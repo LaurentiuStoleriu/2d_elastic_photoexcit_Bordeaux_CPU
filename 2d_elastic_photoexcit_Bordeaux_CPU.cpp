@@ -11,10 +11,18 @@
 #include <random>
 
 #include "alglibmisc.h"
+#include "gsl/gsl_sort_double.h"
 using namespace alglib;
 using namespace std;
 
 #define grafic 1
+#undef grafic
+
+#define MHL 1
+#undef MHL
+
+#define PHOTO
+//#undef PHOTO
 
 constexpr auto n_lat = 30;
 constexpr auto n_part = 3540;
@@ -35,6 +43,7 @@ constexpr auto n_steps = 301;
 constexpr auto T_LIM_DWN = 50.0;
 constexpr auto T_LIM_UP = 350.0;
 constexpr auto delta_T = (T_LIM_UP - T_LIM_DWN) / (n_steps - 1);
+constexpr auto T_EXCITATION = 235.0;
 
 constexpr auto H = 1100.0;		//1100;
 constexpr auto S = 5.5;			//7;
@@ -63,6 +72,7 @@ constexpr char fis_particule[500] = "E:\\Stoleriu\\C\\special\\3d\\generare\\202
 
 constexpr char fis_solutiiMHL[500] = "E:\\Stoleriu\\C\\special\\3d\\res\\2021\\Elastic\\30x30_RektHex_Sol_MHL";
 constexpr char fis_volumeMHL[500] = "E:\\Stoleriu\\C\\special\\3d\\res\\2021\\Elastic\\30x30_RektHex_Sol_MHL.dat";
+constexpr char fis_volumePHOTO[500] = "E:\\Stoleriu\\C\\special\\3d\\res\\2021\\Elastic\\30x30_RektHex_Sol_PHOTO235.dat";
 
 char file[200] = "E:\\Stoleriu\\C\\special\\3d\\res\\2021\\Elastic\\30x30_RektHex_MHLViz";
 
@@ -73,6 +83,7 @@ char file[200] = "E:\\Stoleriu\\C\\special\\3d\\res\\2021\\Elastic\\30x30_RektHe
 int initializare(void);
 void alglib_function_neighbours(void);
 int Temperaturi(void);
+double Suprafata(bool save);
 int Funct_Dopri(double time, double *input, double *deriv);
 int Dopri5(double x, double xend, double eps, double hmax, double has, double *sol);
 
@@ -98,6 +109,8 @@ int main()
 	double step_t = 1.0;
 	double eps = 1.0e-5;
 	double diference;
+	double arie_ini = 0.0;
+	double arie = 0.0;
 
 	timp = t_init;
 
@@ -125,7 +138,6 @@ int main()
 	{
 		j++;
 
-
 		for (i = 0; i < n_part; i++)
 		{
 			sol_old[4 * i + 0] = sol[4 * i + 0];
@@ -146,6 +158,9 @@ int main()
 		printf("S  T  E  P :   %d , \t\t diference: %7.5lg \t\t in: %7.3lf ms\n", j, diference, 0.0);
 	}
 
+	arie_ini = Suprafata(false);
+
+#ifdef MHL
 	//////////////////////////////////////////////////////////////////////////
 	// MHL - TO - UP
 	//////////////////////////////////////////////////////////////////////////
@@ -505,11 +520,183 @@ int main()
 		fclose(fvol);
 		//}
 	}
+#endif
+
+#ifdef PHOTO
+//////////////////////////////////////////////////////////////////////////
+// PHOTOEXCITATION
+//////////////////////////////////////////////////////////////////////////
+	fvol = fopen(fis_volumePHOTO, "w");
+
+	int n_H = 0;
+	int n_L = n_part;
+	int n_L_vechi = n_part;
+
+	std::random_device rd;
+	std::mt19937_64 gen(rd());
+	std::uniform_real_distribution<double> rand_dis(0.0, 1.0);  // use with rand_dis(gen)
+
+	timp = t_init;
+
+	for (i = 0; i < n_part; i++)
+	{
+		T[i] = T_EXCITATION;
+	}
+
+	for (i = 0; i < n_part; i++) //Conditii initiale
+	{
+		sol[4 * i + 0] = Medium[i].x;
+		sol[4 * i + 1] = 0.0;
+		sol[4 * i + 2] = Medium[i].y;
+		sol[4 * i + 3] = 0.0;
+		//Medium[i].raza = 1.1 * radius;
+	}
 
 
+	int contor_pasi = 0;
+
+	while ((contor_pasi < 1000))
+	{
+		contor_pasi++;
+
+		Dopri5(timp, timp + step_t, eps, step_t, step_t / 4.0, &sol[0]);
+
+		for (int i = 0; i < n_part; i++)
+		{
+			Medium[i].x = sol[4 * i + 0];
+			Medium[i].y = sol[4 * i + 2];
+		}
+		timp += step_t;
+
+		Temperaturi();
+
+		for (int i = 0; i < n_part; i++)
+		{
+			if ((Medium[i].raza > 1.05 * radius) && (probabilitateHL[i] > rand_dis(gen)))
+			{
+				Medium[i].raza = rmic;
+				n_H--; n_L++;
+			}
+			else
+			{
+				if ((Medium[i].raza < 1.05 * radius) && (probabilitateLH[i] > rand_dis(gen)))
+				{
+					Medium[i].raza = rmare;
+					n_H++; n_L--;
+				}
+			}
+		}
+
+		arie = Suprafata(false);
+
+#ifdef grafic
+		{
+			int p, i, j, v1, v2;
+			int count = 0;
+			int *count_switched;
+			double d1;
+
+			count_switched = (int *)calloc(n_part, sizeof(int));
+
+			for (p = 0; p < n_part; p++)
+			{
+				count_switched[p] = 0;
+
+				for (i = 0; i < neighbours[p]; i++)
+				{
+					if (Medium[Position_Coef[p][i].vecin].raza > 1.05)
+					{
+						count_switched[p]++;
+					}
+				}
+
+				for (i = 0; i < neighbours[p] - 1; i++)
+				{
+					for (j = i + 1; j < neighbours[p]; j++)
+					{
+						v1 = Position_Coef[p][i].vecin;
+						v2 = Position_Coef[p][j].vecin;
+
+						d1 = sqrt((Medium[v1].x - Medium[v2].x) * (Medium[v1].x - Medium[v2].x) + (Medium[v1].y - Medium[v2].y) * (Medium[v1].y - Medium[v2].y) + (Medium[v1].z - Medium[v2].z) * (Medium[v1].z - Medium[v2].z));
+
+						if ((d1 < 5.0)) //ca sa nu luam doi vecini ambii de pe Ox sau ambii de pe Oy
+						{
+							count++;
+						}
+					}
+				}
+			}
 
 
+			char fis_save_vis[500];
+			sprintf(fis_save_vis, "%s_ucd_%06d.inp", file, (int)timp);
 
+			FILE *fpout;
+			fpout = fopen(fis_save_vis, "w");
+
+			fprintf(fpout, "%d %d 1 0 0\n", n_part, count);
+			printf("SAVING UCD %d %d\n", n_part, count);
+
+			for (i = 0; i < n_part; i++)
+			{
+				fprintf(fpout, "%d %f %f %f\n", i + 1, Medium[i].x, Medium[i].y, Medium[i].z);
+			}
+
+			count = 0;
+			for (p = 0; p < n_part; p++)
+			{
+				for (i = 0; i < neighbours[p] - 1; i++)
+				{
+					for (j = i + 1; j < neighbours[p]; j++)
+					{
+						v1 = Position_Coef[p][i].vecin;
+						v2 = Position_Coef[p][j].vecin;
+
+						d1 = sqrt((Medium[v1].x - Medium[v2].x) * (Medium[v1].x - Medium[v2].x) + (Medium[v1].y - Medium[v2].y) * (Medium[v1].y - Medium[v2].y) + (Medium[v1].z - Medium[v2].z) * (Medium[v1].z - Medium[v2].z));
+
+						if ((d1 < 5.0))  //ca sa nu luam doi vecini ambii de pe Ox sau ambii de pe Oy
+						{
+							count++;
+							fprintf(fpout, "%d 1 tri  %d  %d  %d \n", count, p + 1, v1 + 1, v2 + 1);
+						}
+
+					}
+				}
+			}
+
+			fprintf(fpout, "5 1 1 1 1 1\n");
+			fprintf(fpout, "raza, nm\n");
+			fprintf(fpout, "phase, au\n");
+			fprintf(fpout, "PLH, au\n");
+			fprintf(fpout, "PHL, au\n");
+			fprintf(fpout, "pressure, au\n");
+
+			for (i = 0; i < n_part; i++)
+			{
+				fprintf(fpout, "%d %lf %lf %f %f %f\n", i + 1, Medium[i].raza, Medium[i].k,
+					((probabilitateLH[i] < 1.0) ? (probabilitateLH[i]) : (1.0)),
+					((probabilitateHL[i] < 1.0) ? (probabilitateHL[i]) : (1.0)),
+					pres[i]);
+			}
+
+			fclose(fpout);
+
+			free(count_switched);
+		}
+
+#endif
+	
+	if(!(contor_pasi%100))
+		printf("Timp %lf \t\t Temp %lf \t\t HS %d \t\t Surf  %lf \n", timp, T[0], n_H, arie);
+
+	// ************************* SALVARI VOL********************************
+	fprintf(fvol, "%lf   %lf   %lf   %lf\n", timp, T[0], (double)n_H / n_part, arie);
+	// ************************ END SALVARI *****************************
+
+	}
+	fclose(fvol);
+
+#endif
 
 	printf("\n\n D  O  N  E : \n");
 
@@ -667,6 +854,100 @@ int Temperaturi(void)
 		probabilitateHL[i] = 1.0 / tau * exp(-(E - ka * Fe) / T[i]);
 	}
 	return(0);
+}
+
+//**************************************************************************
+
+double Suprafata(bool save)
+{
+	int i;
+	double a, b, c, p;												//laturile triunghiului
+	double x0 = Medium[1785].x, y0 = Medium[1785].y;
+	double x1, y1, x2, y2;
+
+	double pante_inainte_ordonare[6 * n_lat - 3];
+	double index_margini[6 * n_lat - 3];
+	double index_sort[6 * n_lat - 3];
+
+	int contor = 0;
+	double Surf;
+
+	/////////////////////////////////////////////////////////////////////
+	//////////////////////////////////////////////////// calcul arie ////
+	/////////////////////////////////////////////////////////////////////
+
+	Surf = 0.0;
+	contor = 0;
+	for (i = 0; i < n_part; i++)
+	{
+		if (neighbours[i] < 4.9)
+		{
+
+			x1 = Medium[i].x;
+			y1 = Medium[i].y;
+			index_margini[contor] = i;
+			index_sort[contor] = contor;
+			pante_inainte_ordonare[contor] = atan2((y1 - y0), (x1 - x0));
+			
+			contor++;
+		}
+	}
+
+	//imsl_d_sort((6 * n_lat - 6), pante_inainte_ordonare, IMSL_PERMUTATION_USER, indecsi_sort, IMSL_RETURN_USER, pante_dupa_ordonare, 0);
+	gsl_sort2(pante_inainte_ordonare, 1, index_sort, 1, (6 * n_lat - 3));
+
+	for (i = 0; i < contor - 1; i++)
+	{
+		x1 = Medium[(long)index_margini[(long)index_sort[i]]].x;
+		y1 = Medium[(long)index_margini[(long)index_sort[i]]].y;
+		x2 = Medium[(long)index_margini[(long)index_sort[i + 1]]].x;
+		y2 = Medium[(long)index_margini[(long)index_sort[i + 1]]].y;
+		a = sqrt((x0 - x1) * (x0 - x1) + (y0 - y1) * (y0 - y1));
+		b = sqrt((x0 - x2) * (x0 - x2) + (y0 - y2) * (y0 - y2));
+		c = sqrt((x1 - x2) * (x1 - x2) + (y1 - y2) * (y1 - y2));
+		p = (a + b + c) / 2.0;
+		Surf += sqrt(p * (p - a) * (p - b) * (p - c));
+	}
+	x1 = Medium[(long)index_margini[(long)index_sort[contor - 1]]].x;
+	y1 = Medium[(long)index_margini[(long)index_sort[contor - 1]]].y;
+	x2 = Medium[(long)index_margini[(long)index_sort[0]]].x;
+	y2 = Medium[(long)index_margini[(long)index_sort[0]]].y;
+	a = sqrt((x0 - x1) * (x0 - x1) + (y0 - y1) * (y0 - y1));
+	b = sqrt((x0 - x2) * (x0 - x2) + (y0 - y2) * (y0 - y2));
+	c = sqrt((x1 - x2) * (x1 - x2) + (y1 - y2) * (y1 - y2));
+	p = (a + b + c) / 2.0;
+	Surf += sqrt(p * (p - a) * (p - b) * (p - c));
+
+	if (save)
+	{
+		FILE *fp;
+		fp = fopen("E:\\Stoleriu\\C\\special\\3d\\res\\2021\\Elastic\\run1.dat", "w");
+		for (i = 0; i < contor - 1; i++)
+		{
+			x1 = Medium[(long)index_margini[(long)index_sort[i]]].x;
+			y1 = Medium[(long)index_margini[(long)index_sort[i]]].y;
+			x2 = Medium[(long)index_margini[(long)index_sort[i + 1]]].x;
+			y2 = Medium[(long)index_margini[(long)index_sort[i + 1]]].y;
+			a = sqrt((x0 - x1) * (x0 - x1) + (y0 - y1) * (y0 - y1));
+			b = sqrt((x0 - x2) * (x0 - x2) + (y0 - y2) * (y0 - y2));
+			c = sqrt((x1 - x2) * (x1 - x2) + (y1 - y2) * (y1 - y2));
+			p = (a + b + c) / 2.0;
+			fprintf(fp, "%ld %ld %lf %lf %lf %lf %lf %lf %lf %lf\n", (long)index_margini[(long)index_sort[i]], (long)index_margini[(long)index_sort[i + 1]], x1, y1, x2, y2, a, b, c, sqrt(p * (p - a) * (p - b) * (p - c)));
+		}
+		x1 = Medium[(long)index_margini[(long)index_sort[contor - 1]]].x;
+		y1 = Medium[(long)index_margini[(long)index_sort[contor - 1]]].y;
+		x2 = Medium[(long)index_margini[(long)index_sort[0]]].x;
+		y2 = Medium[(long)index_margini[(long)index_sort[0]]].y;
+		a = sqrt((x0 - x1) * (x0 - x1) + (y0 - y1) * (y0 - y1));
+		b = sqrt((x0 - x2) * (x0 - x2) + (y0 - y2) * (y0 - y2));
+		c = sqrt((x1 - x2) * (x1 - x2) + (y1 - y2) * (y1 - y2));
+		p = (a + b + c) / 2.0;
+		fprintf(fp, "%ld %ld %lf %lf %lf %lf %lf %lf %lf %lf\n", (long)index_margini[(long)index_sort[i]], (long)index_margini[(long)index_sort[i + 1]], x1, y1, x2, y2, a, b, c, sqrt(p * (p - a) * (p - b) * (p - c)));
+
+		fclose(fp);
+	}
+
+	return Surf;
 }
 
 //**************************************************************************
