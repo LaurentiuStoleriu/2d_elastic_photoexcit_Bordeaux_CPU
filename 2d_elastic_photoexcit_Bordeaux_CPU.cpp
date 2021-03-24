@@ -21,13 +21,13 @@ constexpr auto n_part = 3540;
 constexpr auto n_equ = 14160;
 constexpr auto n_max_vec = 6;
 
-constexpr auto radius = 1.0;	// radius trebuie sa ramana 1, e doar ce la LS
+constexpr auto radius = 0.2;	// radius trebuie sa ramana 1, e doar ce la LS
+constexpr auto L = 0.6;
+constexpr auto rmic = radius;// 0.20;
+constexpr auto rmare = 1.1 * radius; // 0.22;
 
-constexpr auto L = 0.6;//2.0;
-constexpr auto rmic = 0.20;
-constexpr auto rmare = 0.22;
 constexpr auto m = 1.0;
-constexpr auto Kf_mic_mic = 1.0;
+constexpr auto Kf_mic_mic = 5.0;
 constexpr auto Kf_poly = 1.0;
 constexpr auto mu = 1.0;
 
@@ -59,7 +59,7 @@ double sol[n_equ], sol_old[n_equ];
 double T[n_part];
 double probabilitateHL[n_part], probabilitateLH[n_part], pres[n_part];
 
-constexpr char fis_particule[500] = "E:\\Stoleriu\\C\\special\\3d\\generare\\2021\\Elastic\\30x30_RektHex_L2_LS.dat";  // HS: r=1.1 L=2
+constexpr char fis_particule[500] = "E:\\Stoleriu\\C\\special\\3d\\generare\\2021\\Elastic\\30x30_RektHex_L06_LS.dat";  // HS: r=1.1 L=2
 
 constexpr char fis_solutiiMHL[500] = "E:\\Stoleriu\\C\\special\\3d\\res\\2021\\Elastic\\30x30_RektHex_Sol_MHL";
 constexpr char fis_volumeMHL[500] = "E:\\Stoleriu\\C\\special\\3d\\res\\2021\\Elastic\\30x30_RektHex_Sol_MHL.dat";
@@ -203,22 +203,19 @@ int main()
 			{
 				if ((Medium[i].raza > 1.05 * radius) && (probabilitateHL[i] > rand_dis(gen)))
 				{
-					Medium[i].raza = 1.0;
-					n_H--;
+					Medium[i].raza = rmic;
+					n_H--; n_L++;
 				}
 				else
 				{
 					if ((Medium[i].raza < 1.05 * radius) && (probabilitateLH[i] > rand_dis(gen)))
 					{
-						Medium[i].raza = 1.1;
-						n_H++;
+						Medium[i].raza = rmare;
+						n_H++; n_L--;
 					}
 				}
 			}
 		}
-
-		printf("Timp %lf \t\t Temp %lf \t\t HS %d \n", timp, T[0], n_H);
-		n_L_vechi = n_L;
 
 		if (fabs((double)(n_L - n_L_vechi)) > ((double)n_part / 100))
 		{
@@ -318,7 +315,10 @@ int main()
 			}
 
 #endif
+			n_L_vechi = n_L;
 		}
+
+		printf("Timp %lf \t\t Temp %lf \t\t HS %d \n", timp, T[0], n_H);
 
 		fvol = fopen(fis_volumeMHL, "a");
 		// ************************* SALVARI VOL********************************
@@ -333,9 +333,9 @@ int main()
 // MHL - TO - DOWN
 //////////////////////////////////////////////////////////////////////////
 
-	n_H = n_part;
-	n_L = 0;
-	n_L_vechi = 0;
+	//n_H = n_part;
+	//n_L = 0;
+	//n_L_vechi = 0;
 
 	//timp = t_init;
 
@@ -380,22 +380,19 @@ int main()
 			{
 				if ((Medium[i].raza > 1.05 * radius) && (probabilitateHL[i] > rand_dis(gen)))
 				{
-					Medium[i].raza = 1.0;
-					n_H--;
+					Medium[i].raza = rmic;
+					n_H--; n_L++;
 				}
 				else
 				{
 					if ((Medium[i].raza < 1.05 * radius) && (probabilitateLH[i] > rand_dis(gen)))
 					{
-						Medium[i].raza = 1.1;
-						n_H++;
+						Medium[i].raza = rmare;
+						n_H++; n_L--;
 					}
 				}
 			}
 		}
-
-		printf("Timp %lf \t\t Temp %lf \t\t HS %d \n", timp, T[0], n_H);
-		n_L_vechi = n_L;
 
 		if (fabs((double)(n_L - n_L_vechi)) > ((double)n_part / 100))
 		{
@@ -494,8 +491,12 @@ int main()
 				free(count_switched);
 			}
 
-#endif
+#endif	
+			n_L_vechi = n_L;
 		}
+
+		printf("Timp %lf \t\t Temp %lf \t\t HS %d \n", timp, T[0], n_H);
+
 
 		fvol = fopen(fis_volumeMHL, "a");
 		// ************************* SALVARI VOL********************************
@@ -555,6 +556,7 @@ void alglib_function_neighbours(void)
 {
 	int	neighbours_max = 0, neighbours_med = 0;
 	int i, j, local_index;
+	double distance;
 	real_2d_array a;
 
 	a.setlength(n_part, 3);
@@ -594,7 +596,8 @@ void alglib_function_neighbours(void)
 
 		ae_int_t k;
 		//k = kdtreequeryknn(kdt, x, 2, false);
-		k = kdtreequeryrnn(kdt, x, 1.1 * (2 * radius + L) * Medium[i].raza /*10.0*pow(3.0*Medium_vol[i] / 4.0 / Pi, (1.0 / 3.0))*/, false);
+		distance = 1.1 * (2.0 * radius + L);
+		k = kdtreequeryrnn(kdt, x, distance /*10.0*pow(3.0*Medium_vol[i] / 4.0 / Pi, (1.0 / 3.0))*/, false);
 
 		neighbours[i] = (int)k;
 
@@ -637,6 +640,7 @@ void alglib_function_neighbours(void)
 		if (neighbours[i] > neighbours_max)	neighbours_max = neighbours[i];
 	}
 	printf("Numar maxim de vecini: %d    Numar mediu de vecini: %f \n", neighbours_max, (double)neighbours_med / n_part);
+	//getchar();
 }
 
 //*************************************************************************
