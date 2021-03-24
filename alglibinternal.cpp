@@ -1,5 +1,5 @@
 /*************************************************************************
-ALGLIB 3.13.0 (source code generated 2017-12-29)
+ALGLIB 3.17.0 (source code generated 2020-12-27)
 Copyright (c) Sergey Bochkanov (ALGLIB project).
 
 >>> SOURCE LICENSE >>>
@@ -17,6 +17,10 @@ A copy of the GNU General Public License is available at
 http://www.fsf.org/licensing/licenses
 >>> END OF LICENSE >>>
 *************************************************************************/
+#ifdef _MSC_VER
+#define _CRT_SECURE_NO_WARNINGS
+#endif
+
 #include "alglibinternal.h"
 
 // disable some irrelevant warnings
@@ -424,32 +428,38 @@ ae_int_t getrbfserializationcode(ae_state *_state)
 }
 
 
-#endif
-#if defined(AE_COMPILE_APSERV) || !defined(AE_PARTIAL_BUILD)
-
-
-/*************************************************************************
-This function is used to set error flags  during  unit  tests.  When  COND
-parameter is True, FLAG variable is  set  to  True.  When  COND is  False,
-FLAG is unchanged.
-
-The purpose of this function is to have single  point  where  failures  of
-unit tests can be detected.
-
-This function returns value of COND.
-*************************************************************************/
-ae_bool seterrorflag(ae_bool* flag, ae_bool cond, ae_state *_state)
+ae_int_t getspline2dserializationcode(ae_state *_state)
 {
-    ae_bool result;
+    ae_int_t result;
 
 
-    if( cond )
-    {
-        *flag = ae_true;
-    }
-    result = cond;
+    result = 6;
     return result;
 }
+
+
+ae_int_t getidwserializationcode(ae_state *_state)
+{
+    ae_int_t result;
+
+
+    result = 7;
+    return result;
+}
+
+
+ae_int_t getknnserializationcode(ae_state *_state)
+{
+    ae_int_t result;
+
+
+    result = 108;
+    return result;
+}
+
+
+#endif
+#if defined(AE_COMPILE_APSERV) || !defined(AE_PARTIAL_BUILD)
 
 
 /*************************************************************************
@@ -463,18 +473,16 @@ than S.
 
 This function returns value of COND.
 *************************************************************************/
-ae_bool seterrorflagdiff(ae_bool* flag,
+void seterrorflagdiff(ae_bool* flag,
      double val,
      double refval,
      double tol,
      double s,
      ae_state *_state)
 {
-    ae_bool result;
 
 
-    result = seterrorflag(flag, ae_fp_greater(ae_fabs(val-refval, _state),tol*ae_maxreal(ae_fabs(refval, _state), s, _state)), _state);
-    return result;
+    ae_set_error_flag(flag, ae_fp_greater(ae_fabs(val-refval, _state),tol*ae_maxreal(ae_fabs(refval, _state), s, _state)), __FILE__, __LINE__, "apserv.ap:162");
 }
 
 
@@ -907,6 +915,28 @@ ae_bool aresameboolean(ae_bool v1, ae_bool v2, ae_state *_state)
 
 
 /*************************************************************************
+Resizes X and fills by zeros
+
+  -- ALGLIB --
+     Copyright 20.03.2009 by Bochkanov Sergey
+*************************************************************************/
+void setlengthzero(/* Real    */ ae_vector* x,
+     ae_int_t n,
+     ae_state *_state)
+{
+    ae_int_t i;
+
+
+    ae_assert(n>=0, "SetLengthZero: N<0", _state);
+    ae_vector_set_length(x, n, _state);
+    for(i=0; i<=n-1; i++)
+    {
+        x->ptr.p_double[i] = (double)(0);
+    }
+}
+
+
+/*************************************************************************
 If Length(X)<N, resizes X
 
   -- ALGLIB --
@@ -987,6 +1017,88 @@ void rmatrixsetlengthatleast(/* Real    */ ae_matrix* x,
 
 
 /*************************************************************************
+If Cols(X)<N or Rows(X)<M, resizes X
+
+  -- ALGLIB --
+     Copyright 20.03.2009 by Bochkanov Sergey
+*************************************************************************/
+void bmatrixsetlengthatleast(/* Boolean */ ae_matrix* x,
+     ae_int_t m,
+     ae_int_t n,
+     ae_state *_state)
+{
+
+
+    if( m>0&&n>0 )
+    {
+        if( x->rows<m||x->cols<n )
+        {
+            ae_matrix_set_length(x, m, n, _state);
+        }
+    }
+}
+
+
+/*************************************************************************
+Grows X, i.e. changes its size in such a way that:
+a) contents is preserved
+b) new size is at least N
+c) new size can be larger than N, so subsequent grow() calls can return
+   without reallocation
+
+  -- ALGLIB --
+     Copyright 20.03.2009 by Bochkanov Sergey
+*************************************************************************/
+void bvectorgrowto(/* Boolean */ ae_vector* x,
+     ae_int_t n,
+     ae_state *_state)
+{
+    ae_frame _frame_block;
+    ae_vector oldx;
+    ae_int_t i;
+    ae_int_t n2;
+
+    ae_frame_make(_state, &_frame_block);
+    memset(&oldx, 0, sizeof(oldx));
+    ae_vector_init(&oldx, 0, DT_BOOL, _state, ae_true);
+
+    
+    /*
+     * Enough place
+     */
+    if( x->cnt>=n )
+    {
+        ae_frame_leave(_state);
+        return;
+    }
+    
+    /*
+     * Choose new size
+     */
+    n = ae_maxint(n, ae_round(1.8*x->cnt+1, _state), _state);
+    
+    /*
+     * Grow
+     */
+    n2 = x->cnt;
+    ae_swap_vectors(x, &oldx);
+    ae_vector_set_length(x, n, _state);
+    for(i=0; i<=n-1; i++)
+    {
+        if( i<n2 )
+        {
+            x->ptr.p_bool[i] = oldx.ptr.p_bool[i];
+        }
+        else
+        {
+            x->ptr.p_bool[i] = ae_false;
+        }
+    }
+    ae_frame_leave(_state);
+}
+
+
+/*************************************************************************
 Grows X, i.e. changes its size in such a way that:
 a) contents is preserved
 b) new size is at least N
@@ -1006,7 +1118,8 @@ void ivectorgrowto(/* Integer */ ae_vector* x,
     ae_int_t n2;
 
     ae_frame_make(_state, &_frame_block);
-    memset(&oldx, 0, sizeof(oldx));    ae_vector_init(&oldx, 0, DT_INT, _state, ae_true);
+    memset(&oldx, 0, sizeof(oldx));
+    ae_vector_init(&oldx, 0, DT_INT, _state, ae_true);
 
     
     /*
@@ -1045,6 +1158,136 @@ void ivectorgrowto(/* Integer */ ae_vector* x,
 
 
 /*************************************************************************
+Grows X, i.e. appends rows in such a way that:
+a) contents is preserved
+b) new row count is at least N
+c) new row count can be larger than N, so subsequent grow() calls can return
+   without reallocation
+d) new matrix has at least MinCols columns (if less than specified amount
+   of columns is present, new columns are added with undefined contents);
+   MinCols can be 0 or negative value = ignored
+
+  -- ALGLIB --
+     Copyright 20.03.2009 by Bochkanov Sergey
+*************************************************************************/
+void rmatrixgrowrowsto(/* Real    */ ae_matrix* a,
+     ae_int_t n,
+     ae_int_t mincols,
+     ae_state *_state)
+{
+    ae_frame _frame_block;
+    ae_matrix olda;
+    ae_int_t i;
+    ae_int_t j;
+    ae_int_t n2;
+    ae_int_t m;
+
+    ae_frame_make(_state, &_frame_block);
+    memset(&olda, 0, sizeof(olda));
+    ae_matrix_init(&olda, 0, 0, DT_REAL, _state, ae_true);
+
+    
+    /*
+     * Enough place?
+     */
+    if( a->rows>=n&&a->cols>=mincols )
+    {
+        ae_frame_leave(_state);
+        return;
+    }
+    
+    /*
+     * Sizes and metrics
+     */
+    if( a->rows<n )
+    {
+        n = ae_maxint(n, ae_round(1.8*a->rows+1, _state), _state);
+    }
+    n2 = ae_minint(a->rows, n, _state);
+    m = a->cols;
+    
+    /*
+     * Grow
+     */
+    ae_swap_matrices(a, &olda);
+    ae_matrix_set_length(a, n, ae_maxint(m, mincols, _state), _state);
+    for(i=0; i<=n2-1; i++)
+    {
+        for(j=0; j<=m-1; j++)
+        {
+            a->ptr.pp_double[i][j] = olda.ptr.pp_double[i][j];
+        }
+    }
+    ae_frame_leave(_state);
+}
+
+
+/*************************************************************************
+Grows X, i.e. appends cols in such a way that:
+a) contents is preserved
+b) new col count is at least N
+c) new col count can be larger than N, so subsequent grow() calls can return
+   without reallocation
+d) new matrix has at least MinRows row (if less than specified amount
+   of rows is present, new rows are added with undefined contents);
+   MinRows can be 0 or negative value = ignored
+
+  -- ALGLIB --
+     Copyright 20.03.2009 by Bochkanov Sergey
+*************************************************************************/
+void rmatrixgrowcolsto(/* Real    */ ae_matrix* a,
+     ae_int_t n,
+     ae_int_t minrows,
+     ae_state *_state)
+{
+    ae_frame _frame_block;
+    ae_matrix olda;
+    ae_int_t i;
+    ae_int_t j;
+    ae_int_t n2;
+    ae_int_t m;
+
+    ae_frame_make(_state, &_frame_block);
+    memset(&olda, 0, sizeof(olda));
+    ae_matrix_init(&olda, 0, 0, DT_REAL, _state, ae_true);
+
+    
+    /*
+     * Enough place?
+     */
+    if( a->cols>=n&&a->rows>=minrows )
+    {
+        ae_frame_leave(_state);
+        return;
+    }
+    
+    /*
+     * Sizes and metrics
+     */
+    if( a->cols<n )
+    {
+        n = ae_maxint(n, ae_round(1.8*a->cols+1, _state), _state);
+    }
+    n2 = ae_minint(a->cols, n, _state);
+    m = a->rows;
+    
+    /*
+     * Grow
+     */
+    ae_swap_matrices(a, &olda);
+    ae_matrix_set_length(a, ae_maxint(m, minrows, _state), n, _state);
+    for(i=0; i<=m-1; i++)
+    {
+        for(j=0; j<=n2-1; j++)
+        {
+            a->ptr.pp_double[i][j] = olda.ptr.pp_double[i][j];
+        }
+    }
+    ae_frame_leave(_state);
+}
+
+
+/*************************************************************************
 Grows X, i.e. changes its size in such a way that:
 a) contents is preserved
 b) new size is at least N
@@ -1064,7 +1307,8 @@ void rvectorgrowto(/* Real    */ ae_vector* x,
     ae_int_t n2;
 
     ae_frame_make(_state, &_frame_block);
-    memset(&oldx, 0, sizeof(oldx));    ae_vector_init(&oldx, 0, DT_REAL, _state, ae_true);
+    memset(&oldx, 0, sizeof(oldx));
+    ae_vector_init(&oldx, 0, DT_REAL, _state, ae_true);
 
     
     /*
@@ -1120,7 +1364,8 @@ void ivectorresize(/* Integer */ ae_vector* x,
     ae_int_t n2;
 
     ae_frame_make(_state, &_frame_block);
-    memset(&oldx, 0, sizeof(oldx));    ae_vector_init(&oldx, 0, DT_INT, _state, ae_true);
+    memset(&oldx, 0, sizeof(oldx));
+    ae_vector_init(&oldx, 0, DT_INT, _state, ae_true);
 
     n2 = x->cnt;
     ae_swap_vectors(x, &oldx);
@@ -1158,7 +1403,8 @@ void rvectorresize(/* Real    */ ae_vector* x,
     ae_int_t n2;
 
     ae_frame_make(_state, &_frame_block);
-    memset(&oldx, 0, sizeof(oldx));    ae_vector_init(&oldx, 0, DT_REAL, _state, ae_true);
+    memset(&oldx, 0, sizeof(oldx));
+    ae_vector_init(&oldx, 0, DT_REAL, _state, ae_true);
 
     n2 = x->cnt;
     ae_swap_vectors(x, &oldx);
@@ -1199,7 +1445,8 @@ void rmatrixresize(/* Real    */ ae_matrix* x,
     ae_int_t n2;
 
     ae_frame_make(_state, &_frame_block);
-    memset(&oldx, 0, sizeof(oldx));    ae_matrix_init(&oldx, 0, 0, DT_REAL, _state, ae_true);
+    memset(&oldx, 0, sizeof(oldx));
+    ae_matrix_init(&oldx, 0, 0, DT_REAL, _state, ae_true);
 
     m2 = x->rows;
     n2 = x->cols;
@@ -1244,7 +1491,8 @@ void imatrixresize(/* Integer */ ae_matrix* x,
     ae_int_t n2;
 
     ae_frame_make(_state, &_frame_block);
-    memset(&oldx, 0, sizeof(oldx));    ae_matrix_init(&oldx, 0, 0, DT_INT, _state, ae_true);
+    memset(&oldx, 0, sizeof(oldx));
+    ae_matrix_init(&oldx, 0, 0, DT_INT, _state, ae_true);
 
     m2 = x->rows;
     n2 = x->cols;
@@ -1269,6 +1517,37 @@ void imatrixresize(/* Integer */ ae_matrix* x,
 
 
 /*************************************************************************
+appends element to X
+
+  -- ALGLIB --
+     Copyright 20.03.2009 by Bochkanov Sergey
+*************************************************************************/
+void ivectorappend(/* Integer */ ae_vector* x,
+     ae_int_t v,
+     ae_state *_state)
+{
+    ae_frame _frame_block;
+    ae_vector oldx;
+    ae_int_t i;
+    ae_int_t n;
+
+    ae_frame_make(_state, &_frame_block);
+    memset(&oldx, 0, sizeof(oldx));
+    ae_vector_init(&oldx, 0, DT_INT, _state, ae_true);
+
+    n = x->cnt;
+    ae_swap_vectors(x, &oldx);
+    ae_vector_set_length(x, n+1, _state);
+    for(i=0; i<=n-1; i++)
+    {
+        x->ptr.p_int[i] = oldx.ptr.p_int[i];
+    }
+    x->ptr.p_int[n] = v;
+    ae_frame_leave(_state);
+}
+
+
+/*************************************************************************
 This function checks that length(X) is at least N and first N values  from
 X[] are finite
 
@@ -1280,6 +1559,7 @@ ae_bool isfinitevector(/* Real    */ ae_vector* x,
      ae_state *_state)
 {
     ae_int_t i;
+    double v;
     ae_bool result;
 
 
@@ -1294,15 +1574,12 @@ ae_bool isfinitevector(/* Real    */ ae_vector* x,
         result = ae_false;
         return result;
     }
+    v = (double)(0);
     for(i=0; i<=n-1; i++)
     {
-        if( !ae_isfinite(x->ptr.p_double[i], _state) )
-        {
-            result = ae_false;
-            return result;
-        }
+        v = 0.01*v+x->ptr.p_double[i];
     }
-    result = ae_true;
+    result = ae_isfinite(v, _state);
     return result;
 }
 
@@ -1934,6 +2211,68 @@ void swaprows(/* Real    */ ae_matrix* a,
 
 
 /*************************************************************************
+This function is used to swap two cols of the matrix; if NRows<0, automatically
+determined from the matrix size.
+*************************************************************************/
+void swapcols(/* Real    */ ae_matrix* a,
+     ae_int_t j0,
+     ae_int_t j1,
+     ae_int_t nrows,
+     ae_state *_state)
+{
+    ae_int_t i;
+    double v;
+
+
+    if( j0==j1 )
+    {
+        return;
+    }
+    if( nrows<0 )
+    {
+        nrows = a->rows;
+    }
+    for(i=0; i<=nrows-1; i++)
+    {
+        v = a->ptr.pp_double[i][j0];
+        a->ptr.pp_double[i][j0] = a->ptr.pp_double[i][j1];
+        a->ptr.pp_double[i][j1] = v;
+    }
+}
+
+
+/*************************************************************************
+This function is used to swap two "entries" in 1-dimensional array composed
+from D-element entries
+*************************************************************************/
+void swapentries(/* Real    */ ae_vector* a,
+     ae_int_t i0,
+     ae_int_t i1,
+     ae_int_t entrywidth,
+     ae_state *_state)
+{
+    ae_int_t offs0;
+    ae_int_t offs1;
+    ae_int_t j;
+    double v;
+
+
+    if( i0==i1 )
+    {
+        return;
+    }
+    offs0 = i0*entrywidth;
+    offs1 = i1*entrywidth;
+    for(j=0; j<=entrywidth-1; j++)
+    {
+        v = a->ptr.p_double[offs0+j];
+        a->ptr.p_double[offs0+j] = a->ptr.p_double[offs1+j];
+        a->ptr.p_double[offs1+j] = v;
+    }
+}
+
+
+/*************************************************************************
 This function is used to swap two elements of the vector
 *************************************************************************/
 void swapelements(/* Real    */ ae_vector* a,
@@ -2019,6 +2358,34 @@ void dec(ae_int_t* v, ae_state *_state)
 
 
 /*************************************************************************
+This function is used to increment value of integer variable; name of  the
+function suggests that increment is done in multithreaded setting  in  the
+thread-unsafe manner (optional progress reports which do not need guaranteed
+correctness)
+*************************************************************************/
+void threadunsafeinc(ae_int_t* v, ae_state *_state)
+{
+
+
+    *v = *v+1;
+}
+
+
+/*************************************************************************
+This function is used to increment value of integer variable; name of  the
+function suggests that increment is done in multithreaded setting  in  the
+thread-unsafe manner (optional progress reports which do not need guaranteed
+correctness)
+*************************************************************************/
+void threadunsafeincby(ae_int_t* v, ae_int_t k, ae_state *_state)
+{
+
+
+    *v = *v+k;
+}
+
+
+/*************************************************************************
 This function performs two operations:
 1. decrements value of integer variable, if it is positive
 2. explicitly sets variable to zero if it is non-positive
@@ -2040,6 +2407,27 @@ void countdown(ae_int_t* v, ae_state *_state)
 
 
 /*************************************************************************
+This function returns +1 or -1 depending on sign of X.
+x=0 results in +1 being returned.
+*************************************************************************/
+double possign(double x, ae_state *_state)
+{
+    double result;
+
+
+    if( ae_fp_greater_eq(x,(double)(0)) )
+    {
+        result = (double)(1);
+    }
+    else
+    {
+        result = (double)(-1);
+    }
+    return result;
+}
+
+
+/*************************************************************************
 This function returns product of two real numbers. It is convenient when
 you have to perform typecast-and-product of two INTEGERS.
 *************************************************************************/
@@ -2049,6 +2437,159 @@ double rmul2(double v0, double v1, ae_state *_state)
 
 
     result = v0*v1;
+    return result;
+}
+
+
+/*************************************************************************
+This function returns product of three real numbers. It is convenient when
+you have to perform typecast-and-product of two INTEGERS.
+*************************************************************************/
+double rmul3(double v0, double v1, double v2, ae_state *_state)
+{
+    double result;
+
+
+    result = v0*v1*v2;
+    return result;
+}
+
+
+/*************************************************************************
+This function returns (A div B) rounded up; it expects that A>0, B>0, but
+does not check it.
+*************************************************************************/
+ae_int_t idivup(ae_int_t a, ae_int_t b, ae_state *_state)
+{
+    ae_int_t result;
+
+
+    result = a/b;
+    if( a%b>0 )
+    {
+        result = result+1;
+    }
+    return result;
+}
+
+
+/*************************************************************************
+This function returns min(i0,i1)
+*************************************************************************/
+ae_int_t imin2(ae_int_t i0, ae_int_t i1, ae_state *_state)
+{
+    ae_int_t result;
+
+
+    result = i0;
+    if( i1<result )
+    {
+        result = i1;
+    }
+    return result;
+}
+
+
+/*************************************************************************
+This function returns min(i0,i1,i2)
+*************************************************************************/
+ae_int_t imin3(ae_int_t i0, ae_int_t i1, ae_int_t i2, ae_state *_state)
+{
+    ae_int_t result;
+
+
+    result = i0;
+    if( i1<result )
+    {
+        result = i1;
+    }
+    if( i2<result )
+    {
+        result = i2;
+    }
+    return result;
+}
+
+
+/*************************************************************************
+This function returns max(i0,i1)
+*************************************************************************/
+ae_int_t imax2(ae_int_t i0, ae_int_t i1, ae_state *_state)
+{
+    ae_int_t result;
+
+
+    result = i0;
+    if( i1>result )
+    {
+        result = i1;
+    }
+    return result;
+}
+
+
+/*************************************************************************
+This function returns max(i0,i1,i2)
+*************************************************************************/
+ae_int_t imax3(ae_int_t i0, ae_int_t i1, ae_int_t i2, ae_state *_state)
+{
+    ae_int_t result;
+
+
+    result = i0;
+    if( i1>result )
+    {
+        result = i1;
+    }
+    if( i2>result )
+    {
+        result = i2;
+    }
+    return result;
+}
+
+
+/*************************************************************************
+This function returns max(r0,r1,r2)
+*************************************************************************/
+double rmax3(double r0, double r1, double r2, ae_state *_state)
+{
+    double result;
+
+
+    result = r0;
+    if( ae_fp_greater(r1,result) )
+    {
+        result = r1;
+    }
+    if( ae_fp_greater(r2,result) )
+    {
+        result = r2;
+    }
+    return result;
+}
+
+
+/*************************************************************************
+This function returns max(|r0|,|r1|,|r2|)
+*************************************************************************/
+double rmaxabs3(double r0, double r1, double r2, ae_state *_state)
+{
+    double result;
+
+
+    r0 = ae_fabs(r0, _state);
+    r1 = ae_fabs(r1, _state);
+    r2 = ae_fabs(r2, _state);
+    result = r0;
+    if( ae_fp_greater(r1,result) )
+    {
+        result = r1;
+    }
+    if( ae_fp_greater(r2,result) )
+    {
+        result = r2;
+    }
     return result;
 }
 
@@ -2075,6 +2616,109 @@ double boundval(double x, double b1, double b2, ae_state *_state)
         return result;
     }
     result = x;
+    return result;
+}
+
+
+/*************************************************************************
+'bounds' value: maps X to [B1,B2]
+
+  -- ALGLIB --
+     Copyright 20.03.2009 by Bochkanov Sergey
+*************************************************************************/
+ae_int_t iboundval(ae_int_t x, ae_int_t b1, ae_int_t b2, ae_state *_state)
+{
+    ae_int_t result;
+
+
+    if( x<=b1 )
+    {
+        result = b1;
+        return result;
+    }
+    if( x>=b2 )
+    {
+        result = b2;
+        return result;
+    }
+    result = x;
+    return result;
+}
+
+
+/*************************************************************************
+'bounds' value: maps X to [B1,B2]
+
+  -- ALGLIB --
+     Copyright 20.03.2009 by Bochkanov Sergey
+*************************************************************************/
+double rboundval(double x, double b1, double b2, ae_state *_state)
+{
+    double result;
+
+
+    if( ae_fp_less_eq(x,b1) )
+    {
+        result = b1;
+        return result;
+    }
+    if( ae_fp_greater_eq(x,b2) )
+    {
+        result = b2;
+        return result;
+    }
+    result = x;
+    return result;
+}
+
+
+/*************************************************************************
+Returns number of non-zeros
+*************************************************************************/
+ae_int_t countnz1(/* Real    */ ae_vector* v,
+     ae_int_t n,
+     ae_state *_state)
+{
+    ae_int_t i;
+    ae_int_t result;
+
+
+    result = 0;
+    for(i=0; i<=n-1; i++)
+    {
+        if( !(v->ptr.p_double[i]==0) )
+        {
+            result = result+1;
+        }
+    }
+    return result;
+}
+
+
+/*************************************************************************
+Returns number of non-zeros
+*************************************************************************/
+ae_int_t countnz2(/* Real    */ ae_matrix* v,
+     ae_int_t m,
+     ae_int_t n,
+     ae_state *_state)
+{
+    ae_int_t i;
+    ae_int_t j;
+    ae_int_t result;
+
+
+    result = 0;
+    for(i=0; i<=m-1; i++)
+    {
+        for(j=0; j<=n-1; j++)
+        {
+            if( !(v->ptr.pp_double[i][j]==0) )
+            {
+                result = result+1;
+            }
+        }
+    }
     return result;
 }
 
@@ -2363,6 +3007,28 @@ void unserializerealmatrix(ae_serializer* s,
 
 
 /*************************************************************************
+Copy boolean array
+*************************************************************************/
+void copybooleanarray(/* Boolean */ ae_vector* src,
+     /* Boolean */ ae_vector* dst,
+     ae_state *_state)
+{
+    ae_int_t i;
+
+    ae_vector_clear(dst);
+
+    if( src->cnt>0 )
+    {
+        ae_vector_set_length(dst, src->cnt, _state);
+        for(i=0; i<=src->cnt-1; i++)
+        {
+            dst->ptr.p_bool[i] = src->ptr.p_bool[i];
+        }
+    }
+}
+
+
+/*************************************************************************
 Copy integer array
 *************************************************************************/
 void copyintegerarray(/* Integer */ ae_vector* src,
@@ -2462,6 +3128,44 @@ void unsetrealmatrix(/* Real    */ ae_matrix* a, ae_state *_state)
 
     ae_matrix_clear(a);
 
+}
+
+
+/*************************************************************************
+This function is used in parallel functions for recurrent division of large
+task into two smaller tasks.
+
+It has following properties:
+* it works only for TaskSize>=2 and TaskSize>TileSize (assertion is thrown otherwise)
+* Task0+Task1=TaskSize, Task0>0, Task1>0
+* Task0 and Task1 are close to each other
+* Task0>=Task1
+* Task0 is always divisible by TileSize
+
+  -- ALGLIB --
+     Copyright 07.04.2013 by Bochkanov Sergey
+*************************************************************************/
+void tiledsplit(ae_int_t tasksize,
+     ae_int_t tilesize,
+     ae_int_t* task0,
+     ae_int_t* task1,
+     ae_state *_state)
+{
+    ae_int_t cc;
+
+    *task0 = 0;
+    *task1 = 0;
+
+    ae_assert(tasksize>=2, "TiledSplit: TaskSize<2", _state);
+    ae_assert(tasksize>tilesize, "TiledSplit: TaskSize<=TileSize", _state);
+    cc = chunkscount(tasksize, tilesize, _state);
+    ae_assert(cc>=2, "TiledSplit: integrity check failed", _state);
+    *task0 = idivup(cc, 2, _state)*tilesize;
+    *task1 = tasksize-(*task0);
+    ae_assert(*task0>=1, "TiledSplit: internal error", _state);
+    ae_assert(*task1>=1, "TiledSplit: internal error", _state);
+    ae_assert(*task0%tilesize==0, "TiledSplit: internal error", _state);
+    ae_assert(*task0>=(*task1), "TiledSplit: internal error", _state);
 }
 
 
@@ -2594,6 +3298,141 @@ void splitlengtheven(ae_int_t tasksize,
 
 
 /*************************************************************************
+This function is used to calculate number of chunks (including partial,
+non-complete chunks) in some set. It expects that ChunkSize>=1, TaskSize>=0.
+Assertion is thrown otherwise.
+
+Function result is equivalent to Ceil(TaskSize/ChunkSize), but with guarantees
+that rounding errors won't ruin results.
+
+  -- ALGLIB --
+     Copyright 21.01.2015 by Bochkanov Sergey
+*************************************************************************/
+ae_int_t chunkscount(ae_int_t tasksize,
+     ae_int_t chunksize,
+     ae_state *_state)
+{
+    ae_int_t result;
+
+
+    ae_assert(tasksize>=0, "ChunksCount: TaskSize<0", _state);
+    ae_assert(chunksize>=1, "ChunksCount: ChunkSize<1", _state);
+    result = tasksize/chunksize;
+    if( tasksize%chunksize!=0 )
+    {
+        result = result+1;
+    }
+    return result;
+}
+
+
+/*************************************************************************
+Returns maximum density for level 2 sparse/dense functions. Density values
+below one returned by this function are better to handle via sparse Level 2
+functionality.
+
+  -- ALGLIB routine --
+     10.01.2019
+     Bochkanov Sergey
+*************************************************************************/
+double sparselevel2density(ae_state *_state)
+{
+    double result;
+
+
+    result = 0.1;
+    return result;
+}
+
+
+/*************************************************************************
+Returns A-tile size for a matrix.
+
+A-tiles are smallest tiles (32x32), suitable for processing by ALGLIB  own
+implementation of Level 3 linear algebra.
+
+  -- ALGLIB routine --
+     10.01.2019
+     Bochkanov Sergey
+*************************************************************************/
+ae_int_t matrixtilesizea(ae_state *_state)
+{
+    ae_int_t result;
+
+
+    result = 32;
+    return result;
+}
+
+
+/*************************************************************************
+Returns B-tile size for a matrix.
+
+B-tiles are larger  tiles (64x64), suitable for parallel execution or for
+processing by vendor's implementation of Level 3 linear algebra.
+
+  -- ALGLIB routine --
+     10.01.2019
+     Bochkanov Sergey
+*************************************************************************/
+ae_int_t matrixtilesizeb(ae_state *_state)
+{
+#ifndef ALGLIB_INTERCEPTS_MKL
+    ae_int_t result;
+
+
+    result = 64;
+    return result;
+#else
+    return _ialglib_i_matrixtilesizeb();
+#endif
+}
+
+
+/*************************************************************************
+This function returns minimum cost of task which is feasible for
+multithreaded processing. It returns real number in order to avoid overflow
+problems.
+
+  -- ALGLIB --
+     Copyright 10.01.2018 by Bochkanov Sergey
+*************************************************************************/
+double smpactivationlevel(ae_state *_state)
+{
+    double nn;
+    double result;
+
+
+    nn = (double)(2*matrixtilesizeb(_state));
+    result = ae_maxreal(0.95*2*nn*nn*nn, 1.0E7, _state);
+    return result;
+}
+
+
+/*************************************************************************
+This function returns minimum cost of task which is feasible for
+spawn (given that multithreading is active).
+
+It returns real number in order to avoid overflow problems.
+
+  -- ALGLIB --
+     Copyright 10.01.2018 by Bochkanov Sergey
+*************************************************************************/
+double spawnlevel(ae_state *_state)
+{
+    double nn;
+    double result;
+
+
+    nn = (double)(2*matrixtilesizea(_state));
+    result = 0.95*2*nn*nn*nn;
+    return result;
+}
+
+
+/*************************************************************************
+--- OBSOLETE FUNCTION, USE TILED SPLIT INSTEAD --- 
+
 This function is used in parallel functions for recurrent division of large
 task into two smaller tasks.
 
@@ -2631,31 +3470,304 @@ void splitlength(ae_int_t tasksize,
 
 
 /*************************************************************************
-This function is used to calculate number of chunks (including partial,
-non-complete chunks) in some set. It expects that ChunkSize>=1, TaskSize>=0.
-Assertion is thrown otherwise.
+Outputs vector A[I0,I1-1] to trace log using either:
+a)  6-digit exponential format (no trace flags is set)
+b) 15-ditit exponential format ('PREC.E15' trace flag is set)
+b)  6-ditit fixed-point format ('PREC.F6' trace flag is set)
 
-Function result is equivalent to Ceil(TaskSize/ChunkSize), but with guarantees
-that rounding errors won't ruin results.
-
-  -- ALGLIB --
-     Copyright 21.01.2015 by Bochkanov Sergey
+This function checks trace flags every time it is called.
 *************************************************************************/
-ae_int_t chunkscount(ae_int_t tasksize,
-     ae_int_t chunksize,
+void tracevectorautoprec(/* Real    */ ae_vector* a,
+     ae_int_t i0,
+     ae_int_t i1,
      ae_state *_state)
 {
-    ae_int_t result;
+    ae_int_t i;
+    ae_int_t prectouse;
 
 
-    ae_assert(tasksize>=0, "ChunksCount: TaskSize<0", _state);
-    ae_assert(chunksize>=1, "ChunksCount: ChunkSize<1", _state);
-    result = tasksize/chunksize;
-    if( tasksize%chunksize!=0 )
+    
+    /*
+     * Determine precision to use
+     */
+    prectouse = 0;
+    if( ae_is_trace_enabled("PREC.E15") )
     {
-        result = result+1;
+        prectouse = 1;
     }
-    return result;
+    if( ae_is_trace_enabled("PREC.F6") )
+    {
+        prectouse = 2;
+    }
+    
+    /*
+     * Output
+     */
+    ae_trace("[ ");
+    for(i=i0; i<=i1-1; i++)
+    {
+        if( prectouse==0 )
+        {
+            ae_trace("%14.6e",
+                (double)(a->ptr.p_double[i]));
+        }
+        if( prectouse==1 )
+        {
+            ae_trace("%23.15e",
+                (double)(a->ptr.p_double[i]));
+        }
+        if( prectouse==2 )
+        {
+            ae_trace("%13.6f",
+                (double)(a->ptr.p_double[i]));
+        }
+        if( i<i1-1 )
+        {
+            ae_trace(" ");
+        }
+    }
+    ae_trace(" ]");
+}
+
+
+/*************************************************************************
+Unscales/unshifts vector A[N] by computing A*Scl+Sft and outputs result to
+trace log using either:
+a)  6-digit exponential format (no trace flags is set)
+b) 15-ditit exponential format ('PREC.E15' trace flag is set)
+b)  6-ditit fixed-point format ('PREC.F6' trace flag is set)
+
+This function checks trace flags every time it is called.
+Both Scl and Sft can be omitted.
+*************************************************************************/
+void tracevectorunscaledunshiftedautoprec(/* Real    */ ae_vector* x,
+     ae_int_t n,
+     /* Real    */ ae_vector* scl,
+     ae_bool applyscl,
+     /* Real    */ ae_vector* sft,
+     ae_bool applysft,
+     ae_state *_state)
+{
+    ae_int_t i;
+    ae_int_t prectouse;
+    double v;
+
+
+    
+    /*
+     * Determine precision to use
+     */
+    prectouse = 0;
+    if( ae_is_trace_enabled("PREC.E15") )
+    {
+        prectouse = 1;
+    }
+    if( ae_is_trace_enabled("PREC.F6") )
+    {
+        prectouse = 2;
+    }
+    
+    /*
+     * Output
+     */
+    ae_trace("[ ");
+    for(i=0; i<=n-1; i++)
+    {
+        v = x->ptr.p_double[i];
+        if( applyscl )
+        {
+            v = v*scl->ptr.p_double[i];
+        }
+        if( applysft )
+        {
+            v = v+sft->ptr.p_double[i];
+        }
+        if( prectouse==0 )
+        {
+            ae_trace("%14.6e",
+                (double)(v));
+        }
+        if( prectouse==1 )
+        {
+            ae_trace("%23.15e",
+                (double)(v));
+        }
+        if( prectouse==2 )
+        {
+            ae_trace("%13.6f",
+                (double)(v));
+        }
+        if( i<n-1 )
+        {
+            ae_trace(" ");
+        }
+    }
+    ae_trace(" ]");
+}
+
+
+/*************************************************************************
+Outputs vector of 1-norms of rows [I0,I1-1] of A[I0...I1-1,J0...J1-1]   to
+trace log using either:
+a)  6-digit exponential format (no trace flags is set)
+b) 15-ditit exponential format ('PREC.E15' trace flag is set)
+b)  6-ditit fixed-point format ('PREC.F6' trace flag is set)
+
+This function checks trace flags every time it is called.
+*************************************************************************/
+void tracerownrm1autoprec(/* Real    */ ae_matrix* a,
+     ae_int_t i0,
+     ae_int_t i1,
+     ae_int_t j0,
+     ae_int_t j1,
+     ae_state *_state)
+{
+    ae_int_t i;
+    ae_int_t j;
+    double v;
+    ae_int_t prectouse;
+
+
+    
+    /*
+     * Determine precision to use
+     */
+    prectouse = 0;
+    if( ae_is_trace_enabled("PREC.E15") )
+    {
+        prectouse = 1;
+    }
+    if( ae_is_trace_enabled("PREC.F6") )
+    {
+        prectouse = 2;
+    }
+    
+    /*
+     * Output
+     */
+    ae_trace("[ ");
+    for(i=i0; i<=i1-1; i++)
+    {
+        v = (double)(0);
+        for(j=j0; j<=j1-1; j++)
+        {
+            v = ae_maxreal(v, ae_fabs(a->ptr.pp_double[i][j], _state), _state);
+        }
+        if( prectouse==0 )
+        {
+            ae_trace("%14.6e",
+                (double)(v));
+        }
+        if( prectouse==1 )
+        {
+            ae_trace("%23.15e",
+                (double)(v));
+        }
+        if( prectouse==2 )
+        {
+            ae_trace("%13.6f",
+                (double)(v));
+        }
+        if( i<i1-1 )
+        {
+            ae_trace(" ");
+        }
+    }
+    ae_trace(" ]");
+}
+
+
+/*************************************************************************
+Outputs vector A[I0,I1-1] to trace log using E8 precision
+*************************************************************************/
+void tracevectore6(/* Real    */ ae_vector* a,
+     ae_int_t i0,
+     ae_int_t i1,
+     ae_state *_state)
+{
+    ae_int_t i;
+
+
+    ae_trace("[ ");
+    for(i=i0; i<=i1-1; i++)
+    {
+        ae_trace("%14.6e",
+            (double)(a->ptr.p_double[i]));
+        if( i<i1-1 )
+        {
+            ae_trace(" ");
+        }
+    }
+    ae_trace(" ]");
+}
+
+
+/*************************************************************************
+Outputs vector A[I0,I1-1] to trace log using E8 or E15 precision
+*************************************************************************/
+void tracevectore615(/* Real    */ ae_vector* a,
+     ae_int_t i0,
+     ae_int_t i1,
+     ae_bool usee15,
+     ae_state *_state)
+{
+    ae_int_t i;
+
+
+    ae_trace("[ ");
+    for(i=i0; i<=i1-1; i++)
+    {
+        if( usee15 )
+        {
+            ae_trace("%23.15e",
+                (double)(a->ptr.p_double[i]));
+        }
+        else
+        {
+            ae_trace("%14.6e",
+                (double)(a->ptr.p_double[i]));
+        }
+        if( i<i1-1 )
+        {
+            ae_trace(" ");
+        }
+    }
+    ae_trace(" ]");
+}
+
+
+/*************************************************************************
+Outputs vector of 1-norms of rows [I0,I1-1] of A[I0...I1-1,J0...J1-1]   to
+trace log using E8 precision
+*************************************************************************/
+void tracerownrm1e6(/* Real    */ ae_matrix* a,
+     ae_int_t i0,
+     ae_int_t i1,
+     ae_int_t j0,
+     ae_int_t j1,
+     ae_state *_state)
+{
+    ae_int_t i;
+    ae_int_t j;
+    double v;
+
+
+    ae_trace("[ ");
+    for(i=i0; i<=i1-1; i++)
+    {
+        v = (double)(0);
+        for(j=j0; j<=j1-1; j++)
+        {
+            v = ae_maxreal(v, ae_fabs(a->ptr.pp_double[i][j], _state), _state);
+        }
+        ae_trace("%14.6e",
+            (double)(v));
+        if( i<i1-1 )
+        {
+            ae_trace(" ");
+        }
+    }
+    ae_trace(" ]");
 }
 
 
@@ -3018,7 +4130,8 @@ void tagsort(/* Real    */ ae_vector* a,
     apbuffers buf;
 
     ae_frame_make(_state, &_frame_block);
-    memset(&buf, 0, sizeof(buf));    ae_vector_clear(p1);
+    memset(&buf, 0, sizeof(buf));
+    ae_vector_clear(p1);
     ae_vector_clear(p2);
     _apbuffers_init(&buf, _state, ae_true);
 
@@ -3411,6 +4524,12 @@ void tagsortmiddleir(/* Integer */ ae_vector* a,
     ae_int_t t;
     ae_int_t tmp;
     double tmpr;
+    ae_int_t p0;
+    ae_int_t p1;
+    ae_int_t at;
+    ae_int_t ak;
+    ae_int_t ak1;
+    double bt;
 
 
     
@@ -3425,76 +4544,269 @@ void tagsortmiddleir(/* Integer */ ae_vector* a,
     /*
      * General case, N>1: sort, update B
      */
-    i = 2;
-    do
+    for(i=2; i<=n; i++)
     {
         t = i;
         while(t!=1)
         {
             k = t/2;
-            if( a->ptr.p_int[offset+k-1]>=a->ptr.p_int[offset+t-1] )
+            p0 = offset+k-1;
+            p1 = offset+t-1;
+            ak = a->ptr.p_int[p0];
+            at = a->ptr.p_int[p1];
+            if( ak>=at )
             {
-                t = 1;
+                break;
             }
-            else
-            {
-                tmp = a->ptr.p_int[offset+k-1];
-                a->ptr.p_int[offset+k-1] = a->ptr.p_int[offset+t-1];
-                a->ptr.p_int[offset+t-1] = tmp;
-                tmpr = b->ptr.p_double[offset+k-1];
-                b->ptr.p_double[offset+k-1] = b->ptr.p_double[offset+t-1];
-                b->ptr.p_double[offset+t-1] = tmpr;
-                t = k;
-            }
+            a->ptr.p_int[p0] = at;
+            a->ptr.p_int[p1] = ak;
+            tmpr = b->ptr.p_double[p0];
+            b->ptr.p_double[p0] = b->ptr.p_double[p1];
+            b->ptr.p_double[p1] = tmpr;
+            t = k;
         }
-        i = i+1;
     }
-    while(i<=n);
-    i = n-1;
-    do
+    for(i=n-1; i>=1; i--)
     {
-        tmp = a->ptr.p_int[offset+i];
-        a->ptr.p_int[offset+i] = a->ptr.p_int[offset+0];
-        a->ptr.p_int[offset+0] = tmp;
-        tmpr = b->ptr.p_double[offset+i];
-        b->ptr.p_double[offset+i] = b->ptr.p_double[offset+0];
-        b->ptr.p_double[offset+0] = tmpr;
-        t = 1;
-        while(t!=0)
+        p0 = offset+0;
+        p1 = offset+i;
+        tmp = a->ptr.p_int[p1];
+        a->ptr.p_int[p1] = a->ptr.p_int[p0];
+        a->ptr.p_int[p0] = tmp;
+        at = tmp;
+        tmpr = b->ptr.p_double[p1];
+        b->ptr.p_double[p1] = b->ptr.p_double[p0];
+        b->ptr.p_double[p0] = tmpr;
+        bt = tmpr;
+        t = 0;
+        for(;;)
         {
-            k = 2*t;
-            if( k>i )
+            k = 2*t+1;
+            if( k+1>i )
             {
-                t = 0;
+                break;
             }
-            else
+            p0 = offset+t;
+            p1 = offset+k;
+            ak = a->ptr.p_int[p1];
+            if( k+1<i )
             {
-                if( k<i )
+                ak1 = a->ptr.p_int[p1+1];
+                if( ak1>ak )
                 {
-                    if( a->ptr.p_int[offset+k]>a->ptr.p_int[offset+k-1] )
-                    {
-                        k = k+1;
-                    }
-                }
-                if( a->ptr.p_int[offset+t-1]>=a->ptr.p_int[offset+k-1] )
-                {
-                    t = 0;
-                }
-                else
-                {
-                    tmp = a->ptr.p_int[offset+k-1];
-                    a->ptr.p_int[offset+k-1] = a->ptr.p_int[offset+t-1];
-                    a->ptr.p_int[offset+t-1] = tmp;
-                    tmpr = b->ptr.p_double[offset+k-1];
-                    b->ptr.p_double[offset+k-1] = b->ptr.p_double[offset+t-1];
-                    b->ptr.p_double[offset+t-1] = tmpr;
-                    t = k;
+                    ak = ak1;
+                    p1 = p1+1;
+                    k = k+1;
                 }
             }
+            if( at>=ak )
+            {
+                break;
+            }
+            a->ptr.p_int[p1] = at;
+            a->ptr.p_int[p0] = ak;
+            b->ptr.p_double[p0] = b->ptr.p_double[p1];
+            b->ptr.p_double[p1] = bt;
+            t = k;
         }
-        i = i-1;
     }
-    while(i>=1);
+}
+
+
+/*************************************************************************
+Sorting function optimized for integer keys and real labels, can be used
+to sort middle of the array
+
+A is sorted, and same permutations are applied to B.
+
+NOTES:
+    this function assumes that A[] is finite; it doesn't checks that
+    condition. All other conditions (size of input arrays, etc.) are not
+    checked too.
+
+  -- ALGLIB --
+     Copyright 11.12.2008 by Bochkanov Sergey
+*************************************************************************/
+void tagsortmiddlei(/* Integer */ ae_vector* a,
+     ae_int_t offset,
+     ae_int_t n,
+     ae_state *_state)
+{
+    ae_int_t i;
+    ae_int_t k;
+    ae_int_t t;
+    ae_int_t tmp;
+    ae_int_t p0;
+    ae_int_t p1;
+    ae_int_t at;
+    ae_int_t ak;
+    ae_int_t ak1;
+
+
+    
+    /*
+     * Special cases
+     */
+    if( n<=1 )
+    {
+        return;
+    }
+    
+    /*
+     * General case, N>1: sort, update B
+     */
+    for(i=2; i<=n; i++)
+    {
+        t = i;
+        while(t!=1)
+        {
+            k = t/2;
+            p0 = offset+k-1;
+            p1 = offset+t-1;
+            ak = a->ptr.p_int[p0];
+            at = a->ptr.p_int[p1];
+            if( ak>=at )
+            {
+                break;
+            }
+            a->ptr.p_int[p0] = at;
+            a->ptr.p_int[p1] = ak;
+            t = k;
+        }
+    }
+    for(i=n-1; i>=1; i--)
+    {
+        p0 = offset+0;
+        p1 = offset+i;
+        tmp = a->ptr.p_int[p1];
+        a->ptr.p_int[p1] = a->ptr.p_int[p0];
+        a->ptr.p_int[p0] = tmp;
+        at = tmp;
+        t = 0;
+        for(;;)
+        {
+            k = 2*t+1;
+            if( k+1>i )
+            {
+                break;
+            }
+            p0 = offset+t;
+            p1 = offset+k;
+            ak = a->ptr.p_int[p1];
+            if( k+1<i )
+            {
+                ak1 = a->ptr.p_int[p1+1];
+                if( ak1>ak )
+                {
+                    ak = ak1;
+                    p1 = p1+1;
+                    k = k+1;
+                }
+            }
+            if( at>=ak )
+            {
+                break;
+            }
+            a->ptr.p_int[p1] = at;
+            a->ptr.p_int[p0] = ak;
+            t = k;
+        }
+    }
+}
+
+
+/*************************************************************************
+Sorting function optimized for integer values (only keys, no labels),  can
+be used to sort middle of the array
+
+  -- ALGLIB --
+     Copyright 11.12.2008 by Bochkanov Sergey
+*************************************************************************/
+void sortmiddlei(/* Integer */ ae_vector* a,
+     ae_int_t offset,
+     ae_int_t n,
+     ae_state *_state)
+{
+    ae_int_t i;
+    ae_int_t k;
+    ae_int_t t;
+    ae_int_t tmp;
+    ae_int_t p0;
+    ae_int_t p1;
+    ae_int_t at;
+    ae_int_t ak;
+    ae_int_t ak1;
+
+
+    
+    /*
+     * Special cases
+     */
+    if( n<=1 )
+    {
+        return;
+    }
+    
+    /*
+     * General case, N>1: sort, update B
+     */
+    for(i=2; i<=n; i++)
+    {
+        t = i;
+        while(t!=1)
+        {
+            k = t/2;
+            p0 = offset+k-1;
+            p1 = offset+t-1;
+            ak = a->ptr.p_int[p0];
+            at = a->ptr.p_int[p1];
+            if( ak>=at )
+            {
+                break;
+            }
+            a->ptr.p_int[p0] = at;
+            a->ptr.p_int[p1] = ak;
+            t = k;
+        }
+    }
+    for(i=n-1; i>=1; i--)
+    {
+        p0 = offset+0;
+        p1 = offset+i;
+        tmp = a->ptr.p_int[p1];
+        a->ptr.p_int[p1] = a->ptr.p_int[p0];
+        a->ptr.p_int[p0] = tmp;
+        at = tmp;
+        t = 0;
+        for(;;)
+        {
+            k = 2*t+1;
+            if( k+1>i )
+            {
+                break;
+            }
+            p0 = offset+t;
+            p1 = offset+k;
+            ak = a->ptr.p_int[p1];
+            if( k+1<i )
+            {
+                ak1 = a->ptr.p_int[p1+1];
+                if( ak1>ak )
+                {
+                    ak = ak1;
+                    p1 = p1+1;
+                    k = k+1;
+                }
+            }
+            if( at>=ak )
+            {
+                break;
+            }
+            a->ptr.p_int[p1] = at;
+            a->ptr.p_int[p0] = ak;
+            t = k;
+        }
+    }
 }
 
 
@@ -3555,7 +4867,7 @@ void tagheappushi(/* Real    */ ae_vector* a,
     {
         k = (j-1)/2;
         v = a->ptr.p_double[k];
-        if( ae_fp_less(v,va) )
+        if( v<va )
         {
             
             /*
@@ -3649,7 +4961,7 @@ void tagheapreplacetopi(/* Real    */ ae_vector* a,
              * have no siblings due to heap structure)
              */
             v = a->ptr.p_double[k1];
-            if( ae_fp_greater(v,va) )
+            if( v>va )
             {
                 a->ptr.p_double[j] = v;
                 b->ptr.p_int[j] = b->ptr.p_int[k1];
@@ -3665,9 +4977,9 @@ void tagheapreplacetopi(/* Real    */ ae_vector* a,
              */
             v1 = a->ptr.p_double[k1];
             v2 = a->ptr.p_double[k2];
-            if( ae_fp_greater(v1,v2) )
+            if( v1>v2 )
             {
-                if( ae_fp_less(va,v1) )
+                if( va<v1 )
                 {
                     a->ptr.p_double[j] = v1;
                     b->ptr.p_int[j] = b->ptr.p_int[k1];
@@ -3680,7 +4992,7 @@ void tagheapreplacetopi(/* Real    */ ae_vector* a,
             }
             else
             {
-                if( ae_fp_less(va,v2) )
+                if( va<v2 )
                 {
                     a->ptr.p_double[j] = v2;
                     b->ptr.p_int[j] = b->ptr.p_int[k2];
@@ -4383,6 +5695,1458 @@ static void tsort_tagsortfastrec(/* Real    */ ae_vector* a,
 
 #endif
 #if defined(AE_COMPILE_ABLASF) || !defined(AE_PARTIAL_BUILD)
+
+
+/*************************************************************************
+Computes dot product (X,Y) for elements [0,N) of X[] and Y[]
+
+INPUT PARAMETERS:
+    N       -   vector length
+    X       -   array[N], vector to process
+    Y       -   array[N], vector to process
+
+RESULT:
+    (X,Y)
+
+  -- ALGLIB --
+     Copyright 20.01.2020 by Bochkanov Sergey
+*************************************************************************/
+double rdotv(ae_int_t n,
+     /* Real    */ ae_vector* x,
+     /* Real    */ ae_vector* y,
+     ae_state *_state)
+{
+    ae_int_t i;
+    double result;
+
+
+    result = (double)(0);
+    for(i=0; i<=n-1; i++)
+    {
+        result = result+x->ptr.p_double[i]*y->ptr.p_double[i];
+    }
+    return result;
+}
+
+
+/*************************************************************************
+Computes dot product (X,A[i]) for elements [0,N) of vector X[] and row A[i,*]
+
+INPUT PARAMETERS:
+    N       -   vector length
+    X       -   array[N], vector to process
+    A       -   array[?,N], matrix to process
+    I       -   row index
+
+RESULT:
+    (X,Ai)
+
+  -- ALGLIB --
+     Copyright 20.01.2020 by Bochkanov Sergey
+*************************************************************************/
+double rdotvr(ae_int_t n,
+     /* Real    */ ae_vector* x,
+     /* Real    */ ae_matrix* a,
+     ae_int_t i,
+     ae_state *_state)
+{
+    ae_int_t j;
+    double result;
+
+
+    result = (double)(0);
+    for(j=0; j<=n-1; j++)
+    {
+        result = result+x->ptr.p_double[j]*a->ptr.pp_double[i][j];
+    }
+    return result;
+}
+
+
+/*************************************************************************
+Computes dot product (X,A[i]) for rows A[ia,*] and B[ib,*]
+
+INPUT PARAMETERS:
+    N       -   vector length
+    X       -   array[N], vector to process
+    A       -   array[?,N], matrix to process
+    I       -   row index
+
+RESULT:
+    (X,Ai)
+
+  -- ALGLIB --
+     Copyright 20.01.2020 by Bochkanov Sergey
+*************************************************************************/
+double rdotrr(ae_int_t n,
+     /* Real    */ ae_matrix* a,
+     ae_int_t ia,
+     /* Real    */ ae_matrix* b,
+     ae_int_t ib,
+     ae_state *_state)
+{
+    ae_int_t j;
+    double result;
+
+
+    result = (double)(0);
+    for(j=0; j<=n-1; j++)
+    {
+        result = result+a->ptr.pp_double[ia][j]*b->ptr.pp_double[ib][j];
+    }
+    return result;
+}
+
+
+/*************************************************************************
+Computes dot product (X,X) for elements [0,N) of X[]
+
+INPUT PARAMETERS:
+    N       -   vector length
+    X       -   array[N], vector to process
+
+RESULT:
+    (X,X)
+
+  -- ALGLIB --
+     Copyright 20.01.2020 by Bochkanov Sergey
+*************************************************************************/
+double rdotv2(ae_int_t n, /* Real    */ ae_vector* x, ae_state *_state)
+{
+    ae_int_t i;
+    double v;
+    double result;
+
+
+    result = (double)(0);
+    for(i=0; i<=n-1; i++)
+    {
+        v = x->ptr.p_double[i];
+        result = result+v*v;
+    }
+    return result;
+}
+
+
+/*************************************************************************
+Performs inplace addition of Y[] to X[]
+
+INPUT PARAMETERS:
+    N       -   vector length
+    Alpha   -   multiplier
+    Y       -   array[N], vector to process
+    X       -   array[N], vector to process
+
+RESULT:
+    X := X + alpha*Y
+
+  -- ALGLIB --
+     Copyright 20.01.2020 by Bochkanov Sergey
+*************************************************************************/
+void raddv(ae_int_t n,
+     double alpha,
+     /* Real    */ ae_vector* y,
+     /* Real    */ ae_vector* x,
+     ae_state *_state)
+{
+    ae_int_t i;
+
+
+    for(i=0; i<=n-1; i++)
+    {
+        x->ptr.p_double[i] = x->ptr.p_double[i]+alpha*y->ptr.p_double[i];
+    }
+}
+
+
+/*************************************************************************
+Performs inplace addition of Y[] to X[]
+
+INPUT PARAMETERS:
+    N       -   vector length
+    Alpha   -   multiplier
+    Y       -   source vector
+    OffsY   -   source offset
+    X       -   destination vector
+    OffsX   -   destination offset
+
+RESULT:
+    X := X + alpha*Y
+
+  -- ALGLIB --
+     Copyright 20.01.2020 by Bochkanov Sergey
+*************************************************************************/
+void raddvx(ae_int_t n,
+     double alpha,
+     /* Real    */ ae_vector* y,
+     ae_int_t offsy,
+     /* Real    */ ae_vector* x,
+     ae_int_t offsx,
+     ae_state *_state)
+{
+    ae_int_t i;
+
+
+    for(i=0; i<=n-1; i++)
+    {
+        x->ptr.p_double[offsx+i] = x->ptr.p_double[offsx+i]+alpha*y->ptr.p_double[offsy+i];
+    }
+}
+
+
+/*************************************************************************
+Performs inplace addition of vector Y[] to column X[]
+
+INPUT PARAMETERS:
+    N       -   vector length
+    Alpha   -   multiplier
+    Y       -   vector to add
+    X       -   target column ColIdx
+
+RESULT:
+    X := X + alpha*Y
+
+  -- ALGLIB --
+     Copyright 20.01.2020 by Bochkanov Sergey
+*************************************************************************/
+void raddvc(ae_int_t n,
+     double alpha,
+     /* Real    */ ae_vector* y,
+     /* Real    */ ae_matrix* x,
+     ae_int_t colidx,
+     ae_state *_state)
+{
+    ae_int_t i;
+
+
+    for(i=0; i<=n-1; i++)
+    {
+        x->ptr.pp_double[i][colidx] = x->ptr.pp_double[i][colidx]+alpha*y->ptr.p_double[i];
+    }
+}
+
+
+/*************************************************************************
+Performs inplace addition of vector Y[] to row X[]
+
+INPUT PARAMETERS:
+    N       -   vector length
+    Alpha   -   multiplier
+    Y       -   vector to add
+    X       -   target row RowIdx
+
+RESULT:
+    X := X + alpha*Y
+
+  -- ALGLIB --
+     Copyright 20.01.2020 by Bochkanov Sergey
+*************************************************************************/
+void raddvr(ae_int_t n,
+     double alpha,
+     /* Real    */ ae_vector* y,
+     /* Real    */ ae_matrix* x,
+     ae_int_t rowidx,
+     ae_state *_state)
+{
+    ae_int_t i;
+
+
+    for(i=0; i<=n-1; i++)
+    {
+        x->ptr.pp_double[rowidx][i] = x->ptr.pp_double[rowidx][i]+alpha*y->ptr.p_double[i];
+    }
+}
+
+
+/*************************************************************************
+Performs componentwise multiplication of row X[] by vector Y[]
+
+INPUT PARAMETERS:
+    N       -   vector length
+    Y       -   vector to multiply by
+    X       -   target row RowIdx
+
+RESULT:
+    X := componentwise(X*Y)
+
+  -- ALGLIB --
+     Copyright 20.01.2020 by Bochkanov Sergey
+*************************************************************************/
+void rmergemulvr(ae_int_t n,
+     /* Real    */ ae_vector* y,
+     /* Real    */ ae_matrix* x,
+     ae_int_t rowidx,
+     ae_state *_state)
+{
+    ae_int_t i;
+
+
+    for(i=0; i<=n-1; i++)
+    {
+        x->ptr.pp_double[rowidx][i] = x->ptr.pp_double[rowidx][i]*y->ptr.p_double[i];
+    }
+}
+
+
+/*************************************************************************
+Performs componentwise max of row X[I] and vector Y[] 
+
+INPUT PARAMETERS:
+    N       -   vector length
+    X       -   matrix, I-th row is source
+    X       -   target row RowIdx
+
+RESULT:
+    X := componentwise(X*Y)
+
+  -- ALGLIB --
+     Copyright 20.01.2020 by Bochkanov Sergey
+*************************************************************************/
+void rmergemaxrv(ae_int_t n,
+     /* Real    */ ae_matrix* x,
+     ae_int_t rowidx,
+     /* Real    */ ae_vector* y,
+     ae_state *_state)
+{
+    ae_int_t i;
+
+
+    for(i=0; i<=n-1; i++)
+    {
+        y->ptr.p_double[i] = ae_maxreal(y->ptr.p_double[i], x->ptr.pp_double[rowidx][i], _state);
+    }
+}
+
+
+/*************************************************************************
+Performs inplace addition of Y[RIdx,...] to X[]
+
+INPUT PARAMETERS:
+    N       -   vector length
+    Alpha   -   multiplier
+    Y       -   array[?,N], matrix whose RIdx-th row is added
+    RIdx    -   row index
+    X       -   array[N], vector to process
+
+RESULT:
+    X := X + alpha*Y
+
+  -- ALGLIB --
+     Copyright 20.01.2020 by Bochkanov Sergey
+*************************************************************************/
+void raddrv(ae_int_t n,
+     double alpha,
+     /* Real    */ ae_matrix* y,
+     ae_int_t ridx,
+     /* Real    */ ae_vector* x,
+     ae_state *_state)
+{
+    ae_int_t i;
+
+
+    for(i=0; i<=n-1; i++)
+    {
+        x->ptr.p_double[i] = x->ptr.p_double[i]+alpha*y->ptr.pp_double[ridx][i];
+    }
+}
+
+
+/*************************************************************************
+Performs inplace multiplication of X[] by V
+
+INPUT PARAMETERS:
+    N       -   vector length
+    X       -   array[N], vector to process
+    V       -   multiplier
+
+OUTPUT PARAMETERS:
+    X       -   elements 0...N-1 multiplied by V
+
+  -- ALGLIB --
+     Copyright 20.01.2020 by Bochkanov Sergey
+*************************************************************************/
+void rmulv(ae_int_t n,
+     double v,
+     /* Real    */ ae_vector* x,
+     ae_state *_state)
+{
+    ae_int_t i;
+
+
+    for(i=0; i<=n-1; i++)
+    {
+        x->ptr.p_double[i] = x->ptr.p_double[i]*v;
+    }
+}
+
+
+/*************************************************************************
+Performs inplace multiplication of X[] by V
+
+INPUT PARAMETERS:
+    N       -   row length
+    X       -   array[?,N], row to process
+    V       -   multiplier
+
+OUTPUT PARAMETERS:
+    X       -   elements 0...N-1 of row RowIdx are multiplied by V
+
+  -- ALGLIB --
+     Copyright 20.01.2020 by Bochkanov Sergey
+*************************************************************************/
+void rmulr(ae_int_t n,
+     double v,
+     /* Real    */ ae_matrix* x,
+     ae_int_t rowidx,
+     ae_state *_state)
+{
+    ae_int_t i;
+
+
+    for(i=0; i<=n-1; i++)
+    {
+        x->ptr.pp_double[rowidx][i] = x->ptr.pp_double[rowidx][i]*v;
+    }
+}
+
+
+/*************************************************************************
+Performs inplace multiplication of X[OffsX:OffsX+N-1] by V
+
+INPUT PARAMETERS:
+    N       -   subvector length
+    X       -   vector to process
+    V       -   multiplier
+
+OUTPUT PARAMETERS:
+    X       -   elements OffsX:OffsX+N-1 multiplied by V
+
+  -- ALGLIB --
+     Copyright 20.01.2020 by Bochkanov Sergey
+*************************************************************************/
+void rmulvx(ae_int_t n,
+     double v,
+     /* Real    */ ae_vector* x,
+     ae_int_t offsx,
+     ae_state *_state)
+{
+    ae_int_t i;
+
+
+    for(i=0; i<=n-1; i++)
+    {
+        x->ptr.p_double[offsx+i] = x->ptr.p_double[offsx+i]*v;
+    }
+}
+
+
+/*************************************************************************
+Returns maximum |X|
+
+INPUT PARAMETERS:
+    N       -   vector length
+    X       -   array[N], vector to process
+
+OUTPUT PARAMETERS:
+    max(|X[i]|)
+
+  -- ALGLIB --
+     Copyright 20.01.2020 by Bochkanov Sergey
+*************************************************************************/
+double rmaxabsv(ae_int_t n, /* Real    */ ae_vector* x, ae_state *_state)
+{
+    ae_int_t i;
+    double v;
+    double result;
+
+
+    result = (double)(0);
+    for(i=0; i<=n-1; i++)
+    {
+        v = ae_fabs(x->ptr.p_double[i], _state);
+        if( ae_fp_greater(v,result) )
+        {
+            result = v;
+        }
+    }
+    return result;
+}
+
+
+/*************************************************************************
+Sets vector X[] to V
+
+INPUT PARAMETERS:
+    N       -   vector length
+    V       -   value to set
+    X       -   array[N]
+
+OUTPUT PARAMETERS:
+    X       -   leading N elements are replaced by V
+
+  -- ALGLIB --
+     Copyright 20.01.2020 by Bochkanov Sergey
+*************************************************************************/
+void rsetv(ae_int_t n,
+     double v,
+     /* Real    */ ae_vector* x,
+     ae_state *_state)
+{
+    ae_int_t j;
+
+
+    for(j=0; j<=n-1; j++)
+    {
+        x->ptr.p_double[j] = v;
+    }
+}
+
+
+/*************************************************************************
+Sets X[OffsX:OffsX+N-1] to V
+
+INPUT PARAMETERS:
+    N       -   subvector length
+    V       -   value to set
+    X       -   array[N]
+
+OUTPUT PARAMETERS:
+    X       -   X[OffsX:OffsX+N-1] is replaced by V
+
+  -- ALGLIB --
+     Copyright 20.01.2020 by Bochkanov Sergey
+*************************************************************************/
+void rsetvx(ae_int_t n,
+     double v,
+     /* Real    */ ae_vector* x,
+     ae_int_t offsx,
+     ae_state *_state)
+{
+    ae_int_t j;
+
+
+    for(j=0; j<=n-1; j++)
+    {
+        x->ptr.p_double[offsx+j] = v;
+    }
+}
+
+
+/*************************************************************************
+Sets vector X[] to V
+
+INPUT PARAMETERS:
+    N       -   vector length
+    V       -   value to set
+    X       -   array[N]
+
+OUTPUT PARAMETERS:
+    X       -   leading N elements are replaced by V
+
+  -- ALGLIB --
+     Copyright 20.01.2020 by Bochkanov Sergey
+*************************************************************************/
+void isetv(ae_int_t n,
+     ae_int_t v,
+     /* Integer */ ae_vector* x,
+     ae_state *_state)
+{
+    ae_int_t j;
+
+
+    for(j=0; j<=n-1; j++)
+    {
+        x->ptr.p_int[j] = v;
+    }
+}
+
+
+/*************************************************************************
+Sets vector X[] to V
+
+INPUT PARAMETERS:
+    N       -   vector length
+    V       -   value to set
+    X       -   array[N]
+
+OUTPUT PARAMETERS:
+    X       -   leading N elements are replaced by V
+
+  -- ALGLIB --
+     Copyright 20.01.2020 by Bochkanov Sergey
+*************************************************************************/
+void bsetv(ae_int_t n,
+     ae_bool v,
+     /* Boolean */ ae_vector* x,
+     ae_state *_state)
+{
+    ae_int_t j;
+
+
+    for(j=0; j<=n-1; j++)
+    {
+        x->ptr.p_bool[j] = v;
+    }
+}
+
+
+/*************************************************************************
+Sets matrix A[] to V
+
+INPUT PARAMETERS:
+    M, N    -   rows/cols count
+    V       -   value to set
+    A       -   array[M,N]
+
+OUTPUT PARAMETERS:
+    A       -   leading M rows, N cols are replaced by V
+
+  -- ALGLIB --
+     Copyright 20.01.2020 by Bochkanov Sergey
+*************************************************************************/
+void rsetm(ae_int_t m,
+     ae_int_t n,
+     double v,
+     /* Real    */ ae_matrix* a,
+     ae_state *_state)
+{
+    ae_int_t i;
+    ae_int_t j;
+
+
+    for(i=0; i<=m-1; i++)
+    {
+        for(j=0; j<=n-1; j++)
+        {
+            a->ptr.pp_double[i][j] = v;
+        }
+    }
+}
+
+
+/*************************************************************************
+Sets vector X[] to V, reallocating X[] if too small
+
+INPUT PARAMETERS:
+    N       -   vector length
+    V       -   value to set
+    X       -   possibly preallocated array
+
+OUTPUT PARAMETERS:
+    X       -   leading N elements are replaced by V; array is reallocated
+                if its length is less than N.
+
+  -- ALGLIB --
+     Copyright 20.01.2020 by Bochkanov Sergey
+*************************************************************************/
+void rsetallocv(ae_int_t n,
+     double v,
+     /* Real    */ ae_vector* x,
+     ae_state *_state)
+{
+
+
+    if( x->cnt<n )
+    {
+        ae_vector_set_length(x, n, _state);
+    }
+    rsetv(n, v, x, _state);
+}
+
+
+/*************************************************************************
+Sets vector A[] to V, reallocating A[] if too small.
+
+INPUT PARAMETERS:
+    M       -   rows count
+    N       -   cols count
+    V       -   value to set
+    A       -   possibly preallocated matrix
+
+OUTPUT PARAMETERS:
+    A       -   leading M rows, N cols are replaced by V; the matrix is
+                reallocated if its rows/cols count is less than M/N.
+
+  -- ALGLIB --
+     Copyright 20.01.2020 by Bochkanov Sergey
+*************************************************************************/
+void rsetallocm(ae_int_t m,
+     ae_int_t n,
+     double v,
+     /* Real    */ ae_matrix* a,
+     ae_state *_state)
+{
+
+
+    if( a->rows<m||a->cols<n )
+    {
+        ae_matrix_set_length(a, m, n, _state);
+    }
+    rsetm(m, n, v, a, _state);
+}
+
+
+/*************************************************************************
+Reallocates X[] if its length is less than required value. Does not change
+its length and contents if it is large enough.
+
+INPUT PARAMETERS:
+    N       -   desired vector length
+    X       -   possibly preallocated array
+
+OUTPUT PARAMETERS:
+    X       -   length(X)>=N
+
+  -- ALGLIB --
+     Copyright 20.01.2020 by Bochkanov Sergey
+*************************************************************************/
+void rallocv(ae_int_t n, /* Real    */ ae_vector* x, ae_state *_state)
+{
+
+
+    if( x->cnt<n )
+    {
+        ae_vector_set_length(x, n, _state);
+    }
+}
+
+
+/*************************************************************************
+Reallocates X[] if its length is less than required value. Does not change
+its length and contents if it is large enough.
+
+INPUT PARAMETERS:
+    N       -   desired vector length
+    X       -   possibly preallocated array
+
+OUTPUT PARAMETERS:
+    X       -   length(X)>=N
+
+  -- ALGLIB --
+     Copyright 20.01.2020 by Bochkanov Sergey
+*************************************************************************/
+void ballocv(ae_int_t n, /* Boolean */ ae_vector* x, ae_state *_state)
+{
+
+
+    if( x->cnt<n )
+    {
+        ae_vector_set_length(x, n, _state);
+    }
+}
+
+
+/*************************************************************************
+Reallocates matrix if its rows or cols count is less than  required.  Does
+not change its size if it is exactly that size or larger.
+
+INPUT PARAMETERS:
+    M       -   rows count
+    N       -   cols count
+    A       -   possibly preallocated matrix
+
+OUTPUT PARAMETERS:
+    A       -   size is at least M*N
+
+  -- ALGLIB --
+     Copyright 20.01.2020 by Bochkanov Sergey
+*************************************************************************/
+void rallocm(ae_int_t m,
+     ae_int_t n,
+     /* Real    */ ae_matrix* a,
+     ae_state *_state)
+{
+
+
+    if( a->rows<m||a->cols<n )
+    {
+        ae_matrix_set_length(a, m, n, _state);
+    }
+}
+
+
+/*************************************************************************
+Sets vector X[] to V, reallocating X[] if too small
+
+INPUT PARAMETERS:
+    N       -   vector length
+    V       -   value to set
+    X       -   possibly preallocated array
+
+OUTPUT PARAMETERS:
+    X       -   leading N elements are replaced by V; array is reallocated
+                if its length is less than N.
+
+  -- ALGLIB --
+     Copyright 20.01.2020 by Bochkanov Sergey
+*************************************************************************/
+void isetallocv(ae_int_t n,
+     ae_int_t v,
+     /* Integer */ ae_vector* x,
+     ae_state *_state)
+{
+
+
+    if( x->cnt<n )
+    {
+        ae_vector_set_length(x, n, _state);
+    }
+    isetv(n, v, x, _state);
+}
+
+
+/*************************************************************************
+Sets vector X[] to V, reallocating X[] if too small
+
+INPUT PARAMETERS:
+    N       -   vector length
+    V       -   value to set
+    X       -   possibly preallocated array
+
+OUTPUT PARAMETERS:
+    X       -   leading N elements are replaced by V; array is reallocated
+                if its length is less than N.
+
+  -- ALGLIB --
+     Copyright 20.01.2020 by Bochkanov Sergey
+*************************************************************************/
+void bsetallocv(ae_int_t n,
+     ae_bool v,
+     /* Boolean */ ae_vector* x,
+     ae_state *_state)
+{
+
+
+    if( x->cnt<n )
+    {
+        ae_vector_set_length(x, n, _state);
+    }
+    bsetv(n, v, x, _state);
+}
+
+
+/*************************************************************************
+Sets row I of A[,] to V
+
+INPUT PARAMETERS:
+    N       -   vector length
+    V       -   value to set
+    A       -   array[N,N] or larger
+    I       -   row index
+
+OUTPUT PARAMETERS:
+    A       -   leading N elements of I-th row are replaced by V
+
+  -- ALGLIB --
+     Copyright 20.01.2020 by Bochkanov Sergey
+*************************************************************************/
+void rsetr(ae_int_t n,
+     double v,
+     /* Real    */ ae_matrix* a,
+     ae_int_t i,
+     ae_state *_state)
+{
+    ae_int_t j;
+
+
+    for(j=0; j<=n-1; j++)
+    {
+        a->ptr.pp_double[i][j] = v;
+    }
+}
+
+
+/*************************************************************************
+Sets col J of A[,] to V
+
+INPUT PARAMETERS:
+    N       -   vector length
+    V       -   value to set
+    A       -   array[N,N] or larger
+    J       -   col index
+
+OUTPUT PARAMETERS:
+    A       -   leading N elements of I-th col are replaced by V
+
+  -- ALGLIB --
+     Copyright 20.01.2020 by Bochkanov Sergey
+*************************************************************************/
+void rsetc(ae_int_t n,
+     double v,
+     /* Real    */ ae_matrix* a,
+     ae_int_t j,
+     ae_state *_state)
+{
+    ae_int_t i;
+
+
+    for(i=0; i<=n-1; i++)
+    {
+        a->ptr.pp_double[i][j] = v;
+    }
+}
+
+
+/*************************************************************************
+Copies vector X[] to Y[]
+
+INPUT PARAMETERS:
+    N       -   vector length
+    X       -   array[N], source
+    Y       -   preallocated array[N]
+
+OUTPUT PARAMETERS:
+    Y       -   leading N elements are replaced by X
+
+    
+NOTE: destination and source should NOT overlap
+
+  -- ALGLIB --
+     Copyright 20.01.2020 by Bochkanov Sergey
+*************************************************************************/
+void rcopyv(ae_int_t n,
+     /* Real    */ ae_vector* x,
+     /* Real    */ ae_vector* y,
+     ae_state *_state)
+{
+    ae_int_t j;
+
+
+    for(j=0; j<=n-1; j++)
+    {
+        y->ptr.p_double[j] = x->ptr.p_double[j];
+    }
+}
+
+
+/*************************************************************************
+Copies vector X[] to Y[]
+
+INPUT PARAMETERS:
+    N       -   vector length
+    X       -   array[N], source
+    Y       -   preallocated array[N]
+
+OUTPUT PARAMETERS:
+    Y       -   leading N elements are replaced by X
+
+    
+NOTE: destination and source should NOT overlap
+
+  -- ALGLIB --
+     Copyright 20.01.2020 by Bochkanov Sergey
+*************************************************************************/
+void bcopyv(ae_int_t n,
+     /* Boolean */ ae_vector* x,
+     /* Boolean */ ae_vector* y,
+     ae_state *_state)
+{
+    ae_int_t j;
+
+
+    for(j=0; j<=n-1; j++)
+    {
+        y->ptr.p_bool[j] = x->ptr.p_bool[j];
+    }
+}
+
+
+/*************************************************************************
+Copies vector X[] to Y[], extended version
+
+INPUT PARAMETERS:
+    N       -   vector length
+    X       -   source array
+    OffsX   -   source offset
+    Y       -   preallocated array[N]
+    OffsY   -   destination offset
+
+OUTPUT PARAMETERS:
+    Y       -   N elements starting from OffsY are replaced by X[OffsX:OffsX+N-1]
+    
+NOTE: destination and source should NOT overlap
+
+  -- ALGLIB --
+     Copyright 20.01.2020 by Bochkanov Sergey
+*************************************************************************/
+void rcopyvx(ae_int_t n,
+     /* Real    */ ae_vector* x,
+     ae_int_t offsx,
+     /* Real    */ ae_vector* y,
+     ae_int_t offsy,
+     ae_state *_state)
+{
+    ae_int_t j;
+
+
+    for(j=0; j<=n-1; j++)
+    {
+        y->ptr.p_double[offsy+j] = x->ptr.p_double[offsx+j];
+    }
+}
+
+
+/*************************************************************************
+Copies vector X[] to Y[], resizing Y[] if needed.
+
+INPUT PARAMETERS:
+    N       -   vector length
+    X       -   array[N], source
+    Y       -   possibly preallocated array[N] (resized if needed)
+
+OUTPUT PARAMETERS:
+    Y       -   leading N elements are replaced by X
+
+  -- ALGLIB --
+     Copyright 20.01.2020 by Bochkanov Sergey
+*************************************************************************/
+void rcopyallocv(ae_int_t n,
+     /* Real    */ ae_vector* x,
+     /* Real    */ ae_vector* y,
+     ae_state *_state)
+{
+    ae_int_t j;
+
+
+    if( y->cnt<n )
+    {
+        ae_vector_set_length(y, n, _state);
+    }
+    for(j=0; j<=n-1; j++)
+    {
+        y->ptr.p_double[j] = x->ptr.p_double[j];
+    }
+}
+
+
+/*************************************************************************
+Copies matrix X[] to Y[], resizing Y[] if needed. On resize, dimensions of
+Y[] are increased - but not decreased.
+
+INPUT PARAMETERS:
+    M       -   rows count
+    N       -   cols count
+    X       -   array[M,N], source
+    Y       -   possibly preallocated array[M,N] (resized if needed)
+
+OUTPUT PARAMETERS:
+    Y       -   leading [M,N] elements are replaced by X
+
+  -- ALGLIB --
+     Copyright 20.01.2020 by Bochkanov Sergey
+*************************************************************************/
+void rcopyallocm(ae_int_t m,
+     ae_int_t n,
+     /* Real    */ ae_matrix* x,
+     /* Real    */ ae_matrix* y,
+     ae_state *_state)
+{
+    ae_int_t i;
+    ae_int_t j;
+
+
+    if( m==0||n==0 )
+    {
+        return;
+    }
+    if( y->rows<m||y->cols<n )
+    {
+        ae_matrix_set_length(y, ae_maxint(m, y->rows, _state), ae_maxint(n, y->cols, _state), _state);
+    }
+    for(i=0; i<=m-1; i++)
+    {
+        for(j=0; j<=n-1; j++)
+        {
+            y->ptr.pp_double[i][j] = x->ptr.pp_double[i][j];
+        }
+    }
+}
+
+
+/*************************************************************************
+Copies vector X[] to Y[], resizing Y[] if needed.
+
+INPUT PARAMETERS:
+    N       -   vector length
+    X       -   array[N], source
+    Y       -   possibly preallocated array[N] (resized if needed)
+
+OUTPUT PARAMETERS:
+    Y       -   leading N elements are replaced by X
+
+  -- ALGLIB --
+     Copyright 20.01.2020 by Bochkanov Sergey
+*************************************************************************/
+void icopyallocv(ae_int_t n,
+     /* Integer */ ae_vector* x,
+     /* Integer */ ae_vector* y,
+     ae_state *_state)
+{
+    ae_int_t j;
+
+
+    if( y->cnt<n )
+    {
+        ae_vector_set_length(y, n, _state);
+    }
+    for(j=0; j<=n-1; j++)
+    {
+        y->ptr.p_int[j] = x->ptr.p_int[j];
+    }
+}
+
+
+/*************************************************************************
+Copies vector X[] to Y[], resizing Y[] if needed.
+
+INPUT PARAMETERS:
+    N       -   vector length
+    X       -   array[N], source
+    Y       -   possibly preallocated array[N] (resized if needed)
+
+OUTPUT PARAMETERS:
+    Y       -   leading N elements are replaced by X
+
+  -- ALGLIB --
+     Copyright 20.01.2020 by Bochkanov Sergey
+*************************************************************************/
+void bcopyallocv(ae_int_t n,
+     /* Boolean */ ae_vector* x,
+     /* Boolean */ ae_vector* y,
+     ae_state *_state)
+{
+    ae_int_t j;
+
+
+    if( y->cnt<n )
+    {
+        ae_vector_set_length(y, n, _state);
+    }
+    for(j=0; j<=n-1; j++)
+    {
+        y->ptr.p_bool[j] = x->ptr.p_bool[j];
+    }
+}
+
+
+/*************************************************************************
+Copies vector X[] to Y[]
+
+INPUT PARAMETERS:
+    N       -   vector length
+    X       -   source array
+    Y       -   preallocated array[N]
+
+OUTPUT PARAMETERS:
+    Y       -   X copied to Y
+
+  -- ALGLIB --
+     Copyright 20.01.2020 by Bochkanov Sergey
+*************************************************************************/
+void icopyv(ae_int_t n,
+     /* Integer */ ae_vector* x,
+     /* Integer */ ae_vector* y,
+     ae_state *_state)
+{
+    ae_int_t j;
+
+
+    for(j=0; j<=n-1; j++)
+    {
+        y->ptr.p_int[j] = x->ptr.p_int[j];
+    }
+}
+
+
+/*************************************************************************
+Copies vector X[] to Y[], extended version
+
+INPUT PARAMETERS:
+    N       -   vector length
+    X       -   source array
+    OffsX   -   source offset
+    Y       -   preallocated array[N]
+    OffsY   -   destination offset
+
+OUTPUT PARAMETERS:
+    Y       -   N elements starting from OffsY are replaced by X[OffsX:OffsX+N-1]
+    
+NOTE: destination and source should NOT overlap
+
+  -- ALGLIB --
+     Copyright 20.01.2020 by Bochkanov Sergey
+*************************************************************************/
+void icopyvx(ae_int_t n,
+     /* Integer */ ae_vector* x,
+     ae_int_t offsx,
+     /* Integer */ ae_vector* y,
+     ae_int_t offsy,
+     ae_state *_state)
+{
+    ae_int_t j;
+
+
+    for(j=0; j<=n-1; j++)
+    {
+        y->ptr.p_int[offsy+j] = x->ptr.p_int[offsx+j];
+    }
+}
+
+
+/*************************************************************************
+Grows X, i.e. changes its size in such a way that:
+a) contents is preserved
+b) new size is at least N
+c) actual size can be larger than N, so subsequent grow() calls can return
+   without reallocation
+
+  -- ALGLIB --
+     Copyright 20.03.2009 by Bochkanov Sergey
+*************************************************************************/
+void igrowv(ae_int_t newn, /* Integer */ ae_vector* x, ae_state *_state)
+{
+    ae_frame _frame_block;
+    ae_vector oldx;
+    ae_int_t oldn;
+
+    ae_frame_make(_state, &_frame_block);
+    memset(&oldx, 0, sizeof(oldx));
+    ae_vector_init(&oldx, 0, DT_INT, _state, ae_true);
+
+    if( x->cnt>=newn )
+    {
+        ae_frame_leave(_state);
+        return;
+    }
+    oldn = x->cnt;
+    newn = ae_maxint(newn, ae_round(1.8*oldn+1, _state), _state);
+    ae_swap_vectors(x, &oldx);
+    ae_vector_set_length(x, newn, _state);
+    icopyv(oldn, &oldx, x, _state);
+    ae_frame_leave(_state);
+}
+
+
+/*************************************************************************
+Performs copying with multiplication of V*X[] to Y[]
+
+INPUT PARAMETERS:
+    N       -   vector length
+    V       -   multiplier
+    X       -   array[N], source
+    Y       -   preallocated array[N]
+
+OUTPUT PARAMETERS:
+    Y       -   array[N], Y = V*X
+
+  -- ALGLIB --
+     Copyright 20.01.2020 by Bochkanov Sergey
+*************************************************************************/
+void rcopymulv(ae_int_t n,
+     double v,
+     /* Real    */ ae_vector* x,
+     /* Real    */ ae_vector* y,
+     ae_state *_state)
+{
+    ae_int_t i;
+
+
+    for(i=0; i<=n-1; i++)
+    {
+        y->ptr.p_double[i] = v*x->ptr.p_double[i];
+    }
+}
+
+
+/*************************************************************************
+Performs copying with multiplication of V*X[] to Y[I,*]
+
+INPUT PARAMETERS:
+    N       -   vector length
+    V       -   multiplier
+    X       -   array[N], source
+    Y       -   preallocated array[?,N]
+    RIdx    -   destination row index
+
+OUTPUT PARAMETERS:
+    Y       -   Y[RIdx,...] = V*X
+
+  -- ALGLIB --
+     Copyright 20.01.2020 by Bochkanov Sergey
+*************************************************************************/
+void rcopymulvr(ae_int_t n,
+     double v,
+     /* Real    */ ae_vector* x,
+     /* Real    */ ae_matrix* y,
+     ae_int_t ridx,
+     ae_state *_state)
+{
+    ae_int_t i;
+
+
+    for(i=0; i<=n-1; i++)
+    {
+        y->ptr.pp_double[ridx][i] = v*x->ptr.p_double[i];
+    }
+}
+
+
+/*************************************************************************
+Copies vector X[] to row I of A[,]
+
+INPUT PARAMETERS:
+    N       -   vector length
+    X       -   array[N], source
+    A       -   preallocated 2D array large enough to store result
+    I       -   destination row index
+
+OUTPUT PARAMETERS:
+    A       -   leading N elements of I-th row are replaced by X
+
+  -- ALGLIB --
+     Copyright 20.01.2020 by Bochkanov Sergey
+*************************************************************************/
+void rcopyvr(ae_int_t n,
+     /* Real    */ ae_vector* x,
+     /* Real    */ ae_matrix* a,
+     ae_int_t i,
+     ae_state *_state)
+{
+    ae_int_t j;
+
+
+    for(j=0; j<=n-1; j++)
+    {
+        a->ptr.pp_double[i][j] = x->ptr.p_double[j];
+    }
+}
+
+
+/*************************************************************************
+Copies row I of A[,] to vector X[]
+
+INPUT PARAMETERS:
+    N       -   vector length
+    A       -   2D array, source
+    I       -   source row index
+    X       -   preallocated destination
+
+OUTPUT PARAMETERS:
+    X       -   array[N], destination
+
+  -- ALGLIB --
+     Copyright 20.01.2020 by Bochkanov Sergey
+*************************************************************************/
+void rcopyrv(ae_int_t n,
+     /* Real    */ ae_matrix* a,
+     ae_int_t i,
+     /* Real    */ ae_vector* x,
+     ae_state *_state)
+{
+    ae_int_t j;
+
+
+    for(j=0; j<=n-1; j++)
+    {
+        x->ptr.p_double[j] = a->ptr.pp_double[i][j];
+    }
+}
+
+
+/*************************************************************************
+Copies row I of A[,] to row K of B[,].
+
+A[i,...] and B[k,...] may overlap.
+
+INPUT PARAMETERS:
+    N       -   vector length
+    A       -   2D array, source
+    I       -   source row index
+    B       -   preallocated destination
+    K       -   destination row index
+
+OUTPUT PARAMETERS:
+    B       -   row K overwritten
+
+  -- ALGLIB --
+     Copyright 20.01.2020 by Bochkanov Sergey
+*************************************************************************/
+void rcopyrr(ae_int_t n,
+     /* Real    */ ae_matrix* a,
+     ae_int_t i,
+     /* Real    */ ae_matrix* b,
+     ae_int_t k,
+     ae_state *_state)
+{
+    ae_int_t j;
+
+
+    for(j=0; j<=n-1; j++)
+    {
+        b->ptr.pp_double[k][j] = a->ptr.pp_double[i][j];
+    }
+}
+
+
+/*************************************************************************
+Copies vector X[] to column J of A[,]
+
+INPUT PARAMETERS:
+    N       -   vector length
+    X       -   array[N], source
+    A       -   preallocated 2D array large enough to store result
+    J       -   destination col index
+
+OUTPUT PARAMETERS:
+    A       -   leading N elements of J-th column are replaced by X
+
+  -- ALGLIB --
+     Copyright 20.01.2020 by Bochkanov Sergey
+*************************************************************************/
+void rcopyvc(ae_int_t n,
+     /* Real    */ ae_vector* x,
+     /* Real    */ ae_matrix* a,
+     ae_int_t j,
+     ae_state *_state)
+{
+    ae_int_t i;
+
+
+    for(i=0; i<=n-1; i++)
+    {
+        a->ptr.pp_double[i][j] = x->ptr.p_double[i];
+    }
+}
+
+
+/*************************************************************************
+Copies column J of A[,] to vector X[]
+
+INPUT PARAMETERS:
+    N       -   vector length
+    A       -   source 2D array
+    J       -   source col index
+
+OUTPUT PARAMETERS:
+    X       -   preallocated array[N], destination
+
+  -- ALGLIB --
+     Copyright 20.01.2020 by Bochkanov Sergey
+*************************************************************************/
+void rcopycv(ae_int_t n,
+     /* Real    */ ae_matrix* a,
+     ae_int_t j,
+     /* Real    */ ae_vector* x,
+     ae_state *_state)
+{
+    ae_int_t i;
+
+
+    for(i=0; i<=n-1; i++)
+    {
+        x->ptr.p_double[i] = a->ptr.pp_double[i][j];
+    }
+}
 
 
 /*************************************************************************
@@ -7274,6 +10038,49 @@ ae_bool smatrixtdevdmkl(/* Real    */ ae_vector* d,
 }
 
 
+/*************************************************************************
+MKL-based kernel.
+
+Returns True if MKL was present and handled request (MKL  completion  code
+is returned as separate output parameter).
+
+D and E are pre-allocated arrays with length N (both of them!). On output,
+D constraints eigenvalues, and E is destroyed.
+
+Z is preallocated array[N,N] for ZNeeded<>0; ignored for ZNeeded=0.
+
+EVDResult is modified if and only if MKL is present.
+
+  -- ALGLIB routine --
+     20.10.2014
+     Bochkanov Sergey
+*************************************************************************/
+ae_bool sparsegemvcrsmkl(ae_int_t opa,
+     ae_int_t arows,
+     ae_int_t acols,
+     double alpha,
+     /* Real    */ ae_vector* vals,
+     /* Integer */ ae_vector* cidx,
+     /* Integer */ ae_vector* ridx,
+     /* Real    */ ae_vector* x,
+     ae_int_t ix,
+     double beta,
+     /* Real    */ ae_vector* y,
+     ae_int_t iy,
+     ae_state *_state)
+{
+#ifndef ALGLIB_INTERCEPTS_MKL
+    ae_bool result;
+
+
+    result = ae_false;
+    return result;
+#else
+    return _ialglib_i_sparsegemvcrsmkl(opa, arows, acols, alpha, vals, cidx, ridx, x, ix, beta, y, iy);
+#endif
+}
+
+
 #endif
 #if defined(AE_COMPILE_CREFLECTIONS) || !defined(AE_PARTIAL_BUILD)
 
@@ -7960,7 +10767,10 @@ void rmatrixtrsafesolve(/* Real    */ ae_matrix* a,
     ae_int_t i;
 
     ae_frame_make(_state, &_frame_block);
-    memset(&cnorm, 0, sizeof(cnorm));    memset(&a1, 0, sizeof(a1));    memset(&x1, 0, sizeof(x1));    *s = 0;
+    memset(&cnorm, 0, sizeof(cnorm));
+    memset(&a1, 0, sizeof(a1));
+    memset(&x1, 0, sizeof(x1));
+    *s = 0;
     ae_vector_init(&cnorm, 0, DT_REAL, _state, ae_true);
     ae_matrix_init(&a1, 0, 0, DT_REAL, _state, ae_true);
     ae_vector_init(&x1, 0, DT_REAL, _state, ae_true);
@@ -8875,7 +11685,8 @@ ae_bool rmatrixscaledtrsafesolve(/* Real    */ ae_matrix* a,
     ae_bool result;
 
     ae_frame_make(_state, &_frame_block);
-    memset(&tmp, 0, sizeof(tmp));    ae_vector_init(&tmp, 0, DT_REAL, _state, ae_true);
+    memset(&tmp, 0, sizeof(tmp));
+    ae_vector_init(&tmp, 0, DT_REAL, _state, ae_true);
 
     ae_assert(n>0, "RMatrixTRSafeSolve: incorrect N!", _state);
     ae_assert(trans==0||trans==1, "RMatrixTRSafeSolve: incorrect Trans!", _state);
@@ -9134,7 +11945,8 @@ ae_bool cmatrixscaledtrsafesolve(/* Complex */ ae_matrix* a,
     ae_bool result;
 
     ae_frame_make(_state, &_frame_block);
-    memset(&tmp, 0, sizeof(tmp));    ae_vector_init(&tmp, 0, DT_COMPLEX, _state, ae_true);
+    memset(&tmp, 0, sizeof(tmp));
+    ae_vector_init(&tmp, 0, DT_COMPLEX, _state, ae_true);
 
     ae_assert(n>0, "CMatrixTRSafeSolve: incorrect N!", _state);
     ae_assert((trans==0||trans==1)||trans==2, "CMatrixTRSafeSolve: incorrect Trans!", _state);
@@ -10477,6 +13289,11 @@ NOTE 3:
 this algorithm guarantees that, if MCINFO=1 or MCINFO=5, then:
 * F(final_point)<F(initial_point) - strict inequality
 * final_point<>initial_point - after rounding to machine precision
+
+NOTE 4:
+
+when non-descent direction is specified, algorithm stops with MCINFO=0,
+Stp=0 and initial point at X[].
 :::::::::::::::::::::::::::::::::::::::::
 
 
@@ -10627,6 +13444,7 @@ void mcsrch(ae_int_t n,
             if( ae_fp_greater_eq(state->dginit,(double)(0)) )
             {
                 *stage = 0;
+                *stp = (double)(0);
                 return;
             }
             
@@ -12716,7 +15534,8 @@ void ftcomplexfftplan(ae_int_t n,
     ae_int_t precisize;
 
     ae_frame_make(_state, &_frame_block);
-    memset(&bluesteinbuf, 0, sizeof(bluesteinbuf));    _fasttransformplan_clear(plan);
+    memset(&bluesteinbuf, 0, sizeof(bluesteinbuf));
+    _fasttransformplan_clear(plan);
     _srealarray_init(&bluesteinbuf, _state, ae_true);
 
     
@@ -13122,7 +15941,8 @@ static void ftbase_ftcomplexfftplanrec(ae_int_t n,
     ae_int_t row3;
 
     ae_frame_make(_state, &_frame_block);
-    memset(&localbuf, 0, sizeof(localbuf));    _srealarray_init(&localbuf, _state, ae_true);
+    memset(&localbuf, 0, sizeof(localbuf));
+    _srealarray_init(&localbuf, _state, ae_true);
 
     ae_assert(n>0, "FTComplexFFTPlan: N<=0", _state);
     ae_assert(k>0, "FTComplexFFTPlan: K<=0", _state);
@@ -13574,7 +16394,11 @@ static void ftbase_ftapplysubplan(fasttransformplan* plan,
     ae_smart_ptr _bufd;
 
     ae_frame_make(_state, &_frame_block);
-    memset(&_bufa, 0, sizeof(_bufa));    memset(&_bufb, 0, sizeof(_bufb));    memset(&_bufc, 0, sizeof(_bufc));    memset(&_bufd, 0, sizeof(_bufd));    ae_smart_ptr_init(&_bufa, (void**)&bufa, _state, ae_true);
+    memset(&_bufa, 0, sizeof(_bufa));
+    memset(&_bufb, 0, sizeof(_bufb));
+    memset(&_bufc, 0, sizeof(_bufc));
+    memset(&_bufd, 0, sizeof(_bufd));
+    ae_smart_ptr_init(&_bufa, (void**)&bufa, _state, ae_true);
     ae_smart_ptr_init(&_bufb, (void**)&bufb, _state, ae_true);
     ae_smart_ptr_init(&_bufc, (void**)&bufc, _state, ae_true);
     ae_smart_ptr_init(&_bufd, (void**)&bufd, _state, ae_true);
@@ -14709,7 +17533,8 @@ static void ftbase_ftprecomputebluesteinsfft(ae_int_t n,
     fasttransformplan plan;
 
     ae_frame_make(_state, &_frame_block);
-    memset(&plan, 0, sizeof(plan));    _fasttransformplan_init(&plan, _state, ae_true);
+    memset(&plan, 0, sizeof(plan));
+    _fasttransformplan_init(&plan, _state, ae_true);
 
     
     /*
@@ -14908,7 +17733,8 @@ static void ftbase_ftprecomputeradersfft(ae_int_t n,
     double v;
 
     ae_frame_make(_state, &_frame_block);
-    memset(&plan, 0, sizeof(plan));    _fasttransformplan_init(&plan, _state, ae_true);
+    memset(&plan, 0, sizeof(plan));
+    _fasttransformplan_init(&plan, _state, ae_true);
 
     
     /*

@@ -1,5 +1,5 @@
 /*************************************************************************
-ALGLIB 3.13.0 (source code generated 2017-12-29)
+ALGLIB 3.17.0 (source code generated 2020-12-27)
 Copyright (c) Sergey Bochkanov (ALGLIB project).
 
 >>> SOURCE LICENSE >>>
@@ -17,6 +17,10 @@ A copy of the GNU General Public License is available at
 http://www.fsf.org/licensing/licenses
 >>> END OF LICENSE >>>
 *************************************************************************/
+#ifdef _MSC_VER
+#define _CRT_SECURE_NO_WARNINGS
+#endif
+
 #include "dataanalysis.h"
 
 // disable some irrelevant warnings
@@ -88,6 +92,10 @@ namespace alglib
 
 #endif
 
+#if defined(AE_COMPILE_KNN) || !defined(AE_PARTIAL_BUILD)
+
+#endif
+
 #if defined(AE_COMPILE_DATACOMP) || !defined(AE_PARTIAL_BUILD)
 
 #endif
@@ -108,21 +116,14 @@ one of the reduced versions:
 
 It should be noted that, unlike LDA, PCA does not use class labels.
 
-COMMERCIAL EDITION OF ALGLIB:
-
-  ! Commercial version of ALGLIB includes two  important  improvements  of
-  ! this function, which can be used from C++ and C#:
-  ! * multithreading support
-  ! * Intel MKL support (lightweight Intel MKL is shipped with ALGLIB)
+  ! COMMERCIAL EDITION OF ALGLIB:
   !
-  ! Multithreading typically gives sublinear (wrt to cores count) speedup,
-  ! because only some parts of the algorithm can be parallelized.
-  !
-  ! Intel MKL gives approximately constant  (with  respect  to  number  of
-  ! worker threads) acceleration factor which depends on CPU  being  used,
-  ! problem  size  and  "baseline"  ALGLIB  edition  which  is  used   for
-  ! comparison. Best results are achieved  for  high-dimensional  problems
-  ! (NVars is at least 256).
+  ! Commercial Edition of ALGLIB includes following important improvements
+  ! of this function:
+  ! * high-performance native backend with same C# interface (C# version)
+  ! * multithreading support (C++ and C# versions)
+  ! * hardware vendor (Intel) implementations of linear algebra primitives
+  !   (C++ and C# versions, x86/x64 platform)
   !
   ! We recommend you to read 'Working with commercial version' section  of
   ! ALGLIB Reference Manual in order to find out how to  use  performance-
@@ -148,7 +149,7 @@ OUTPUT PARAMETERS:
   -- ALGLIB --
      Copyright 25.08.2008 by Bochkanov Sergey
 *************************************************************************/
-void pcabuildbasis(const real_2d_array &x, const ae_int_t npoints, const ae_int_t nvars, ae_int_t &info, real_1d_array &s2, real_2d_array &v)
+void pcabuildbasis(const real_2d_array &x, const ae_int_t npoints, const ae_int_t nvars, ae_int_t &info, real_1d_array &s2, real_2d_array &v, const xparams _xparams)
 {
     jmp_buf _break_jump;
     alglib_impl::ae_state _alglib_env_state;
@@ -163,28 +164,9 @@ void pcabuildbasis(const real_2d_array &x, const ae_int_t npoints, const ae_int_
 #endif
     }
     ae_state_set_break_jump(&_alglib_env_state, &_break_jump);
+    if( _xparams.flags!=0x0 )
+        ae_state_set_flags(&_alglib_env_state, _xparams.flags);
     alglib_impl::pcabuildbasis(const_cast<alglib_impl::ae_matrix*>(x.c_ptr()), npoints, nvars, &info, const_cast<alglib_impl::ae_vector*>(s2.c_ptr()), const_cast<alglib_impl::ae_matrix*>(v.c_ptr()), &_alglib_env_state);
-    alglib_impl::ae_state_clear(&_alglib_env_state);
-    return;
-}
-
-
-void smp_pcabuildbasis(const real_2d_array &x, const ae_int_t npoints, const ae_int_t nvars, ae_int_t &info, real_1d_array &s2, real_2d_array &v)
-{
-    jmp_buf _break_jump;
-    alglib_impl::ae_state _alglib_env_state;
-    alglib_impl::ae_state_init(&_alglib_env_state);
-    if( setjmp(_break_jump) )
-    {
-#if !defined(AE_NO_EXCEPTIONS)
-        _ALGLIB_CPP_EXCEPTION(_alglib_env_state.error_msg);
-#else
-        _ALGLIB_SET_ERROR_FLAG(_alglib_env_state.error_msg);
-        return;
-#endif
-    }
-    ae_state_set_break_jump(&_alglib_env_state, &_break_jump);
-    alglib_impl::_pexec_pcabuildbasis(const_cast<alglib_impl::ae_matrix*>(x.c_ptr()), npoints, nvars, &info, const_cast<alglib_impl::ae_vector*>(s2.c_ptr()), const_cast<alglib_impl::ae_matrix*>(v.c_ptr()), &_alglib_env_state);
     alglib_impl::ae_state_clear(&_alglib_env_state);
     return;
 }
@@ -201,23 +183,14 @@ it is better to use pcabuildbasis() function.
 
 It should be noted that, unlike LDA, PCA does not use class labels.
 
-COMMERCIAL EDITION OF ALGLIB:
-
-  ! Commercial version of ALGLIB includes two  important  improvements  of
-  ! this function, which can be used from C++ and C#:
-  ! * multithreading support
-  ! * Intel MKL support (lightweight Intel MKL is shipped with ALGLIB)
+  ! COMMERCIAL EDITION OF ALGLIB:
   !
-  ! For a situation  when  you  need  just  a  few  eigenvectors  (~1-10),
-  ! multithreading typically gives sublinear (wrt to cores count) speedup.
-  ! For larger  problems  it  may  give  you  nearly  linear  increase  in
-  ! performance.
-  !
-  ! Intel MKL gives approximately constant  (with  respect  to  number  of
-  ! worker threads) acceleration factor which depends on CPU  being  used,
-  ! problem  size  and  "baseline"  ALGLIB  edition  which  is  used   for
-  ! comparison. Best results are achieved  for  high-dimensional  problems
-  ! (NVars is at least 256).
+  ! Commercial Edition of ALGLIB includes following important improvements
+  ! of this function:
+  ! * high-performance native backend with same C# interface (C# version)
+  ! * multithreading support (C++ and C# versions)
+  ! * hardware vendor (Intel) implementations of linear algebra primitives
+  !   (C++ and C# versions, x86/x64 platform)
   !
   ! We recommend you to read 'Working with commercial version' section  of
   ! ALGLIB Reference Manual in order to find out how to  use  performance-
@@ -228,7 +201,7 @@ INPUT PARAMETERS:
                     matrix contains ONLY INDEPENDENT VARIABLES.
     NPoints     -   dataset size, NPoints>=0
     NVars       -   number of independent variables, NVars>=1
-    NNeeded     -   number of requested directions, in [1,NVars] range;
+    NNeeded     -   number of requested components, in [1,NVars] range;
                     this function is efficient only for NNeeded<<NVars.
     Eps         -   desired  precision  of  vectors  returned;  underlying
                     solver will stop iterations as soon as absolute  error
@@ -256,7 +229,7 @@ stopping condition. Exact value of automatically selected eps is  version-
   -- ALGLIB --
      Copyright 10.01.2017 by Bochkanov Sergey
 *************************************************************************/
-void pcatruncatedsubspace(const real_2d_array &x, const ae_int_t npoints, const ae_int_t nvars, const ae_int_t nneeded, const double eps, const ae_int_t maxits, real_1d_array &s2, real_2d_array &v)
+void pcatruncatedsubspace(const real_2d_array &x, const ae_int_t npoints, const ae_int_t nvars, const ae_int_t nneeded, const double eps, const ae_int_t maxits, real_1d_array &s2, real_2d_array &v, const xparams _xparams)
 {
     jmp_buf _break_jump;
     alglib_impl::ae_state _alglib_env_state;
@@ -271,13 +244,79 @@ void pcatruncatedsubspace(const real_2d_array &x, const ae_int_t npoints, const 
 #endif
     }
     ae_state_set_break_jump(&_alglib_env_state, &_break_jump);
+    if( _xparams.flags!=0x0 )
+        ae_state_set_flags(&_alglib_env_state, _xparams.flags);
     alglib_impl::pcatruncatedsubspace(const_cast<alglib_impl::ae_matrix*>(x.c_ptr()), npoints, nvars, nneeded, eps, maxits, const_cast<alglib_impl::ae_vector*>(s2.c_ptr()), const_cast<alglib_impl::ae_matrix*>(v.c_ptr()), &_alglib_env_state);
     alglib_impl::ae_state_clear(&_alglib_env_state);
     return;
 }
 
+/*************************************************************************
+Sparse truncated principal components analysis
 
-void smp_pcatruncatedsubspace(const real_2d_array &x, const ae_int_t npoints, const ae_int_t nvars, const ae_int_t nneeded, const double eps, const ae_int_t maxits, real_1d_array &s2, real_2d_array &v)
+This function performs sparse truncated PCA, i.e. returns just a few  most
+important principal components for a sparse input X.
+
+Internally it uses iterative eigensolver which is very efficient when only
+a minor fraction of full basis is required.
+
+It should be noted that, unlike LDA, PCA does not use class labels.
+
+  ! COMMERCIAL EDITION OF ALGLIB:
+  !
+  ! Commercial Edition of ALGLIB includes following important improvements
+  ! of this function:
+  ! * high-performance native backend with same C# interface (C# version)
+  ! * multithreading support (C++ and C# versions)
+  ! * hardware vendor (Intel) implementations of linear algebra primitives
+  !   (C++ and C# versions, x86/x64 platform)
+  !
+  ! We recommend you to read 'Working with commercial version' section  of
+  ! ALGLIB Reference Manual in order to find out how to  use  performance-
+  ! related features provided by commercial edition of ALGLIB.
+
+INPUT PARAMETERS:
+    X           -   sparse dataset, sparse  npoints*nvars  matrix.  It  is
+                    recommended to use CRS sparse storage format;  non-CRS
+                    input will be internally converted to CRS.
+                    Matrix contains ONLY INDEPENDENT VARIABLES,  and  must
+                    be EXACTLY npoints*nvars.
+    NPoints     -   dataset size, NPoints>=0
+    NVars       -   number of independent variables, NVars>=1
+    NNeeded     -   number of requested components, in [1,NVars] range;
+                    this function is efficient only for NNeeded<<NVars.
+    Eps         -   desired  precision  of  vectors  returned;  underlying
+                    solver will stop iterations as soon as absolute  error
+                    in corresponding singular values  reduces  to  roughly
+                    eps*MAX(lambda[]), with lambda[] being array of  eigen
+                    values.
+                    Zero value means that  algorithm  performs  number  of
+                    iterations  specified  by  maxits  parameter,  without
+                    paying attention to precision.
+    MaxIts      -   number of iterations performed by  subspace  iteration
+                    method. Zero value means that no  limit  on  iteration
+                    count is placed (eps-based stopping condition is used).
+
+
+OUTPUT PARAMETERS:
+    S2          -   array[NNeeded]. Variance values corresponding
+                    to basis vectors.
+    V           -   array[NVars,NNeeded]
+                    matrix, whose columns store basis vectors.
+
+NOTE: passing eps=0 and maxits=0 results in small eps  being  selected  as
+      a stopping condition. Exact value of automatically selected  eps  is
+      version-dependent.
+
+NOTE: zero  MaxIts  is  silently  replaced  by some reasonable value which
+      prevents eternal loops (possible when inputs are degenerate and  too
+      stringent stopping criteria are specified). In  current  version  it
+      is 50+2*NVars.
+
+  -- ALGLIB --
+     Copyright 10.01.2017 by Bochkanov Sergey
+*************************************************************************/
+void pcatruncatedsubspacesparse(const sparsematrix &x, const ae_int_t npoints, const ae_int_t nvars, const ae_int_t nneeded, const double eps, const ae_int_t maxits, real_1d_array &s2, real_2d_array &v, const xparams _xparams)
 {
     jmp_buf _break_jump;
     alglib_impl::ae_state _alglib_env_state;
@@ -292,7 +331,9 @@ void smp_pcatruncatedsubspace(const real_2d_array &x, const ae_int_t npoints, co
 #endif
     }
     ae_state_set_break_jump(&_alglib_env_state, &_break_jump);
-    alglib_impl::_pexec_pcatruncatedsubspace(const_cast<alglib_impl::ae_matrix*>(x.c_ptr()), npoints, nvars, nneeded, eps, maxits, const_cast<alglib_impl::ae_vector*>(s2.c_ptr()), const_cast<alglib_impl::ae_matrix*>(v.c_ptr()), &_alglib_env_state);
+    if( _xparams.flags!=0x0 )
+        ae_state_set_flags(&_alglib_env_state, _xparams.flags);
+    alglib_impl::pcatruncatedsubspacesparse(const_cast<alglib_impl::sparsematrix*>(x.c_ptr()), npoints, nvars, nneeded, eps, maxits, const_cast<alglib_impl::ae_vector*>(s2.c_ptr()), const_cast<alglib_impl::ae_matrix*>(v.c_ptr()), &_alglib_env_state);
     alglib_impl::ae_state_clear(&_alglib_env_state);
     return;
 }
@@ -326,7 +367,7 @@ OUTPUT PARAMETERS:
   -- ALGLIB --
      Copyright 22.05.2008 by Bochkanov Sergey
 *************************************************************************/
-void dsoptimalsplit2(const real_1d_array &a, const integer_1d_array &c, const ae_int_t n, ae_int_t &info, double &threshold, double &pal, double &pbl, double &par, double &pbr, double &cve)
+void dsoptimalsplit2(const real_1d_array &a, const integer_1d_array &c, const ae_int_t n, ae_int_t &info, double &threshold, double &pal, double &pbl, double &par, double &pbr, double &cve, const xparams _xparams)
 {
     jmp_buf _break_jump;
     alglib_impl::ae_state _alglib_env_state;
@@ -341,6 +382,8 @@ void dsoptimalsplit2(const real_1d_array &a, const integer_1d_array &c, const ae
 #endif
     }
     ae_state_set_break_jump(&_alglib_env_state, &_break_jump);
+    if( _xparams.flags!=0x0 )
+        ae_state_set_flags(&_alglib_env_state, _xparams.flags);
     alglib_impl::dsoptimalsplit2(const_cast<alglib_impl::ae_vector*>(a.c_ptr()), const_cast<alglib_impl::ae_vector*>(c.c_ptr()), n, &info, &threshold, &pal, &pbl, &par, &pbr, &cve, &_alglib_env_state);
     alglib_impl::ae_state_clear(&_alglib_env_state);
     return;
@@ -370,7 +413,7 @@ Note:
   -- ALGLIB --
      Copyright 11.12.2008 by Bochkanov Sergey
 *************************************************************************/
-void dsoptimalsplit2fast(real_1d_array &a, integer_1d_array &c, integer_1d_array &tiesbuf, integer_1d_array &cntbuf, real_1d_array &bufr, integer_1d_array &bufi, const ae_int_t n, const ae_int_t nc, const double alpha, ae_int_t &info, double &threshold, double &rms, double &cvrms)
+void dsoptimalsplit2fast(real_1d_array &a, integer_1d_array &c, integer_1d_array &tiesbuf, integer_1d_array &cntbuf, real_1d_array &bufr, integer_1d_array &bufi, const ae_int_t n, const ae_int_t nc, const double alpha, ae_int_t &info, double &threshold, double &rms, double &cvrms, const xparams _xparams)
 {
     jmp_buf _break_jump;
     alglib_impl::ae_state _alglib_env_state;
@@ -385,6 +428,8 @@ void dsoptimalsplit2fast(real_1d_array &a, integer_1d_array &c, integer_1d_array
 #endif
     }
     ae_state_set_break_jump(&_alglib_env_state, &_break_jump);
+    if( _xparams.flags!=0x0 )
+        ae_state_set_flags(&_alglib_env_state, _xparams.flags);
     alglib_impl::dsoptimalsplit2fast(const_cast<alglib_impl::ae_vector*>(a.c_ptr()), const_cast<alglib_impl::ae_vector*>(c.c_ptr()), const_cast<alglib_impl::ae_vector*>(tiesbuf.c_ptr()), const_cast<alglib_impl::ae_vector*>(cntbuf.c_ptr()), const_cast<alglib_impl::ae_vector*>(bufr.c_ptr()), const_cast<alglib_impl::ae_vector*>(bufi.c_ptr()), n, nc, alpha, &info, &threshold, &rms, &cvrms, &_alglib_env_state);
     alglib_impl::ae_state_clear(&_alglib_env_state);
     return;
@@ -812,7 +857,7 @@ random values.
   -- ALGLIB --
      Copyright 04.11.2007 by Bochkanov Sergey
 *************************************************************************/
-void mlpcreate0(const ae_int_t nin, const ae_int_t nout, multilayerperceptron &network)
+void mlpcreate0(const ae_int_t nin, const ae_int_t nout, multilayerperceptron &network, const xparams _xparams)
 {
     jmp_buf _break_jump;
     alglib_impl::ae_state _alglib_env_state;
@@ -827,6 +872,8 @@ void mlpcreate0(const ae_int_t nin, const ae_int_t nout, multilayerperceptron &n
 #endif
     }
     ae_state_set_break_jump(&_alglib_env_state, &_break_jump);
+    if( _xparams.flags!=0x0 )
+        ae_state_set_flags(&_alglib_env_state, _xparams.flags);
     alglib_impl::mlpcreate0(nin, nout, const_cast<alglib_impl::multilayerperceptron*>(network.c_ptr()), &_alglib_env_state);
     alglib_impl::ae_state_clear(&_alglib_env_state);
     return;
@@ -839,7 +886,7 @@ non-linear activation function. Output layer is linear.
   -- ALGLIB --
      Copyright 04.11.2007 by Bochkanov Sergey
 *************************************************************************/
-void mlpcreate1(const ae_int_t nin, const ae_int_t nhid, const ae_int_t nout, multilayerperceptron &network)
+void mlpcreate1(const ae_int_t nin, const ae_int_t nhid, const ae_int_t nout, multilayerperceptron &network, const xparams _xparams)
 {
     jmp_buf _break_jump;
     alglib_impl::ae_state _alglib_env_state;
@@ -854,6 +901,8 @@ void mlpcreate1(const ae_int_t nin, const ae_int_t nhid, const ae_int_t nout, mu
 #endif
     }
     ae_state_set_break_jump(&_alglib_env_state, &_break_jump);
+    if( _xparams.flags!=0x0 )
+        ae_state_set_flags(&_alglib_env_state, _xparams.flags);
     alglib_impl::mlpcreate1(nin, nhid, nout, const_cast<alglib_impl::multilayerperceptron*>(network.c_ptr()), &_alglib_env_state);
     alglib_impl::ae_state_clear(&_alglib_env_state);
     return;
@@ -867,7 +916,7 @@ with non-linear activation function. Output layer is linear.
   -- ALGLIB --
      Copyright 04.11.2007 by Bochkanov Sergey
 *************************************************************************/
-void mlpcreate2(const ae_int_t nin, const ae_int_t nhid1, const ae_int_t nhid2, const ae_int_t nout, multilayerperceptron &network)
+void mlpcreate2(const ae_int_t nin, const ae_int_t nhid1, const ae_int_t nhid2, const ae_int_t nout, multilayerperceptron &network, const xparams _xparams)
 {
     jmp_buf _break_jump;
     alglib_impl::ae_state _alglib_env_state;
@@ -882,6 +931,8 @@ void mlpcreate2(const ae_int_t nin, const ae_int_t nhid1, const ae_int_t nhid2, 
 #endif
     }
     ae_state_set_break_jump(&_alglib_env_state, &_break_jump);
+    if( _xparams.flags!=0x0 )
+        ae_state_set_flags(&_alglib_env_state, _xparams.flags);
     alglib_impl::mlpcreate2(nin, nhid1, nhid2, nout, const_cast<alglib_impl::multilayerperceptron*>(network.c_ptr()), &_alglib_env_state);
     alglib_impl::ae_state_clear(&_alglib_env_state);
     return;
@@ -904,7 +955,7 @@ or
   -- ALGLIB --
      Copyright 30.03.2008 by Bochkanov Sergey
 *************************************************************************/
-void mlpcreateb0(const ae_int_t nin, const ae_int_t nout, const double b, const double d, multilayerperceptron &network)
+void mlpcreateb0(const ae_int_t nin, const ae_int_t nout, const double b, const double d, multilayerperceptron &network, const xparams _xparams)
 {
     jmp_buf _break_jump;
     alglib_impl::ae_state _alglib_env_state;
@@ -919,6 +970,8 @@ void mlpcreateb0(const ae_int_t nin, const ae_int_t nout, const double b, const 
 #endif
     }
     ae_state_set_break_jump(&_alglib_env_state, &_break_jump);
+    if( _xparams.flags!=0x0 )
+        ae_state_set_flags(&_alglib_env_state, _xparams.flags);
     alglib_impl::mlpcreateb0(nin, nout, b, d, const_cast<alglib_impl::multilayerperceptron*>(network.c_ptr()), &_alglib_env_state);
     alglib_impl::ae_state_clear(&_alglib_env_state);
     return;
@@ -930,7 +983,7 @@ Same as MLPCreateB0 but with non-linear hidden layer.
   -- ALGLIB --
      Copyright 30.03.2008 by Bochkanov Sergey
 *************************************************************************/
-void mlpcreateb1(const ae_int_t nin, const ae_int_t nhid, const ae_int_t nout, const double b, const double d, multilayerperceptron &network)
+void mlpcreateb1(const ae_int_t nin, const ae_int_t nhid, const ae_int_t nout, const double b, const double d, multilayerperceptron &network, const xparams _xparams)
 {
     jmp_buf _break_jump;
     alglib_impl::ae_state _alglib_env_state;
@@ -945,6 +998,8 @@ void mlpcreateb1(const ae_int_t nin, const ae_int_t nhid, const ae_int_t nout, c
 #endif
     }
     ae_state_set_break_jump(&_alglib_env_state, &_break_jump);
+    if( _xparams.flags!=0x0 )
+        ae_state_set_flags(&_alglib_env_state, _xparams.flags);
     alglib_impl::mlpcreateb1(nin, nhid, nout, b, d, const_cast<alglib_impl::multilayerperceptron*>(network.c_ptr()), &_alglib_env_state);
     alglib_impl::ae_state_clear(&_alglib_env_state);
     return;
@@ -956,7 +1011,7 @@ Same as MLPCreateB0 but with two non-linear hidden layers.
   -- ALGLIB --
      Copyright 30.03.2008 by Bochkanov Sergey
 *************************************************************************/
-void mlpcreateb2(const ae_int_t nin, const ae_int_t nhid1, const ae_int_t nhid2, const ae_int_t nout, const double b, const double d, multilayerperceptron &network)
+void mlpcreateb2(const ae_int_t nin, const ae_int_t nhid1, const ae_int_t nhid2, const ae_int_t nout, const double b, const double d, multilayerperceptron &network, const xparams _xparams)
 {
     jmp_buf _break_jump;
     alglib_impl::ae_state _alglib_env_state;
@@ -971,6 +1026,8 @@ void mlpcreateb2(const ae_int_t nin, const ae_int_t nhid1, const ae_int_t nhid2,
 #endif
     }
     ae_state_set_break_jump(&_alglib_env_state, &_break_jump);
+    if( _xparams.flags!=0x0 )
+        ae_state_set_flags(&_alglib_env_state, _xparams.flags);
     alglib_impl::mlpcreateb2(nin, nhid1, nhid2, nout, b, d, const_cast<alglib_impl::multilayerperceptron*>(network.c_ptr()), &_alglib_env_state);
     alglib_impl::ae_state_clear(&_alglib_env_state);
     return;
@@ -984,7 +1041,7 @@ random values. Activation function of the output layer takes values [A,B].
   -- ALGLIB --
      Copyright 30.03.2008 by Bochkanov Sergey
 *************************************************************************/
-void mlpcreater0(const ae_int_t nin, const ae_int_t nout, const double a, const double b, multilayerperceptron &network)
+void mlpcreater0(const ae_int_t nin, const ae_int_t nout, const double a, const double b, multilayerperceptron &network, const xparams _xparams)
 {
     jmp_buf _break_jump;
     alglib_impl::ae_state _alglib_env_state;
@@ -999,6 +1056,8 @@ void mlpcreater0(const ae_int_t nin, const ae_int_t nout, const double a, const 
 #endif
     }
     ae_state_set_break_jump(&_alglib_env_state, &_break_jump);
+    if( _xparams.flags!=0x0 )
+        ae_state_set_flags(&_alglib_env_state, _xparams.flags);
     alglib_impl::mlpcreater0(nin, nout, a, b, const_cast<alglib_impl::multilayerperceptron*>(network.c_ptr()), &_alglib_env_state);
     alglib_impl::ae_state_clear(&_alglib_env_state);
     return;
@@ -1010,7 +1069,7 @@ Same as MLPCreateR0, but with non-linear hidden layer.
   -- ALGLIB --
      Copyright 30.03.2008 by Bochkanov Sergey
 *************************************************************************/
-void mlpcreater1(const ae_int_t nin, const ae_int_t nhid, const ae_int_t nout, const double a, const double b, multilayerperceptron &network)
+void mlpcreater1(const ae_int_t nin, const ae_int_t nhid, const ae_int_t nout, const double a, const double b, multilayerperceptron &network, const xparams _xparams)
 {
     jmp_buf _break_jump;
     alglib_impl::ae_state _alglib_env_state;
@@ -1025,6 +1084,8 @@ void mlpcreater1(const ae_int_t nin, const ae_int_t nhid, const ae_int_t nout, c
 #endif
     }
     ae_state_set_break_jump(&_alglib_env_state, &_break_jump);
+    if( _xparams.flags!=0x0 )
+        ae_state_set_flags(&_alglib_env_state, _xparams.flags);
     alglib_impl::mlpcreater1(nin, nhid, nout, a, b, const_cast<alglib_impl::multilayerperceptron*>(network.c_ptr()), &_alglib_env_state);
     alglib_impl::ae_state_clear(&_alglib_env_state);
     return;
@@ -1036,7 +1097,7 @@ Same as MLPCreateR0, but with two non-linear hidden layers.
   -- ALGLIB --
      Copyright 30.03.2008 by Bochkanov Sergey
 *************************************************************************/
-void mlpcreater2(const ae_int_t nin, const ae_int_t nhid1, const ae_int_t nhid2, const ae_int_t nout, const double a, const double b, multilayerperceptron &network)
+void mlpcreater2(const ae_int_t nin, const ae_int_t nhid1, const ae_int_t nhid2, const ae_int_t nout, const double a, const double b, multilayerperceptron &network, const xparams _xparams)
 {
     jmp_buf _break_jump;
     alglib_impl::ae_state _alglib_env_state;
@@ -1051,6 +1112,8 @@ void mlpcreater2(const ae_int_t nin, const ae_int_t nhid1, const ae_int_t nhid2,
 #endif
     }
     ae_state_set_break_jump(&_alglib_env_state, &_break_jump);
+    if( _xparams.flags!=0x0 )
+        ae_state_set_flags(&_alglib_env_state, _xparams.flags);
     alglib_impl::mlpcreater2(nin, nhid1, nhid2, nout, a, b, const_cast<alglib_impl::multilayerperceptron*>(network.c_ptr()), &_alglib_env_state);
     alglib_impl::ae_state_clear(&_alglib_env_state);
     return;
@@ -1065,7 +1128,7 @@ probabilities).
   -- ALGLIB --
      Copyright 04.11.2007 by Bochkanov Sergey
 *************************************************************************/
-void mlpcreatec0(const ae_int_t nin, const ae_int_t nout, multilayerperceptron &network)
+void mlpcreatec0(const ae_int_t nin, const ae_int_t nout, multilayerperceptron &network, const xparams _xparams)
 {
     jmp_buf _break_jump;
     alglib_impl::ae_state _alglib_env_state;
@@ -1080,6 +1143,8 @@ void mlpcreatec0(const ae_int_t nin, const ae_int_t nout, multilayerperceptron &
 #endif
     }
     ae_state_set_break_jump(&_alglib_env_state, &_break_jump);
+    if( _xparams.flags!=0x0 )
+        ae_state_set_flags(&_alglib_env_state, _xparams.flags);
     alglib_impl::mlpcreatec0(nin, nout, const_cast<alglib_impl::multilayerperceptron*>(network.c_ptr()), &_alglib_env_state);
     alglib_impl::ae_state_clear(&_alglib_env_state);
     return;
@@ -1091,7 +1156,7 @@ Same as MLPCreateC0, but with one non-linear hidden layer.
   -- ALGLIB --
      Copyright 04.11.2007 by Bochkanov Sergey
 *************************************************************************/
-void mlpcreatec1(const ae_int_t nin, const ae_int_t nhid, const ae_int_t nout, multilayerperceptron &network)
+void mlpcreatec1(const ae_int_t nin, const ae_int_t nhid, const ae_int_t nout, multilayerperceptron &network, const xparams _xparams)
 {
     jmp_buf _break_jump;
     alglib_impl::ae_state _alglib_env_state;
@@ -1106,6 +1171,8 @@ void mlpcreatec1(const ae_int_t nin, const ae_int_t nhid, const ae_int_t nout, m
 #endif
     }
     ae_state_set_break_jump(&_alglib_env_state, &_break_jump);
+    if( _xparams.flags!=0x0 )
+        ae_state_set_flags(&_alglib_env_state, _xparams.flags);
     alglib_impl::mlpcreatec1(nin, nhid, nout, const_cast<alglib_impl::multilayerperceptron*>(network.c_ptr()), &_alglib_env_state);
     alglib_impl::ae_state_clear(&_alglib_env_state);
     return;
@@ -1117,7 +1184,7 @@ Same as MLPCreateC0, but with two non-linear hidden layers.
   -- ALGLIB --
      Copyright 04.11.2007 by Bochkanov Sergey
 *************************************************************************/
-void mlpcreatec2(const ae_int_t nin, const ae_int_t nhid1, const ae_int_t nhid2, const ae_int_t nout, multilayerperceptron &network)
+void mlpcreatec2(const ae_int_t nin, const ae_int_t nhid1, const ae_int_t nhid2, const ae_int_t nout, multilayerperceptron &network, const xparams _xparams)
 {
     jmp_buf _break_jump;
     alglib_impl::ae_state _alglib_env_state;
@@ -1132,6 +1199,8 @@ void mlpcreatec2(const ae_int_t nin, const ae_int_t nhid1, const ae_int_t nhid2,
 #endif
     }
     ae_state_set_break_jump(&_alglib_env_state, &_break_jump);
+    if( _xparams.flags!=0x0 )
+        ae_state_set_flags(&_alglib_env_state, _xparams.flags);
     alglib_impl::mlpcreatec2(nin, nhid1, nhid2, nout, const_cast<alglib_impl::multilayerperceptron*>(network.c_ptr()), &_alglib_env_state);
     alglib_impl::ae_state_clear(&_alglib_env_state);
     return;
@@ -1149,7 +1218,7 @@ OUTPUT PARAMETERS:
   -- ALGLIB --
      Copyright 04.11.2007 by Bochkanov Sergey
 *************************************************************************/
-void mlpcopy(const multilayerperceptron &network1, multilayerperceptron &network2)
+void mlpcopy(const multilayerperceptron &network1, multilayerperceptron &network2, const xparams _xparams)
 {
     jmp_buf _break_jump;
     alglib_impl::ae_state _alglib_env_state;
@@ -1164,6 +1233,8 @@ void mlpcopy(const multilayerperceptron &network1, multilayerperceptron &network
 #endif
     }
     ae_state_set_break_jump(&_alglib_env_state, &_break_jump);
+    if( _xparams.flags!=0x0 )
+        ae_state_set_flags(&_alglib_env_state, _xparams.flags);
     alglib_impl::mlpcopy(const_cast<alglib_impl::multilayerperceptron*>(network1.c_ptr()), const_cast<alglib_impl::multilayerperceptron*>(network2.c_ptr()), &_alglib_env_state);
     alglib_impl::ae_state_clear(&_alglib_env_state);
     return;
@@ -1187,7 +1258,7 @@ OUTPUT PARAMETERS:
   -- ALGLIB --
      Copyright 20.06.2013 by Bochkanov Sergey
 *************************************************************************/
-void mlpcopytunableparameters(const multilayerperceptron &network1, const multilayerperceptron &network2)
+void mlpcopytunableparameters(const multilayerperceptron &network1, const multilayerperceptron &network2, const xparams _xparams)
 {
     jmp_buf _break_jump;
     alglib_impl::ae_state _alglib_env_state;
@@ -1202,6 +1273,8 @@ void mlpcopytunableparameters(const multilayerperceptron &network1, const multil
 #endif
     }
     ae_state_set_break_jump(&_alglib_env_state, &_break_jump);
+    if( _xparams.flags!=0x0 )
+        ae_state_set_flags(&_alglib_env_state, _xparams.flags);
     alglib_impl::mlpcopytunableparameters(const_cast<alglib_impl::multilayerperceptron*>(network1.c_ptr()), const_cast<alglib_impl::multilayerperceptron*>(network2.c_ptr()), &_alglib_env_state);
     alglib_impl::ae_state_clear(&_alglib_env_state);
     return;
@@ -1213,7 +1286,7 @@ Randomization of neural network weights
   -- ALGLIB --
      Copyright 06.11.2007 by Bochkanov Sergey
 *************************************************************************/
-void mlprandomize(const multilayerperceptron &network)
+void mlprandomize(const multilayerperceptron &network, const xparams _xparams)
 {
     jmp_buf _break_jump;
     alglib_impl::ae_state _alglib_env_state;
@@ -1228,6 +1301,8 @@ void mlprandomize(const multilayerperceptron &network)
 #endif
     }
     ae_state_set_break_jump(&_alglib_env_state, &_break_jump);
+    if( _xparams.flags!=0x0 )
+        ae_state_set_flags(&_alglib_env_state, _xparams.flags);
     alglib_impl::mlprandomize(const_cast<alglib_impl::multilayerperceptron*>(network.c_ptr()), &_alglib_env_state);
     alglib_impl::ae_state_clear(&_alglib_env_state);
     return;
@@ -1239,7 +1314,7 @@ Randomization of neural network weights and standartisator
   -- ALGLIB --
      Copyright 10.03.2008 by Bochkanov Sergey
 *************************************************************************/
-void mlprandomizefull(const multilayerperceptron &network)
+void mlprandomizefull(const multilayerperceptron &network, const xparams _xparams)
 {
     jmp_buf _break_jump;
     alglib_impl::ae_state _alglib_env_state;
@@ -1254,6 +1329,8 @@ void mlprandomizefull(const multilayerperceptron &network)
 #endif
     }
     ae_state_set_break_jump(&_alglib_env_state, &_break_jump);
+    if( _xparams.flags!=0x0 )
+        ae_state_set_flags(&_alglib_env_state, _xparams.flags);
     alglib_impl::mlprandomizefull(const_cast<alglib_impl::multilayerperceptron*>(network.c_ptr()), &_alglib_env_state);
     alglib_impl::ae_state_clear(&_alglib_env_state);
     return;
@@ -1265,7 +1342,7 @@ Internal subroutine.
   -- ALGLIB --
      Copyright 30.03.2008 by Bochkanov Sergey
 *************************************************************************/
-void mlpinitpreprocessor(const multilayerperceptron &network, const real_2d_array &xy, const ae_int_t ssize)
+void mlpinitpreprocessor(const multilayerperceptron &network, const real_2d_array &xy, const ae_int_t ssize, const xparams _xparams)
 {
     jmp_buf _break_jump;
     alglib_impl::ae_state _alglib_env_state;
@@ -1280,6 +1357,8 @@ void mlpinitpreprocessor(const multilayerperceptron &network, const real_2d_arra
 #endif
     }
     ae_state_set_break_jump(&_alglib_env_state, &_break_jump);
+    if( _xparams.flags!=0x0 )
+        ae_state_set_flags(&_alglib_env_state, _xparams.flags);
     alglib_impl::mlpinitpreprocessor(const_cast<alglib_impl::multilayerperceptron*>(network.c_ptr()), const_cast<alglib_impl::ae_matrix*>(xy.c_ptr()), ssize, &_alglib_env_state);
     alglib_impl::ae_state_clear(&_alglib_env_state);
     return;
@@ -1292,7 +1371,7 @@ weights.
   -- ALGLIB --
      Copyright 04.11.2007 by Bochkanov Sergey
 *************************************************************************/
-void mlpproperties(const multilayerperceptron &network, ae_int_t &nin, ae_int_t &nout, ae_int_t &wcount)
+void mlpproperties(const multilayerperceptron &network, ae_int_t &nin, ae_int_t &nout, ae_int_t &wcount, const xparams _xparams)
 {
     jmp_buf _break_jump;
     alglib_impl::ae_state _alglib_env_state;
@@ -1307,6 +1386,8 @@ void mlpproperties(const multilayerperceptron &network, ae_int_t &nin, ae_int_t 
 #endif
     }
     ae_state_set_break_jump(&_alglib_env_state, &_break_jump);
+    if( _xparams.flags!=0x0 )
+        ae_state_set_flags(&_alglib_env_state, _xparams.flags);
     alglib_impl::mlpproperties(const_cast<alglib_impl::multilayerperceptron*>(network.c_ptr()), &nin, &nout, &wcount, &_alglib_env_state);
     alglib_impl::ae_state_clear(&_alglib_env_state);
     return;
@@ -1318,7 +1399,7 @@ Returns number of inputs.
   -- ALGLIB --
      Copyright 19.10.2011 by Bochkanov Sergey
 *************************************************************************/
-ae_int_t mlpgetinputscount(const multilayerperceptron &network)
+ae_int_t mlpgetinputscount(const multilayerperceptron &network, const xparams _xparams)
 {
     jmp_buf _break_jump;
     alglib_impl::ae_state _alglib_env_state;
@@ -1333,6 +1414,8 @@ ae_int_t mlpgetinputscount(const multilayerperceptron &network)
 #endif
     }
     ae_state_set_break_jump(&_alglib_env_state, &_break_jump);
+    if( _xparams.flags!=0x0 )
+        ae_state_set_flags(&_alglib_env_state, _xparams.flags);
     alglib_impl::ae_int_t result = alglib_impl::mlpgetinputscount(const_cast<alglib_impl::multilayerperceptron*>(network.c_ptr()), &_alglib_env_state);
     alglib_impl::ae_state_clear(&_alglib_env_state);
     return *(reinterpret_cast<ae_int_t*>(&result));
@@ -1344,7 +1427,7 @@ Returns number of outputs.
   -- ALGLIB --
      Copyright 19.10.2011 by Bochkanov Sergey
 *************************************************************************/
-ae_int_t mlpgetoutputscount(const multilayerperceptron &network)
+ae_int_t mlpgetoutputscount(const multilayerperceptron &network, const xparams _xparams)
 {
     jmp_buf _break_jump;
     alglib_impl::ae_state _alglib_env_state;
@@ -1359,6 +1442,8 @@ ae_int_t mlpgetoutputscount(const multilayerperceptron &network)
 #endif
     }
     ae_state_set_break_jump(&_alglib_env_state, &_break_jump);
+    if( _xparams.flags!=0x0 )
+        ae_state_set_flags(&_alglib_env_state, _xparams.flags);
     alglib_impl::ae_int_t result = alglib_impl::mlpgetoutputscount(const_cast<alglib_impl::multilayerperceptron*>(network.c_ptr()), &_alglib_env_state);
     alglib_impl::ae_state_clear(&_alglib_env_state);
     return *(reinterpret_cast<ae_int_t*>(&result));
@@ -1370,7 +1455,7 @@ Returns number of weights.
   -- ALGLIB --
      Copyright 19.10.2011 by Bochkanov Sergey
 *************************************************************************/
-ae_int_t mlpgetweightscount(const multilayerperceptron &network)
+ae_int_t mlpgetweightscount(const multilayerperceptron &network, const xparams _xparams)
 {
     jmp_buf _break_jump;
     alglib_impl::ae_state _alglib_env_state;
@@ -1385,6 +1470,8 @@ ae_int_t mlpgetweightscount(const multilayerperceptron &network)
 #endif
     }
     ae_state_set_break_jump(&_alglib_env_state, &_break_jump);
+    if( _xparams.flags!=0x0 )
+        ae_state_set_flags(&_alglib_env_state, _xparams.flags);
     alglib_impl::ae_int_t result = alglib_impl::mlpgetweightscount(const_cast<alglib_impl::multilayerperceptron*>(network.c_ptr()), &_alglib_env_state);
     alglib_impl::ae_state_clear(&_alglib_env_state);
     return *(reinterpret_cast<ae_int_t*>(&result));
@@ -1396,7 +1483,7 @@ Tells whether network is SOFTMAX-normalized (i.e. classifier) or not.
   -- ALGLIB --
      Copyright 04.11.2007 by Bochkanov Sergey
 *************************************************************************/
-bool mlpissoftmax(const multilayerperceptron &network)
+bool mlpissoftmax(const multilayerperceptron &network, const xparams _xparams)
 {
     jmp_buf _break_jump;
     alglib_impl::ae_state _alglib_env_state;
@@ -1411,6 +1498,8 @@ bool mlpissoftmax(const multilayerperceptron &network)
 #endif
     }
     ae_state_set_break_jump(&_alglib_env_state, &_break_jump);
+    if( _xparams.flags!=0x0 )
+        ae_state_set_flags(&_alglib_env_state, _xparams.flags);
     ae_bool result = alglib_impl::mlpissoftmax(const_cast<alglib_impl::multilayerperceptron*>(network.c_ptr()), &_alglib_env_state);
     alglib_impl::ae_state_clear(&_alglib_env_state);
     return *(reinterpret_cast<bool*>(&result));
@@ -1423,7 +1512,7 @@ output layers).
   -- ALGLIB --
      Copyright 25.03.2011 by Bochkanov Sergey
 *************************************************************************/
-ae_int_t mlpgetlayerscount(const multilayerperceptron &network)
+ae_int_t mlpgetlayerscount(const multilayerperceptron &network, const xparams _xparams)
 {
     jmp_buf _break_jump;
     alglib_impl::ae_state _alglib_env_state;
@@ -1438,6 +1527,8 @@ ae_int_t mlpgetlayerscount(const multilayerperceptron &network)
 #endif
     }
     ae_state_set_break_jump(&_alglib_env_state, &_break_jump);
+    if( _xparams.flags!=0x0 )
+        ae_state_set_flags(&_alglib_env_state, _xparams.flags);
     alglib_impl::ae_int_t result = alglib_impl::mlpgetlayerscount(const_cast<alglib_impl::multilayerperceptron*>(network.c_ptr()), &_alglib_env_state);
     alglib_impl::ae_state_clear(&_alglib_env_state);
     return *(reinterpret_cast<ae_int_t*>(&result));
@@ -1455,7 +1546,7 @@ connections - it is just zero.
   -- ALGLIB --
      Copyright 25.03.2011 by Bochkanov Sergey
 *************************************************************************/
-ae_int_t mlpgetlayersize(const multilayerperceptron &network, const ae_int_t k)
+ae_int_t mlpgetlayersize(const multilayerperceptron &network, const ae_int_t k, const xparams _xparams)
 {
     jmp_buf _break_jump;
     alglib_impl::ae_state _alglib_env_state;
@@ -1470,6 +1561,8 @@ ae_int_t mlpgetlayersize(const multilayerperceptron &network, const ae_int_t k)
 #endif
     }
     ae_state_set_break_jump(&_alglib_env_state, &_break_jump);
+    if( _xparams.flags!=0x0 )
+        ae_state_set_flags(&_alglib_env_state, _xparams.flags);
     alglib_impl::ae_int_t result = alglib_impl::mlpgetlayersize(const_cast<alglib_impl::multilayerperceptron*>(network.c_ptr()), k, &_alglib_env_state);
     alglib_impl::ae_state_clear(&_alglib_env_state);
     return *(reinterpret_cast<ae_int_t*>(&result));
@@ -1494,7 +1587,7 @@ before feeding to the network
   -- ALGLIB --
      Copyright 25.03.2011 by Bochkanov Sergey
 *************************************************************************/
-void mlpgetinputscaling(const multilayerperceptron &network, const ae_int_t i, double &mean, double &sigma)
+void mlpgetinputscaling(const multilayerperceptron &network, const ae_int_t i, double &mean, double &sigma, const xparams _xparams)
 {
     jmp_buf _break_jump;
     alglib_impl::ae_state _alglib_env_state;
@@ -1509,6 +1602,8 @@ void mlpgetinputscaling(const multilayerperceptron &network, const ae_int_t i, d
 #endif
     }
     ae_state_set_break_jump(&_alglib_env_state, &_break_jump);
+    if( _xparams.flags!=0x0 )
+        ae_state_set_flags(&_alglib_env_state, _xparams.flags);
     alglib_impl::mlpgetinputscaling(const_cast<alglib_impl::multilayerperceptron*>(network.c_ptr()), i, &mean, &sigma, &_alglib_env_state);
     alglib_impl::ae_state_clear(&_alglib_env_state);
     return;
@@ -1534,7 +1629,7 @@ we return (Mean,Sigma)=(0.0,1.0).
   -- ALGLIB --
      Copyright 25.03.2011 by Bochkanov Sergey
 *************************************************************************/
-void mlpgetoutputscaling(const multilayerperceptron &network, const ae_int_t i, double &mean, double &sigma)
+void mlpgetoutputscaling(const multilayerperceptron &network, const ae_int_t i, double &mean, double &sigma, const xparams _xparams)
 {
     jmp_buf _break_jump;
     alglib_impl::ae_state _alglib_env_state;
@@ -1549,6 +1644,8 @@ void mlpgetoutputscaling(const multilayerperceptron &network, const ae_int_t i, 
 #endif
     }
     ae_state_set_break_jump(&_alglib_env_state, &_break_jump);
+    if( _xparams.flags!=0x0 )
+        ae_state_set_flags(&_alglib_env_state, _xparams.flags);
     alglib_impl::mlpgetoutputscaling(const_cast<alglib_impl::multilayerperceptron*>(network.c_ptr()), i, &mean, &sigma, &_alglib_env_state);
     alglib_impl::ae_state_clear(&_alglib_env_state);
     return;
@@ -1574,7 +1671,7 @@ do not exists.
   -- ALGLIB --
      Copyright 25.03.2011 by Bochkanov Sergey
 *************************************************************************/
-void mlpgetneuroninfo(const multilayerperceptron &network, const ae_int_t k, const ae_int_t i, ae_int_t &fkind, double &threshold)
+void mlpgetneuroninfo(const multilayerperceptron &network, const ae_int_t k, const ae_int_t i, ae_int_t &fkind, double &threshold, const xparams _xparams)
 {
     jmp_buf _break_jump;
     alglib_impl::ae_state _alglib_env_state;
@@ -1589,6 +1686,8 @@ void mlpgetneuroninfo(const multilayerperceptron &network, const ae_int_t k, con
 #endif
     }
     ae_state_set_break_jump(&_alglib_env_state, &_break_jump);
+    if( _xparams.flags!=0x0 )
+        ae_state_set_flags(&_alglib_env_state, _xparams.flags);
     alglib_impl::mlpgetneuroninfo(const_cast<alglib_impl::multilayerperceptron*>(network.c_ptr()), k, i, &fkind, &threshold, &_alglib_env_state);
     alglib_impl::ae_state_clear(&_alglib_env_state);
     return;
@@ -1615,7 +1714,7 @@ This function:
   -- ALGLIB --
      Copyright 25.03.2011 by Bochkanov Sergey
 *************************************************************************/
-double mlpgetweight(const multilayerperceptron &network, const ae_int_t k0, const ae_int_t i0, const ae_int_t k1, const ae_int_t i1)
+double mlpgetweight(const multilayerperceptron &network, const ae_int_t k0, const ae_int_t i0, const ae_int_t k1, const ae_int_t i1, const xparams _xparams)
 {
     jmp_buf _break_jump;
     alglib_impl::ae_state _alglib_env_state;
@@ -1630,6 +1729,8 @@ double mlpgetweight(const multilayerperceptron &network, const ae_int_t k0, cons
 #endif
     }
     ae_state_set_break_jump(&_alglib_env_state, &_break_jump);
+    if( _xparams.flags!=0x0 )
+        ae_state_set_flags(&_alglib_env_state, _xparams.flags);
     double result = alglib_impl::mlpgetweight(const_cast<alglib_impl::multilayerperceptron*>(network.c_ptr()), k0, i0, k1, i1, &_alglib_env_state);
     alglib_impl::ae_state_clear(&_alglib_env_state);
     return *(reinterpret_cast<double*>(&result));
@@ -1652,7 +1753,7 @@ before feeding to the network. This function sets Mean and Sigma.
   -- ALGLIB --
      Copyright 25.03.2011 by Bochkanov Sergey
 *************************************************************************/
-void mlpsetinputscaling(const multilayerperceptron &network, const ae_int_t i, const double mean, const double sigma)
+void mlpsetinputscaling(const multilayerperceptron &network, const ae_int_t i, const double mean, const double sigma, const xparams _xparams)
 {
     jmp_buf _break_jump;
     alglib_impl::ae_state _alglib_env_state;
@@ -1667,6 +1768,8 @@ void mlpsetinputscaling(const multilayerperceptron &network, const ae_int_t i, c
 #endif
     }
     ae_state_set_break_jump(&_alglib_env_state, &_break_jump);
+    if( _xparams.flags!=0x0 )
+        ae_state_set_flags(&_alglib_env_state, _xparams.flags);
     alglib_impl::mlpsetinputscaling(const_cast<alglib_impl::multilayerperceptron*>(network.c_ptr()), i, mean, sigma, &_alglib_env_state);
     alglib_impl::ae_state_clear(&_alglib_env_state);
     return;
@@ -1693,7 +1796,7 @@ other than(0.0,1.0) - this function will throw exception.
   -- ALGLIB --
      Copyright 25.03.2011 by Bochkanov Sergey
 *************************************************************************/
-void mlpsetoutputscaling(const multilayerperceptron &network, const ae_int_t i, const double mean, const double sigma)
+void mlpsetoutputscaling(const multilayerperceptron &network, const ae_int_t i, const double mean, const double sigma, const xparams _xparams)
 {
     jmp_buf _break_jump;
     alglib_impl::ae_state _alglib_env_state;
@@ -1708,6 +1811,8 @@ void mlpsetoutputscaling(const multilayerperceptron &network, const ae_int_t i, 
 #endif
     }
     ae_state_set_break_jump(&_alglib_env_state, &_break_jump);
+    if( _xparams.flags!=0x0 )
+        ae_state_set_flags(&_alglib_env_state, _xparams.flags);
     alglib_impl::mlpsetoutputscaling(const_cast<alglib_impl::multilayerperceptron*>(network.c_ptr()), i, mean, sigma, &_alglib_env_state);
     alglib_impl::ae_state_clear(&_alglib_env_state);
     return;
@@ -1739,7 +1844,7 @@ NOTES:
   -- ALGLIB --
      Copyright 25.03.2011 by Bochkanov Sergey
 *************************************************************************/
-void mlpsetneuroninfo(const multilayerperceptron &network, const ae_int_t k, const ae_int_t i, const ae_int_t fkind, const double threshold)
+void mlpsetneuroninfo(const multilayerperceptron &network, const ae_int_t k, const ae_int_t i, const ae_int_t fkind, const double threshold, const xparams _xparams)
 {
     jmp_buf _break_jump;
     alglib_impl::ae_state _alglib_env_state;
@@ -1754,6 +1859,8 @@ void mlpsetneuroninfo(const multilayerperceptron &network, const ae_int_t k, con
 #endif
     }
     ae_state_set_break_jump(&_alglib_env_state, &_break_jump);
+    if( _xparams.flags!=0x0 )
+        ae_state_set_flags(&_alglib_env_state, _xparams.flags);
     alglib_impl::mlpsetneuroninfo(const_cast<alglib_impl::multilayerperceptron*>(network.c_ptr()), k, i, fkind, threshold, &_alglib_env_state);
     alglib_impl::ae_state_clear(&_alglib_env_state);
     return;
@@ -1780,7 +1887,7 @@ This function:
   -- ALGLIB --
      Copyright 25.03.2011 by Bochkanov Sergey
 *************************************************************************/
-void mlpsetweight(const multilayerperceptron &network, const ae_int_t k0, const ae_int_t i0, const ae_int_t k1, const ae_int_t i1, const double w)
+void mlpsetweight(const multilayerperceptron &network, const ae_int_t k0, const ae_int_t i0, const ae_int_t k1, const ae_int_t i1, const double w, const xparams _xparams)
 {
     jmp_buf _break_jump;
     alglib_impl::ae_state _alglib_env_state;
@@ -1795,6 +1902,8 @@ void mlpsetweight(const multilayerperceptron &network, const ae_int_t k0, const 
 #endif
     }
     ae_state_set_break_jump(&_alglib_env_state, &_break_jump);
+    if( _xparams.flags!=0x0 )
+        ae_state_set_flags(&_alglib_env_state, _xparams.flags);
     alglib_impl::mlpsetweight(const_cast<alglib_impl::multilayerperceptron*>(network.c_ptr()), k0, i0, k1, i1, w, &_alglib_env_state);
     alglib_impl::ae_state_clear(&_alglib_env_state);
     return;
@@ -1815,7 +1924,7 @@ OUTPUT PARAMETERS:
   -- ALGLIB --
      Copyright 04.11.2007 by Bochkanov Sergey
 *************************************************************************/
-void mlpactivationfunction(const double net, const ae_int_t k, double &f, double &df, double &d2f)
+void mlpactivationfunction(const double net, const ae_int_t k, double &f, double &df, double &d2f, const xparams _xparams)
 {
     jmp_buf _break_jump;
     alglib_impl::ae_state _alglib_env_state;
@@ -1830,6 +1939,8 @@ void mlpactivationfunction(const double net, const ae_int_t k, double &f, double
 #endif
     }
     ae_state_set_break_jump(&_alglib_env_state, &_break_jump);
+    if( _xparams.flags!=0x0 )
+        ae_state_set_flags(&_alglib_env_state, _xparams.flags);
     alglib_impl::mlpactivationfunction(net, k, &f, &df, &d2f, &_alglib_env_state);
     alglib_impl::ae_state_clear(&_alglib_env_state);
     return;
@@ -1851,7 +1962,7 @@ See also MLPProcessI
   -- ALGLIB --
      Copyright 04.11.2007 by Bochkanov Sergey
 *************************************************************************/
-void mlpprocess(const multilayerperceptron &network, const real_1d_array &x, real_1d_array &y)
+void mlpprocess(const multilayerperceptron &network, const real_1d_array &x, real_1d_array &y, const xparams _xparams)
 {
     jmp_buf _break_jump;
     alglib_impl::ae_state _alglib_env_state;
@@ -1866,6 +1977,8 @@ void mlpprocess(const multilayerperceptron &network, const real_1d_array &x, rea
 #endif
     }
     ae_state_set_break_jump(&_alglib_env_state, &_break_jump);
+    if( _xparams.flags!=0x0 )
+        ae_state_set_flags(&_alglib_env_state, _xparams.flags);
     alglib_impl::mlpprocess(const_cast<alglib_impl::multilayerperceptron*>(network.c_ptr()), const_cast<alglib_impl::ae_vector*>(x.c_ptr()), const_cast<alglib_impl::ae_vector*>(y.c_ptr()), &_alglib_env_state);
     alglib_impl::ae_state_clear(&_alglib_env_state);
     return;
@@ -1883,7 +1996,7 @@ when you call it from command line.
   -- ALGLIB --
      Copyright 21.09.2010 by Bochkanov Sergey
 *************************************************************************/
-void mlpprocessi(const multilayerperceptron &network, const real_1d_array &x, real_1d_array &y)
+void mlpprocessi(const multilayerperceptron &network, const real_1d_array &x, real_1d_array &y, const xparams _xparams)
 {
     jmp_buf _break_jump;
     alglib_impl::ae_state _alglib_env_state;
@@ -1898,6 +2011,8 @@ void mlpprocessi(const multilayerperceptron &network, const real_1d_array &x, re
 #endif
     }
     ae_state_set_break_jump(&_alglib_env_state, &_break_jump);
+    if( _xparams.flags!=0x0 )
+        ae_state_set_flags(&_alglib_env_state, _xparams.flags);
     alglib_impl::mlpprocessi(const_cast<alglib_impl::multilayerperceptron*>(network.c_ptr()), const_cast<alglib_impl::ae_vector*>(x.c_ptr()), const_cast<alglib_impl::ae_vector*>(y.c_ptr()), &_alglib_env_state);
     alglib_impl::ae_state_clear(&_alglib_env_state);
     return;
@@ -1906,33 +2021,16 @@ void mlpprocessi(const multilayerperceptron &network, const real_1d_array &x, re
 /*************************************************************************
 Error of the neural network on dataset.
 
-
-FOR USERS OF COMMERCIAL EDITION:
-
-  ! Commercial version of ALGLIB includes two  important  improvements  of
-  ! this function:
-  ! * multicore support (C++ and C# computational cores)
-  ! * SSE support
+  ! COMMERCIAL EDITION OF ALGLIB:
   !
-  ! First improvement gives close-to-linear speedup on multicore systems.
-  ! Second improvement gives constant speedup (2-3x, depending on your CPU)
+  ! Commercial Edition of ALGLIB includes following important improvements
+  ! of this function:
+  ! * high-performance native backend with same C# interface (C# version)
+  ! * multithreading support (C++ and C# versions)
   !
-  ! In order to use multicore features you have to:
-  ! * use commercial version of ALGLIB
-  ! * call  this  function  with  "smp_"  prefix,  which  indicates  that
-  !   multicore code will be used (for multicore support)
-  !
-  ! In order to use SSE features you have to:
-  ! * use commercial version of ALGLIB on Intel processors
-  ! * use C++ computational core
-  !
-  ! This note is given for users of commercial edition; if  you  use  GPL
-  ! edition, you still will be able to call smp-version of this function,
-  ! but all computations will be done serially.
-  !
-  ! We recommend you to carefully read ALGLIB Reference  Manual,  section
-  ! called 'SMP support', before using parallel version of this function.
-
+  ! We recommend you to read 'Working with commercial version' section  of
+  ! ALGLIB Reference Manual in order to find out how to  use  performance-
+  ! related features provided by commercial edition of ALGLIB.
 
 INPUT PARAMETERS:
     Network     -   neural network;
@@ -1964,7 +2062,7 @@ dataset format is used:
   -- ALGLIB --
      Copyright 04.11.2007 by Bochkanov Sergey
 *************************************************************************/
-double mlperror(const multilayerperceptron &network, const real_2d_array &xy, const ae_int_t npoints)
+double mlperror(const multilayerperceptron &network, const real_2d_array &xy, const ae_int_t npoints, const xparams _xparams)
 {
     jmp_buf _break_jump;
     alglib_impl::ae_state _alglib_env_state;
@@ -1979,28 +2077,9 @@ double mlperror(const multilayerperceptron &network, const real_2d_array &xy, co
 #endif
     }
     ae_state_set_break_jump(&_alglib_env_state, &_break_jump);
+    if( _xparams.flags!=0x0 )
+        ae_state_set_flags(&_alglib_env_state, _xparams.flags);
     double result = alglib_impl::mlperror(const_cast<alglib_impl::multilayerperceptron*>(network.c_ptr()), const_cast<alglib_impl::ae_matrix*>(xy.c_ptr()), npoints, &_alglib_env_state);
-    alglib_impl::ae_state_clear(&_alglib_env_state);
-    return *(reinterpret_cast<double*>(&result));
-}
-
-
-double smp_mlperror(const multilayerperceptron &network, const real_2d_array &xy, const ae_int_t npoints)
-{
-    jmp_buf _break_jump;
-    alglib_impl::ae_state _alglib_env_state;
-    alglib_impl::ae_state_init(&_alglib_env_state);
-    if( setjmp(_break_jump) )
-    {
-#if !defined(AE_NO_EXCEPTIONS)
-        _ALGLIB_CPP_EXCEPTION(_alglib_env_state.error_msg);
-#else
-        _ALGLIB_SET_ERROR_FLAG(_alglib_env_state.error_msg);
-        return 0;
-#endif
-    }
-    ae_state_set_break_jump(&_alglib_env_state, &_break_jump);
-    double result = alglib_impl::_pexec_mlperror(const_cast<alglib_impl::multilayerperceptron*>(network.c_ptr()), const_cast<alglib_impl::ae_matrix*>(xy.c_ptr()), npoints, &_alglib_env_state);
     alglib_impl::ae_state_clear(&_alglib_env_state);
     return *(reinterpret_cast<double*>(&result));
 }
@@ -2008,33 +2087,16 @@ double smp_mlperror(const multilayerperceptron &network, const real_2d_array &xy
 /*************************************************************************
 Error of the neural network on dataset given by sparse matrix.
 
-
-FOR USERS OF COMMERCIAL EDITION:
-
-  ! Commercial version of ALGLIB includes two  important  improvements  of
-  ! this function:
-  ! * multicore support (C++ and C# computational cores)
-  ! * SSE support
+  ! COMMERCIAL EDITION OF ALGLIB:
   !
-  ! First improvement gives close-to-linear speedup on multicore systems.
-  ! Second improvement gives constant speedup (2-3x, depending on your CPU)
+  ! Commercial Edition of ALGLIB includes following important improvements
+  ! of this function:
+  ! * high-performance native backend with same C# interface (C# version)
+  ! * multithreading support (C++ and C# versions)
   !
-  ! In order to use multicore features you have to:
-  ! * use commercial version of ALGLIB
-  ! * call  this  function  with  "smp_"  prefix,  which  indicates  that
-  !   multicore code will be used (for multicore support)
-  !
-  ! In order to use SSE features you have to:
-  ! * use commercial version of ALGLIB on Intel processors
-  ! * use C++ computational core
-  !
-  ! This note is given for users of commercial edition; if  you  use  GPL
-  ! edition, you still will be able to call smp-version of this function,
-  ! but all computations will be done serially.
-  !
-  ! We recommend you to carefully read ALGLIB Reference  Manual,  section
-  ! called 'SMP support', before using parallel version of this function.
-
+  ! We recommend you to read 'Working with commercial version' section  of
+  ! ALGLIB Reference Manual in order to find out how to  use  performance-
+  ! related features provided by commercial edition of ALGLIB.
 
 INPUT PARAMETERS:
     Network     -   neural network
@@ -2070,7 +2132,7 @@ dataset format is used:
   -- ALGLIB --
      Copyright 23.07.2012 by Bochkanov Sergey
 *************************************************************************/
-double mlperrorsparse(const multilayerperceptron &network, const sparsematrix &xy, const ae_int_t npoints)
+double mlperrorsparse(const multilayerperceptron &network, const sparsematrix &xy, const ae_int_t npoints, const xparams _xparams)
 {
     jmp_buf _break_jump;
     alglib_impl::ae_state _alglib_env_state;
@@ -2085,28 +2147,9 @@ double mlperrorsparse(const multilayerperceptron &network, const sparsematrix &x
 #endif
     }
     ae_state_set_break_jump(&_alglib_env_state, &_break_jump);
+    if( _xparams.flags!=0x0 )
+        ae_state_set_flags(&_alglib_env_state, _xparams.flags);
     double result = alglib_impl::mlperrorsparse(const_cast<alglib_impl::multilayerperceptron*>(network.c_ptr()), const_cast<alglib_impl::sparsematrix*>(xy.c_ptr()), npoints, &_alglib_env_state);
-    alglib_impl::ae_state_clear(&_alglib_env_state);
-    return *(reinterpret_cast<double*>(&result));
-}
-
-
-double smp_mlperrorsparse(const multilayerperceptron &network, const sparsematrix &xy, const ae_int_t npoints)
-{
-    jmp_buf _break_jump;
-    alglib_impl::ae_state _alglib_env_state;
-    alglib_impl::ae_state_init(&_alglib_env_state);
-    if( setjmp(_break_jump) )
-    {
-#if !defined(AE_NO_EXCEPTIONS)
-        _ALGLIB_CPP_EXCEPTION(_alglib_env_state.error_msg);
-#else
-        _ALGLIB_SET_ERROR_FLAG(_alglib_env_state.error_msg);
-        return 0;
-#endif
-    }
-    ae_state_set_break_jump(&_alglib_env_state, &_break_jump);
-    double result = alglib_impl::_pexec_mlperrorsparse(const_cast<alglib_impl::multilayerperceptron*>(network.c_ptr()), const_cast<alglib_impl::sparsematrix*>(xy.c_ptr()), npoints, &_alglib_env_state);
     alglib_impl::ae_state_clear(&_alglib_env_state);
     return *(reinterpret_cast<double*>(&result));
 }
@@ -2120,7 +2163,7 @@ receives no speed-up from being executed in SMP mode.
   -- ALGLIB --
      Copyright 04.11.2007 by Bochkanov Sergey
 *************************************************************************/
-double mlperrorn(const multilayerperceptron &network, const real_2d_array &xy, const ae_int_t ssize)
+double mlperrorn(const multilayerperceptron &network, const real_2d_array &xy, const ae_int_t ssize, const xparams _xparams)
 {
     jmp_buf _break_jump;
     alglib_impl::ae_state _alglib_env_state;
@@ -2135,6 +2178,8 @@ double mlperrorn(const multilayerperceptron &network, const real_2d_array &xy, c
 #endif
     }
     ae_state_set_break_jump(&_alglib_env_state, &_break_jump);
+    if( _xparams.flags!=0x0 )
+        ae_state_set_flags(&_alglib_env_state, _xparams.flags);
     double result = alglib_impl::mlperrorn(const_cast<alglib_impl::multilayerperceptron*>(network.c_ptr()), const_cast<alglib_impl::ae_matrix*>(xy.c_ptr()), ssize, &_alglib_env_state);
     alglib_impl::ae_state_clear(&_alglib_env_state);
     return *(reinterpret_cast<double*>(&result));
@@ -2143,33 +2188,16 @@ double mlperrorn(const multilayerperceptron &network, const real_2d_array &xy, c
 /*************************************************************************
 Classification error of the neural network on dataset.
 
-
-FOR USERS OF COMMERCIAL EDITION:
-
-  ! Commercial version of ALGLIB includes two  important  improvements  of
-  ! this function:
-  ! * multicore support (C++ and C# computational cores)
-  ! * SSE support
+  ! COMMERCIAL EDITION OF ALGLIB:
   !
-  ! First improvement gives close-to-linear speedup on multicore  systems.
-  ! Second improvement gives constant speedup (2-3x depending on your CPU)
+  ! Commercial Edition of ALGLIB includes following important improvements
+  ! of this function:
+  ! * high-performance native backend with same C# interface (C# version)
+  ! * multithreading support (C++ and C# versions)
   !
-  ! In order to use multicore features you have to:
-  ! * use commercial version of ALGLIB
-  ! * call  this  function  with  "smp_"  prefix,  which  indicates  that
-  !   multicore code will be used (for multicore support)
-  !
-  ! In order to use SSE features you have to:
-  ! * use commercial version of ALGLIB on Intel processors
-  ! * use C++ computational core
-  !
-  ! This note is given for users of commercial edition; if  you  use  GPL
-  ! edition, you still will be able to call smp-version of this function,
-  ! but all computations will be done serially.
-  !
-  ! We recommend you to carefully read ALGLIB Reference  Manual,  section
-  ! called 'SMP support', before using parallel version of this function.
-
+  ! We recommend you to read 'Working with commercial version' section  of
+  ! ALGLIB Reference Manual in order to find out how to  use  performance-
+  ! related features provided by commercial edition of ALGLIB.
 
 INPUT PARAMETERS:
     Network     -   neural network;
@@ -2201,7 +2229,7 @@ dataset format is used:
   -- ALGLIB --
      Copyright 04.11.2007 by Bochkanov Sergey
 *************************************************************************/
-ae_int_t mlpclserror(const multilayerperceptron &network, const real_2d_array &xy, const ae_int_t npoints)
+ae_int_t mlpclserror(const multilayerperceptron &network, const real_2d_array &xy, const ae_int_t npoints, const xparams _xparams)
 {
     jmp_buf _break_jump;
     alglib_impl::ae_state _alglib_env_state;
@@ -2216,28 +2244,9 @@ ae_int_t mlpclserror(const multilayerperceptron &network, const real_2d_array &x
 #endif
     }
     ae_state_set_break_jump(&_alglib_env_state, &_break_jump);
+    if( _xparams.flags!=0x0 )
+        ae_state_set_flags(&_alglib_env_state, _xparams.flags);
     alglib_impl::ae_int_t result = alglib_impl::mlpclserror(const_cast<alglib_impl::multilayerperceptron*>(network.c_ptr()), const_cast<alglib_impl::ae_matrix*>(xy.c_ptr()), npoints, &_alglib_env_state);
-    alglib_impl::ae_state_clear(&_alglib_env_state);
-    return *(reinterpret_cast<ae_int_t*>(&result));
-}
-
-
-ae_int_t smp_mlpclserror(const multilayerperceptron &network, const real_2d_array &xy, const ae_int_t npoints)
-{
-    jmp_buf _break_jump;
-    alglib_impl::ae_state _alglib_env_state;
-    alglib_impl::ae_state_init(&_alglib_env_state);
-    if( setjmp(_break_jump) )
-    {
-#if !defined(AE_NO_EXCEPTIONS)
-        _ALGLIB_CPP_EXCEPTION(_alglib_env_state.error_msg);
-#else
-        _ALGLIB_SET_ERROR_FLAG(_alglib_env_state.error_msg);
-        return 0;
-#endif
-    }
-    ae_state_set_break_jump(&_alglib_env_state, &_break_jump);
-    alglib_impl::ae_int_t result = alglib_impl::_pexec_mlpclserror(const_cast<alglib_impl::multilayerperceptron*>(network.c_ptr()), const_cast<alglib_impl::ae_matrix*>(xy.c_ptr()), npoints, &_alglib_env_state);
     alglib_impl::ae_state_clear(&_alglib_env_state);
     return *(reinterpret_cast<ae_int_t*>(&result));
 }
@@ -2245,33 +2254,16 @@ ae_int_t smp_mlpclserror(const multilayerperceptron &network, const real_2d_arra
 /*************************************************************************
 Relative classification error on the test set.
 
-
-FOR USERS OF COMMERCIAL EDITION:
-
-  ! Commercial version of ALGLIB includes two  important  improvements  of
-  ! this function:
-  ! * multicore support (C++ and C# computational cores)
-  ! * SSE support
+  ! COMMERCIAL EDITION OF ALGLIB:
   !
-  ! First improvement gives close-to-linear speedup on multicore  systems.
-  ! Second improvement gives constant speedup (2-3x depending on your CPU)
+  ! Commercial Edition of ALGLIB includes following important improvements
+  ! of this function:
+  ! * high-performance native backend with same C# interface (C# version)
+  ! * multithreading support (C++ and C# versions)
   !
-  ! In order to use multicore features you have to:
-  ! * use commercial version of ALGLIB
-  ! * call  this  function  with  "smp_"  prefix,  which  indicates  that
-  !   multicore code will be used (for multicore support)
-  !
-  ! In order to use SSE features you have to:
-  ! * use commercial version of ALGLIB on Intel processors
-  ! * use C++ computational core
-  !
-  ! This note is given for users of commercial edition; if  you  use  GPL
-  ! edition, you still will be able to call smp-version of this function,
-  ! but all computations will be done serially.
-  !
-  ! We recommend you to carefully read ALGLIB Reference  Manual,  section
-  ! called 'SMP support', before using parallel version of this function.
-
+  ! We recommend you to read 'Working with commercial version' section  of
+  ! ALGLIB Reference Manual in order to find out how to  use  performance-
+  ! related features provided by commercial edition of ALGLIB.
 
 INPUT PARAMETERS:
     Network     -   neural network;
@@ -2304,7 +2296,7 @@ dataset format is used:
   -- ALGLIB --
      Copyright 25.12.2008 by Bochkanov Sergey
 *************************************************************************/
-double mlprelclserror(const multilayerperceptron &network, const real_2d_array &xy, const ae_int_t npoints)
+double mlprelclserror(const multilayerperceptron &network, const real_2d_array &xy, const ae_int_t npoints, const xparams _xparams)
 {
     jmp_buf _break_jump;
     alglib_impl::ae_state _alglib_env_state;
@@ -2319,28 +2311,9 @@ double mlprelclserror(const multilayerperceptron &network, const real_2d_array &
 #endif
     }
     ae_state_set_break_jump(&_alglib_env_state, &_break_jump);
+    if( _xparams.flags!=0x0 )
+        ae_state_set_flags(&_alglib_env_state, _xparams.flags);
     double result = alglib_impl::mlprelclserror(const_cast<alglib_impl::multilayerperceptron*>(network.c_ptr()), const_cast<alglib_impl::ae_matrix*>(xy.c_ptr()), npoints, &_alglib_env_state);
-    alglib_impl::ae_state_clear(&_alglib_env_state);
-    return *(reinterpret_cast<double*>(&result));
-}
-
-
-double smp_mlprelclserror(const multilayerperceptron &network, const real_2d_array &xy, const ae_int_t npoints)
-{
-    jmp_buf _break_jump;
-    alglib_impl::ae_state _alglib_env_state;
-    alglib_impl::ae_state_init(&_alglib_env_state);
-    if( setjmp(_break_jump) )
-    {
-#if !defined(AE_NO_EXCEPTIONS)
-        _ALGLIB_CPP_EXCEPTION(_alglib_env_state.error_msg);
-#else
-        _ALGLIB_SET_ERROR_FLAG(_alglib_env_state.error_msg);
-        return 0;
-#endif
-    }
-    ae_state_set_break_jump(&_alglib_env_state, &_break_jump);
-    double result = alglib_impl::_pexec_mlprelclserror(const_cast<alglib_impl::multilayerperceptron*>(network.c_ptr()), const_cast<alglib_impl::ae_matrix*>(xy.c_ptr()), npoints, &_alglib_env_state);
     alglib_impl::ae_state_clear(&_alglib_env_state);
     return *(reinterpret_cast<double*>(&result));
 }
@@ -2348,33 +2321,16 @@ double smp_mlprelclserror(const multilayerperceptron &network, const real_2d_arr
 /*************************************************************************
 Relative classification error on the test set given by sparse matrix.
 
-
-FOR USERS OF COMMERCIAL EDITION:
-
-  ! Commercial version of ALGLIB includes two  important  improvements  of
-  ! this function:
-  ! * multicore support (C++ and C# computational cores)
-  ! * SSE support
+  ! COMMERCIAL EDITION OF ALGLIB:
   !
-  ! First improvement gives close-to-linear speedup on multicore  systems.
-  ! Second improvement gives constant speedup (2-3x depending on your CPU)
+  ! Commercial Edition of ALGLIB includes following important improvements
+  ! of this function:
+  ! * high-performance native backend with same C# interface (C# version)
+  ! * multithreading support (C++ and C# versions)
   !
-  ! In order to use multicore features you have to:
-  ! * use commercial version of ALGLIB
-  ! * call  this  function  with  "smp_"  prefix,  which  indicates  that
-  !   multicore code will be used (for multicore support)
-  !
-  ! In order to use SSE features you have to:
-  ! * use commercial version of ALGLIB on Intel processors
-  ! * use C++ computational core
-  !
-  ! This note is given for users of commercial edition; if  you  use  GPL
-  ! edition, you still will be able to call smp-version of this function,
-  ! but all computations will be done serially.
-  !
-  ! We recommend you to carefully read ALGLIB Reference  Manual,  section
-  ! called 'SMP support', before using parallel version of this function.
-
+  ! We recommend you to read 'Working with commercial version' section  of
+  ! ALGLIB Reference Manual in order to find out how to  use  performance-
+  ! related features provided by commercial edition of ALGLIB.
 
 INPUT PARAMETERS:
     Network     -   neural network;
@@ -2408,7 +2364,7 @@ dataset format is used:
   -- ALGLIB --
      Copyright 09.08.2012 by Bochkanov Sergey
 *************************************************************************/
-double mlprelclserrorsparse(const multilayerperceptron &network, const sparsematrix &xy, const ae_int_t npoints)
+double mlprelclserrorsparse(const multilayerperceptron &network, const sparsematrix &xy, const ae_int_t npoints, const xparams _xparams)
 {
     jmp_buf _break_jump;
     alglib_impl::ae_state _alglib_env_state;
@@ -2423,28 +2379,9 @@ double mlprelclserrorsparse(const multilayerperceptron &network, const sparsemat
 #endif
     }
     ae_state_set_break_jump(&_alglib_env_state, &_break_jump);
+    if( _xparams.flags!=0x0 )
+        ae_state_set_flags(&_alglib_env_state, _xparams.flags);
     double result = alglib_impl::mlprelclserrorsparse(const_cast<alglib_impl::multilayerperceptron*>(network.c_ptr()), const_cast<alglib_impl::sparsematrix*>(xy.c_ptr()), npoints, &_alglib_env_state);
-    alglib_impl::ae_state_clear(&_alglib_env_state);
-    return *(reinterpret_cast<double*>(&result));
-}
-
-
-double smp_mlprelclserrorsparse(const multilayerperceptron &network, const sparsematrix &xy, const ae_int_t npoints)
-{
-    jmp_buf _break_jump;
-    alglib_impl::ae_state _alglib_env_state;
-    alglib_impl::ae_state_init(&_alglib_env_state);
-    if( setjmp(_break_jump) )
-    {
-#if !defined(AE_NO_EXCEPTIONS)
-        _ALGLIB_CPP_EXCEPTION(_alglib_env_state.error_msg);
-#else
-        _ALGLIB_SET_ERROR_FLAG(_alglib_env_state.error_msg);
-        return 0;
-#endif
-    }
-    ae_state_set_break_jump(&_alglib_env_state, &_break_jump);
-    double result = alglib_impl::_pexec_mlprelclserrorsparse(const_cast<alglib_impl::multilayerperceptron*>(network.c_ptr()), const_cast<alglib_impl::sparsematrix*>(xy.c_ptr()), npoints, &_alglib_env_state);
     alglib_impl::ae_state_clear(&_alglib_env_state);
     return *(reinterpret_cast<double*>(&result));
 }
@@ -2452,33 +2389,16 @@ double smp_mlprelclserrorsparse(const multilayerperceptron &network, const spars
 /*************************************************************************
 Average cross-entropy  (in bits  per element) on the test set.
 
-
-FOR USERS OF COMMERCIAL EDITION:
-
-  ! Commercial version of ALGLIB includes two  important  improvements  of
-  ! this function:
-  ! * multicore support (C++ and C# computational cores)
-  ! * SSE support
+  ! COMMERCIAL EDITION OF ALGLIB:
   !
-  ! First improvement gives close-to-linear speedup on multicore  systems.
-  ! Second improvement gives constant speedup (2-3x depending on your CPU)
+  ! Commercial Edition of ALGLIB includes following important improvements
+  ! of this function:
+  ! * high-performance native backend with same C# interface (C# version)
+  ! * multithreading support (C++ and C# versions)
   !
-  ! In order to use multicore features you have to:
-  ! * use commercial version of ALGLIB
-  ! * call  this  function  with  "smp_"  prefix,  which  indicates  that
-  !   multicore code will be used (for multicore support)
-  !
-  ! In order to use SSE features you have to:
-  ! * use commercial version of ALGLIB on Intel processors
-  ! * use C++ computational core
-  !
-  ! This note is given for users of commercial edition; if  you  use  GPL
-  ! edition, you still will be able to call smp-version of this function,
-  ! but all computations will be done serially.
-  !
-  ! We recommend you to carefully read ALGLIB Reference  Manual,  section
-  ! called 'SMP support', before using parallel version of this function.
-
+  ! We recommend you to read 'Working with commercial version' section  of
+  ! ALGLIB Reference Manual in order to find out how to  use  performance-
+  ! related features provided by commercial edition of ALGLIB.
 
 INPUT PARAMETERS:
     Network     -   neural network;
@@ -2511,7 +2431,7 @@ dataset format is used:
   -- ALGLIB --
      Copyright 08.01.2009 by Bochkanov Sergey
 *************************************************************************/
-double mlpavgce(const multilayerperceptron &network, const real_2d_array &xy, const ae_int_t npoints)
+double mlpavgce(const multilayerperceptron &network, const real_2d_array &xy, const ae_int_t npoints, const xparams _xparams)
 {
     jmp_buf _break_jump;
     alglib_impl::ae_state _alglib_env_state;
@@ -2526,28 +2446,9 @@ double mlpavgce(const multilayerperceptron &network, const real_2d_array &xy, co
 #endif
     }
     ae_state_set_break_jump(&_alglib_env_state, &_break_jump);
+    if( _xparams.flags!=0x0 )
+        ae_state_set_flags(&_alglib_env_state, _xparams.flags);
     double result = alglib_impl::mlpavgce(const_cast<alglib_impl::multilayerperceptron*>(network.c_ptr()), const_cast<alglib_impl::ae_matrix*>(xy.c_ptr()), npoints, &_alglib_env_state);
-    alglib_impl::ae_state_clear(&_alglib_env_state);
-    return *(reinterpret_cast<double*>(&result));
-}
-
-
-double smp_mlpavgce(const multilayerperceptron &network, const real_2d_array &xy, const ae_int_t npoints)
-{
-    jmp_buf _break_jump;
-    alglib_impl::ae_state _alglib_env_state;
-    alglib_impl::ae_state_init(&_alglib_env_state);
-    if( setjmp(_break_jump) )
-    {
-#if !defined(AE_NO_EXCEPTIONS)
-        _ALGLIB_CPP_EXCEPTION(_alglib_env_state.error_msg);
-#else
-        _ALGLIB_SET_ERROR_FLAG(_alglib_env_state.error_msg);
-        return 0;
-#endif
-    }
-    ae_state_set_break_jump(&_alglib_env_state, &_break_jump);
-    double result = alglib_impl::_pexec_mlpavgce(const_cast<alglib_impl::multilayerperceptron*>(network.c_ptr()), const_cast<alglib_impl::ae_matrix*>(xy.c_ptr()), npoints, &_alglib_env_state);
     alglib_impl::ae_state_clear(&_alglib_env_state);
     return *(reinterpret_cast<double*>(&result));
 }
@@ -2556,33 +2457,16 @@ double smp_mlpavgce(const multilayerperceptron &network, const real_2d_array &xy
 Average  cross-entropy  (in bits  per element)  on the  test set  given by
 sparse matrix.
 
-
-FOR USERS OF COMMERCIAL EDITION:
-
-  ! Commercial version of ALGLIB includes two  important  improvements  of
-  ! this function:
-  ! * multicore support (C++ and C# computational cores)
-  ! * SSE support
+  ! COMMERCIAL EDITION OF ALGLIB:
   !
-  ! First improvement gives close-to-linear speedup on multicore  systems.
-  ! Second improvement gives constant speedup (2-3x depending on your CPU)
+  ! Commercial Edition of ALGLIB includes following important improvements
+  ! of this function:
+  ! * high-performance native backend with same C# interface (C# version)
+  ! * multithreading support (C++ and C# versions)
   !
-  ! In order to use multicore features you have to:
-  ! * use commercial version of ALGLIB
-  ! * call  this  function  with  "smp_"  prefix,  which  indicates  that
-  !   multicore code will be used (for multicore support)
-  !
-  ! In order to use SSE features you have to:
-  ! * use commercial version of ALGLIB on Intel processors
-  ! * use C++ computational core
-  !
-  ! This note is given for users of commercial edition; if  you  use  GPL
-  ! edition, you still will be able to call smp-version of this function,
-  ! but all computations will be done serially.
-  !
-  ! We recommend you to carefully read ALGLIB Reference  Manual,  section
-  ! called 'SMP support', before using parallel version of this function.
-
+  ! We recommend you to read 'Working with commercial version' section  of
+  ! ALGLIB Reference Manual in order to find out how to  use  performance-
+  ! related features provided by commercial edition of ALGLIB.
 
 INPUT PARAMETERS:
     Network     -   neural network;
@@ -2619,7 +2503,7 @@ dataset format is used:
   -- ALGLIB --
      Copyright 9.08.2012 by Bochkanov Sergey
 *************************************************************************/
-double mlpavgcesparse(const multilayerperceptron &network, const sparsematrix &xy, const ae_int_t npoints)
+double mlpavgcesparse(const multilayerperceptron &network, const sparsematrix &xy, const ae_int_t npoints, const xparams _xparams)
 {
     jmp_buf _break_jump;
     alglib_impl::ae_state _alglib_env_state;
@@ -2634,28 +2518,9 @@ double mlpavgcesparse(const multilayerperceptron &network, const sparsematrix &x
 #endif
     }
     ae_state_set_break_jump(&_alglib_env_state, &_break_jump);
+    if( _xparams.flags!=0x0 )
+        ae_state_set_flags(&_alglib_env_state, _xparams.flags);
     double result = alglib_impl::mlpavgcesparse(const_cast<alglib_impl::multilayerperceptron*>(network.c_ptr()), const_cast<alglib_impl::sparsematrix*>(xy.c_ptr()), npoints, &_alglib_env_state);
-    alglib_impl::ae_state_clear(&_alglib_env_state);
-    return *(reinterpret_cast<double*>(&result));
-}
-
-
-double smp_mlpavgcesparse(const multilayerperceptron &network, const sparsematrix &xy, const ae_int_t npoints)
-{
-    jmp_buf _break_jump;
-    alglib_impl::ae_state _alglib_env_state;
-    alglib_impl::ae_state_init(&_alglib_env_state);
-    if( setjmp(_break_jump) )
-    {
-#if !defined(AE_NO_EXCEPTIONS)
-        _ALGLIB_CPP_EXCEPTION(_alglib_env_state.error_msg);
-#else
-        _ALGLIB_SET_ERROR_FLAG(_alglib_env_state.error_msg);
-        return 0;
-#endif
-    }
-    ae_state_set_break_jump(&_alglib_env_state, &_break_jump);
-    double result = alglib_impl::_pexec_mlpavgcesparse(const_cast<alglib_impl::multilayerperceptron*>(network.c_ptr()), const_cast<alglib_impl::sparsematrix*>(xy.c_ptr()), npoints, &_alglib_env_state);
     alglib_impl::ae_state_clear(&_alglib_env_state);
     return *(reinterpret_cast<double*>(&result));
 }
@@ -2663,33 +2528,16 @@ double smp_mlpavgcesparse(const multilayerperceptron &network, const sparsematri
 /*************************************************************************
 RMS error on the test set given.
 
-
-FOR USERS OF COMMERCIAL EDITION:
-
-  ! Commercial version of ALGLIB includes two  important  improvements  of
-  ! this function:
-  ! * multicore support (C++ and C# computational cores)
-  ! * SSE support
+  ! COMMERCIAL EDITION OF ALGLIB:
   !
-  ! First improvement gives close-to-linear speedup on multicore  systems.
-  ! Second improvement gives constant speedup (2-3x depending on your CPU)
+  ! Commercial Edition of ALGLIB includes following important improvements
+  ! of this function:
+  ! * high-performance native backend with same C# interface (C# version)
+  ! * multithreading support (C++ and C# versions)
   !
-  ! In order to use multicore features you have to:
-  ! * use commercial version of ALGLIB
-  ! * call  this  function  with  "smp_"  prefix,  which  indicates  that
-  !   multicore code will be used (for multicore support)
-  !
-  ! In order to use SSE features you have to:
-  ! * use commercial version of ALGLIB on Intel processors
-  ! * use C++ computational core
-  !
-  ! This note is given for users of commercial edition; if  you  use  GPL
-  ! edition, you still will be able to call smp-version of this function,
-  ! but all computations will be done serially.
-  !
-  ! We recommend you to carefully read ALGLIB Reference  Manual,  section
-  ! called 'SMP support', before using parallel version of this function.
-
+  ! We recommend you to read 'Working with commercial version' section  of
+  ! ALGLIB Reference Manual in order to find out how to  use  performance-
+  ! related features provided by commercial edition of ALGLIB.
 
 INPUT PARAMETERS:
     Network     -   neural network;
@@ -2723,7 +2571,7 @@ dataset format is used:
   -- ALGLIB --
      Copyright 04.11.2007 by Bochkanov Sergey
 *************************************************************************/
-double mlprmserror(const multilayerperceptron &network, const real_2d_array &xy, const ae_int_t npoints)
+double mlprmserror(const multilayerperceptron &network, const real_2d_array &xy, const ae_int_t npoints, const xparams _xparams)
 {
     jmp_buf _break_jump;
     alglib_impl::ae_state _alglib_env_state;
@@ -2738,28 +2586,9 @@ double mlprmserror(const multilayerperceptron &network, const real_2d_array &xy,
 #endif
     }
     ae_state_set_break_jump(&_alglib_env_state, &_break_jump);
+    if( _xparams.flags!=0x0 )
+        ae_state_set_flags(&_alglib_env_state, _xparams.flags);
     double result = alglib_impl::mlprmserror(const_cast<alglib_impl::multilayerperceptron*>(network.c_ptr()), const_cast<alglib_impl::ae_matrix*>(xy.c_ptr()), npoints, &_alglib_env_state);
-    alglib_impl::ae_state_clear(&_alglib_env_state);
-    return *(reinterpret_cast<double*>(&result));
-}
-
-
-double smp_mlprmserror(const multilayerperceptron &network, const real_2d_array &xy, const ae_int_t npoints)
-{
-    jmp_buf _break_jump;
-    alglib_impl::ae_state _alglib_env_state;
-    alglib_impl::ae_state_init(&_alglib_env_state);
-    if( setjmp(_break_jump) )
-    {
-#if !defined(AE_NO_EXCEPTIONS)
-        _ALGLIB_CPP_EXCEPTION(_alglib_env_state.error_msg);
-#else
-        _ALGLIB_SET_ERROR_FLAG(_alglib_env_state.error_msg);
-        return 0;
-#endif
-    }
-    ae_state_set_break_jump(&_alglib_env_state, &_break_jump);
-    double result = alglib_impl::_pexec_mlprmserror(const_cast<alglib_impl::multilayerperceptron*>(network.c_ptr()), const_cast<alglib_impl::ae_matrix*>(xy.c_ptr()), npoints, &_alglib_env_state);
     alglib_impl::ae_state_clear(&_alglib_env_state);
     return *(reinterpret_cast<double*>(&result));
 }
@@ -2767,33 +2596,16 @@ double smp_mlprmserror(const multilayerperceptron &network, const real_2d_array 
 /*************************************************************************
 RMS error on the test set given by sparse matrix.
 
-
-FOR USERS OF COMMERCIAL EDITION:
-
-  ! Commercial version of ALGLIB includes two  important  improvements  of
-  ! this function:
-  ! * multicore support (C++ and C# computational cores)
-  ! * SSE support
+  ! COMMERCIAL EDITION OF ALGLIB:
   !
-  ! First improvement gives close-to-linear speedup on multicore  systems.
-  ! Second improvement gives constant speedup (2-3x depending on your CPU)
+  ! Commercial Edition of ALGLIB includes following important improvements
+  ! of this function:
+  ! * high-performance native backend with same C# interface (C# version)
+  ! * multithreading support (C++ and C# versions)
   !
-  ! In order to use multicore features you have to:
-  ! * use commercial version of ALGLIB
-  ! * call  this  function  with  "smp_"  prefix,  which  indicates  that
-  !   multicore code will be used (for multicore support)
-  !
-  ! In order to use SSE features you have to:
-  ! * use commercial version of ALGLIB on Intel processors
-  ! * use C++ computational core
-  !
-  ! This note is given for users of commercial edition; if  you  use  GPL
-  ! edition, you still will be able to call smp-version of this function,
-  ! but all computations will be done serially.
-  !
-  ! We recommend you to carefully read ALGLIB Reference  Manual,  section
-  ! called 'SMP support', before using parallel version of this function.
-
+  ! We recommend you to read 'Working with commercial version' section  of
+  ! ALGLIB Reference Manual in order to find out how to  use  performance-
+  ! related features provided by commercial edition of ALGLIB.
 
 INPUT PARAMETERS:
     Network     -   neural network;
@@ -2831,7 +2643,7 @@ dataset format is used:
   -- ALGLIB --
      Copyright 09.08.2012 by Bochkanov Sergey
 *************************************************************************/
-double mlprmserrorsparse(const multilayerperceptron &network, const sparsematrix &xy, const ae_int_t npoints)
+double mlprmserrorsparse(const multilayerperceptron &network, const sparsematrix &xy, const ae_int_t npoints, const xparams _xparams)
 {
     jmp_buf _break_jump;
     alglib_impl::ae_state _alglib_env_state;
@@ -2846,28 +2658,9 @@ double mlprmserrorsparse(const multilayerperceptron &network, const sparsematrix
 #endif
     }
     ae_state_set_break_jump(&_alglib_env_state, &_break_jump);
+    if( _xparams.flags!=0x0 )
+        ae_state_set_flags(&_alglib_env_state, _xparams.flags);
     double result = alglib_impl::mlprmserrorsparse(const_cast<alglib_impl::multilayerperceptron*>(network.c_ptr()), const_cast<alglib_impl::sparsematrix*>(xy.c_ptr()), npoints, &_alglib_env_state);
-    alglib_impl::ae_state_clear(&_alglib_env_state);
-    return *(reinterpret_cast<double*>(&result));
-}
-
-
-double smp_mlprmserrorsparse(const multilayerperceptron &network, const sparsematrix &xy, const ae_int_t npoints)
-{
-    jmp_buf _break_jump;
-    alglib_impl::ae_state _alglib_env_state;
-    alglib_impl::ae_state_init(&_alglib_env_state);
-    if( setjmp(_break_jump) )
-    {
-#if !defined(AE_NO_EXCEPTIONS)
-        _ALGLIB_CPP_EXCEPTION(_alglib_env_state.error_msg);
-#else
-        _ALGLIB_SET_ERROR_FLAG(_alglib_env_state.error_msg);
-        return 0;
-#endif
-    }
-    ae_state_set_break_jump(&_alglib_env_state, &_break_jump);
-    double result = alglib_impl::_pexec_mlprmserrorsparse(const_cast<alglib_impl::multilayerperceptron*>(network.c_ptr()), const_cast<alglib_impl::sparsematrix*>(xy.c_ptr()), npoints, &_alglib_env_state);
     alglib_impl::ae_state_clear(&_alglib_env_state);
     return *(reinterpret_cast<double*>(&result));
 }
@@ -2875,33 +2668,16 @@ double smp_mlprmserrorsparse(const multilayerperceptron &network, const sparsema
 /*************************************************************************
 Average absolute error on the test set.
 
-
-FOR USERS OF COMMERCIAL EDITION:
-
-  ! Commercial version of ALGLIB includes two  important  improvements  of
-  ! this function:
-  ! * multicore support (C++ and C# computational cores)
-  ! * SSE support
+  ! COMMERCIAL EDITION OF ALGLIB:
   !
-  ! First improvement gives close-to-linear speedup on multicore  systems.
-  ! Second improvement gives constant speedup (2-3x depending on your CPU)
+  ! Commercial Edition of ALGLIB includes following important improvements
+  ! of this function:
+  ! * high-performance native backend with same C# interface (C# version)
+  ! * multithreading support (C++ and C# versions)
   !
-  ! In order to use multicore features you have to:
-  ! * use commercial version of ALGLIB
-  ! * call  this  function  with  "smp_"  prefix,  which  indicates  that
-  !   multicore code will be used (for multicore support)
-  !
-  ! In order to use SSE features you have to:
-  ! * use commercial version of ALGLIB on Intel processors
-  ! * use C++ computational core
-  !
-  ! This note is given for users of commercial edition; if  you  use  GPL
-  ! edition, you still will be able to call smp-version of this function,
-  ! but all computations will be done serially.
-  !
-  ! We recommend you to carefully read ALGLIB Reference  Manual,  section
-  ! called 'SMP support', before using parallel version of this function.
-
+  ! We recommend you to read 'Working with commercial version' section  of
+  ! ALGLIB Reference Manual in order to find out how to  use  performance-
+  ! related features provided by commercial edition of ALGLIB.
 
 INPUT PARAMETERS:
     Network     -   neural network;
@@ -2934,7 +2710,7 @@ dataset format is used:
   -- ALGLIB --
      Copyright 11.03.2008 by Bochkanov Sergey
 *************************************************************************/
-double mlpavgerror(const multilayerperceptron &network, const real_2d_array &xy, const ae_int_t npoints)
+double mlpavgerror(const multilayerperceptron &network, const real_2d_array &xy, const ae_int_t npoints, const xparams _xparams)
 {
     jmp_buf _break_jump;
     alglib_impl::ae_state _alglib_env_state;
@@ -2949,28 +2725,9 @@ double mlpavgerror(const multilayerperceptron &network, const real_2d_array &xy,
 #endif
     }
     ae_state_set_break_jump(&_alglib_env_state, &_break_jump);
+    if( _xparams.flags!=0x0 )
+        ae_state_set_flags(&_alglib_env_state, _xparams.flags);
     double result = alglib_impl::mlpavgerror(const_cast<alglib_impl::multilayerperceptron*>(network.c_ptr()), const_cast<alglib_impl::ae_matrix*>(xy.c_ptr()), npoints, &_alglib_env_state);
-    alglib_impl::ae_state_clear(&_alglib_env_state);
-    return *(reinterpret_cast<double*>(&result));
-}
-
-
-double smp_mlpavgerror(const multilayerperceptron &network, const real_2d_array &xy, const ae_int_t npoints)
-{
-    jmp_buf _break_jump;
-    alglib_impl::ae_state _alglib_env_state;
-    alglib_impl::ae_state_init(&_alglib_env_state);
-    if( setjmp(_break_jump) )
-    {
-#if !defined(AE_NO_EXCEPTIONS)
-        _ALGLIB_CPP_EXCEPTION(_alglib_env_state.error_msg);
-#else
-        _ALGLIB_SET_ERROR_FLAG(_alglib_env_state.error_msg);
-        return 0;
-#endif
-    }
-    ae_state_set_break_jump(&_alglib_env_state, &_break_jump);
-    double result = alglib_impl::_pexec_mlpavgerror(const_cast<alglib_impl::multilayerperceptron*>(network.c_ptr()), const_cast<alglib_impl::ae_matrix*>(xy.c_ptr()), npoints, &_alglib_env_state);
     alglib_impl::ae_state_clear(&_alglib_env_state);
     return *(reinterpret_cast<double*>(&result));
 }
@@ -2978,33 +2735,16 @@ double smp_mlpavgerror(const multilayerperceptron &network, const real_2d_array 
 /*************************************************************************
 Average absolute error on the test set given by sparse matrix.
 
-
-FOR USERS OF COMMERCIAL EDITION:
-
-  ! Commercial version of ALGLIB includes two  important  improvements  of
-  ! this function:
-  ! * multicore support (C++ and C# computational cores)
-  ! * SSE support
+  ! COMMERCIAL EDITION OF ALGLIB:
   !
-  ! First improvement gives close-to-linear speedup on multicore  systems.
-  ! Second improvement gives constant speedup (2-3x depending on your CPU)
+  ! Commercial Edition of ALGLIB includes following important improvements
+  ! of this function:
+  ! * high-performance native backend with same C# interface (C# version)
+  ! * multithreading support (C++ and C# versions)
   !
-  ! In order to use multicore features you have to:
-  ! * use commercial version of ALGLIB
-  ! * call  this  function  with  "smp_"  prefix,  which  indicates  that
-  !   multicore code will be used (for multicore support)
-  !
-  ! In order to use SSE features you have to:
-  ! * use commercial version of ALGLIB on Intel processors
-  ! * use C++ computational core
-  !
-  ! This note is given for users of commercial edition; if  you  use  GPL
-  ! edition, you still will be able to call smp-version of this function,
-  ! but all computations will be done serially.
-  !
-  ! We recommend you to carefully read ALGLIB Reference  Manual,  section
-  ! called 'SMP support', before using parallel version of this function.
-
+  ! We recommend you to read 'Working with commercial version' section  of
+  ! ALGLIB Reference Manual in order to find out how to  use  performance-
+  ! related features provided by commercial edition of ALGLIB.
 
 INPUT PARAMETERS:
     Network     -   neural network;
@@ -3041,7 +2781,7 @@ dataset format is used:
   -- ALGLIB --
      Copyright 09.08.2012 by Bochkanov Sergey
 *************************************************************************/
-double mlpavgerrorsparse(const multilayerperceptron &network, const sparsematrix &xy, const ae_int_t npoints)
+double mlpavgerrorsparse(const multilayerperceptron &network, const sparsematrix &xy, const ae_int_t npoints, const xparams _xparams)
 {
     jmp_buf _break_jump;
     alglib_impl::ae_state _alglib_env_state;
@@ -3056,28 +2796,9 @@ double mlpavgerrorsparse(const multilayerperceptron &network, const sparsematrix
 #endif
     }
     ae_state_set_break_jump(&_alglib_env_state, &_break_jump);
+    if( _xparams.flags!=0x0 )
+        ae_state_set_flags(&_alglib_env_state, _xparams.flags);
     double result = alglib_impl::mlpavgerrorsparse(const_cast<alglib_impl::multilayerperceptron*>(network.c_ptr()), const_cast<alglib_impl::sparsematrix*>(xy.c_ptr()), npoints, &_alglib_env_state);
-    alglib_impl::ae_state_clear(&_alglib_env_state);
-    return *(reinterpret_cast<double*>(&result));
-}
-
-
-double smp_mlpavgerrorsparse(const multilayerperceptron &network, const sparsematrix &xy, const ae_int_t npoints)
-{
-    jmp_buf _break_jump;
-    alglib_impl::ae_state _alglib_env_state;
-    alglib_impl::ae_state_init(&_alglib_env_state);
-    if( setjmp(_break_jump) )
-    {
-#if !defined(AE_NO_EXCEPTIONS)
-        _ALGLIB_CPP_EXCEPTION(_alglib_env_state.error_msg);
-#else
-        _ALGLIB_SET_ERROR_FLAG(_alglib_env_state.error_msg);
-        return 0;
-#endif
-    }
-    ae_state_set_break_jump(&_alglib_env_state, &_break_jump);
-    double result = alglib_impl::_pexec_mlpavgerrorsparse(const_cast<alglib_impl::multilayerperceptron*>(network.c_ptr()), const_cast<alglib_impl::sparsematrix*>(xy.c_ptr()), npoints, &_alglib_env_state);
     alglib_impl::ae_state_clear(&_alglib_env_state);
     return *(reinterpret_cast<double*>(&result));
 }
@@ -3085,33 +2806,16 @@ double smp_mlpavgerrorsparse(const multilayerperceptron &network, const sparsema
 /*************************************************************************
 Average relative error on the test set.
 
-
-FOR USERS OF COMMERCIAL EDITION:
-
-  ! Commercial version of ALGLIB includes two  important  improvements  of
-  ! this function:
-  ! * multicore support (C++ and C# computational cores)
-  ! * SSE support
+  ! COMMERCIAL EDITION OF ALGLIB:
   !
-  ! First improvement gives close-to-linear speedup on multicore  systems.
-  ! Second improvement gives constant speedup (2-3x depending on your CPU)
+  ! Commercial Edition of ALGLIB includes following important improvements
+  ! of this function:
+  ! * high-performance native backend with same C# interface (C# version)
+  ! * multithreading support (C++ and C# versions)
   !
-  ! In order to use multicore features you have to:
-  ! * use commercial version of ALGLIB
-  ! * call  this  function  with  "smp_"  prefix,  which  indicates  that
-  !   multicore code will be used (for multicore support)
-  !
-  ! In order to use SSE features you have to:
-  ! * use commercial version of ALGLIB on Intel processors
-  ! * use C++ computational core
-  !
-  ! This note is given for users of commercial edition; if  you  use  GPL
-  ! edition, you still will be able to call smp-version of this function,
-  ! but all computations will be done serially.
-  !
-  ! We recommend you to carefully read ALGLIB Reference  Manual,  section
-  ! called 'SMP support', before using parallel version of this function.
-
+  ! We recommend you to read 'Working with commercial version' section  of
+  ! ALGLIB Reference Manual in order to find out how to  use  performance-
+  ! related features provided by commercial edition of ALGLIB.
 
 INPUT PARAMETERS:
     Network     -   neural network;
@@ -3145,7 +2849,7 @@ dataset format is used:
   -- ALGLIB --
      Copyright 11.03.2008 by Bochkanov Sergey
 *************************************************************************/
-double mlpavgrelerror(const multilayerperceptron &network, const real_2d_array &xy, const ae_int_t npoints)
+double mlpavgrelerror(const multilayerperceptron &network, const real_2d_array &xy, const ae_int_t npoints, const xparams _xparams)
 {
     jmp_buf _break_jump;
     alglib_impl::ae_state _alglib_env_state;
@@ -3160,28 +2864,9 @@ double mlpavgrelerror(const multilayerperceptron &network, const real_2d_array &
 #endif
     }
     ae_state_set_break_jump(&_alglib_env_state, &_break_jump);
+    if( _xparams.flags!=0x0 )
+        ae_state_set_flags(&_alglib_env_state, _xparams.flags);
     double result = alglib_impl::mlpavgrelerror(const_cast<alglib_impl::multilayerperceptron*>(network.c_ptr()), const_cast<alglib_impl::ae_matrix*>(xy.c_ptr()), npoints, &_alglib_env_state);
-    alglib_impl::ae_state_clear(&_alglib_env_state);
-    return *(reinterpret_cast<double*>(&result));
-}
-
-
-double smp_mlpavgrelerror(const multilayerperceptron &network, const real_2d_array &xy, const ae_int_t npoints)
-{
-    jmp_buf _break_jump;
-    alglib_impl::ae_state _alglib_env_state;
-    alglib_impl::ae_state_init(&_alglib_env_state);
-    if( setjmp(_break_jump) )
-    {
-#if !defined(AE_NO_EXCEPTIONS)
-        _ALGLIB_CPP_EXCEPTION(_alglib_env_state.error_msg);
-#else
-        _ALGLIB_SET_ERROR_FLAG(_alglib_env_state.error_msg);
-        return 0;
-#endif
-    }
-    ae_state_set_break_jump(&_alglib_env_state, &_break_jump);
-    double result = alglib_impl::_pexec_mlpavgrelerror(const_cast<alglib_impl::multilayerperceptron*>(network.c_ptr()), const_cast<alglib_impl::ae_matrix*>(xy.c_ptr()), npoints, &_alglib_env_state);
     alglib_impl::ae_state_clear(&_alglib_env_state);
     return *(reinterpret_cast<double*>(&result));
 }
@@ -3189,33 +2874,16 @@ double smp_mlpavgrelerror(const multilayerperceptron &network, const real_2d_arr
 /*************************************************************************
 Average relative error on the test set given by sparse matrix.
 
-
-FOR USERS OF COMMERCIAL EDITION:
-
-  ! Commercial version of ALGLIB includes two  important  improvements  of
-  ! this function:
-  ! * multicore support (C++ and C# computational cores)
-  ! * SSE support
+  ! COMMERCIAL EDITION OF ALGLIB:
   !
-  ! First improvement gives close-to-linear speedup on multicore  systems.
-  ! Second improvement gives constant speedup (2-3x depending on your CPU)
+  ! Commercial Edition of ALGLIB includes following important improvements
+  ! of this function:
+  ! * high-performance native backend with same C# interface (C# version)
+  ! * multithreading support (C++ and C# versions)
   !
-  ! In order to use multicore features you have to:
-  ! * use commercial version of ALGLIB
-  ! * call  this  function  with  "smp_"  prefix,  which  indicates  that
-  !   multicore code will be used (for multicore support)
-  !
-  ! In order to use SSE features you have to:
-  ! * use commercial version of ALGLIB on Intel processors
-  ! * use C++ computational core
-  !
-  ! This note is given for users of commercial edition; if  you  use  GPL
-  ! edition, you still will be able to call smp-version of this function,
-  ! but all computations will be done serially.
-  !
-  ! We recommend you to carefully read ALGLIB Reference  Manual,  section
-  ! called 'SMP support', before using parallel version of this function.
-
+  ! We recommend you to read 'Working with commercial version' section  of
+  ! ALGLIB Reference Manual in order to find out how to  use  performance-
+  ! related features provided by commercial edition of ALGLIB.
 
 INPUT PARAMETERS:
     Network     -   neural network;
@@ -3253,7 +2921,7 @@ dataset format is used:
   -- ALGLIB --
      Copyright 09.08.2012 by Bochkanov Sergey
 *************************************************************************/
-double mlpavgrelerrorsparse(const multilayerperceptron &network, const sparsematrix &xy, const ae_int_t npoints)
+double mlpavgrelerrorsparse(const multilayerperceptron &network, const sparsematrix &xy, const ae_int_t npoints, const xparams _xparams)
 {
     jmp_buf _break_jump;
     alglib_impl::ae_state _alglib_env_state;
@@ -3268,28 +2936,9 @@ double mlpavgrelerrorsparse(const multilayerperceptron &network, const sparsemat
 #endif
     }
     ae_state_set_break_jump(&_alglib_env_state, &_break_jump);
+    if( _xparams.flags!=0x0 )
+        ae_state_set_flags(&_alglib_env_state, _xparams.flags);
     double result = alglib_impl::mlpavgrelerrorsparse(const_cast<alglib_impl::multilayerperceptron*>(network.c_ptr()), const_cast<alglib_impl::sparsematrix*>(xy.c_ptr()), npoints, &_alglib_env_state);
-    alglib_impl::ae_state_clear(&_alglib_env_state);
-    return *(reinterpret_cast<double*>(&result));
-}
-
-
-double smp_mlpavgrelerrorsparse(const multilayerperceptron &network, const sparsematrix &xy, const ae_int_t npoints)
-{
-    jmp_buf _break_jump;
-    alglib_impl::ae_state _alglib_env_state;
-    alglib_impl::ae_state_init(&_alglib_env_state);
-    if( setjmp(_break_jump) )
-    {
-#if !defined(AE_NO_EXCEPTIONS)
-        _ALGLIB_CPP_EXCEPTION(_alglib_env_state.error_msg);
-#else
-        _ALGLIB_SET_ERROR_FLAG(_alglib_env_state.error_msg);
-        return 0;
-#endif
-    }
-    ae_state_set_break_jump(&_alglib_env_state, &_break_jump);
-    double result = alglib_impl::_pexec_mlpavgrelerrorsparse(const_cast<alglib_impl::multilayerperceptron*>(network.c_ptr()), const_cast<alglib_impl::sparsematrix*>(xy.c_ptr()), npoints, &_alglib_env_state);
     alglib_impl::ae_state_clear(&_alglib_env_state);
     return *(reinterpret_cast<double*>(&result));
 }
@@ -3313,7 +2962,7 @@ OUTPUT PARAMETERS:
   -- ALGLIB --
      Copyright 04.11.2007 by Bochkanov Sergey
 *************************************************************************/
-void mlpgrad(const multilayerperceptron &network, const real_1d_array &x, const real_1d_array &desiredy, double &e, real_1d_array &grad)
+void mlpgrad(const multilayerperceptron &network, const real_1d_array &x, const real_1d_array &desiredy, double &e, real_1d_array &grad, const xparams _xparams)
 {
     jmp_buf _break_jump;
     alglib_impl::ae_state _alglib_env_state;
@@ -3328,6 +2977,8 @@ void mlpgrad(const multilayerperceptron &network, const real_1d_array &x, const 
 #endif
     }
     ae_state_set_break_jump(&_alglib_env_state, &_break_jump);
+    if( _xparams.flags!=0x0 )
+        ae_state_set_flags(&_alglib_env_state, _xparams.flags);
     alglib_impl::mlpgrad(const_cast<alglib_impl::multilayerperceptron*>(network.c_ptr()), const_cast<alglib_impl::ae_vector*>(x.c_ptr()), const_cast<alglib_impl::ae_vector*>(desiredy.c_ptr()), &e, const_cast<alglib_impl::ae_vector*>(grad.c_ptr()), &_alglib_env_state);
     alglib_impl::ae_state_clear(&_alglib_env_state);
     return;
@@ -3353,7 +3004,7 @@ OUTPUT PARAMETERS:
   -- ALGLIB --
      Copyright 04.11.2007 by Bochkanov Sergey
 *************************************************************************/
-void mlpgradn(const multilayerperceptron &network, const real_1d_array &x, const real_1d_array &desiredy, double &e, real_1d_array &grad)
+void mlpgradn(const multilayerperceptron &network, const real_1d_array &x, const real_1d_array &desiredy, double &e, real_1d_array &grad, const xparams _xparams)
 {
     jmp_buf _break_jump;
     alglib_impl::ae_state _alglib_env_state;
@@ -3368,6 +3019,8 @@ void mlpgradn(const multilayerperceptron &network, const real_1d_array &x, const
 #endif
     }
     ae_state_set_break_jump(&_alglib_env_state, &_break_jump);
+    if( _xparams.flags!=0x0 )
+        ae_state_set_flags(&_alglib_env_state, _xparams.flags);
     alglib_impl::mlpgradn(const_cast<alglib_impl::multilayerperceptron*>(network.c_ptr()), const_cast<alglib_impl::ae_vector*>(x.c_ptr()), const_cast<alglib_impl::ae_vector*>(desiredy.c_ptr()), &e, const_cast<alglib_impl::ae_vector*>(grad.c_ptr()), &_alglib_env_state);
     alglib_impl::ae_state_clear(&_alglib_env_state);
     return;
@@ -3376,33 +3029,16 @@ void mlpgradn(const multilayerperceptron &network, const real_1d_array &x, const
 /*************************************************************************
 Batch gradient calculation for a set of inputs/outputs
 
-
-FOR USERS OF COMMERCIAL EDITION:
-
-  ! Commercial version of ALGLIB includes two  important  improvements  of
-  ! this function:
-  ! * multicore support (C++ and C# computational cores)
-  ! * SSE support
+  ! COMMERCIAL EDITION OF ALGLIB:
   !
-  ! First improvement gives close-to-linear speedup on multicore  systems.
-  ! Second improvement gives constant speedup (2-3x depending on your CPU)
+  ! Commercial Edition of ALGLIB includes following important improvements
+  ! of this function:
+  ! * high-performance native backend with same C# interface (C# version)
+  ! * multithreading support (C++ and C# versions)
   !
-  ! In order to use multicore features you have to:
-  ! * use commercial version of ALGLIB
-  ! * call  this  function  with  "smp_"  prefix,  which  indicates  that
-  !   multicore code will be used (for multicore support)
-  !
-  ! In order to use SSE features you have to:
-  ! * use commercial version of ALGLIB on Intel processors
-  ! * use C++ computational core
-  !
-  ! This note is given for users of commercial edition; if  you  use  GPL
-  ! edition, you still will be able to call smp-version of this function,
-  ! but all computations will be done serially.
-  !
-  ! We recommend you to carefully read ALGLIB Reference  Manual,  section
-  ! called 'SMP support', before using parallel version of this function.
-
+  ! We recommend you to read 'Working with commercial version' section  of
+  ! ALGLIB Reference Manual in order to find out how to  use  performance-
+  ! related features provided by commercial edition of ALGLIB.
 
 INPUT PARAMETERS:
     Network -   network initialized with one of the network creation funcs
@@ -3425,7 +3061,7 @@ OUTPUT PARAMETERS:
   -- ALGLIB --
      Copyright 04.11.2007 by Bochkanov Sergey
 *************************************************************************/
-void mlpgradbatch(const multilayerperceptron &network, const real_2d_array &xy, const ae_int_t ssize, double &e, real_1d_array &grad)
+void mlpgradbatch(const multilayerperceptron &network, const real_2d_array &xy, const ae_int_t ssize, double &e, real_1d_array &grad, const xparams _xparams)
 {
     jmp_buf _break_jump;
     alglib_impl::ae_state _alglib_env_state;
@@ -3440,28 +3076,9 @@ void mlpgradbatch(const multilayerperceptron &network, const real_2d_array &xy, 
 #endif
     }
     ae_state_set_break_jump(&_alglib_env_state, &_break_jump);
+    if( _xparams.flags!=0x0 )
+        ae_state_set_flags(&_alglib_env_state, _xparams.flags);
     alglib_impl::mlpgradbatch(const_cast<alglib_impl::multilayerperceptron*>(network.c_ptr()), const_cast<alglib_impl::ae_matrix*>(xy.c_ptr()), ssize, &e, const_cast<alglib_impl::ae_vector*>(grad.c_ptr()), &_alglib_env_state);
-    alglib_impl::ae_state_clear(&_alglib_env_state);
-    return;
-}
-
-
-void smp_mlpgradbatch(const multilayerperceptron &network, const real_2d_array &xy, const ae_int_t ssize, double &e, real_1d_array &grad)
-{
-    jmp_buf _break_jump;
-    alglib_impl::ae_state _alglib_env_state;
-    alglib_impl::ae_state_init(&_alglib_env_state);
-    if( setjmp(_break_jump) )
-    {
-#if !defined(AE_NO_EXCEPTIONS)
-        _ALGLIB_CPP_EXCEPTION(_alglib_env_state.error_msg);
-#else
-        _ALGLIB_SET_ERROR_FLAG(_alglib_env_state.error_msg);
-        return;
-#endif
-    }
-    ae_state_set_break_jump(&_alglib_env_state, &_break_jump);
-    alglib_impl::_pexec_mlpgradbatch(const_cast<alglib_impl::multilayerperceptron*>(network.c_ptr()), const_cast<alglib_impl::ae_matrix*>(xy.c_ptr()), ssize, &e, const_cast<alglib_impl::ae_vector*>(grad.c_ptr()), &_alglib_env_state);
     alglib_impl::ae_state_clear(&_alglib_env_state);
     return;
 }
@@ -3470,33 +3087,16 @@ void smp_mlpgradbatch(const multilayerperceptron &network, const real_2d_array &
 Batch gradient calculation for a set  of inputs/outputs  given  by  sparse
 matrices
 
-
-FOR USERS OF COMMERCIAL EDITION:
-
-  ! Commercial version of ALGLIB includes two  important  improvements  of
-  ! this function:
-  ! * multicore support (C++ and C# computational cores)
-  ! * SSE support
+  ! COMMERCIAL EDITION OF ALGLIB:
   !
-  ! First improvement gives close-to-linear speedup on multicore  systems.
-  ! Second improvement gives constant speedup (2-3x depending on your CPU)
+  ! Commercial Edition of ALGLIB includes following important improvements
+  ! of this function:
+  ! * high-performance native backend with same C# interface (C# version)
+  ! * multithreading support (C++ and C# versions)
   !
-  ! In order to use multicore features you have to:
-  ! * use commercial version of ALGLIB
-  ! * call  this  function  with  "smp_"  prefix,  which  indicates  that
-  !   multicore code will be used (for multicore support)
-  !
-  ! In order to use SSE features you have to:
-  ! * use commercial version of ALGLIB on Intel processors
-  ! * use C++ computational core
-  !
-  ! This note is given for users of commercial edition; if  you  use  GPL
-  ! edition, you still will be able to call smp-version of this function,
-  ! but all computations will be done serially.
-  !
-  ! We recommend you to carefully read ALGLIB Reference  Manual,  section
-  ! called 'SMP support', before using parallel version of this function.
-
+  ! We recommend you to read 'Working with commercial version' section  of
+  ! ALGLIB Reference Manual in order to find out how to  use  performance-
+  ! related features provided by commercial edition of ALGLIB.
 
 INPUT PARAMETERS:
     Network -   network initialized with one of the network creation funcs
@@ -3520,7 +3120,7 @@ OUTPUT PARAMETERS:
   -- ALGLIB --
      Copyright 26.07.2012 by Bochkanov Sergey
 *************************************************************************/
-void mlpgradbatchsparse(const multilayerperceptron &network, const sparsematrix &xy, const ae_int_t ssize, double &e, real_1d_array &grad)
+void mlpgradbatchsparse(const multilayerperceptron &network, const sparsematrix &xy, const ae_int_t ssize, double &e, real_1d_array &grad, const xparams _xparams)
 {
     jmp_buf _break_jump;
     alglib_impl::ae_state _alglib_env_state;
@@ -3535,28 +3135,9 @@ void mlpgradbatchsparse(const multilayerperceptron &network, const sparsematrix 
 #endif
     }
     ae_state_set_break_jump(&_alglib_env_state, &_break_jump);
+    if( _xparams.flags!=0x0 )
+        ae_state_set_flags(&_alglib_env_state, _xparams.flags);
     alglib_impl::mlpgradbatchsparse(const_cast<alglib_impl::multilayerperceptron*>(network.c_ptr()), const_cast<alglib_impl::sparsematrix*>(xy.c_ptr()), ssize, &e, const_cast<alglib_impl::ae_vector*>(grad.c_ptr()), &_alglib_env_state);
-    alglib_impl::ae_state_clear(&_alglib_env_state);
-    return;
-}
-
-
-void smp_mlpgradbatchsparse(const multilayerperceptron &network, const sparsematrix &xy, const ae_int_t ssize, double &e, real_1d_array &grad)
-{
-    jmp_buf _break_jump;
-    alglib_impl::ae_state _alglib_env_state;
-    alglib_impl::ae_state_init(&_alglib_env_state);
-    if( setjmp(_break_jump) )
-    {
-#if !defined(AE_NO_EXCEPTIONS)
-        _ALGLIB_CPP_EXCEPTION(_alglib_env_state.error_msg);
-#else
-        _ALGLIB_SET_ERROR_FLAG(_alglib_env_state.error_msg);
-        return;
-#endif
-    }
-    ae_state_set_break_jump(&_alglib_env_state, &_break_jump);
-    alglib_impl::_pexec_mlpgradbatchsparse(const_cast<alglib_impl::multilayerperceptron*>(network.c_ptr()), const_cast<alglib_impl::sparsematrix*>(xy.c_ptr()), ssize, &e, const_cast<alglib_impl::ae_vector*>(grad.c_ptr()), &_alglib_env_state);
     alglib_impl::ae_state_clear(&_alglib_env_state);
     return;
 }
@@ -3564,33 +3145,16 @@ void smp_mlpgradbatchsparse(const multilayerperceptron &network, const sparsemat
 /*************************************************************************
 Batch gradient calculation for a subset of dataset
 
-
-FOR USERS OF COMMERCIAL EDITION:
-
-  ! Commercial version of ALGLIB includes two  important  improvements  of
-  ! this function:
-  ! * multicore support (C++ and C# computational cores)
-  ! * SSE support
+  ! COMMERCIAL EDITION OF ALGLIB:
   !
-  ! First improvement gives close-to-linear speedup on multicore  systems.
-  ! Second improvement gives constant speedup (2-3x depending on your CPU)
+  ! Commercial Edition of ALGLIB includes following important improvements
+  ! of this function:
+  ! * high-performance native backend with same C# interface (C# version)
+  ! * multithreading support (C++ and C# versions)
   !
-  ! In order to use multicore features you have to:
-  ! * use commercial version of ALGLIB
-  ! * call  this  function  with  "smp_"  prefix,  which  indicates  that
-  !   multicore code will be used (for multicore support)
-  !
-  ! In order to use SSE features you have to:
-  ! * use commercial version of ALGLIB on Intel processors
-  ! * use C++ computational core
-  !
-  ! This note is given for users of commercial edition; if  you  use  GPL
-  ! edition, you still will be able to call smp-version of this function,
-  ! but all computations will be done serially.
-  !
-  ! We recommend you to carefully read ALGLIB Reference  Manual,  section
-  ! called 'SMP support', before using parallel version of this function.
-
+  ! We recommend you to read 'Working with commercial version' section  of
+  ! ALGLIB Reference Manual in order to find out how to  use  performance-
+  ! related features provided by commercial edition of ALGLIB.
 
 INPUT PARAMETERS:
     Network -   network initialized with one of the network creation funcs
@@ -3627,7 +3191,7 @@ OUTPUT PARAMETERS:
   -- ALGLIB --
      Copyright 26.07.2012 by Bochkanov Sergey
 *************************************************************************/
-void mlpgradbatchsubset(const multilayerperceptron &network, const real_2d_array &xy, const ae_int_t setsize, const integer_1d_array &idx, const ae_int_t subsetsize, double &e, real_1d_array &grad)
+void mlpgradbatchsubset(const multilayerperceptron &network, const real_2d_array &xy, const ae_int_t setsize, const integer_1d_array &idx, const ae_int_t subsetsize, double &e, real_1d_array &grad, const xparams _xparams)
 {
     jmp_buf _break_jump;
     alglib_impl::ae_state _alglib_env_state;
@@ -3642,28 +3206,9 @@ void mlpgradbatchsubset(const multilayerperceptron &network, const real_2d_array
 #endif
     }
     ae_state_set_break_jump(&_alglib_env_state, &_break_jump);
+    if( _xparams.flags!=0x0 )
+        ae_state_set_flags(&_alglib_env_state, _xparams.flags);
     alglib_impl::mlpgradbatchsubset(const_cast<alglib_impl::multilayerperceptron*>(network.c_ptr()), const_cast<alglib_impl::ae_matrix*>(xy.c_ptr()), setsize, const_cast<alglib_impl::ae_vector*>(idx.c_ptr()), subsetsize, &e, const_cast<alglib_impl::ae_vector*>(grad.c_ptr()), &_alglib_env_state);
-    alglib_impl::ae_state_clear(&_alglib_env_state);
-    return;
-}
-
-
-void smp_mlpgradbatchsubset(const multilayerperceptron &network, const real_2d_array &xy, const ae_int_t setsize, const integer_1d_array &idx, const ae_int_t subsetsize, double &e, real_1d_array &grad)
-{
-    jmp_buf _break_jump;
-    alglib_impl::ae_state _alglib_env_state;
-    alglib_impl::ae_state_init(&_alglib_env_state);
-    if( setjmp(_break_jump) )
-    {
-#if !defined(AE_NO_EXCEPTIONS)
-        _ALGLIB_CPP_EXCEPTION(_alglib_env_state.error_msg);
-#else
-        _ALGLIB_SET_ERROR_FLAG(_alglib_env_state.error_msg);
-        return;
-#endif
-    }
-    ae_state_set_break_jump(&_alglib_env_state, &_break_jump);
-    alglib_impl::_pexec_mlpgradbatchsubset(const_cast<alglib_impl::multilayerperceptron*>(network.c_ptr()), const_cast<alglib_impl::ae_matrix*>(xy.c_ptr()), setsize, const_cast<alglib_impl::ae_vector*>(idx.c_ptr()), subsetsize, &e, const_cast<alglib_impl::ae_vector*>(grad.c_ptr()), &_alglib_env_state);
     alglib_impl::ae_state_clear(&_alglib_env_state);
     return;
 }
@@ -3672,33 +3217,16 @@ void smp_mlpgradbatchsubset(const multilayerperceptron &network, const real_2d_a
 Batch gradient calculation for a set of inputs/outputs  for  a  subset  of
 dataset given by set of indexes.
 
-
-FOR USERS OF COMMERCIAL EDITION:
-
-  ! Commercial version of ALGLIB includes two  important  improvements  of
-  ! this function:
-  ! * multicore support (C++ and C# computational cores)
-  ! * SSE support
+  ! COMMERCIAL EDITION OF ALGLIB:
   !
-  ! First improvement gives close-to-linear speedup on multicore  systems.
-  ! Second improvement gives constant speedup (2-3x depending on your CPU)
+  ! Commercial Edition of ALGLIB includes following important improvements
+  ! of this function:
+  ! * high-performance native backend with same C# interface (C# version)
+  ! * multithreading support (C++ and C# versions)
   !
-  ! In order to use multicore features you have to:
-  ! * use commercial version of ALGLIB
-  ! * call  this  function  with  "smp_"  prefix,  which  indicates  that
-  !   multicore code will be used (for multicore support)
-  !
-  ! In order to use SSE features you have to:
-  ! * use commercial version of ALGLIB on Intel processors
-  ! * use C++ computational core
-  !
-  ! This note is given for users of commercial edition; if  you  use  GPL
-  ! edition, you still will be able to call smp-version of this function,
-  ! but all computations will be done serially.
-  !
-  ! We recommend you to carefully read ALGLIB Reference  Manual,  section
-  ! called 'SMP support', before using parallel version of this function.
-
+  ! We recommend you to read 'Working with commercial version' section  of
+  ! ALGLIB Reference Manual in order to find out how to  use  performance-
+  ! related features provided by commercial edition of ALGLIB.
 
 INPUT PARAMETERS:
     Network -   network initialized with one of the network creation funcs
@@ -3739,7 +3267,7 @@ NOTE: when  SubsetSize<0 is used full dataset by call MLPGradBatchSparse
   -- ALGLIB --
      Copyright 26.07.2012 by Bochkanov Sergey
 *************************************************************************/
-void mlpgradbatchsparsesubset(const multilayerperceptron &network, const sparsematrix &xy, const ae_int_t setsize, const integer_1d_array &idx, const ae_int_t subsetsize, double &e, real_1d_array &grad)
+void mlpgradbatchsparsesubset(const multilayerperceptron &network, const sparsematrix &xy, const ae_int_t setsize, const integer_1d_array &idx, const ae_int_t subsetsize, double &e, real_1d_array &grad, const xparams _xparams)
 {
     jmp_buf _break_jump;
     alglib_impl::ae_state _alglib_env_state;
@@ -3754,28 +3282,9 @@ void mlpgradbatchsparsesubset(const multilayerperceptron &network, const sparsem
 #endif
     }
     ae_state_set_break_jump(&_alglib_env_state, &_break_jump);
+    if( _xparams.flags!=0x0 )
+        ae_state_set_flags(&_alglib_env_state, _xparams.flags);
     alglib_impl::mlpgradbatchsparsesubset(const_cast<alglib_impl::multilayerperceptron*>(network.c_ptr()), const_cast<alglib_impl::sparsematrix*>(xy.c_ptr()), setsize, const_cast<alglib_impl::ae_vector*>(idx.c_ptr()), subsetsize, &e, const_cast<alglib_impl::ae_vector*>(grad.c_ptr()), &_alglib_env_state);
-    alglib_impl::ae_state_clear(&_alglib_env_state);
-    return;
-}
-
-
-void smp_mlpgradbatchsparsesubset(const multilayerperceptron &network, const sparsematrix &xy, const ae_int_t setsize, const integer_1d_array &idx, const ae_int_t subsetsize, double &e, real_1d_array &grad)
-{
-    jmp_buf _break_jump;
-    alglib_impl::ae_state _alglib_env_state;
-    alglib_impl::ae_state_init(&_alglib_env_state);
-    if( setjmp(_break_jump) )
-    {
-#if !defined(AE_NO_EXCEPTIONS)
-        _ALGLIB_CPP_EXCEPTION(_alglib_env_state.error_msg);
-#else
-        _ALGLIB_SET_ERROR_FLAG(_alglib_env_state.error_msg);
-        return;
-#endif
-    }
-    ae_state_set_break_jump(&_alglib_env_state, &_break_jump);
-    alglib_impl::_pexec_mlpgradbatchsparsesubset(const_cast<alglib_impl::multilayerperceptron*>(network.c_ptr()), const_cast<alglib_impl::sparsematrix*>(xy.c_ptr()), setsize, const_cast<alglib_impl::ae_vector*>(idx.c_ptr()), subsetsize, &e, const_cast<alglib_impl::ae_vector*>(grad.c_ptr()), &_alglib_env_state);
     alglib_impl::ae_state_clear(&_alglib_env_state);
     return;
 }
@@ -3803,7 +3312,7 @@ OUTPUT PARAMETERS:
   -- ALGLIB --
      Copyright 04.11.2007 by Bochkanov Sergey
 *************************************************************************/
-void mlpgradnbatch(const multilayerperceptron &network, const real_2d_array &xy, const ae_int_t ssize, double &e, real_1d_array &grad)
+void mlpgradnbatch(const multilayerperceptron &network, const real_2d_array &xy, const ae_int_t ssize, double &e, real_1d_array &grad, const xparams _xparams)
 {
     jmp_buf _break_jump;
     alglib_impl::ae_state _alglib_env_state;
@@ -3818,6 +3327,8 @@ void mlpgradnbatch(const multilayerperceptron &network, const real_2d_array &xy,
 #endif
     }
     ae_state_set_break_jump(&_alglib_env_state, &_break_jump);
+    if( _xparams.flags!=0x0 )
+        ae_state_set_flags(&_alglib_env_state, _xparams.flags);
     alglib_impl::mlpgradnbatch(const_cast<alglib_impl::multilayerperceptron*>(network.c_ptr()), const_cast<alglib_impl::ae_matrix*>(xy.c_ptr()), ssize, &e, const_cast<alglib_impl::ae_vector*>(grad.c_ptr()), &_alglib_env_state);
     alglib_impl::ae_state_clear(&_alglib_env_state);
     return;
@@ -3835,7 +3346,7 @@ Internal subroutine.
      B. A. Pearlmutter,
      Neural Computation, 1994.
 *************************************************************************/
-void mlphessiannbatch(const multilayerperceptron &network, const real_2d_array &xy, const ae_int_t ssize, double &e, real_1d_array &grad, real_2d_array &h)
+void mlphessiannbatch(const multilayerperceptron &network, const real_2d_array &xy, const ae_int_t ssize, double &e, real_1d_array &grad, real_2d_array &h, const xparams _xparams)
 {
     jmp_buf _break_jump;
     alglib_impl::ae_state _alglib_env_state;
@@ -3850,6 +3361,8 @@ void mlphessiannbatch(const multilayerperceptron &network, const real_2d_array &
 #endif
     }
     ae_state_set_break_jump(&_alglib_env_state, &_break_jump);
+    if( _xparams.flags!=0x0 )
+        ae_state_set_flags(&_alglib_env_state, _xparams.flags);
     alglib_impl::mlphessiannbatch(const_cast<alglib_impl::multilayerperceptron*>(network.c_ptr()), const_cast<alglib_impl::ae_matrix*>(xy.c_ptr()), ssize, &e, const_cast<alglib_impl::ae_vector*>(grad.c_ptr()), const_cast<alglib_impl::ae_matrix*>(h.c_ptr()), &_alglib_env_state);
     alglib_impl::ae_state_clear(&_alglib_env_state);
     return;
@@ -3867,7 +3380,7 @@ Internal subroutine.
      B. A. Pearlmutter,
      Neural Computation, 1994.
 *************************************************************************/
-void mlphessianbatch(const multilayerperceptron &network, const real_2d_array &xy, const ae_int_t ssize, double &e, real_1d_array &grad, real_2d_array &h)
+void mlphessianbatch(const multilayerperceptron &network, const real_2d_array &xy, const ae_int_t ssize, double &e, real_1d_array &grad, real_2d_array &h, const xparams _xparams)
 {
     jmp_buf _break_jump;
     alglib_impl::ae_state _alglib_env_state;
@@ -3882,6 +3395,8 @@ void mlphessianbatch(const multilayerperceptron &network, const real_2d_array &x
 #endif
     }
     ae_state_set_break_jump(&_alglib_env_state, &_break_jump);
+    if( _xparams.flags!=0x0 )
+        ae_state_set_flags(&_alglib_env_state, _xparams.flags);
     alglib_impl::mlphessianbatch(const_cast<alglib_impl::multilayerperceptron*>(network.c_ptr()), const_cast<alglib_impl::ae_matrix*>(xy.c_ptr()), ssize, &e, const_cast<alglib_impl::ae_vector*>(grad.c_ptr()), const_cast<alglib_impl::ae_matrix*>(h.c_ptr()), &_alglib_env_state);
     alglib_impl::ae_state_clear(&_alglib_env_state);
     return;
@@ -3890,32 +3405,16 @@ void mlphessianbatch(const multilayerperceptron &network, const real_2d_array &x
 /*************************************************************************
 Calculation of all types of errors on subset of dataset.
 
-FOR USERS OF COMMERCIAL EDITION:
-
-  ! Commercial version of ALGLIB includes two  important  improvements  of
-  ! this function:
-  ! * multicore support (C++ and C# computational cores)
-  ! * SSE support
+  ! COMMERCIAL EDITION OF ALGLIB:
   !
-  ! First improvement gives close-to-linear speedup on multicore  systems.
-  ! Second improvement gives constant speedup (2-3x depending on your CPU)
+  ! Commercial Edition of ALGLIB includes following important improvements
+  ! of this function:
+  ! * high-performance native backend with same C# interface (C# version)
+  ! * multithreading support (C++ and C# versions)
   !
-  ! In order to use multicore features you have to:
-  ! * use commercial version of ALGLIB
-  ! * call  this  function  with  "smp_"  prefix,  which  indicates  that
-  !   multicore code will be used (for multicore support)
-  !
-  ! In order to use SSE features you have to:
-  ! * use commercial version of ALGLIB on Intel processors
-  ! * use C++ computational core
-  !
-  ! This note is given for users of commercial edition; if  you  use  GPL
-  ! edition, you still will be able to call smp-version of this function,
-  ! but all computations will be done serially.
-  !
-  ! We recommend you to carefully read ALGLIB Reference  Manual,  section
-  ! called 'SMP support', before using parallel version of this function.
-
+  ! We recommend you to read 'Working with commercial version' section  of
+  ! ALGLIB Reference Manual in order to find out how to  use  performance-
+  ! related features provided by commercial edition of ALGLIB.
 
 INPUT PARAMETERS:
     Network -   network initialized with one of the network creation funcs
@@ -3937,7 +3436,7 @@ OUTPUT PARAMETERS:
   -- ALGLIB --
      Copyright 04.09.2012 by Bochkanov Sergey
 *************************************************************************/
-void mlpallerrorssubset(const multilayerperceptron &network, const real_2d_array &xy, const ae_int_t setsize, const integer_1d_array &subset, const ae_int_t subsetsize, modelerrors &rep)
+void mlpallerrorssubset(const multilayerperceptron &network, const real_2d_array &xy, const ae_int_t setsize, const integer_1d_array &subset, const ae_int_t subsetsize, modelerrors &rep, const xparams _xparams)
 {
     jmp_buf _break_jump;
     alglib_impl::ae_state _alglib_env_state;
@@ -3952,28 +3451,9 @@ void mlpallerrorssubset(const multilayerperceptron &network, const real_2d_array
 #endif
     }
     ae_state_set_break_jump(&_alglib_env_state, &_break_jump);
+    if( _xparams.flags!=0x0 )
+        ae_state_set_flags(&_alglib_env_state, _xparams.flags);
     alglib_impl::mlpallerrorssubset(const_cast<alglib_impl::multilayerperceptron*>(network.c_ptr()), const_cast<alglib_impl::ae_matrix*>(xy.c_ptr()), setsize, const_cast<alglib_impl::ae_vector*>(subset.c_ptr()), subsetsize, const_cast<alglib_impl::modelerrors*>(rep.c_ptr()), &_alglib_env_state);
-    alglib_impl::ae_state_clear(&_alglib_env_state);
-    return;
-}
-
-
-void smp_mlpallerrorssubset(const multilayerperceptron &network, const real_2d_array &xy, const ae_int_t setsize, const integer_1d_array &subset, const ae_int_t subsetsize, modelerrors &rep)
-{
-    jmp_buf _break_jump;
-    alglib_impl::ae_state _alglib_env_state;
-    alglib_impl::ae_state_init(&_alglib_env_state);
-    if( setjmp(_break_jump) )
-    {
-#if !defined(AE_NO_EXCEPTIONS)
-        _ALGLIB_CPP_EXCEPTION(_alglib_env_state.error_msg);
-#else
-        _ALGLIB_SET_ERROR_FLAG(_alglib_env_state.error_msg);
-        return;
-#endif
-    }
-    ae_state_set_break_jump(&_alglib_env_state, &_break_jump);
-    alglib_impl::_pexec_mlpallerrorssubset(const_cast<alglib_impl::multilayerperceptron*>(network.c_ptr()), const_cast<alglib_impl::ae_matrix*>(xy.c_ptr()), setsize, const_cast<alglib_impl::ae_vector*>(subset.c_ptr()), subsetsize, const_cast<alglib_impl::modelerrors*>(rep.c_ptr()), &_alglib_env_state);
     alglib_impl::ae_state_clear(&_alglib_env_state);
     return;
 }
@@ -3981,32 +3461,16 @@ void smp_mlpallerrorssubset(const multilayerperceptron &network, const real_2d_a
 /*************************************************************************
 Calculation of all types of errors on subset of dataset.
 
-FOR USERS OF COMMERCIAL EDITION:
-
-  ! Commercial version of ALGLIB includes two  important  improvements  of
-  ! this function:
-  ! * multicore support (C++ and C# computational cores)
-  ! * SSE support
+  ! COMMERCIAL EDITION OF ALGLIB:
   !
-  ! First improvement gives close-to-linear speedup on multicore  systems.
-  ! Second improvement gives constant speedup (2-3x depending on your CPU)
+  ! Commercial Edition of ALGLIB includes following important improvements
+  ! of this function:
+  ! * high-performance native backend with same C# interface (C# version)
+  ! * multithreading support (C++ and C# versions)
   !
-  ! In order to use multicore features you have to:
-  ! * use commercial version of ALGLIB
-  ! * call  this  function  with  "smp_"  prefix,  which  indicates  that
-  !   multicore code will be used (for multicore support)
-  !
-  ! In order to use SSE features you have to:
-  ! * use commercial version of ALGLIB on Intel processors
-  ! * use C++ computational core
-  !
-  ! This note is given for users of commercial edition; if  you  use  GPL
-  ! edition, you still will be able to call smp-version of this function,
-  ! but all computations will be done serially.
-  !
-  ! We recommend you to carefully read ALGLIB Reference  Manual,  section
-  ! called 'SMP support', before using parallel version of this function.
-
+  ! We recommend you to read 'Working with commercial version' section  of
+  ! ALGLIB Reference Manual in order to find out how to  use  performance-
+  ! related features provided by commercial edition of ALGLIB.
 
 INPUT PARAMETERS:
     Network -   network initialized with one of the network creation funcs
@@ -4030,7 +3494,7 @@ OUTPUT PARAMETERS:
   -- ALGLIB --
      Copyright 04.09.2012 by Bochkanov Sergey
 *************************************************************************/
-void mlpallerrorssparsesubset(const multilayerperceptron &network, const sparsematrix &xy, const ae_int_t setsize, const integer_1d_array &subset, const ae_int_t subsetsize, modelerrors &rep)
+void mlpallerrorssparsesubset(const multilayerperceptron &network, const sparsematrix &xy, const ae_int_t setsize, const integer_1d_array &subset, const ae_int_t subsetsize, modelerrors &rep, const xparams _xparams)
 {
     jmp_buf _break_jump;
     alglib_impl::ae_state _alglib_env_state;
@@ -4045,28 +3509,9 @@ void mlpallerrorssparsesubset(const multilayerperceptron &network, const sparsem
 #endif
     }
     ae_state_set_break_jump(&_alglib_env_state, &_break_jump);
+    if( _xparams.flags!=0x0 )
+        ae_state_set_flags(&_alglib_env_state, _xparams.flags);
     alglib_impl::mlpallerrorssparsesubset(const_cast<alglib_impl::multilayerperceptron*>(network.c_ptr()), const_cast<alglib_impl::sparsematrix*>(xy.c_ptr()), setsize, const_cast<alglib_impl::ae_vector*>(subset.c_ptr()), subsetsize, const_cast<alglib_impl::modelerrors*>(rep.c_ptr()), &_alglib_env_state);
-    alglib_impl::ae_state_clear(&_alglib_env_state);
-    return;
-}
-
-
-void smp_mlpallerrorssparsesubset(const multilayerperceptron &network, const sparsematrix &xy, const ae_int_t setsize, const integer_1d_array &subset, const ae_int_t subsetsize, modelerrors &rep)
-{
-    jmp_buf _break_jump;
-    alglib_impl::ae_state _alglib_env_state;
-    alglib_impl::ae_state_init(&_alglib_env_state);
-    if( setjmp(_break_jump) )
-    {
-#if !defined(AE_NO_EXCEPTIONS)
-        _ALGLIB_CPP_EXCEPTION(_alglib_env_state.error_msg);
-#else
-        _ALGLIB_SET_ERROR_FLAG(_alglib_env_state.error_msg);
-        return;
-#endif
-    }
-    ae_state_set_break_jump(&_alglib_env_state, &_break_jump);
-    alglib_impl::_pexec_mlpallerrorssparsesubset(const_cast<alglib_impl::multilayerperceptron*>(network.c_ptr()), const_cast<alglib_impl::sparsematrix*>(xy.c_ptr()), setsize, const_cast<alglib_impl::ae_vector*>(subset.c_ptr()), subsetsize, const_cast<alglib_impl::modelerrors*>(rep.c_ptr()), &_alglib_env_state);
     alglib_impl::ae_state_clear(&_alglib_env_state);
     return;
 }
@@ -4074,33 +3519,16 @@ void smp_mlpallerrorssparsesubset(const multilayerperceptron &network, const spa
 /*************************************************************************
 Error of the neural network on subset of dataset.
 
-
-FOR USERS OF COMMERCIAL EDITION:
-
-  ! Commercial version of ALGLIB includes two  important  improvements  of
-  ! this function:
-  ! * multicore support (C++ and C# computational cores)
-  ! * SSE support
+  ! COMMERCIAL EDITION OF ALGLIB:
   !
-  ! First improvement gives close-to-linear speedup on multicore  systems.
-  ! Second improvement gives constant speedup (2-3x depending on your CPU)
+  ! Commercial Edition of ALGLIB includes following important improvements
+  ! of this function:
+  ! * high-performance native backend with same C# interface (C# version)
+  ! * multithreading support (C++ and C# versions)
   !
-  ! In order to use multicore features you have to:
-  ! * use commercial version of ALGLIB
-  ! * call  this  function  with  "smp_"  prefix,  which  indicates  that
-  !   multicore code will be used (for multicore support)
-  !
-  ! In order to use SSE features you have to:
-  ! * use commercial version of ALGLIB on Intel processors
-  ! * use C++ computational core
-  !
-  ! This note is given for users of commercial edition; if  you  use  GPL
-  ! edition, you still will be able to call smp-version of this function,
-  ! but all computations will be done serially.
-  !
-  ! We recommend you to carefully read ALGLIB Reference  Manual,  section
-  ! called 'SMP support', before using parallel version of this function.
-
+  ! We recommend you to read 'Working with commercial version' section  of
+  ! ALGLIB Reference Manual in order to find out how to  use  performance-
+  ! related features provided by commercial edition of ALGLIB.
 
 INPUT PARAMETERS:
     Network   -     neural network;
@@ -4139,7 +3567,7 @@ dataset format is used:
   -- ALGLIB --
      Copyright 04.09.2012 by Bochkanov Sergey
 *************************************************************************/
-double mlperrorsubset(const multilayerperceptron &network, const real_2d_array &xy, const ae_int_t setsize, const integer_1d_array &subset, const ae_int_t subsetsize)
+double mlperrorsubset(const multilayerperceptron &network, const real_2d_array &xy, const ae_int_t setsize, const integer_1d_array &subset, const ae_int_t subsetsize, const xparams _xparams)
 {
     jmp_buf _break_jump;
     alglib_impl::ae_state _alglib_env_state;
@@ -4154,28 +3582,9 @@ double mlperrorsubset(const multilayerperceptron &network, const real_2d_array &
 #endif
     }
     ae_state_set_break_jump(&_alglib_env_state, &_break_jump);
+    if( _xparams.flags!=0x0 )
+        ae_state_set_flags(&_alglib_env_state, _xparams.flags);
     double result = alglib_impl::mlperrorsubset(const_cast<alglib_impl::multilayerperceptron*>(network.c_ptr()), const_cast<alglib_impl::ae_matrix*>(xy.c_ptr()), setsize, const_cast<alglib_impl::ae_vector*>(subset.c_ptr()), subsetsize, &_alglib_env_state);
-    alglib_impl::ae_state_clear(&_alglib_env_state);
-    return *(reinterpret_cast<double*>(&result));
-}
-
-
-double smp_mlperrorsubset(const multilayerperceptron &network, const real_2d_array &xy, const ae_int_t setsize, const integer_1d_array &subset, const ae_int_t subsetsize)
-{
-    jmp_buf _break_jump;
-    alglib_impl::ae_state _alglib_env_state;
-    alglib_impl::ae_state_init(&_alglib_env_state);
-    if( setjmp(_break_jump) )
-    {
-#if !defined(AE_NO_EXCEPTIONS)
-        _ALGLIB_CPP_EXCEPTION(_alglib_env_state.error_msg);
-#else
-        _ALGLIB_SET_ERROR_FLAG(_alglib_env_state.error_msg);
-        return 0;
-#endif
-    }
-    ae_state_set_break_jump(&_alglib_env_state, &_break_jump);
-    double result = alglib_impl::_pexec_mlperrorsubset(const_cast<alglib_impl::multilayerperceptron*>(network.c_ptr()), const_cast<alglib_impl::ae_matrix*>(xy.c_ptr()), setsize, const_cast<alglib_impl::ae_vector*>(subset.c_ptr()), subsetsize, &_alglib_env_state);
     alglib_impl::ae_state_clear(&_alglib_env_state);
     return *(reinterpret_cast<double*>(&result));
 }
@@ -4183,33 +3592,16 @@ double smp_mlperrorsubset(const multilayerperceptron &network, const real_2d_arr
 /*************************************************************************
 Error of the neural network on subset of sparse dataset.
 
-
-FOR USERS OF COMMERCIAL EDITION:
-
-  ! Commercial version of ALGLIB includes two  important  improvements  of
-  ! this function:
-  ! * multicore support (C++ and C# computational cores)
-  ! * SSE support
+  ! COMMERCIAL EDITION OF ALGLIB:
   !
-  ! First improvement gives close-to-linear speedup on multicore  systems.
-  ! Second improvement gives constant speedup (2-3x depending on your CPU)
+  ! Commercial Edition of ALGLIB includes following important improvements
+  ! of this function:
+  ! * high-performance native backend with same C# interface (C# version)
+  ! * multithreading support (C++ and C# versions)
   !
-  ! In order to use multicore features you have to:
-  ! * use commercial version of ALGLIB
-  ! * call  this  function  with  "smp_"  prefix,  which  indicates  that
-  !   multicore code will be used (for multicore support)
-  !
-  ! In order to use SSE features you have to:
-  ! * use commercial version of ALGLIB on Intel processors
-  ! * use C++ computational core
-  !
-  ! This note is given for users of commercial edition; if  you  use  GPL
-  ! edition, you still will be able to call smp-version of this function,
-  ! but all computations will be done serially.
-  !
-  ! We recommend you to carefully read ALGLIB Reference  Manual,  section
-  ! called 'SMP support', before using parallel version of this function.
-
+  ! We recommend you to read 'Working with commercial version' section  of
+  ! ALGLIB Reference Manual in order to find out how to  use  performance-
+  ! related features provided by commercial edition of ALGLIB.
 
 INPUT PARAMETERS:
     Network   -     neural network;
@@ -4253,7 +3645,7 @@ dataset format is used:
   -- ALGLIB --
      Copyright 04.09.2012 by Bochkanov Sergey
 *************************************************************************/
-double mlperrorsparsesubset(const multilayerperceptron &network, const sparsematrix &xy, const ae_int_t setsize, const integer_1d_array &subset, const ae_int_t subsetsize)
+double mlperrorsparsesubset(const multilayerperceptron &network, const sparsematrix &xy, const ae_int_t setsize, const integer_1d_array &subset, const ae_int_t subsetsize, const xparams _xparams)
 {
     jmp_buf _break_jump;
     alglib_impl::ae_state _alglib_env_state;
@@ -4268,28 +3660,9 @@ double mlperrorsparsesubset(const multilayerperceptron &network, const sparsemat
 #endif
     }
     ae_state_set_break_jump(&_alglib_env_state, &_break_jump);
+    if( _xparams.flags!=0x0 )
+        ae_state_set_flags(&_alglib_env_state, _xparams.flags);
     double result = alglib_impl::mlperrorsparsesubset(const_cast<alglib_impl::multilayerperceptron*>(network.c_ptr()), const_cast<alglib_impl::sparsematrix*>(xy.c_ptr()), setsize, const_cast<alglib_impl::ae_vector*>(subset.c_ptr()), subsetsize, &_alglib_env_state);
-    alglib_impl::ae_state_clear(&_alglib_env_state);
-    return *(reinterpret_cast<double*>(&result));
-}
-
-
-double smp_mlperrorsparsesubset(const multilayerperceptron &network, const sparsematrix &xy, const ae_int_t setsize, const integer_1d_array &subset, const ae_int_t subsetsize)
-{
-    jmp_buf _break_jump;
-    alglib_impl::ae_state _alglib_env_state;
-    alglib_impl::ae_state_init(&_alglib_env_state);
-    if( setjmp(_break_jump) )
-    {
-#if !defined(AE_NO_EXCEPTIONS)
-        _ALGLIB_CPP_EXCEPTION(_alglib_env_state.error_msg);
-#else
-        _ALGLIB_SET_ERROR_FLAG(_alglib_env_state.error_msg);
-        return 0;
-#endif
-    }
-    ae_state_set_break_jump(&_alglib_env_state, &_break_jump);
-    double result = alglib_impl::_pexec_mlperrorsparsesubset(const_cast<alglib_impl::multilayerperceptron*>(network.c_ptr()), const_cast<alglib_impl::sparsematrix*>(xy.c_ptr()), setsize, const_cast<alglib_impl::ae_vector*>(subset.c_ptr()), subsetsize, &_alglib_env_state);
     alglib_impl::ae_state_clear(&_alglib_env_state);
     return *(reinterpret_cast<double*>(&result));
 }
@@ -4352,7 +3725,7 @@ OUTPUT PARAMETERS:
   -- ALGLIB --
      Copyright 31.05.2008 by Bochkanov Sergey
 *************************************************************************/
-void fisherlda(const real_2d_array &xy, const ae_int_t npoints, const ae_int_t nvars, const ae_int_t nclasses, ae_int_t &info, real_1d_array &w)
+void fisherlda(const real_2d_array &xy, const ae_int_t npoints, const ae_int_t nvars, const ae_int_t nclasses, ae_int_t &info, real_1d_array &w, const xparams _xparams)
 {
     jmp_buf _break_jump;
     alglib_impl::ae_state _alglib_env_state;
@@ -4367,6 +3740,8 @@ void fisherlda(const real_2d_array &xy, const ae_int_t npoints, const ae_int_t n
 #endif
     }
     ae_state_set_break_jump(&_alglib_env_state, &_break_jump);
+    if( _xparams.flags!=0x0 )
+        ae_state_set_flags(&_alglib_env_state, _xparams.flags);
     alglib_impl::fisherlda(const_cast<alglib_impl::ae_matrix*>(xy.c_ptr()), npoints, nvars, nclasses, &info, const_cast<alglib_impl::ae_vector*>(w.c_ptr()), &_alglib_env_state);
     alglib_impl::ae_state_clear(&_alglib_env_state);
     return;
@@ -4379,25 +3754,14 @@ Subroutine finds coefficients of linear combinations which optimally separates
 training set on classes. It returns N-dimensional basis whose vector are sorted
 by quality of training set separation (in descending order).
 
-COMMERCIAL EDITION OF ALGLIB:
-
-  ! Commercial version of ALGLIB includes two important  improvements   of
-  ! this function, which can be used from C++ and C#:
-  ! * Intel MKL support (lightweight Intel MKL is shipped with ALGLIB)
-  ! * multithreading support
+  ! COMMERCIAL EDITION OF ALGLIB:
   !
-  ! Intel MKL gives approximately constant  (with  respect  to  number  of
-  ! worker threads) acceleration factor which depends on CPU  being  used,
-  ! problem  size  and  "baseline"  ALGLIB  edition  which  is  used   for
-  ! comparison. Best results are achieved  for  high-dimensional  problems
-  ! (NVars is at least 256).
-  !
-  ! Multithreading is used to  accelerate  initial  phase  of  LDA,  which
-  ! includes calculation of products of large matrices.  Again,  for  best
-  ! efficiency problem must be high-dimensional.
-  !
-  ! Generally, commercial ALGLIB is several times faster than  open-source
-  ! generic C edition, and many times faster than open-source C# edition.
+  ! Commercial Edition of ALGLIB includes following important improvements
+  ! of this function:
+  ! * high-performance native backend with same C# interface (C# version)
+  ! * multithreading support (C++ and C# versions)
+  ! * hardware vendor (Intel) implementations of linear algebra primitives
+  !   (C++ and C# versions, x86/x64 platform)
   !
   ! We recommend you to read 'Working with commercial version' section  of
   ! ALGLIB Reference Manual in order to find out how to  use  performance-
@@ -4431,7 +3795,7 @@ OUTPUT PARAMETERS:
   -- ALGLIB --
      Copyright 31.05.2008 by Bochkanov Sergey
 *************************************************************************/
-void fisherldan(const real_2d_array &xy, const ae_int_t npoints, const ae_int_t nvars, const ae_int_t nclasses, ae_int_t &info, real_2d_array &w)
+void fisherldan(const real_2d_array &xy, const ae_int_t npoints, const ae_int_t nvars, const ae_int_t nclasses, ae_int_t &info, real_2d_array &w, const xparams _xparams)
 {
     jmp_buf _break_jump;
     alglib_impl::ae_state _alglib_env_state;
@@ -4446,28 +3810,9 @@ void fisherldan(const real_2d_array &xy, const ae_int_t npoints, const ae_int_t 
 #endif
     }
     ae_state_set_break_jump(&_alglib_env_state, &_break_jump);
+    if( _xparams.flags!=0x0 )
+        ae_state_set_flags(&_alglib_env_state, _xparams.flags);
     alglib_impl::fisherldan(const_cast<alglib_impl::ae_matrix*>(xy.c_ptr()), npoints, nvars, nclasses, &info, const_cast<alglib_impl::ae_matrix*>(w.c_ptr()), &_alglib_env_state);
-    alglib_impl::ae_state_clear(&_alglib_env_state);
-    return;
-}
-
-
-void smp_fisherldan(const real_2d_array &xy, const ae_int_t npoints, const ae_int_t nvars, const ae_int_t nclasses, ae_int_t &info, real_2d_array &w)
-{
-    jmp_buf _break_jump;
-    alglib_impl::ae_state _alglib_env_state;
-    alglib_impl::ae_state_init(&_alglib_env_state);
-    if( setjmp(_break_jump) )
-    {
-#if !defined(AE_NO_EXCEPTIONS)
-        _ALGLIB_CPP_EXCEPTION(_alglib_env_state.error_msg);
-#else
-        _ALGLIB_SET_ERROR_FLAG(_alglib_env_state.error_msg);
-        return;
-#endif
-    }
-    ae_state_set_break_jump(&_alglib_env_state, &_break_jump);
-    alglib_impl::_pexec_fisherldan(const_cast<alglib_impl::ae_matrix*>(xy.c_ptr()), npoints, nvars, nclasses, &info, const_cast<alglib_impl::ae_matrix*>(w.c_ptr()), &_alglib_env_state);
     alglib_impl::ae_state_clear(&_alglib_env_state);
     return;
 }
@@ -4646,7 +3991,7 @@ OUTPUT PARAMETERS:
   -- ALGLIB --
      Copyright 30.10.2017 by Bochkanov Sergey
 *************************************************************************/
-void ssacreate(ssamodel &s)
+void ssacreate(ssamodel &s, const xparams _xparams)
 {
     jmp_buf _break_jump;
     alglib_impl::ae_state _alglib_env_state;
@@ -4661,6 +4006,8 @@ void ssacreate(ssamodel &s)
 #endif
     }
     ae_state_set_break_jump(&_alglib_env_state, &_break_jump);
+    if( _xparams.flags!=0x0 )
+        ae_state_set_flags(&_alglib_env_state, _xparams.flags);
     alglib_impl::ssacreate(const_cast<alglib_impl::ssamodel*>(s.c_ptr()), &_alglib_env_state);
     alglib_impl::ae_state_clear(&_alglib_env_state);
     return;
@@ -4692,7 +4039,7 @@ OUTPUT PARAMETERS:
   -- ALGLIB --
      Copyright 30.10.2017 by Bochkanov Sergey
 *************************************************************************/
-void ssasetwindow(const ssamodel &s, const ae_int_t windowwidth)
+void ssasetwindow(const ssamodel &s, const ae_int_t windowwidth, const xparams _xparams)
 {
     jmp_buf _break_jump;
     alglib_impl::ae_state _alglib_env_state;
@@ -4707,6 +4054,8 @@ void ssasetwindow(const ssamodel &s, const ae_int_t windowwidth)
 #endif
     }
     ae_state_set_break_jump(&_alglib_env_state, &_break_jump);
+    if( _xparams.flags!=0x0 )
+        ae_state_set_flags(&_alglib_env_state, _xparams.flags);
     alglib_impl::ssasetwindow(const_cast<alglib_impl::ssamodel*>(s.c_ptr()), windowwidth, &_alglib_env_state);
     alglib_impl::ae_state_clear(&_alglib_env_state);
     return;
@@ -4736,7 +4085,7 @@ INPUT PARAMETERS:
   -- ALGLIB --
      Copyright 03.11.2017 by Bochkanov Sergey
 *************************************************************************/
-void ssasetseed(const ssamodel &s, const ae_int_t seed)
+void ssasetseed(const ssamodel &s, const ae_int_t seed, const xparams _xparams)
 {
     jmp_buf _break_jump;
     alglib_impl::ae_state _alglib_env_state;
@@ -4751,6 +4100,8 @@ void ssasetseed(const ssamodel &s, const ae_int_t seed)
 #endif
     }
     ae_state_set_break_jump(&_alglib_env_state, &_break_jump);
+    if( _xparams.flags!=0x0 )
+        ae_state_set_flags(&_alglib_env_state, _xparams.flags);
     alglib_impl::ssasetseed(const_cast<alglib_impl::ssamodel*>(s.c_ptr()), seed, &_alglib_env_state);
     alglib_impl::ae_state_clear(&_alglib_env_state);
     return;
@@ -4778,7 +4129,7 @@ INPUT PARAMETERS:
   -- ALGLIB --
      Copyright 03.11.2017 by Bochkanov Sergey
 *************************************************************************/
-void ssasetpoweruplength(const ssamodel &s, const ae_int_t pwlen)
+void ssasetpoweruplength(const ssamodel &s, const ae_int_t pwlen, const xparams _xparams)
 {
     jmp_buf _break_jump;
     alglib_impl::ae_state _alglib_env_state;
@@ -4793,6 +4144,8 @@ void ssasetpoweruplength(const ssamodel &s, const ae_int_t pwlen)
 #endif
     }
     ae_state_set_break_jump(&_alglib_env_state, &_break_jump);
+    if( _xparams.flags!=0x0 )
+        ae_state_set_flags(&_alglib_env_state, _xparams.flags);
     alglib_impl::ssasetpoweruplength(const_cast<alglib_impl::ssamodel*>(s.c_ptr()), pwlen, &_alglib_env_state);
     alglib_impl::ae_state_clear(&_alglib_env_state);
     return;
@@ -4818,7 +4171,7 @@ INPUT PARAMETERS:
   -- ALGLIB --
      Copyright 20.12.2017 by Bochkanov Sergey
 *************************************************************************/
-void ssasetmemorylimit(const ssamodel &s, const ae_int_t memlimit)
+void ssasetmemorylimit(const ssamodel &s, const ae_int_t memlimit, const xparams _xparams)
 {
     jmp_buf _break_jump;
     alglib_impl::ae_state _alglib_env_state;
@@ -4833,6 +4186,8 @@ void ssasetmemorylimit(const ssamodel &s, const ae_int_t memlimit)
 #endif
     }
     ae_state_set_break_jump(&_alglib_env_state, &_break_jump);
+    if( _xparams.flags!=0x0 )
+        ae_state_set_flags(&_alglib_env_state, _xparams.flags);
     alglib_impl::ssasetmemorylimit(const_cast<alglib_impl::ssamodel*>(s.c_ptr()), memlimit, &_alglib_env_state);
     alglib_impl::ae_state_clear(&_alglib_env_state);
     return;
@@ -4880,7 +4235,7 @@ NOTE: you can clear dataset with ssacleardata()
   -- ALGLIB --
      Copyright 30.10.2017 by Bochkanov Sergey
 *************************************************************************/
-void ssaaddsequence(const ssamodel &s, const real_1d_array &x, const ae_int_t n)
+void ssaaddsequence(const ssamodel &s, const real_1d_array &x, const ae_int_t n, const xparams _xparams)
 {
     jmp_buf _break_jump;
     alglib_impl::ae_state _alglib_env_state;
@@ -4895,6 +4250,8 @@ void ssaaddsequence(const ssamodel &s, const real_1d_array &x, const ae_int_t n)
 #endif
     }
     ae_state_set_break_jump(&_alglib_env_state, &_break_jump);
+    if( _xparams.flags!=0x0 )
+        ae_state_set_flags(&_alglib_env_state, _xparams.flags);
     alglib_impl::ssaaddsequence(const_cast<alglib_impl::ssamodel*>(s.c_ptr()), const_cast<alglib_impl::ae_vector*>(x.c_ptr()), n, &_alglib_env_state);
     alglib_impl::ae_state_clear(&_alglib_env_state);
     return;
@@ -4943,7 +4300,7 @@ NOTE: you can clear dataset with ssacleardata()
      Copyright 30.10.2017 by Bochkanov Sergey
 *************************************************************************/
 #if !defined(AE_NO_EXCEPTIONS)
-void ssaaddsequence(const ssamodel &s, const real_1d_array &x)
+void ssaaddsequence(const ssamodel &s, const real_1d_array &x, const xparams _xparams)
 {
     jmp_buf _break_jump;
     alglib_impl::ae_state _alglib_env_state;    
@@ -4954,6 +4311,8 @@ void ssaaddsequence(const ssamodel &s, const real_1d_array &x)
     if( setjmp(_break_jump) )
         _ALGLIB_CPP_EXCEPTION(_alglib_env_state.error_msg);
     ae_state_set_break_jump(&_alglib_env_state, &_break_jump);
+    if( _xparams.flags!=0x0 )
+        ae_state_set_flags(&_alglib_env_state, _xparams.flags);
     alglib_impl::ssaaddsequence(const_cast<alglib_impl::ssamodel*>(s.c_ptr()), const_cast<alglib_impl::ae_vector*>(x.c_ptr()), n, &_alglib_env_state);
 
     alglib_impl::ae_state_clear(&_alglib_env_state);
@@ -5020,7 +4379,7 @@ NOTE: this function throws an exception if called for empty dataset (there
   -- ALGLIB --
      Copyright 30.10.2017 by Bochkanov Sergey
 *************************************************************************/
-void ssaappendpointandupdate(const ssamodel &s, const double x, const double updateits)
+void ssaappendpointandupdate(const ssamodel &s, const double x, const double updateits, const xparams _xparams)
 {
     jmp_buf _break_jump;
     alglib_impl::ae_state _alglib_env_state;
@@ -5035,6 +4394,8 @@ void ssaappendpointandupdate(const ssamodel &s, const double x, const double upd
 #endif
     }
     ae_state_set_break_jump(&_alglib_env_state, &_break_jump);
+    if( _xparams.flags!=0x0 )
+        ae_state_set_flags(&_alglib_env_state, _xparams.flags);
     alglib_impl::ssaappendpointandupdate(const_cast<alglib_impl::ssamodel*>(s.c_ptr()), x, updateits, &_alglib_env_state);
     alglib_impl::ae_state_clear(&_alglib_env_state);
     return;
@@ -5097,7 +4458,7 @@ NOTE: this function uses internal  RNG  to  handle  fractional  values  of
   -- ALGLIB --
      Copyright 30.10.2017 by Bochkanov Sergey
 *************************************************************************/
-void ssaappendsequenceandupdate(const ssamodel &s, const real_1d_array &x, const ae_int_t nticks, const double updateits)
+void ssaappendsequenceandupdate(const ssamodel &s, const real_1d_array &x, const ae_int_t nticks, const double updateits, const xparams _xparams)
 {
     jmp_buf _break_jump;
     alglib_impl::ae_state _alglib_env_state;
@@ -5112,6 +4473,8 @@ void ssaappendsequenceandupdate(const ssamodel &s, const real_1d_array &x, const
 #endif
     }
     ae_state_set_break_jump(&_alglib_env_state, &_break_jump);
+    if( _xparams.flags!=0x0 )
+        ae_state_set_flags(&_alglib_env_state, _xparams.flags);
     alglib_impl::ssaappendsequenceandupdate(const_cast<alglib_impl::ssamodel*>(s.c_ptr()), const_cast<alglib_impl::ae_vector*>(x.c_ptr()), nticks, updateits, &_alglib_env_state);
     alglib_impl::ae_state_clear(&_alglib_env_state);
     return;
@@ -5175,7 +4538,7 @@ NOTE: this function uses internal  RNG  to  handle  fractional  values  of
      Copyright 30.10.2017 by Bochkanov Sergey
 *************************************************************************/
 #if !defined(AE_NO_EXCEPTIONS)
-void ssaappendsequenceandupdate(const ssamodel &s, const real_1d_array &x, const double updateits)
+void ssaappendsequenceandupdate(const ssamodel &s, const real_1d_array &x, const double updateits, const xparams _xparams)
 {
     jmp_buf _break_jump;
     alglib_impl::ae_state _alglib_env_state;    
@@ -5186,6 +4549,8 @@ void ssaappendsequenceandupdate(const ssamodel &s, const real_1d_array &x, const
     if( setjmp(_break_jump) )
         _ALGLIB_CPP_EXCEPTION(_alglib_env_state.error_msg);
     ae_state_set_break_jump(&_alglib_env_state, &_break_jump);
+    if( _xparams.flags!=0x0 )
+        ae_state_set_flags(&_alglib_env_state, _xparams.flags);
     alglib_impl::ssaappendsequenceandupdate(const_cast<alglib_impl::ssamodel*>(s.c_ptr()), const_cast<alglib_impl::ae_vector*>(x.c_ptr()), nticks, updateits, &_alglib_env_state);
 
     alglib_impl::ae_state_clear(&_alglib_env_state);
@@ -5228,7 +4593,7 @@ NOTE: calling this function invalidates basis in all cases.
   -- ALGLIB --
      Copyright 30.10.2017 by Bochkanov Sergey
 *************************************************************************/
-void ssasetalgoprecomputed(const ssamodel &s, const real_2d_array &a, const ae_int_t windowwidth, const ae_int_t nbasis)
+void ssasetalgoprecomputed(const ssamodel &s, const real_2d_array &a, const ae_int_t windowwidth, const ae_int_t nbasis, const xparams _xparams)
 {
     jmp_buf _break_jump;
     alglib_impl::ae_state _alglib_env_state;
@@ -5243,6 +4608,8 @@ void ssasetalgoprecomputed(const ssamodel &s, const real_2d_array &a, const ae_i
 #endif
     }
     ae_state_set_break_jump(&_alglib_env_state, &_break_jump);
+    if( _xparams.flags!=0x0 )
+        ae_state_set_flags(&_alglib_env_state, _xparams.flags);
     alglib_impl::ssasetalgoprecomputed(const_cast<alglib_impl::ssamodel*>(s.c_ptr()), const_cast<alglib_impl::ae_matrix*>(a.c_ptr()), windowwidth, nbasis, &_alglib_env_state);
     alglib_impl::ae_state_clear(&_alglib_env_state);
     return;
@@ -5284,7 +4651,7 @@ NOTE: calling this function invalidates basis in all cases.
      Copyright 30.10.2017 by Bochkanov Sergey
 *************************************************************************/
 #if !defined(AE_NO_EXCEPTIONS)
-void ssasetalgoprecomputed(const ssamodel &s, const real_2d_array &a)
+void ssasetalgoprecomputed(const ssamodel &s, const real_2d_array &a, const xparams _xparams)
 {
     jmp_buf _break_jump;
     alglib_impl::ae_state _alglib_env_state;    
@@ -5297,6 +4664,8 @@ void ssasetalgoprecomputed(const ssamodel &s, const real_2d_array &a)
     if( setjmp(_break_jump) )
         _ALGLIB_CPP_EXCEPTION(_alglib_env_state.error_msg);
     ae_state_set_break_jump(&_alglib_env_state, &_break_jump);
+    if( _xparams.flags!=0x0 )
+        ae_state_set_flags(&_alglib_env_state, _xparams.flags);
     alglib_impl::ssasetalgoprecomputed(const_cast<alglib_impl::ssamodel*>(s.c_ptr()), const_cast<alglib_impl::ae_matrix*>(a.c_ptr()), windowwidth, nbasis, &_alglib_env_state);
 
     alglib_impl::ae_state_clear(&_alglib_env_state);
@@ -5333,7 +4702,7 @@ NOTE: calling this function invalidates basis, except  for  the  situation
   -- ALGLIB --
      Copyright 30.10.2017 by Bochkanov Sergey
 *************************************************************************/
-void ssasetalgotopkdirect(const ssamodel &s, const ae_int_t topk)
+void ssasetalgotopkdirect(const ssamodel &s, const ae_int_t topk, const xparams _xparams)
 {
     jmp_buf _break_jump;
     alglib_impl::ae_state _alglib_env_state;
@@ -5348,6 +4717,8 @@ void ssasetalgotopkdirect(const ssamodel &s, const ae_int_t topk)
 #endif
     }
     ae_state_set_break_jump(&_alglib_env_state, &_break_jump);
+    if( _xparams.flags!=0x0 )
+        ae_state_set_flags(&_alglib_env_state, _xparams.flags);
     alglib_impl::ssasetalgotopkdirect(const_cast<alglib_impl::ssamodel*>(s.c_ptr()), topk, &_alglib_env_state);
     alglib_impl::ae_state_clear(&_alglib_env_state);
     return;
@@ -5394,7 +4765,7 @@ NOTE: calling this function invalidates basis, except  for  the  situation
   -- ALGLIB --
      Copyright 30.10.2017 by Bochkanov Sergey
 *************************************************************************/
-void ssasetalgotopkrealtime(const ssamodel &s, const ae_int_t topk)
+void ssasetalgotopkrealtime(const ssamodel &s, const ae_int_t topk, const xparams _xparams)
 {
     jmp_buf _break_jump;
     alglib_impl::ae_state _alglib_env_state;
@@ -5409,6 +4780,8 @@ void ssasetalgotopkrealtime(const ssamodel &s, const ae_int_t topk)
 #endif
     }
     ae_state_set_break_jump(&_alglib_env_state, &_break_jump);
+    if( _xparams.flags!=0x0 )
+        ae_state_set_flags(&_alglib_env_state, _xparams.flags);
     alglib_impl::ssasetalgotopkrealtime(const_cast<alglib_impl::ssamodel*>(s.c_ptr()), topk, &_alglib_env_state);
     alglib_impl::ae_state_clear(&_alglib_env_state);
     return;
@@ -5427,7 +4800,7 @@ OUTPUT PARAMETERS:
   -- ALGLIB --
      Copyright 30.10.2017 by Bochkanov Sergey
 *************************************************************************/
-void ssacleardata(const ssamodel &s)
+void ssacleardata(const ssamodel &s, const xparams _xparams)
 {
     jmp_buf _break_jump;
     alglib_impl::ae_state _alglib_env_state;
@@ -5442,6 +4815,8 @@ void ssacleardata(const ssamodel &s)
 #endif
     }
     ae_state_set_break_jump(&_alglib_env_state, &_break_jump);
+    if( _xparams.flags!=0x0 )
+        ae_state_set_flags(&_alglib_env_state, _xparams.flags);
     alglib_impl::ssacleardata(const_cast<alglib_impl::ssamodel*>(s.c_ptr()), &_alglib_env_state);
     alglib_impl::ae_state_clear(&_alglib_env_state);
     return;
@@ -5488,7 +4863,7 @@ just one zero vector.
   -- ALGLIB --
      Copyright 30.10.2017 by Bochkanov Sergey
 *************************************************************************/
-void ssagetbasis(const ssamodel &s, real_2d_array &a, real_1d_array &sv, ae_int_t &windowwidth, ae_int_t &nbasis)
+void ssagetbasis(const ssamodel &s, real_2d_array &a, real_1d_array &sv, ae_int_t &windowwidth, ae_int_t &nbasis, const xparams _xparams)
 {
     jmp_buf _break_jump;
     alglib_impl::ae_state _alglib_env_state;
@@ -5503,6 +4878,8 @@ void ssagetbasis(const ssamodel &s, real_2d_array &a, real_1d_array &sv, ae_int_
 #endif
     }
     ae_state_set_break_jump(&_alglib_env_state, &_break_jump);
+    if( _xparams.flags!=0x0 )
+        ae_state_set_flags(&_alglib_env_state, _xparams.flags);
     alglib_impl::ssagetbasis(const_cast<alglib_impl::ssamodel*>(s.c_ptr()), const_cast<alglib_impl::ae_matrix*>(a.c_ptr()), const_cast<alglib_impl::ae_vector*>(sv.c_ptr()), &windowwidth, &nbasis, &_alglib_env_state);
     alglib_impl::ae_state_clear(&_alglib_env_state);
     return;
@@ -5546,7 +4923,7 @@ shorter than window size; no algorithm is specified) returns zeros.
   -- ALGLIB --
      Copyright 30.10.2017 by Bochkanov Sergey
 *************************************************************************/
-void ssagetlrr(const ssamodel &s, real_1d_array &a, ae_int_t &windowwidth)
+void ssagetlrr(const ssamodel &s, real_1d_array &a, ae_int_t &windowwidth, const xparams _xparams)
 {
     jmp_buf _break_jump;
     alglib_impl::ae_state _alglib_env_state;
@@ -5561,6 +4938,8 @@ void ssagetlrr(const ssamodel &s, real_1d_array &a, ae_int_t &windowwidth)
 #endif
     }
     ae_state_set_break_jump(&_alglib_env_state, &_break_jump);
+    if( _xparams.flags!=0x0 )
+        ae_state_set_flags(&_alglib_env_state, _xparams.flags);
     alglib_impl::ssagetlrr(const_cast<alglib_impl::ssamodel*>(s.c_ptr()), const_cast<alglib_impl::ae_vector*>(a.c_ptr()), &windowwidth, &_alglib_env_state);
     alglib_impl::ae_state_clear(&_alglib_env_state);
     return;
@@ -5639,7 +5018,7 @@ values, no basis is constructed).
   -- ALGLIB --
      Copyright 30.10.2017 by Bochkanov Sergey
 *************************************************************************/
-void ssaanalyzelastwindow(const ssamodel &s, real_1d_array &trend, real_1d_array &noise, ae_int_t &nticks)
+void ssaanalyzelastwindow(const ssamodel &s, real_1d_array &trend, real_1d_array &noise, ae_int_t &nticks, const xparams _xparams)
 {
     jmp_buf _break_jump;
     alglib_impl::ae_state _alglib_env_state;
@@ -5654,6 +5033,8 @@ void ssaanalyzelastwindow(const ssamodel &s, real_1d_array &trend, real_1d_array
 #endif
     }
     ae_state_set_break_jump(&_alglib_env_state, &_break_jump);
+    if( _xparams.flags!=0x0 )
+        ae_state_set_flags(&_alglib_env_state, _xparams.flags);
     alglib_impl::ssaanalyzelastwindow(const_cast<alglib_impl::ssamodel*>(s.c_ptr()), const_cast<alglib_impl::ae_vector*>(trend.c_ptr()), const_cast<alglib_impl::ae_vector*>(noise.c_ptr()), &nticks, &_alglib_env_state);
     alglib_impl::ae_state_clear(&_alglib_env_state);
     return;
@@ -5749,7 +5130,7 @@ values, no basis is constructed).
   -- ALGLIB --
      Copyright 30.10.2017 by Bochkanov Sergey
 *************************************************************************/
-void ssaanalyzelast(const ssamodel &s, const ae_int_t nticks, real_1d_array &trend, real_1d_array &noise)
+void ssaanalyzelast(const ssamodel &s, const ae_int_t nticks, real_1d_array &trend, real_1d_array &noise, const xparams _xparams)
 {
     jmp_buf _break_jump;
     alglib_impl::ae_state _alglib_env_state;
@@ -5764,6 +5145,8 @@ void ssaanalyzelast(const ssamodel &s, const ae_int_t nticks, real_1d_array &tre
 #endif
     }
     ae_state_set_break_jump(&_alglib_env_state, &_break_jump);
+    if( _xparams.flags!=0x0 )
+        ae_state_set_flags(&_alglib_env_state, _xparams.flags);
     alglib_impl::ssaanalyzelast(const_cast<alglib_impl::ssamodel*>(s.c_ptr()), nticks, const_cast<alglib_impl::ae_vector*>(trend.c_ptr()), const_cast<alglib_impl::ae_vector*>(noise.c_ptr()), &_alglib_env_state);
     alglib_impl::ae_state_clear(&_alglib_env_state);
     return;
@@ -5842,7 +5225,7 @@ values, no basis is constructed).
   -- ALGLIB --
      Copyright 30.10.2017 by Bochkanov Sergey
 *************************************************************************/
-void ssaanalyzesequence(const ssamodel &s, const real_1d_array &data, const ae_int_t nticks, real_1d_array &trend, real_1d_array &noise)
+void ssaanalyzesequence(const ssamodel &s, const real_1d_array &data, const ae_int_t nticks, real_1d_array &trend, real_1d_array &noise, const xparams _xparams)
 {
     jmp_buf _break_jump;
     alglib_impl::ae_state _alglib_env_state;
@@ -5857,6 +5240,8 @@ void ssaanalyzesequence(const ssamodel &s, const real_1d_array &data, const ae_i
 #endif
     }
     ae_state_set_break_jump(&_alglib_env_state, &_break_jump);
+    if( _xparams.flags!=0x0 )
+        ae_state_set_flags(&_alglib_env_state, _xparams.flags);
     alglib_impl::ssaanalyzesequence(const_cast<alglib_impl::ssamodel*>(s.c_ptr()), const_cast<alglib_impl::ae_vector*>(data.c_ptr()), nticks, const_cast<alglib_impl::ae_vector*>(trend.c_ptr()), const_cast<alglib_impl::ae_vector*>(noise.c_ptr()), &_alglib_env_state);
     alglib_impl::ae_state_clear(&_alglib_env_state);
     return;
@@ -5936,7 +5321,7 @@ values, no basis is constructed).
      Copyright 30.10.2017 by Bochkanov Sergey
 *************************************************************************/
 #if !defined(AE_NO_EXCEPTIONS)
-void ssaanalyzesequence(const ssamodel &s, const real_1d_array &data, real_1d_array &trend, real_1d_array &noise)
+void ssaanalyzesequence(const ssamodel &s, const real_1d_array &data, real_1d_array &trend, real_1d_array &noise, const xparams _xparams)
 {
     jmp_buf _break_jump;
     alglib_impl::ae_state _alglib_env_state;    
@@ -5947,6 +5332,8 @@ void ssaanalyzesequence(const ssamodel &s, const real_1d_array &data, real_1d_ar
     if( setjmp(_break_jump) )
         _ALGLIB_CPP_EXCEPTION(_alglib_env_state.error_msg);
     ae_state_set_break_jump(&_alglib_env_state, &_break_jump);
+    if( _xparams.flags!=0x0 )
+        ae_state_set_flags(&_alglib_env_state, _xparams.flags);
     alglib_impl::ssaanalyzesequence(const_cast<alglib_impl::ssamodel*>(s.c_ptr()), const_cast<alglib_impl::ae_vector*>(data.c_ptr()), nticks, const_cast<alglib_impl::ae_vector*>(trend.c_ptr()), const_cast<alglib_impl::ae_vector*>(noise.c_ptr()), &_alglib_env_state);
 
     alglib_impl::ae_state_clear(&_alglib_env_state);
@@ -6027,7 +5414,7 @@ values, no basis is ever constructed).
   -- ALGLIB --
      Copyright 30.10.2017 by Bochkanov Sergey
 *************************************************************************/
-void ssaforecastlast(const ssamodel &s, const ae_int_t nticks, real_1d_array &trend)
+void ssaforecastlast(const ssamodel &s, const ae_int_t nticks, real_1d_array &trend, const xparams _xparams)
 {
     jmp_buf _break_jump;
     alglib_impl::ae_state _alglib_env_state;
@@ -6042,6 +5429,8 @@ void ssaforecastlast(const ssamodel &s, const ae_int_t nticks, real_1d_array &tr
 #endif
     }
     ae_state_set_break_jump(&_alglib_env_state, &_break_jump);
+    if( _xparams.flags!=0x0 )
+        ae_state_set_flags(&_alglib_env_state, _xparams.flags);
     alglib_impl::ssaforecastlast(const_cast<alglib_impl::ssamodel*>(s.c_ptr()), nticks, const_cast<alglib_impl::ae_vector*>(trend.c_ptr()), &_alglib_env_state);
     alglib_impl::ae_state_clear(&_alglib_env_state);
     return;
@@ -6123,7 +5512,7 @@ values, no basis is ever constructed).
   -- ALGLIB --
      Copyright 30.10.2017 by Bochkanov Sergey
 *************************************************************************/
-void ssaforecastsequence(const ssamodel &s, const real_1d_array &data, const ae_int_t datalen, const ae_int_t forecastlen, const bool applysmoothing, real_1d_array &trend)
+void ssaforecastsequence(const ssamodel &s, const real_1d_array &data, const ae_int_t datalen, const ae_int_t forecastlen, const bool applysmoothing, real_1d_array &trend, const xparams _xparams)
 {
     jmp_buf _break_jump;
     alglib_impl::ae_state _alglib_env_state;
@@ -6138,6 +5527,8 @@ void ssaforecastsequence(const ssamodel &s, const real_1d_array &data, const ae_
 #endif
     }
     ae_state_set_break_jump(&_alglib_env_state, &_break_jump);
+    if( _xparams.flags!=0x0 )
+        ae_state_set_flags(&_alglib_env_state, _xparams.flags);
     alglib_impl::ssaforecastsequence(const_cast<alglib_impl::ssamodel*>(s.c_ptr()), const_cast<alglib_impl::ae_vector*>(data.c_ptr()), datalen, forecastlen, applysmoothing, const_cast<alglib_impl::ae_vector*>(trend.c_ptr()), &_alglib_env_state);
     alglib_impl::ae_state_clear(&_alglib_env_state);
     return;
@@ -6220,7 +5611,7 @@ values, no basis is ever constructed).
      Copyright 30.10.2017 by Bochkanov Sergey
 *************************************************************************/
 #if !defined(AE_NO_EXCEPTIONS)
-void ssaforecastsequence(const ssamodel &s, const real_1d_array &data, const ae_int_t forecastlen, real_1d_array &trend)
+void ssaforecastsequence(const ssamodel &s, const real_1d_array &data, const ae_int_t forecastlen, real_1d_array &trend, const xparams _xparams)
 {
     jmp_buf _break_jump;
     alglib_impl::ae_state _alglib_env_state;    
@@ -6233,6 +5624,8 @@ void ssaforecastsequence(const ssamodel &s, const real_1d_array &data, const ae_
     if( setjmp(_break_jump) )
         _ALGLIB_CPP_EXCEPTION(_alglib_env_state.error_msg);
     ae_state_set_break_jump(&_alglib_env_state, &_break_jump);
+    if( _xparams.flags!=0x0 )
+        ae_state_set_flags(&_alglib_env_state, _xparams.flags);
     alglib_impl::ssaforecastsequence(const_cast<alglib_impl::ssamodel*>(s.c_ptr()), const_cast<alglib_impl::ae_vector*>(data.c_ptr()), datalen, forecastlen, applysmoothing, const_cast<alglib_impl::ae_vector*>(trend.c_ptr()), &_alglib_env_state);
 
     alglib_impl::ae_state_clear(&_alglib_env_state);
@@ -6317,7 +5710,7 @@ values, no basis is ever constructed).
   -- ALGLIB --
      Copyright 30.10.2017 by Bochkanov Sergey
 *************************************************************************/
-void ssaforecastavglast(const ssamodel &s, const ae_int_t m, const ae_int_t nticks, real_1d_array &trend)
+void ssaforecastavglast(const ssamodel &s, const ae_int_t m, const ae_int_t nticks, real_1d_array &trend, const xparams _xparams)
 {
     jmp_buf _break_jump;
     alglib_impl::ae_state _alglib_env_state;
@@ -6332,6 +5725,8 @@ void ssaforecastavglast(const ssamodel &s, const ae_int_t m, const ae_int_t ntic
 #endif
     }
     ae_state_set_break_jump(&_alglib_env_state, &_break_jump);
+    if( _xparams.flags!=0x0 )
+        ae_state_set_flags(&_alglib_env_state, _xparams.flags);
     alglib_impl::ssaforecastavglast(const_cast<alglib_impl::ssamodel*>(s.c_ptr()), m, nticks, const_cast<alglib_impl::ae_vector*>(trend.c_ptr()), &_alglib_env_state);
     alglib_impl::ae_state_clear(&_alglib_env_state);
     return;
@@ -6416,7 +5811,7 @@ values, no basis is ever constructed).
   -- ALGLIB --
      Copyright 30.10.2017 by Bochkanov Sergey
 *************************************************************************/
-void ssaforecastavgsequence(const ssamodel &s, const real_1d_array &data, const ae_int_t datalen, const ae_int_t m, const ae_int_t forecastlen, const bool applysmoothing, real_1d_array &trend)
+void ssaforecastavgsequence(const ssamodel &s, const real_1d_array &data, const ae_int_t datalen, const ae_int_t m, const ae_int_t forecastlen, const bool applysmoothing, real_1d_array &trend, const xparams _xparams)
 {
     jmp_buf _break_jump;
     alglib_impl::ae_state _alglib_env_state;
@@ -6431,6 +5826,8 @@ void ssaforecastavgsequence(const ssamodel &s, const real_1d_array &data, const 
 #endif
     }
     ae_state_set_break_jump(&_alglib_env_state, &_break_jump);
+    if( _xparams.flags!=0x0 )
+        ae_state_set_flags(&_alglib_env_state, _xparams.flags);
     alglib_impl::ssaforecastavgsequence(const_cast<alglib_impl::ssamodel*>(s.c_ptr()), const_cast<alglib_impl::ae_vector*>(data.c_ptr()), datalen, m, forecastlen, applysmoothing, const_cast<alglib_impl::ae_vector*>(trend.c_ptr()), &_alglib_env_state);
     alglib_impl::ae_state_clear(&_alglib_env_state);
     return;
@@ -6516,7 +5913,7 @@ values, no basis is ever constructed).
      Copyright 30.10.2017 by Bochkanov Sergey
 *************************************************************************/
 #if !defined(AE_NO_EXCEPTIONS)
-void ssaforecastavgsequence(const ssamodel &s, const real_1d_array &data, const ae_int_t m, const ae_int_t forecastlen, real_1d_array &trend)
+void ssaforecastavgsequence(const ssamodel &s, const real_1d_array &data, const ae_int_t m, const ae_int_t forecastlen, real_1d_array &trend, const xparams _xparams)
 {
     jmp_buf _break_jump;
     alglib_impl::ae_state _alglib_env_state;    
@@ -6529,6 +5926,8 @@ void ssaforecastavgsequence(const ssamodel &s, const real_1d_array &data, const 
     if( setjmp(_break_jump) )
         _ALGLIB_CPP_EXCEPTION(_alglib_env_state.error_msg);
     ae_state_set_break_jump(&_alglib_env_state, &_break_jump);
+    if( _xparams.flags!=0x0 )
+        ae_state_set_flags(&_alglib_env_state, _xparams.flags);
     alglib_impl::ssaforecastavgsequence(const_cast<alglib_impl::ssamodel*>(s.c_ptr()), const_cast<alglib_impl::ae_vector*>(data.c_ptr()), datalen, m, forecastlen, applysmoothing, const_cast<alglib_impl::ae_vector*>(trend.c_ptr()), &_alglib_env_state);
 
     alglib_impl::ae_state_clear(&_alglib_env_state);
@@ -6843,7 +6242,7 @@ OUTPUT PARAMETERS:
   -- ALGLIB --
      Copyright 02.08.2008 by Bochkanov Sergey
 *************************************************************************/
-void lrbuild(const real_2d_array &xy, const ae_int_t npoints, const ae_int_t nvars, ae_int_t &info, linearmodel &lm, lrreport &ar)
+void lrbuild(const real_2d_array &xy, const ae_int_t npoints, const ae_int_t nvars, ae_int_t &info, linearmodel &lm, lrreport &ar, const xparams _xparams)
 {
     jmp_buf _break_jump;
     alglib_impl::ae_state _alglib_env_state;
@@ -6858,6 +6257,8 @@ void lrbuild(const real_2d_array &xy, const ae_int_t npoints, const ae_int_t nva
 #endif
     }
     ae_state_set_break_jump(&_alglib_env_state, &_break_jump);
+    if( _xparams.flags!=0x0 )
+        ae_state_set_flags(&_alglib_env_state, _xparams.flags);
     alglib_impl::lrbuild(const_cast<alglib_impl::ae_matrix*>(xy.c_ptr()), npoints, nvars, &info, const_cast<alglib_impl::linearmodel*>(lm.c_ptr()), const_cast<alglib_impl::lrreport*>(ar.c_ptr()), &_alglib_env_state);
     alglib_impl::ae_state_clear(&_alglib_env_state);
     return;
@@ -6893,7 +6294,7 @@ OUTPUT PARAMETERS:
   -- ALGLIB --
      Copyright 02.08.2008 by Bochkanov Sergey
 *************************************************************************/
-void lrbuilds(const real_2d_array &xy, const real_1d_array &s, const ae_int_t npoints, const ae_int_t nvars, ae_int_t &info, linearmodel &lm, lrreport &ar)
+void lrbuilds(const real_2d_array &xy, const real_1d_array &s, const ae_int_t npoints, const ae_int_t nvars, ae_int_t &info, linearmodel &lm, lrreport &ar, const xparams _xparams)
 {
     jmp_buf _break_jump;
     alglib_impl::ae_state _alglib_env_state;
@@ -6908,6 +6309,8 @@ void lrbuilds(const real_2d_array &xy, const real_1d_array &s, const ae_int_t np
 #endif
     }
     ae_state_set_break_jump(&_alglib_env_state, &_break_jump);
+    if( _xparams.flags!=0x0 )
+        ae_state_set_flags(&_alglib_env_state, _xparams.flags);
     alglib_impl::lrbuilds(const_cast<alglib_impl::ae_matrix*>(xy.c_ptr()), const_cast<alglib_impl::ae_vector*>(s.c_ptr()), npoints, nvars, &info, const_cast<alglib_impl::linearmodel*>(lm.c_ptr()), const_cast<alglib_impl::lrreport*>(ar.c_ptr()), &_alglib_env_state);
     alglib_impl::ae_state_clear(&_alglib_env_state);
     return;
@@ -6923,7 +6326,7 @@ i.e. with zero constant term.
   -- ALGLIB --
      Copyright 30.10.2008 by Bochkanov Sergey
 *************************************************************************/
-void lrbuildzs(const real_2d_array &xy, const real_1d_array &s, const ae_int_t npoints, const ae_int_t nvars, ae_int_t &info, linearmodel &lm, lrreport &ar)
+void lrbuildzs(const real_2d_array &xy, const real_1d_array &s, const ae_int_t npoints, const ae_int_t nvars, ae_int_t &info, linearmodel &lm, lrreport &ar, const xparams _xparams)
 {
     jmp_buf _break_jump;
     alglib_impl::ae_state _alglib_env_state;
@@ -6938,6 +6341,8 @@ void lrbuildzs(const real_2d_array &xy, const real_1d_array &s, const ae_int_t n
 #endif
     }
     ae_state_set_break_jump(&_alglib_env_state, &_break_jump);
+    if( _xparams.flags!=0x0 )
+        ae_state_set_flags(&_alglib_env_state, _xparams.flags);
     alglib_impl::lrbuildzs(const_cast<alglib_impl::ae_matrix*>(xy.c_ptr()), const_cast<alglib_impl::ae_vector*>(s.c_ptr()), npoints, nvars, &info, const_cast<alglib_impl::linearmodel*>(lm.c_ptr()), const_cast<alglib_impl::lrreport*>(ar.c_ptr()), &_alglib_env_state);
     alglib_impl::ae_state_clear(&_alglib_env_state);
     return;
@@ -6953,7 +6358,7 @@ i.e. with zero constant term.
   -- ALGLIB --
      Copyright 30.10.2008 by Bochkanov Sergey
 *************************************************************************/
-void lrbuildz(const real_2d_array &xy, const ae_int_t npoints, const ae_int_t nvars, ae_int_t &info, linearmodel &lm, lrreport &ar)
+void lrbuildz(const real_2d_array &xy, const ae_int_t npoints, const ae_int_t nvars, ae_int_t &info, linearmodel &lm, lrreport &ar, const xparams _xparams)
 {
     jmp_buf _break_jump;
     alglib_impl::ae_state _alglib_env_state;
@@ -6968,6 +6373,8 @@ void lrbuildz(const real_2d_array &xy, const ae_int_t npoints, const ae_int_t nv
 #endif
     }
     ae_state_set_break_jump(&_alglib_env_state, &_break_jump);
+    if( _xparams.flags!=0x0 )
+        ae_state_set_flags(&_alglib_env_state, _xparams.flags);
     alglib_impl::lrbuildz(const_cast<alglib_impl::ae_matrix*>(xy.c_ptr()), npoints, nvars, &info, const_cast<alglib_impl::linearmodel*>(lm.c_ptr()), const_cast<alglib_impl::lrreport*>(ar.c_ptr()), &_alglib_env_state);
     alglib_impl::ae_state_clear(&_alglib_env_state);
     return;
@@ -6988,7 +6395,7 @@ OUTPUT PARAMETERS:
   -- ALGLIB --
      Copyright 30.08.2008 by Bochkanov Sergey
 *************************************************************************/
-void lrunpack(const linearmodel &lm, real_1d_array &v, ae_int_t &nvars)
+void lrunpack(const linearmodel &lm, real_1d_array &v, ae_int_t &nvars, const xparams _xparams)
 {
     jmp_buf _break_jump;
     alglib_impl::ae_state _alglib_env_state;
@@ -7003,6 +6410,8 @@ void lrunpack(const linearmodel &lm, real_1d_array &v, ae_int_t &nvars)
 #endif
     }
     ae_state_set_break_jump(&_alglib_env_state, &_break_jump);
+    if( _xparams.flags!=0x0 )
+        ae_state_set_flags(&_alglib_env_state, _xparams.flags);
     alglib_impl::lrunpack(const_cast<alglib_impl::linearmodel*>(lm.c_ptr()), const_cast<alglib_impl::ae_vector*>(v.c_ptr()), &nvars, &_alglib_env_state);
     alglib_impl::ae_state_clear(&_alglib_env_state);
     return;
@@ -7022,7 +6431,7 @@ OUTPUT PAREMETERS:
   -- ALGLIB --
      Copyright 30.08.2008 by Bochkanov Sergey
 *************************************************************************/
-void lrpack(const real_1d_array &v, const ae_int_t nvars, linearmodel &lm)
+void lrpack(const real_1d_array &v, const ae_int_t nvars, linearmodel &lm, const xparams _xparams)
 {
     jmp_buf _break_jump;
     alglib_impl::ae_state _alglib_env_state;
@@ -7037,6 +6446,8 @@ void lrpack(const real_1d_array &v, const ae_int_t nvars, linearmodel &lm)
 #endif
     }
     ae_state_set_break_jump(&_alglib_env_state, &_break_jump);
+    if( _xparams.flags!=0x0 )
+        ae_state_set_flags(&_alglib_env_state, _xparams.flags);
     alglib_impl::lrpack(const_cast<alglib_impl::ae_vector*>(v.c_ptr()), nvars, const_cast<alglib_impl::linearmodel*>(lm.c_ptr()), &_alglib_env_state);
     alglib_impl::ae_state_clear(&_alglib_env_state);
     return;
@@ -7055,7 +6466,7 @@ Result:
   -- ALGLIB --
      Copyright 03.09.2008 by Bochkanov Sergey
 *************************************************************************/
-double lrprocess(const linearmodel &lm, const real_1d_array &x)
+double lrprocess(const linearmodel &lm, const real_1d_array &x, const xparams _xparams)
 {
     jmp_buf _break_jump;
     alglib_impl::ae_state _alglib_env_state;
@@ -7070,6 +6481,8 @@ double lrprocess(const linearmodel &lm, const real_1d_array &x)
 #endif
     }
     ae_state_set_break_jump(&_alglib_env_state, &_break_jump);
+    if( _xparams.flags!=0x0 )
+        ae_state_set_flags(&_alglib_env_state, _xparams.flags);
     double result = alglib_impl::lrprocess(const_cast<alglib_impl::linearmodel*>(lm.c_ptr()), const_cast<alglib_impl::ae_vector*>(x.c_ptr()), &_alglib_env_state);
     alglib_impl::ae_state_clear(&_alglib_env_state);
     return *(reinterpret_cast<double*>(&result));
@@ -7089,7 +6502,7 @@ RESULT:
   -- ALGLIB --
      Copyright 30.08.2008 by Bochkanov Sergey
 *************************************************************************/
-double lrrmserror(const linearmodel &lm, const real_2d_array &xy, const ae_int_t npoints)
+double lrrmserror(const linearmodel &lm, const real_2d_array &xy, const ae_int_t npoints, const xparams _xparams)
 {
     jmp_buf _break_jump;
     alglib_impl::ae_state _alglib_env_state;
@@ -7104,6 +6517,8 @@ double lrrmserror(const linearmodel &lm, const real_2d_array &xy, const ae_int_t
 #endif
     }
     ae_state_set_break_jump(&_alglib_env_state, &_break_jump);
+    if( _xparams.flags!=0x0 )
+        ae_state_set_flags(&_alglib_env_state, _xparams.flags);
     double result = alglib_impl::lrrmserror(const_cast<alglib_impl::linearmodel*>(lm.c_ptr()), const_cast<alglib_impl::ae_matrix*>(xy.c_ptr()), npoints, &_alglib_env_state);
     alglib_impl::ae_state_clear(&_alglib_env_state);
     return *(reinterpret_cast<double*>(&result));
@@ -7123,7 +6538,7 @@ RESULT:
   -- ALGLIB --
      Copyright 30.08.2008 by Bochkanov Sergey
 *************************************************************************/
-double lravgerror(const linearmodel &lm, const real_2d_array &xy, const ae_int_t npoints)
+double lravgerror(const linearmodel &lm, const real_2d_array &xy, const ae_int_t npoints, const xparams _xparams)
 {
     jmp_buf _break_jump;
     alglib_impl::ae_state _alglib_env_state;
@@ -7138,6 +6553,8 @@ double lravgerror(const linearmodel &lm, const real_2d_array &xy, const ae_int_t
 #endif
     }
     ae_state_set_break_jump(&_alglib_env_state, &_break_jump);
+    if( _xparams.flags!=0x0 )
+        ae_state_set_flags(&_alglib_env_state, _xparams.flags);
     double result = alglib_impl::lravgerror(const_cast<alglib_impl::linearmodel*>(lm.c_ptr()), const_cast<alglib_impl::ae_matrix*>(xy.c_ptr()), npoints, &_alglib_env_state);
     alglib_impl::ae_state_clear(&_alglib_env_state);
     return *(reinterpret_cast<double*>(&result));
@@ -7157,7 +6574,7 @@ RESULT:
   -- ALGLIB --
      Copyright 30.08.2008 by Bochkanov Sergey
 *************************************************************************/
-double lravgrelerror(const linearmodel &lm, const real_2d_array &xy, const ae_int_t npoints)
+double lravgrelerror(const linearmodel &lm, const real_2d_array &xy, const ae_int_t npoints, const xparams _xparams)
 {
     jmp_buf _break_jump;
     alglib_impl::ae_state _alglib_env_state;
@@ -7172,6 +6589,8 @@ double lravgrelerror(const linearmodel &lm, const real_2d_array &xy, const ae_in
 #endif
     }
     ae_state_set_break_jump(&_alglib_env_state, &_break_jump);
+    if( _xparams.flags!=0x0 )
+        ae_state_set_flags(&_alglib_env_state, _xparams.flags);
     double result = alglib_impl::lravgrelerror(const_cast<alglib_impl::linearmodel*>(lm.c_ptr()), const_cast<alglib_impl::ae_matrix*>(xy.c_ptr()), npoints, &_alglib_env_state);
     alglib_impl::ae_state_clear(&_alglib_env_state);
     return *(reinterpret_cast<double*>(&result));
@@ -7215,7 +6634,7 @@ NOTE 3: this  is  unsymmetric version of the algorithm,  which  does  NOT
   -- ALGLIB --
      Copyright 25.10.2011 by Bochkanov Sergey
 *************************************************************************/
-void filtersma(real_1d_array &x, const ae_int_t n, const ae_int_t k)
+void filtersma(real_1d_array &x, const ae_int_t n, const ae_int_t k, const xparams _xparams)
 {
     jmp_buf _break_jump;
     alglib_impl::ae_state _alglib_env_state;
@@ -7230,6 +6649,8 @@ void filtersma(real_1d_array &x, const ae_int_t n, const ae_int_t k)
 #endif
     }
     ae_state_set_break_jump(&_alglib_env_state, &_break_jump);
+    if( _xparams.flags!=0x0 )
+        ae_state_set_flags(&_alglib_env_state, _xparams.flags);
     alglib_impl::filtersma(const_cast<alglib_impl::ae_vector*>(x.c_ptr()), n, k, &_alglib_env_state);
     alglib_impl::ae_state_clear(&_alglib_env_state);
     return;
@@ -7272,7 +6693,7 @@ NOTE 3: this  is  unsymmetric version of the algorithm,  which  does  NOT
      Copyright 25.10.2011 by Bochkanov Sergey
 *************************************************************************/
 #if !defined(AE_NO_EXCEPTIONS)
-void filtersma(real_1d_array &x, const ae_int_t k)
+void filtersma(real_1d_array &x, const ae_int_t k, const xparams _xparams)
 {
     jmp_buf _break_jump;
     alglib_impl::ae_state _alglib_env_state;    
@@ -7283,6 +6704,8 @@ void filtersma(real_1d_array &x, const ae_int_t k)
     if( setjmp(_break_jump) )
         _ALGLIB_CPP_EXCEPTION(_alglib_env_state.error_msg);
     ae_state_set_break_jump(&_alglib_env_state, &_break_jump);
+    if( _xparams.flags!=0x0 )
+        ae_state_set_flags(&_alglib_env_state, _xparams.flags);
     alglib_impl::filtersma(const_cast<alglib_impl::ae_vector*>(x.c_ptr()), n, k, &_alglib_env_state);
 
     alglib_impl::ae_state_clear(&_alglib_env_state);
@@ -7321,7 +6744,7 @@ NOTE 3: technical analytis users quite often work  with  EMA  coefficient
   -- ALGLIB --
      Copyright 25.10.2011 by Bochkanov Sergey
 *************************************************************************/
-void filterema(real_1d_array &x, const ae_int_t n, const double alpha)
+void filterema(real_1d_array &x, const ae_int_t n, const double alpha, const xparams _xparams)
 {
     jmp_buf _break_jump;
     alglib_impl::ae_state _alglib_env_state;
@@ -7336,6 +6759,8 @@ void filterema(real_1d_array &x, const ae_int_t n, const double alpha)
 #endif
     }
     ae_state_set_break_jump(&_alglib_env_state, &_break_jump);
+    if( _xparams.flags!=0x0 )
+        ae_state_set_flags(&_alglib_env_state, _xparams.flags);
     alglib_impl::filterema(const_cast<alglib_impl::ae_vector*>(x.c_ptr()), n, alpha, &_alglib_env_state);
     alglib_impl::ae_state_clear(&_alglib_env_state);
     return;
@@ -7373,7 +6798,7 @@ NOTE 3: technical analytis users quite often work  with  EMA  coefficient
      Copyright 25.10.2011 by Bochkanov Sergey
 *************************************************************************/
 #if !defined(AE_NO_EXCEPTIONS)
-void filterema(real_1d_array &x, const double alpha)
+void filterema(real_1d_array &x, const double alpha, const xparams _xparams)
 {
     jmp_buf _break_jump;
     alglib_impl::ae_state _alglib_env_state;    
@@ -7384,6 +6809,8 @@ void filterema(real_1d_array &x, const double alpha)
     if( setjmp(_break_jump) )
         _ALGLIB_CPP_EXCEPTION(_alglib_env_state.error_msg);
     ae_state_set_break_jump(&_alglib_env_state, &_break_jump);
+    if( _xparams.flags!=0x0 )
+        ae_state_set_flags(&_alglib_env_state, _xparams.flags);
     alglib_impl::filterema(const_cast<alglib_impl::ae_vector*>(x.c_ptr()), n, alpha, &_alglib_env_state);
 
     alglib_impl::ae_state_clear(&_alglib_env_state);
@@ -7430,7 +6857,7 @@ NOTE 3: this  is  unsymmetric version of the algorithm,  which  does  NOT
   -- ALGLIB --
      Copyright 25.10.2011 by Bochkanov Sergey
 *************************************************************************/
-void filterlrma(real_1d_array &x, const ae_int_t n, const ae_int_t k)
+void filterlrma(real_1d_array &x, const ae_int_t n, const ae_int_t k, const xparams _xparams)
 {
     jmp_buf _break_jump;
     alglib_impl::ae_state _alglib_env_state;
@@ -7445,6 +6872,8 @@ void filterlrma(real_1d_array &x, const ae_int_t n, const ae_int_t k)
 #endif
     }
     ae_state_set_break_jump(&_alglib_env_state, &_break_jump);
+    if( _xparams.flags!=0x0 )
+        ae_state_set_flags(&_alglib_env_state, _xparams.flags);
     alglib_impl::filterlrma(const_cast<alglib_impl::ae_vector*>(x.c_ptr()), n, k, &_alglib_env_state);
     alglib_impl::ae_state_clear(&_alglib_env_state);
     return;
@@ -7490,7 +6919,7 @@ NOTE 3: this  is  unsymmetric version of the algorithm,  which  does  NOT
      Copyright 25.10.2011 by Bochkanov Sergey
 *************************************************************************/
 #if !defined(AE_NO_EXCEPTIONS)
-void filterlrma(real_1d_array &x, const ae_int_t k)
+void filterlrma(real_1d_array &x, const ae_int_t k, const xparams _xparams)
 {
     jmp_buf _break_jump;
     alglib_impl::ae_state _alglib_env_state;    
@@ -7501,6 +6930,8 @@ void filterlrma(real_1d_array &x, const ae_int_t k)
     if( setjmp(_break_jump) )
         _ALGLIB_CPP_EXCEPTION(_alglib_env_state.error_msg);
     ae_state_set_break_jump(&_alglib_env_state, &_break_jump);
+    if( _xparams.flags!=0x0 )
+        ae_state_set_flags(&_alglib_env_state, _xparams.flags);
     alglib_impl::filterlrma(const_cast<alglib_impl::ae_vector*>(x.c_ptr()), n, k, &_alglib_env_state);
 
     alglib_impl::ae_state_clear(&_alglib_env_state);
@@ -7793,7 +7224,7 @@ OUTPUT PARAMETERS:
   -- ALGLIB --
      Copyright 10.09.2008 by Bochkanov Sergey
 *************************************************************************/
-void mnltrainh(const real_2d_array &xy, const ae_int_t npoints, const ae_int_t nvars, const ae_int_t nclasses, ae_int_t &info, logitmodel &lm, mnlreport &rep)
+void mnltrainh(const real_2d_array &xy, const ae_int_t npoints, const ae_int_t nvars, const ae_int_t nclasses, ae_int_t &info, logitmodel &lm, mnlreport &rep, const xparams _xparams)
 {
     jmp_buf _break_jump;
     alglib_impl::ae_state _alglib_env_state;
@@ -7808,6 +7239,8 @@ void mnltrainh(const real_2d_array &xy, const ae_int_t npoints, const ae_int_t n
 #endif
     }
     ae_state_set_break_jump(&_alglib_env_state, &_break_jump);
+    if( _xparams.flags!=0x0 )
+        ae_state_set_flags(&_alglib_env_state, _xparams.flags);
     alglib_impl::mnltrainh(const_cast<alglib_impl::ae_matrix*>(xy.c_ptr()), npoints, nvars, nclasses, &info, const_cast<alglib_impl::logitmodel*>(lm.c_ptr()), const_cast<alglib_impl::mnlreport*>(rep.c_ptr()), &_alglib_env_state);
     alglib_impl::ae_state_clear(&_alglib_env_state);
     return;
@@ -7832,7 +7265,7 @@ OUTPUT PARAMETERS:
   -- ALGLIB --
      Copyright 10.09.2008 by Bochkanov Sergey
 *************************************************************************/
-void mnlprocess(const logitmodel &lm, const real_1d_array &x, real_1d_array &y)
+void mnlprocess(const logitmodel &lm, const real_1d_array &x, real_1d_array &y, const xparams _xparams)
 {
     jmp_buf _break_jump;
     alglib_impl::ae_state _alglib_env_state;
@@ -7847,6 +7280,8 @@ void mnlprocess(const logitmodel &lm, const real_1d_array &x, real_1d_array &y)
 #endif
     }
     ae_state_set_break_jump(&_alglib_env_state, &_break_jump);
+    if( _xparams.flags!=0x0 )
+        ae_state_set_flags(&_alglib_env_state, _xparams.flags);
     alglib_impl::mnlprocess(const_cast<alglib_impl::logitmodel*>(lm.c_ptr()), const_cast<alglib_impl::ae_vector*>(x.c_ptr()), const_cast<alglib_impl::ae_vector*>(y.c_ptr()), &_alglib_env_state);
     alglib_impl::ae_state_clear(&_alglib_env_state);
     return;
@@ -7864,7 +7299,7 @@ when you call it from command line.
   -- ALGLIB --
      Copyright 10.09.2008 by Bochkanov Sergey
 *************************************************************************/
-void mnlprocessi(const logitmodel &lm, const real_1d_array &x, real_1d_array &y)
+void mnlprocessi(const logitmodel &lm, const real_1d_array &x, real_1d_array &y, const xparams _xparams)
 {
     jmp_buf _break_jump;
     alglib_impl::ae_state _alglib_env_state;
@@ -7879,6 +7314,8 @@ void mnlprocessi(const logitmodel &lm, const real_1d_array &x, real_1d_array &y)
 #endif
     }
     ae_state_set_break_jump(&_alglib_env_state, &_break_jump);
+    if( _xparams.flags!=0x0 )
+        ae_state_set_flags(&_alglib_env_state, _xparams.flags);
     alglib_impl::mnlprocessi(const_cast<alglib_impl::logitmodel*>(lm.c_ptr()), const_cast<alglib_impl::ae_vector*>(x.c_ptr()), const_cast<alglib_impl::ae_vector*>(y.c_ptr()), &_alglib_env_state);
     alglib_impl::ae_state_clear(&_alglib_env_state);
     return;
@@ -7902,7 +7339,7 @@ OUTPUT PARAMETERS:
   -- ALGLIB --
      Copyright 10.09.2008 by Bochkanov Sergey
 *************************************************************************/
-void mnlunpack(const logitmodel &lm, real_2d_array &a, ae_int_t &nvars, ae_int_t &nclasses)
+void mnlunpack(const logitmodel &lm, real_2d_array &a, ae_int_t &nvars, ae_int_t &nclasses, const xparams _xparams)
 {
     jmp_buf _break_jump;
     alglib_impl::ae_state _alglib_env_state;
@@ -7917,6 +7354,8 @@ void mnlunpack(const logitmodel &lm, real_2d_array &a, ae_int_t &nvars, ae_int_t
 #endif
     }
     ae_state_set_break_jump(&_alglib_env_state, &_break_jump);
+    if( _xparams.flags!=0x0 )
+        ae_state_set_flags(&_alglib_env_state, _xparams.flags);
     alglib_impl::mnlunpack(const_cast<alglib_impl::logitmodel*>(lm.c_ptr()), const_cast<alglib_impl::ae_matrix*>(a.c_ptr()), &nvars, &nclasses, &_alglib_env_state);
     alglib_impl::ae_state_clear(&_alglib_env_state);
     return;
@@ -7937,7 +7376,7 @@ OUTPUT PARAMETERS:
   -- ALGLIB --
      Copyright 10.09.2008 by Bochkanov Sergey
 *************************************************************************/
-void mnlpack(const real_2d_array &a, const ae_int_t nvars, const ae_int_t nclasses, logitmodel &lm)
+void mnlpack(const real_2d_array &a, const ae_int_t nvars, const ae_int_t nclasses, logitmodel &lm, const xparams _xparams)
 {
     jmp_buf _break_jump;
     alglib_impl::ae_state _alglib_env_state;
@@ -7952,6 +7391,8 @@ void mnlpack(const real_2d_array &a, const ae_int_t nvars, const ae_int_t nclass
 #endif
     }
     ae_state_set_break_jump(&_alglib_env_state, &_break_jump);
+    if( _xparams.flags!=0x0 )
+        ae_state_set_flags(&_alglib_env_state, _xparams.flags);
     alglib_impl::mnlpack(const_cast<alglib_impl::ae_matrix*>(a.c_ptr()), nvars, nclasses, const_cast<alglib_impl::logitmodel*>(lm.c_ptr()), &_alglib_env_state);
     alglib_impl::ae_state_clear(&_alglib_env_state);
     return;
@@ -7971,7 +7412,7 @@ RESULT:
   -- ALGLIB --
      Copyright 10.09.2008 by Bochkanov Sergey
 *************************************************************************/
-double mnlavgce(const logitmodel &lm, const real_2d_array &xy, const ae_int_t npoints)
+double mnlavgce(const logitmodel &lm, const real_2d_array &xy, const ae_int_t npoints, const xparams _xparams)
 {
     jmp_buf _break_jump;
     alglib_impl::ae_state _alglib_env_state;
@@ -7986,6 +7427,8 @@ double mnlavgce(const logitmodel &lm, const real_2d_array &xy, const ae_int_t np
 #endif
     }
     ae_state_set_break_jump(&_alglib_env_state, &_break_jump);
+    if( _xparams.flags!=0x0 )
+        ae_state_set_flags(&_alglib_env_state, _xparams.flags);
     double result = alglib_impl::mnlavgce(const_cast<alglib_impl::logitmodel*>(lm.c_ptr()), const_cast<alglib_impl::ae_matrix*>(xy.c_ptr()), npoints, &_alglib_env_state);
     alglib_impl::ae_state_clear(&_alglib_env_state);
     return *(reinterpret_cast<double*>(&result));
@@ -8005,7 +7448,7 @@ RESULT:
   -- ALGLIB --
      Copyright 10.09.2008 by Bochkanov Sergey
 *************************************************************************/
-double mnlrelclserror(const logitmodel &lm, const real_2d_array &xy, const ae_int_t npoints)
+double mnlrelclserror(const logitmodel &lm, const real_2d_array &xy, const ae_int_t npoints, const xparams _xparams)
 {
     jmp_buf _break_jump;
     alglib_impl::ae_state _alglib_env_state;
@@ -8020,6 +7463,8 @@ double mnlrelclserror(const logitmodel &lm, const real_2d_array &xy, const ae_in
 #endif
     }
     ae_state_set_break_jump(&_alglib_env_state, &_break_jump);
+    if( _xparams.flags!=0x0 )
+        ae_state_set_flags(&_alglib_env_state, _xparams.flags);
     double result = alglib_impl::mnlrelclserror(const_cast<alglib_impl::logitmodel*>(lm.c_ptr()), const_cast<alglib_impl::ae_matrix*>(xy.c_ptr()), npoints, &_alglib_env_state);
     alglib_impl::ae_state_clear(&_alglib_env_state);
     return *(reinterpret_cast<double*>(&result));
@@ -8039,7 +7484,7 @@ RESULT:
   -- ALGLIB --
      Copyright 30.08.2008 by Bochkanov Sergey
 *************************************************************************/
-double mnlrmserror(const logitmodel &lm, const real_2d_array &xy, const ae_int_t npoints)
+double mnlrmserror(const logitmodel &lm, const real_2d_array &xy, const ae_int_t npoints, const xparams _xparams)
 {
     jmp_buf _break_jump;
     alglib_impl::ae_state _alglib_env_state;
@@ -8054,6 +7499,8 @@ double mnlrmserror(const logitmodel &lm, const real_2d_array &xy, const ae_int_t
 #endif
     }
     ae_state_set_break_jump(&_alglib_env_state, &_break_jump);
+    if( _xparams.flags!=0x0 )
+        ae_state_set_flags(&_alglib_env_state, _xparams.flags);
     double result = alglib_impl::mnlrmserror(const_cast<alglib_impl::logitmodel*>(lm.c_ptr()), const_cast<alglib_impl::ae_matrix*>(xy.c_ptr()), npoints, &_alglib_env_state);
     alglib_impl::ae_state_clear(&_alglib_env_state);
     return *(reinterpret_cast<double*>(&result));
@@ -8073,7 +7520,7 @@ RESULT:
   -- ALGLIB --
      Copyright 30.08.2008 by Bochkanov Sergey
 *************************************************************************/
-double mnlavgerror(const logitmodel &lm, const real_2d_array &xy, const ae_int_t npoints)
+double mnlavgerror(const logitmodel &lm, const real_2d_array &xy, const ae_int_t npoints, const xparams _xparams)
 {
     jmp_buf _break_jump;
     alglib_impl::ae_state _alglib_env_state;
@@ -8088,6 +7535,8 @@ double mnlavgerror(const logitmodel &lm, const real_2d_array &xy, const ae_int_t
 #endif
     }
     ae_state_set_break_jump(&_alglib_env_state, &_break_jump);
+    if( _xparams.flags!=0x0 )
+        ae_state_set_flags(&_alglib_env_state, _xparams.flags);
     double result = alglib_impl::mnlavgerror(const_cast<alglib_impl::logitmodel*>(lm.c_ptr()), const_cast<alglib_impl::ae_matrix*>(xy.c_ptr()), npoints, &_alglib_env_state);
     alglib_impl::ae_state_clear(&_alglib_env_state);
     return *(reinterpret_cast<double*>(&result));
@@ -8107,7 +7556,7 @@ RESULT:
   -- ALGLIB --
      Copyright 30.08.2008 by Bochkanov Sergey
 *************************************************************************/
-double mnlavgrelerror(const logitmodel &lm, const real_2d_array &xy, const ae_int_t ssize)
+double mnlavgrelerror(const logitmodel &lm, const real_2d_array &xy, const ae_int_t ssize, const xparams _xparams)
 {
     jmp_buf _break_jump;
     alglib_impl::ae_state _alglib_env_state;
@@ -8122,6 +7571,8 @@ double mnlavgrelerror(const logitmodel &lm, const real_2d_array &xy, const ae_in
 #endif
     }
     ae_state_set_break_jump(&_alglib_env_state, &_break_jump);
+    if( _xparams.flags!=0x0 )
+        ae_state_set_flags(&_alglib_env_state, _xparams.flags);
     double result = alglib_impl::mnlavgrelerror(const_cast<alglib_impl::logitmodel*>(lm.c_ptr()), const_cast<alglib_impl::ae_matrix*>(xy.c_ptr()), ssize, &_alglib_env_state);
     alglib_impl::ae_state_clear(&_alglib_env_state);
     return *(reinterpret_cast<double*>(&result));
@@ -8133,7 +7584,7 @@ Classification error on test set = MNLRelClsError*NPoints
   -- ALGLIB --
      Copyright 10.09.2008 by Bochkanov Sergey
 *************************************************************************/
-ae_int_t mnlclserror(const logitmodel &lm, const real_2d_array &xy, const ae_int_t npoints)
+ae_int_t mnlclserror(const logitmodel &lm, const real_2d_array &xy, const ae_int_t npoints, const xparams _xparams)
 {
     jmp_buf _break_jump;
     alglib_impl::ae_state _alglib_env_state;
@@ -8148,6 +7599,8 @@ ae_int_t mnlclserror(const logitmodel &lm, const real_2d_array &xy, const ae_int
 #endif
     }
     ae_state_set_break_jump(&_alglib_env_state, &_break_jump);
+    if( _xparams.flags!=0x0 )
+        ae_state_set_flags(&_alglib_env_state, _xparams.flags);
     alglib_impl::ae_int_t result = alglib_impl::mnlclserror(const_cast<alglib_impl::logitmodel*>(lm.c_ptr()), const_cast<alglib_impl::ae_matrix*>(xy.c_ptr()), npoints, &_alglib_env_state);
     alglib_impl::ae_state_clear(&_alglib_env_state);
     return *(reinterpret_cast<ae_int_t*>(&result));
@@ -8483,7 +7936,7 @@ OUTPUT PARAMETERS:
   -- ALGLIB --
      Copyright 23.05.2010 by Bochkanov Sergey
 *************************************************************************/
-void mcpdcreate(const ae_int_t n, mcpdstate &s)
+void mcpdcreate(const ae_int_t n, mcpdstate &s, const xparams _xparams)
 {
     jmp_buf _break_jump;
     alglib_impl::ae_state _alglib_env_state;
@@ -8498,6 +7951,8 @@ void mcpdcreate(const ae_int_t n, mcpdstate &s)
 #endif
     }
     ae_state_set_break_jump(&_alglib_env_state, &_break_jump);
+    if( _xparams.flags!=0x0 )
+        ae_state_set_flags(&_alglib_env_state, _xparams.flags);
     alglib_impl::mcpdcreate(n, const_cast<alglib_impl::mcpdstate*>(s.c_ptr()), &_alglib_env_state);
     alglib_impl::ae_state_clear(&_alglib_env_state);
     return;
@@ -8549,7 +8004,7 @@ OUTPUT PARAMETERS:
   -- ALGLIB --
      Copyright 23.05.2010 by Bochkanov Sergey
 *************************************************************************/
-void mcpdcreateentry(const ae_int_t n, const ae_int_t entrystate, mcpdstate &s)
+void mcpdcreateentry(const ae_int_t n, const ae_int_t entrystate, mcpdstate &s, const xparams _xparams)
 {
     jmp_buf _break_jump;
     alglib_impl::ae_state _alglib_env_state;
@@ -8564,6 +8019,8 @@ void mcpdcreateentry(const ae_int_t n, const ae_int_t entrystate, mcpdstate &s)
 #endif
     }
     ae_state_set_break_jump(&_alglib_env_state, &_break_jump);
+    if( _xparams.flags!=0x0 )
+        ae_state_set_flags(&_alglib_env_state, _xparams.flags);
     alglib_impl::mcpdcreateentry(n, entrystate, const_cast<alglib_impl::mcpdstate*>(s.c_ptr()), &_alglib_env_state);
     alglib_impl::ae_state_clear(&_alglib_env_state);
     return;
@@ -8615,7 +8072,7 @@ OUTPUT PARAMETERS:
   -- ALGLIB --
      Copyright 23.05.2010 by Bochkanov Sergey
 *************************************************************************/
-void mcpdcreateexit(const ae_int_t n, const ae_int_t exitstate, mcpdstate &s)
+void mcpdcreateexit(const ae_int_t n, const ae_int_t exitstate, mcpdstate &s, const xparams _xparams)
 {
     jmp_buf _break_jump;
     alglib_impl::ae_state _alglib_env_state;
@@ -8630,6 +8087,8 @@ void mcpdcreateexit(const ae_int_t n, const ae_int_t exitstate, mcpdstate &s)
 #endif
     }
     ae_state_set_break_jump(&_alglib_env_state, &_break_jump);
+    if( _xparams.flags!=0x0 )
+        ae_state_set_flags(&_alglib_env_state, _xparams.flags);
     alglib_impl::mcpdcreateexit(n, exitstate, const_cast<alglib_impl::mcpdstate*>(s.c_ptr()), &_alglib_env_state);
     alglib_impl::ae_state_clear(&_alglib_env_state);
     return;
@@ -8692,7 +8151,7 @@ OUTPUT PARAMETERS:
   -- ALGLIB --
      Copyright 23.05.2010 by Bochkanov Sergey
 *************************************************************************/
-void mcpdcreateentryexit(const ae_int_t n, const ae_int_t entrystate, const ae_int_t exitstate, mcpdstate &s)
+void mcpdcreateentryexit(const ae_int_t n, const ae_int_t entrystate, const ae_int_t exitstate, mcpdstate &s, const xparams _xparams)
 {
     jmp_buf _break_jump;
     alglib_impl::ae_state _alglib_env_state;
@@ -8707,6 +8166,8 @@ void mcpdcreateentryexit(const ae_int_t n, const ae_int_t entrystate, const ae_i
 #endif
     }
     ae_state_set_break_jump(&_alglib_env_state, &_break_jump);
+    if( _xparams.flags!=0x0 )
+        ae_state_set_flags(&_alglib_env_state, _xparams.flags);
     alglib_impl::mcpdcreateentryexit(n, entrystate, exitstate, const_cast<alglib_impl::mcpdstate*>(s.c_ptr()), &_alglib_env_state);
     alglib_impl::ae_state_clear(&_alglib_env_state);
     return;
@@ -8744,7 +8205,7 @@ NOTES:
   -- ALGLIB --
      Copyright 23.05.2010 by Bochkanov Sergey
 *************************************************************************/
-void mcpdaddtrack(const mcpdstate &s, const real_2d_array &xy, const ae_int_t k)
+void mcpdaddtrack(const mcpdstate &s, const real_2d_array &xy, const ae_int_t k, const xparams _xparams)
 {
     jmp_buf _break_jump;
     alglib_impl::ae_state _alglib_env_state;
@@ -8759,6 +8220,8 @@ void mcpdaddtrack(const mcpdstate &s, const real_2d_array &xy, const ae_int_t k)
 #endif
     }
     ae_state_set_break_jump(&_alglib_env_state, &_break_jump);
+    if( _xparams.flags!=0x0 )
+        ae_state_set_flags(&_alglib_env_state, _xparams.flags);
     alglib_impl::mcpdaddtrack(const_cast<alglib_impl::mcpdstate*>(s.c_ptr()), const_cast<alglib_impl::ae_matrix*>(xy.c_ptr()), k, &_alglib_env_state);
     alglib_impl::ae_state_clear(&_alglib_env_state);
     return;
@@ -8797,7 +8260,7 @@ NOTES:
      Copyright 23.05.2010 by Bochkanov Sergey
 *************************************************************************/
 #if !defined(AE_NO_EXCEPTIONS)
-void mcpdaddtrack(const mcpdstate &s, const real_2d_array &xy)
+void mcpdaddtrack(const mcpdstate &s, const real_2d_array &xy, const xparams _xparams)
 {
     jmp_buf _break_jump;
     alglib_impl::ae_state _alglib_env_state;    
@@ -8808,6 +8271,8 @@ void mcpdaddtrack(const mcpdstate &s, const real_2d_array &xy)
     if( setjmp(_break_jump) )
         _ALGLIB_CPP_EXCEPTION(_alglib_env_state.error_msg);
     ae_state_set_break_jump(&_alglib_env_state, &_break_jump);
+    if( _xparams.flags!=0x0 )
+        ae_state_set_flags(&_alglib_env_state, _xparams.flags);
     alglib_impl::mcpdaddtrack(const_cast<alglib_impl::mcpdstate*>(s.c_ptr()), const_cast<alglib_impl::ae_matrix*>(xy.c_ptr()), k, &_alglib_env_state);
 
     alglib_impl::ae_state_clear(&_alglib_env_state);
@@ -8871,7 +8336,7 @@ call to MCPDSolve().
   -- ALGLIB --
      Copyright 23.05.2010 by Bochkanov Sergey
 *************************************************************************/
-void mcpdsetec(const mcpdstate &s, const real_2d_array &ec)
+void mcpdsetec(const mcpdstate &s, const real_2d_array &ec, const xparams _xparams)
 {
     jmp_buf _break_jump;
     alglib_impl::ae_state _alglib_env_state;
@@ -8886,6 +8351,8 @@ void mcpdsetec(const mcpdstate &s, const real_2d_array &ec)
 #endif
     }
     ae_state_set_break_jump(&_alglib_env_state, &_break_jump);
+    if( _xparams.flags!=0x0 )
+        ae_state_set_flags(&_alglib_env_state, _xparams.flags);
     alglib_impl::mcpdsetec(const_cast<alglib_impl::mcpdstate*>(s.c_ptr()), const_cast<alglib_impl::ae_matrix*>(ec.c_ptr()), &_alglib_env_state);
     alglib_impl::ae_state_clear(&_alglib_env_state);
     return;
@@ -8943,7 +8410,7 @@ call to MCPDSolve().
   -- ALGLIB --
      Copyright 23.05.2010 by Bochkanov Sergey
 *************************************************************************/
-void mcpdaddec(const mcpdstate &s, const ae_int_t i, const ae_int_t j, const double c)
+void mcpdaddec(const mcpdstate &s, const ae_int_t i, const ae_int_t j, const double c, const xparams _xparams)
 {
     jmp_buf _break_jump;
     alglib_impl::ae_state _alglib_env_state;
@@ -8958,6 +8425,8 @@ void mcpdaddec(const mcpdstate &s, const ae_int_t i, const ae_int_t j, const dou
 #endif
     }
     ae_state_set_break_jump(&_alglib_env_state, &_break_jump);
+    if( _xparams.flags!=0x0 )
+        ae_state_set_flags(&_alglib_env_state, _xparams.flags);
     alglib_impl::mcpdaddec(const_cast<alglib_impl::mcpdstate*>(s.c_ptr()), i, j, c, &_alglib_env_state);
     alglib_impl::ae_state_clear(&_alglib_env_state);
     return;
@@ -9011,7 +8480,7 @@ INPUT PARAMETERS:
   -- ALGLIB --
      Copyright 23.05.2010 by Bochkanov Sergey
 *************************************************************************/
-void mcpdsetbc(const mcpdstate &s, const real_2d_array &bndl, const real_2d_array &bndu)
+void mcpdsetbc(const mcpdstate &s, const real_2d_array &bndl, const real_2d_array &bndu, const xparams _xparams)
 {
     jmp_buf _break_jump;
     alglib_impl::ae_state _alglib_env_state;
@@ -9026,6 +8495,8 @@ void mcpdsetbc(const mcpdstate &s, const real_2d_array &bndl, const real_2d_arra
 #endif
     }
     ae_state_set_break_jump(&_alglib_env_state, &_break_jump);
+    if( _xparams.flags!=0x0 )
+        ae_state_set_flags(&_alglib_env_state, _xparams.flags);
     alglib_impl::mcpdsetbc(const_cast<alglib_impl::mcpdstate*>(s.c_ptr()), const_cast<alglib_impl::ae_matrix*>(bndl.c_ptr()), const_cast<alglib_impl::ae_matrix*>(bndu.c_ptr()), &_alglib_env_state);
     alglib_impl::ae_state_clear(&_alglib_env_state);
     return;
@@ -9079,7 +8550,7 @@ INPUT PARAMETERS:
   -- ALGLIB --
      Copyright 23.05.2010 by Bochkanov Sergey
 *************************************************************************/
-void mcpdaddbc(const mcpdstate &s, const ae_int_t i, const ae_int_t j, const double bndl, const double bndu)
+void mcpdaddbc(const mcpdstate &s, const ae_int_t i, const ae_int_t j, const double bndl, const double bndu, const xparams _xparams)
 {
     jmp_buf _break_jump;
     alglib_impl::ae_state _alglib_env_state;
@@ -9094,6 +8565,8 @@ void mcpdaddbc(const mcpdstate &s, const ae_int_t i, const ae_int_t j, const dou
 #endif
     }
     ae_state_set_break_jump(&_alglib_env_state, &_break_jump);
+    if( _xparams.flags!=0x0 )
+        ae_state_set_flags(&_alglib_env_state, _xparams.flags);
     alglib_impl::mcpdaddbc(const_cast<alglib_impl::mcpdstate*>(s.c_ptr()), i, j, bndl, bndu, &_alglib_env_state);
     alglib_impl::ae_state_clear(&_alglib_env_state);
     return;
@@ -9140,7 +8613,7 @@ INPUT PARAMETERS:
   -- ALGLIB --
      Copyright 23.05.2010 by Bochkanov Sergey
 *************************************************************************/
-void mcpdsetlc(const mcpdstate &s, const real_2d_array &c, const integer_1d_array &ct, const ae_int_t k)
+void mcpdsetlc(const mcpdstate &s, const real_2d_array &c, const integer_1d_array &ct, const ae_int_t k, const xparams _xparams)
 {
     jmp_buf _break_jump;
     alglib_impl::ae_state _alglib_env_state;
@@ -9155,6 +8628,8 @@ void mcpdsetlc(const mcpdstate &s, const real_2d_array &c, const integer_1d_arra
 #endif
     }
     ae_state_set_break_jump(&_alglib_env_state, &_break_jump);
+    if( _xparams.flags!=0x0 )
+        ae_state_set_flags(&_alglib_env_state, _xparams.flags);
     alglib_impl::mcpdsetlc(const_cast<alglib_impl::mcpdstate*>(s.c_ptr()), const_cast<alglib_impl::ae_matrix*>(c.c_ptr()), const_cast<alglib_impl::ae_vector*>(ct.c_ptr()), k, &_alglib_env_state);
     alglib_impl::ae_state_clear(&_alglib_env_state);
     return;
@@ -9202,7 +8677,7 @@ INPUT PARAMETERS:
      Copyright 23.05.2010 by Bochkanov Sergey
 *************************************************************************/
 #if !defined(AE_NO_EXCEPTIONS)
-void mcpdsetlc(const mcpdstate &s, const real_2d_array &c, const integer_1d_array &ct)
+void mcpdsetlc(const mcpdstate &s, const real_2d_array &c, const integer_1d_array &ct, const xparams _xparams)
 {
     jmp_buf _break_jump;
     alglib_impl::ae_state _alglib_env_state;    
@@ -9214,6 +8689,8 @@ void mcpdsetlc(const mcpdstate &s, const real_2d_array &c, const integer_1d_arra
     if( setjmp(_break_jump) )
         _ALGLIB_CPP_EXCEPTION(_alglib_env_state.error_msg);
     ae_state_set_break_jump(&_alglib_env_state, &_break_jump);
+    if( _xparams.flags!=0x0 )
+        ae_state_set_flags(&_alglib_env_state, _xparams.flags);
     alglib_impl::mcpdsetlc(const_cast<alglib_impl::mcpdstate*>(s.c_ptr()), const_cast<alglib_impl::ae_matrix*>(c.c_ptr()), const_cast<alglib_impl::ae_vector*>(ct.c_ptr()), k, &_alglib_env_state);
 
     alglib_impl::ae_state_clear(&_alglib_env_state);
@@ -9241,7 +8718,7 @@ INPUT PARAMETERS:
   -- ALGLIB --
      Copyright 23.05.2010 by Bochkanov Sergey
 *************************************************************************/
-void mcpdsettikhonovregularizer(const mcpdstate &s, const double v)
+void mcpdsettikhonovregularizer(const mcpdstate &s, const double v, const xparams _xparams)
 {
     jmp_buf _break_jump;
     alglib_impl::ae_state _alglib_env_state;
@@ -9256,6 +8733,8 @@ void mcpdsettikhonovregularizer(const mcpdstate &s, const double v)
 #endif
     }
     ae_state_set_break_jump(&_alglib_env_state, &_break_jump);
+    if( _xparams.flags!=0x0 )
+        ae_state_set_flags(&_alglib_env_state, _xparams.flags);
     alglib_impl::mcpdsettikhonovregularizer(const_cast<alglib_impl::mcpdstate*>(s.c_ptr()), v, &_alglib_env_state);
     alglib_impl::ae_state_clear(&_alglib_env_state);
     return;
@@ -9283,7 +8762,7 @@ INPUT PARAMETERS:
   -- ALGLIB --
      Copyright 23.05.2010 by Bochkanov Sergey
 *************************************************************************/
-void mcpdsetprior(const mcpdstate &s, const real_2d_array &pp)
+void mcpdsetprior(const mcpdstate &s, const real_2d_array &pp, const xparams _xparams)
 {
     jmp_buf _break_jump;
     alglib_impl::ae_state _alglib_env_state;
@@ -9298,6 +8777,8 @@ void mcpdsetprior(const mcpdstate &s, const real_2d_array &pp)
 #endif
     }
     ae_state_set_break_jump(&_alglib_env_state, &_break_jump);
+    if( _xparams.flags!=0x0 )
+        ae_state_set_flags(&_alglib_env_state, _xparams.flags);
     alglib_impl::mcpdsetprior(const_cast<alglib_impl::mcpdstate*>(s.c_ptr()), const_cast<alglib_impl::ae_matrix*>(pp.c_ptr()), &_alglib_env_state);
     alglib_impl::ae_state_clear(&_alglib_env_state);
     return;
@@ -9328,7 +8809,7 @@ INPUT PARAMETERS:
   -- ALGLIB --
      Copyright 23.05.2010 by Bochkanov Sergey
 *************************************************************************/
-void mcpdsetpredictionweights(const mcpdstate &s, const real_1d_array &pw)
+void mcpdsetpredictionweights(const mcpdstate &s, const real_1d_array &pw, const xparams _xparams)
 {
     jmp_buf _break_jump;
     alglib_impl::ae_state _alglib_env_state;
@@ -9343,6 +8824,8 @@ void mcpdsetpredictionweights(const mcpdstate &s, const real_1d_array &pw)
 #endif
     }
     ae_state_set_break_jump(&_alglib_env_state, &_break_jump);
+    if( _xparams.flags!=0x0 )
+        ae_state_set_flags(&_alglib_env_state, _xparams.flags);
     alglib_impl::mcpdsetpredictionweights(const_cast<alglib_impl::mcpdstate*>(s.c_ptr()), const_cast<alglib_impl::ae_vector*>(pw.c_ptr()), &_alglib_env_state);
     alglib_impl::ae_state_clear(&_alglib_env_state);
     return;
@@ -9357,7 +8840,7 @@ and completion code.
   -- ALGLIB --
      Copyright 23.05.2010 by Bochkanov Sergey
 *************************************************************************/
-void mcpdsolve(const mcpdstate &s)
+void mcpdsolve(const mcpdstate &s, const xparams _xparams)
 {
     jmp_buf _break_jump;
     alglib_impl::ae_state _alglib_env_state;
@@ -9372,6 +8855,8 @@ void mcpdsolve(const mcpdstate &s)
 #endif
     }
     ae_state_set_break_jump(&_alglib_env_state, &_break_jump);
+    if( _xparams.flags!=0x0 )
+        ae_state_set_flags(&_alglib_env_state, _xparams.flags);
     alglib_impl::mcpdsolve(const_cast<alglib_impl::mcpdstate*>(s.c_ptr()), &_alglib_env_state);
     alglib_impl::ae_state_clear(&_alglib_env_state);
     return;
@@ -9396,7 +8881,7 @@ OUTPUT PARAMETERS:
   -- ALGLIB --
      Copyright 23.05.2010 by Bochkanov Sergey
 *************************************************************************/
-void mcpdresults(const mcpdstate &s, real_2d_array &p, mcpdreport &rep)
+void mcpdresults(const mcpdstate &s, real_2d_array &p, mcpdreport &rep, const xparams _xparams)
 {
     jmp_buf _break_jump;
     alglib_impl::ae_state _alglib_env_state;
@@ -9411,6 +8896,8 @@ void mcpdresults(const mcpdstate &s, real_2d_array &p, mcpdreport &rep)
 #endif
     }
     ae_state_set_break_jump(&_alglib_env_state, &_break_jump);
+    if( _xparams.flags!=0x0 )
+        ae_state_set_flags(&_alglib_env_state, _xparams.flags);
     alglib_impl::mcpdresults(const_cast<alglib_impl::mcpdstate*>(s.c_ptr()), const_cast<alglib_impl::ae_matrix*>(p.c_ptr()), const_cast<alglib_impl::mcpdreport*>(rep.c_ptr()), &_alglib_env_state);
     alglib_impl::ae_state_clear(&_alglib_env_state);
     return;
@@ -9698,7 +9185,7 @@ Like MLPCreate0, but for ensembles.
   -- ALGLIB --
      Copyright 18.02.2009 by Bochkanov Sergey
 *************************************************************************/
-void mlpecreate0(const ae_int_t nin, const ae_int_t nout, const ae_int_t ensemblesize, mlpensemble &ensemble)
+void mlpecreate0(const ae_int_t nin, const ae_int_t nout, const ae_int_t ensemblesize, mlpensemble &ensemble, const xparams _xparams)
 {
     jmp_buf _break_jump;
     alglib_impl::ae_state _alglib_env_state;
@@ -9713,6 +9200,8 @@ void mlpecreate0(const ae_int_t nin, const ae_int_t nout, const ae_int_t ensembl
 #endif
     }
     ae_state_set_break_jump(&_alglib_env_state, &_break_jump);
+    if( _xparams.flags!=0x0 )
+        ae_state_set_flags(&_alglib_env_state, _xparams.flags);
     alglib_impl::mlpecreate0(nin, nout, ensemblesize, const_cast<alglib_impl::mlpensemble*>(ensemble.c_ptr()), &_alglib_env_state);
     alglib_impl::ae_state_clear(&_alglib_env_state);
     return;
@@ -9724,7 +9213,7 @@ Like MLPCreate1, but for ensembles.
   -- ALGLIB --
      Copyright 18.02.2009 by Bochkanov Sergey
 *************************************************************************/
-void mlpecreate1(const ae_int_t nin, const ae_int_t nhid, const ae_int_t nout, const ae_int_t ensemblesize, mlpensemble &ensemble)
+void mlpecreate1(const ae_int_t nin, const ae_int_t nhid, const ae_int_t nout, const ae_int_t ensemblesize, mlpensemble &ensemble, const xparams _xparams)
 {
     jmp_buf _break_jump;
     alglib_impl::ae_state _alglib_env_state;
@@ -9739,6 +9228,8 @@ void mlpecreate1(const ae_int_t nin, const ae_int_t nhid, const ae_int_t nout, c
 #endif
     }
     ae_state_set_break_jump(&_alglib_env_state, &_break_jump);
+    if( _xparams.flags!=0x0 )
+        ae_state_set_flags(&_alglib_env_state, _xparams.flags);
     alglib_impl::mlpecreate1(nin, nhid, nout, ensemblesize, const_cast<alglib_impl::mlpensemble*>(ensemble.c_ptr()), &_alglib_env_state);
     alglib_impl::ae_state_clear(&_alglib_env_state);
     return;
@@ -9750,7 +9241,7 @@ Like MLPCreate2, but for ensembles.
   -- ALGLIB --
      Copyright 18.02.2009 by Bochkanov Sergey
 *************************************************************************/
-void mlpecreate2(const ae_int_t nin, const ae_int_t nhid1, const ae_int_t nhid2, const ae_int_t nout, const ae_int_t ensemblesize, mlpensemble &ensemble)
+void mlpecreate2(const ae_int_t nin, const ae_int_t nhid1, const ae_int_t nhid2, const ae_int_t nout, const ae_int_t ensemblesize, mlpensemble &ensemble, const xparams _xparams)
 {
     jmp_buf _break_jump;
     alglib_impl::ae_state _alglib_env_state;
@@ -9765,6 +9256,8 @@ void mlpecreate2(const ae_int_t nin, const ae_int_t nhid1, const ae_int_t nhid2,
 #endif
     }
     ae_state_set_break_jump(&_alglib_env_state, &_break_jump);
+    if( _xparams.flags!=0x0 )
+        ae_state_set_flags(&_alglib_env_state, _xparams.flags);
     alglib_impl::mlpecreate2(nin, nhid1, nhid2, nout, ensemblesize, const_cast<alglib_impl::mlpensemble*>(ensemble.c_ptr()), &_alglib_env_state);
     alglib_impl::ae_state_clear(&_alglib_env_state);
     return;
@@ -9776,7 +9269,7 @@ Like MLPCreateB0, but for ensembles.
   -- ALGLIB --
      Copyright 18.02.2009 by Bochkanov Sergey
 *************************************************************************/
-void mlpecreateb0(const ae_int_t nin, const ae_int_t nout, const double b, const double d, const ae_int_t ensemblesize, mlpensemble &ensemble)
+void mlpecreateb0(const ae_int_t nin, const ae_int_t nout, const double b, const double d, const ae_int_t ensemblesize, mlpensemble &ensemble, const xparams _xparams)
 {
     jmp_buf _break_jump;
     alglib_impl::ae_state _alglib_env_state;
@@ -9791,6 +9284,8 @@ void mlpecreateb0(const ae_int_t nin, const ae_int_t nout, const double b, const
 #endif
     }
     ae_state_set_break_jump(&_alglib_env_state, &_break_jump);
+    if( _xparams.flags!=0x0 )
+        ae_state_set_flags(&_alglib_env_state, _xparams.flags);
     alglib_impl::mlpecreateb0(nin, nout, b, d, ensemblesize, const_cast<alglib_impl::mlpensemble*>(ensemble.c_ptr()), &_alglib_env_state);
     alglib_impl::ae_state_clear(&_alglib_env_state);
     return;
@@ -9802,7 +9297,7 @@ Like MLPCreateB1, but for ensembles.
   -- ALGLIB --
      Copyright 18.02.2009 by Bochkanov Sergey
 *************************************************************************/
-void mlpecreateb1(const ae_int_t nin, const ae_int_t nhid, const ae_int_t nout, const double b, const double d, const ae_int_t ensemblesize, mlpensemble &ensemble)
+void mlpecreateb1(const ae_int_t nin, const ae_int_t nhid, const ae_int_t nout, const double b, const double d, const ae_int_t ensemblesize, mlpensemble &ensemble, const xparams _xparams)
 {
     jmp_buf _break_jump;
     alglib_impl::ae_state _alglib_env_state;
@@ -9817,6 +9312,8 @@ void mlpecreateb1(const ae_int_t nin, const ae_int_t nhid, const ae_int_t nout, 
 #endif
     }
     ae_state_set_break_jump(&_alglib_env_state, &_break_jump);
+    if( _xparams.flags!=0x0 )
+        ae_state_set_flags(&_alglib_env_state, _xparams.flags);
     alglib_impl::mlpecreateb1(nin, nhid, nout, b, d, ensemblesize, const_cast<alglib_impl::mlpensemble*>(ensemble.c_ptr()), &_alglib_env_state);
     alglib_impl::ae_state_clear(&_alglib_env_state);
     return;
@@ -9828,7 +9325,7 @@ Like MLPCreateB2, but for ensembles.
   -- ALGLIB --
      Copyright 18.02.2009 by Bochkanov Sergey
 *************************************************************************/
-void mlpecreateb2(const ae_int_t nin, const ae_int_t nhid1, const ae_int_t nhid2, const ae_int_t nout, const double b, const double d, const ae_int_t ensemblesize, mlpensemble &ensemble)
+void mlpecreateb2(const ae_int_t nin, const ae_int_t nhid1, const ae_int_t nhid2, const ae_int_t nout, const double b, const double d, const ae_int_t ensemblesize, mlpensemble &ensemble, const xparams _xparams)
 {
     jmp_buf _break_jump;
     alglib_impl::ae_state _alglib_env_state;
@@ -9843,6 +9340,8 @@ void mlpecreateb2(const ae_int_t nin, const ae_int_t nhid1, const ae_int_t nhid2
 #endif
     }
     ae_state_set_break_jump(&_alglib_env_state, &_break_jump);
+    if( _xparams.flags!=0x0 )
+        ae_state_set_flags(&_alglib_env_state, _xparams.flags);
     alglib_impl::mlpecreateb2(nin, nhid1, nhid2, nout, b, d, ensemblesize, const_cast<alglib_impl::mlpensemble*>(ensemble.c_ptr()), &_alglib_env_state);
     alglib_impl::ae_state_clear(&_alglib_env_state);
     return;
@@ -9854,7 +9353,7 @@ Like MLPCreateR0, but for ensembles.
   -- ALGLIB --
      Copyright 18.02.2009 by Bochkanov Sergey
 *************************************************************************/
-void mlpecreater0(const ae_int_t nin, const ae_int_t nout, const double a, const double b, const ae_int_t ensemblesize, mlpensemble &ensemble)
+void mlpecreater0(const ae_int_t nin, const ae_int_t nout, const double a, const double b, const ae_int_t ensemblesize, mlpensemble &ensemble, const xparams _xparams)
 {
     jmp_buf _break_jump;
     alglib_impl::ae_state _alglib_env_state;
@@ -9869,6 +9368,8 @@ void mlpecreater0(const ae_int_t nin, const ae_int_t nout, const double a, const
 #endif
     }
     ae_state_set_break_jump(&_alglib_env_state, &_break_jump);
+    if( _xparams.flags!=0x0 )
+        ae_state_set_flags(&_alglib_env_state, _xparams.flags);
     alglib_impl::mlpecreater0(nin, nout, a, b, ensemblesize, const_cast<alglib_impl::mlpensemble*>(ensemble.c_ptr()), &_alglib_env_state);
     alglib_impl::ae_state_clear(&_alglib_env_state);
     return;
@@ -9880,7 +9381,7 @@ Like MLPCreateR1, but for ensembles.
   -- ALGLIB --
      Copyright 18.02.2009 by Bochkanov Sergey
 *************************************************************************/
-void mlpecreater1(const ae_int_t nin, const ae_int_t nhid, const ae_int_t nout, const double a, const double b, const ae_int_t ensemblesize, mlpensemble &ensemble)
+void mlpecreater1(const ae_int_t nin, const ae_int_t nhid, const ae_int_t nout, const double a, const double b, const ae_int_t ensemblesize, mlpensemble &ensemble, const xparams _xparams)
 {
     jmp_buf _break_jump;
     alglib_impl::ae_state _alglib_env_state;
@@ -9895,6 +9396,8 @@ void mlpecreater1(const ae_int_t nin, const ae_int_t nhid, const ae_int_t nout, 
 #endif
     }
     ae_state_set_break_jump(&_alglib_env_state, &_break_jump);
+    if( _xparams.flags!=0x0 )
+        ae_state_set_flags(&_alglib_env_state, _xparams.flags);
     alglib_impl::mlpecreater1(nin, nhid, nout, a, b, ensemblesize, const_cast<alglib_impl::mlpensemble*>(ensemble.c_ptr()), &_alglib_env_state);
     alglib_impl::ae_state_clear(&_alglib_env_state);
     return;
@@ -9906,7 +9409,7 @@ Like MLPCreateR2, but for ensembles.
   -- ALGLIB --
      Copyright 18.02.2009 by Bochkanov Sergey
 *************************************************************************/
-void mlpecreater2(const ae_int_t nin, const ae_int_t nhid1, const ae_int_t nhid2, const ae_int_t nout, const double a, const double b, const ae_int_t ensemblesize, mlpensemble &ensemble)
+void mlpecreater2(const ae_int_t nin, const ae_int_t nhid1, const ae_int_t nhid2, const ae_int_t nout, const double a, const double b, const ae_int_t ensemblesize, mlpensemble &ensemble, const xparams _xparams)
 {
     jmp_buf _break_jump;
     alglib_impl::ae_state _alglib_env_state;
@@ -9921,6 +9424,8 @@ void mlpecreater2(const ae_int_t nin, const ae_int_t nhid1, const ae_int_t nhid2
 #endif
     }
     ae_state_set_break_jump(&_alglib_env_state, &_break_jump);
+    if( _xparams.flags!=0x0 )
+        ae_state_set_flags(&_alglib_env_state, _xparams.flags);
     alglib_impl::mlpecreater2(nin, nhid1, nhid2, nout, a, b, ensemblesize, const_cast<alglib_impl::mlpensemble*>(ensemble.c_ptr()), &_alglib_env_state);
     alglib_impl::ae_state_clear(&_alglib_env_state);
     return;
@@ -9932,7 +9437,7 @@ Like MLPCreateC0, but for ensembles.
   -- ALGLIB --
      Copyright 18.02.2009 by Bochkanov Sergey
 *************************************************************************/
-void mlpecreatec0(const ae_int_t nin, const ae_int_t nout, const ae_int_t ensemblesize, mlpensemble &ensemble)
+void mlpecreatec0(const ae_int_t nin, const ae_int_t nout, const ae_int_t ensemblesize, mlpensemble &ensemble, const xparams _xparams)
 {
     jmp_buf _break_jump;
     alglib_impl::ae_state _alglib_env_state;
@@ -9947,6 +9452,8 @@ void mlpecreatec0(const ae_int_t nin, const ae_int_t nout, const ae_int_t ensemb
 #endif
     }
     ae_state_set_break_jump(&_alglib_env_state, &_break_jump);
+    if( _xparams.flags!=0x0 )
+        ae_state_set_flags(&_alglib_env_state, _xparams.flags);
     alglib_impl::mlpecreatec0(nin, nout, ensemblesize, const_cast<alglib_impl::mlpensemble*>(ensemble.c_ptr()), &_alglib_env_state);
     alglib_impl::ae_state_clear(&_alglib_env_state);
     return;
@@ -9958,7 +9465,7 @@ Like MLPCreateC1, but for ensembles.
   -- ALGLIB --
      Copyright 18.02.2009 by Bochkanov Sergey
 *************************************************************************/
-void mlpecreatec1(const ae_int_t nin, const ae_int_t nhid, const ae_int_t nout, const ae_int_t ensemblesize, mlpensemble &ensemble)
+void mlpecreatec1(const ae_int_t nin, const ae_int_t nhid, const ae_int_t nout, const ae_int_t ensemblesize, mlpensemble &ensemble, const xparams _xparams)
 {
     jmp_buf _break_jump;
     alglib_impl::ae_state _alglib_env_state;
@@ -9973,6 +9480,8 @@ void mlpecreatec1(const ae_int_t nin, const ae_int_t nhid, const ae_int_t nout, 
 #endif
     }
     ae_state_set_break_jump(&_alglib_env_state, &_break_jump);
+    if( _xparams.flags!=0x0 )
+        ae_state_set_flags(&_alglib_env_state, _xparams.flags);
     alglib_impl::mlpecreatec1(nin, nhid, nout, ensemblesize, const_cast<alglib_impl::mlpensemble*>(ensemble.c_ptr()), &_alglib_env_state);
     alglib_impl::ae_state_clear(&_alglib_env_state);
     return;
@@ -9984,7 +9493,7 @@ Like MLPCreateC2, but for ensembles.
   -- ALGLIB --
      Copyright 18.02.2009 by Bochkanov Sergey
 *************************************************************************/
-void mlpecreatec2(const ae_int_t nin, const ae_int_t nhid1, const ae_int_t nhid2, const ae_int_t nout, const ae_int_t ensemblesize, mlpensemble &ensemble)
+void mlpecreatec2(const ae_int_t nin, const ae_int_t nhid1, const ae_int_t nhid2, const ae_int_t nout, const ae_int_t ensemblesize, mlpensemble &ensemble, const xparams _xparams)
 {
     jmp_buf _break_jump;
     alglib_impl::ae_state _alglib_env_state;
@@ -9999,6 +9508,8 @@ void mlpecreatec2(const ae_int_t nin, const ae_int_t nhid1, const ae_int_t nhid2
 #endif
     }
     ae_state_set_break_jump(&_alglib_env_state, &_break_jump);
+    if( _xparams.flags!=0x0 )
+        ae_state_set_flags(&_alglib_env_state, _xparams.flags);
     alglib_impl::mlpecreatec2(nin, nhid1, nhid2, nout, ensemblesize, const_cast<alglib_impl::mlpensemble*>(ensemble.c_ptr()), &_alglib_env_state);
     alglib_impl::ae_state_clear(&_alglib_env_state);
     return;
@@ -10010,7 +9521,7 @@ Creates ensemble from network. Only network geometry is copied.
   -- ALGLIB --
      Copyright 17.02.2009 by Bochkanov Sergey
 *************************************************************************/
-void mlpecreatefromnetwork(const multilayerperceptron &network, const ae_int_t ensemblesize, mlpensemble &ensemble)
+void mlpecreatefromnetwork(const multilayerperceptron &network, const ae_int_t ensemblesize, mlpensemble &ensemble, const xparams _xparams)
 {
     jmp_buf _break_jump;
     alglib_impl::ae_state _alglib_env_state;
@@ -10025,6 +9536,8 @@ void mlpecreatefromnetwork(const multilayerperceptron &network, const ae_int_t e
 #endif
     }
     ae_state_set_break_jump(&_alglib_env_state, &_break_jump);
+    if( _xparams.flags!=0x0 )
+        ae_state_set_flags(&_alglib_env_state, _xparams.flags);
     alglib_impl::mlpecreatefromnetwork(const_cast<alglib_impl::multilayerperceptron*>(network.c_ptr()), ensemblesize, const_cast<alglib_impl::mlpensemble*>(ensemble.c_ptr()), &_alglib_env_state);
     alglib_impl::ae_state_clear(&_alglib_env_state);
     return;
@@ -10036,7 +9549,7 @@ Randomization of MLP ensemble
   -- ALGLIB --
      Copyright 17.02.2009 by Bochkanov Sergey
 *************************************************************************/
-void mlperandomize(const mlpensemble &ensemble)
+void mlperandomize(const mlpensemble &ensemble, const xparams _xparams)
 {
     jmp_buf _break_jump;
     alglib_impl::ae_state _alglib_env_state;
@@ -10051,6 +9564,8 @@ void mlperandomize(const mlpensemble &ensemble)
 #endif
     }
     ae_state_set_break_jump(&_alglib_env_state, &_break_jump);
+    if( _xparams.flags!=0x0 )
+        ae_state_set_flags(&_alglib_env_state, _xparams.flags);
     alglib_impl::mlperandomize(const_cast<alglib_impl::mlpensemble*>(ensemble.c_ptr()), &_alglib_env_state);
     alglib_impl::ae_state_clear(&_alglib_env_state);
     return;
@@ -10062,7 +9577,7 @@ Return ensemble properties (number of inputs and outputs).
   -- ALGLIB --
      Copyright 17.02.2009 by Bochkanov Sergey
 *************************************************************************/
-void mlpeproperties(const mlpensemble &ensemble, ae_int_t &nin, ae_int_t &nout)
+void mlpeproperties(const mlpensemble &ensemble, ae_int_t &nin, ae_int_t &nout, const xparams _xparams)
 {
     jmp_buf _break_jump;
     alglib_impl::ae_state _alglib_env_state;
@@ -10077,6 +9592,8 @@ void mlpeproperties(const mlpensemble &ensemble, ae_int_t &nin, ae_int_t &nout)
 #endif
     }
     ae_state_set_break_jump(&_alglib_env_state, &_break_jump);
+    if( _xparams.flags!=0x0 )
+        ae_state_set_flags(&_alglib_env_state, _xparams.flags);
     alglib_impl::mlpeproperties(const_cast<alglib_impl::mlpensemble*>(ensemble.c_ptr()), &nin, &nout, &_alglib_env_state);
     alglib_impl::ae_state_clear(&_alglib_env_state);
     return;
@@ -10088,7 +9605,7 @@ Return normalization type (whether ensemble is SOFTMAX-normalized or not).
   -- ALGLIB --
      Copyright 17.02.2009 by Bochkanov Sergey
 *************************************************************************/
-bool mlpeissoftmax(const mlpensemble &ensemble)
+bool mlpeissoftmax(const mlpensemble &ensemble, const xparams _xparams)
 {
     jmp_buf _break_jump;
     alglib_impl::ae_state _alglib_env_state;
@@ -10103,6 +9620,8 @@ bool mlpeissoftmax(const mlpensemble &ensemble)
 #endif
     }
     ae_state_set_break_jump(&_alglib_env_state, &_break_jump);
+    if( _xparams.flags!=0x0 )
+        ae_state_set_flags(&_alglib_env_state, _xparams.flags);
     ae_bool result = alglib_impl::mlpeissoftmax(const_cast<alglib_impl::mlpensemble*>(ensemble.c_ptr()), &_alglib_env_state);
     alglib_impl::ae_state_clear(&_alglib_env_state);
     return *(reinterpret_cast<bool*>(&result));
@@ -10126,7 +9645,7 @@ OUTPUT PARAMETERS:
   -- ALGLIB --
      Copyright 17.02.2009 by Bochkanov Sergey
 *************************************************************************/
-void mlpeprocess(const mlpensemble &ensemble, const real_1d_array &x, real_1d_array &y)
+void mlpeprocess(const mlpensemble &ensemble, const real_1d_array &x, real_1d_array &y, const xparams _xparams)
 {
     jmp_buf _break_jump;
     alglib_impl::ae_state _alglib_env_state;
@@ -10141,6 +9660,8 @@ void mlpeprocess(const mlpensemble &ensemble, const real_1d_array &x, real_1d_ar
 #endif
     }
     ae_state_set_break_jump(&_alglib_env_state, &_break_jump);
+    if( _xparams.flags!=0x0 )
+        ae_state_set_flags(&_alglib_env_state, _xparams.flags);
     alglib_impl::mlpeprocess(const_cast<alglib_impl::mlpensemble*>(ensemble.c_ptr()), const_cast<alglib_impl::ae_vector*>(x.c_ptr()), const_cast<alglib_impl::ae_vector*>(y.c_ptr()), &_alglib_env_state);
     alglib_impl::ae_state_clear(&_alglib_env_state);
     return;
@@ -10158,7 +9679,7 @@ when you call it from command line.
   -- ALGLIB --
      Copyright 17.02.2009 by Bochkanov Sergey
 *************************************************************************/
-void mlpeprocessi(const mlpensemble &ensemble, const real_1d_array &x, real_1d_array &y)
+void mlpeprocessi(const mlpensemble &ensemble, const real_1d_array &x, real_1d_array &y, const xparams _xparams)
 {
     jmp_buf _break_jump;
     alglib_impl::ae_state _alglib_env_state;
@@ -10173,6 +9694,8 @@ void mlpeprocessi(const mlpensemble &ensemble, const real_1d_array &x, real_1d_a
 #endif
     }
     ae_state_set_break_jump(&_alglib_env_state, &_break_jump);
+    if( _xparams.flags!=0x0 )
+        ae_state_set_flags(&_alglib_env_state, _xparams.flags);
     alglib_impl::mlpeprocessi(const_cast<alglib_impl::mlpensemble*>(ensemble.c_ptr()), const_cast<alglib_impl::ae_vector*>(x.c_ptr()), const_cast<alglib_impl::ae_vector*>(y.c_ptr()), &_alglib_env_state);
     alglib_impl::ae_state_clear(&_alglib_env_state);
     return;
@@ -10194,7 +9717,7 @@ are used as classifiers.
   -- ALGLIB --
      Copyright 17.02.2009 by Bochkanov Sergey
 *************************************************************************/
-double mlperelclserror(const mlpensemble &ensemble, const real_2d_array &xy, const ae_int_t npoints)
+double mlperelclserror(const mlpensemble &ensemble, const real_2d_array &xy, const ae_int_t npoints, const xparams _xparams)
 {
     jmp_buf _break_jump;
     alglib_impl::ae_state _alglib_env_state;
@@ -10209,6 +9732,8 @@ double mlperelclserror(const mlpensemble &ensemble, const real_2d_array &xy, con
 #endif
     }
     ae_state_set_break_jump(&_alglib_env_state, &_break_jump);
+    if( _xparams.flags!=0x0 )
+        ae_state_set_flags(&_alglib_env_state, _xparams.flags);
     double result = alglib_impl::mlperelclserror(const_cast<alglib_impl::mlpensemble*>(ensemble.c_ptr()), const_cast<alglib_impl::ae_matrix*>(xy.c_ptr()), npoints, &_alglib_env_state);
     alglib_impl::ae_state_clear(&_alglib_env_state);
     return *(reinterpret_cast<double*>(&result));
@@ -10229,7 +9754,7 @@ RESULT:
   -- ALGLIB --
      Copyright 17.02.2009 by Bochkanov Sergey
 *************************************************************************/
-double mlpeavgce(const mlpensemble &ensemble, const real_2d_array &xy, const ae_int_t npoints)
+double mlpeavgce(const mlpensemble &ensemble, const real_2d_array &xy, const ae_int_t npoints, const xparams _xparams)
 {
     jmp_buf _break_jump;
     alglib_impl::ae_state _alglib_env_state;
@@ -10244,6 +9769,8 @@ double mlpeavgce(const mlpensemble &ensemble, const real_2d_array &xy, const ae_
 #endif
     }
     ae_state_set_break_jump(&_alglib_env_state, &_break_jump);
+    if( _xparams.flags!=0x0 )
+        ae_state_set_flags(&_alglib_env_state, _xparams.flags);
     double result = alglib_impl::mlpeavgce(const_cast<alglib_impl::mlpensemble*>(ensemble.c_ptr()), const_cast<alglib_impl::ae_matrix*>(xy.c_ptr()), npoints, &_alglib_env_state);
     alglib_impl::ae_state_clear(&_alglib_env_state);
     return *(reinterpret_cast<double*>(&result));
@@ -10265,7 +9792,7 @@ RMS error means error when estimating posterior probabilities.
   -- ALGLIB --
      Copyright 17.02.2009 by Bochkanov Sergey
 *************************************************************************/
-double mlpermserror(const mlpensemble &ensemble, const real_2d_array &xy, const ae_int_t npoints)
+double mlpermserror(const mlpensemble &ensemble, const real_2d_array &xy, const ae_int_t npoints, const xparams _xparams)
 {
     jmp_buf _break_jump;
     alglib_impl::ae_state _alglib_env_state;
@@ -10280,6 +9807,8 @@ double mlpermserror(const mlpensemble &ensemble, const real_2d_array &xy, const 
 #endif
     }
     ae_state_set_break_jump(&_alglib_env_state, &_break_jump);
+    if( _xparams.flags!=0x0 )
+        ae_state_set_flags(&_alglib_env_state, _xparams.flags);
     double result = alglib_impl::mlpermserror(const_cast<alglib_impl::mlpensemble*>(ensemble.c_ptr()), const_cast<alglib_impl::ae_matrix*>(xy.c_ptr()), npoints, &_alglib_env_state);
     alglib_impl::ae_state_clear(&_alglib_env_state);
     return *(reinterpret_cast<double*>(&result));
@@ -10300,7 +9829,7 @@ it means average error when estimating posterior probabilities.
   -- ALGLIB --
      Copyright 17.02.2009 by Bochkanov Sergey
 *************************************************************************/
-double mlpeavgerror(const mlpensemble &ensemble, const real_2d_array &xy, const ae_int_t npoints)
+double mlpeavgerror(const mlpensemble &ensemble, const real_2d_array &xy, const ae_int_t npoints, const xparams _xparams)
 {
     jmp_buf _break_jump;
     alglib_impl::ae_state _alglib_env_state;
@@ -10315,6 +9844,8 @@ double mlpeavgerror(const mlpensemble &ensemble, const real_2d_array &xy, const 
 #endif
     }
     ae_state_set_break_jump(&_alglib_env_state, &_break_jump);
+    if( _xparams.flags!=0x0 )
+        ae_state_set_flags(&_alglib_env_state, _xparams.flags);
     double result = alglib_impl::mlpeavgerror(const_cast<alglib_impl::mlpensemble*>(ensemble.c_ptr()), const_cast<alglib_impl::ae_matrix*>(xy.c_ptr()), npoints, &_alglib_env_state);
     alglib_impl::ae_state_clear(&_alglib_env_state);
     return *(reinterpret_cast<double*>(&result));
@@ -10335,7 +9866,7 @@ it means average relative error when estimating posterior probabilities.
   -- ALGLIB --
      Copyright 17.02.2009 by Bochkanov Sergey
 *************************************************************************/
-double mlpeavgrelerror(const mlpensemble &ensemble, const real_2d_array &xy, const ae_int_t npoints)
+double mlpeavgrelerror(const mlpensemble &ensemble, const real_2d_array &xy, const ae_int_t npoints, const xparams _xparams)
 {
     jmp_buf _break_jump;
     alglib_impl::ae_state _alglib_env_state;
@@ -10350,6 +9881,8 @@ double mlpeavgrelerror(const mlpensemble &ensemble, const real_2d_array &xy, con
 #endif
     }
     ae_state_set_break_jump(&_alglib_env_state, &_break_jump);
+    if( _xparams.flags!=0x0 )
+        ae_state_set_flags(&_alglib_env_state, _xparams.flags);
     double result = alglib_impl::mlpeavgrelerror(const_cast<alglib_impl::mlpensemble*>(ensemble.c_ptr()), const_cast<alglib_impl::ae_matrix*>(xy.c_ptr()), npoints, &_alglib_env_state);
     alglib_impl::ae_state_clear(&_alglib_env_state);
     return *(reinterpret_cast<double*>(&result));
@@ -10787,7 +10320,7 @@ OUTPUT PARAMETERS:
   -- ALGLIB --
      Copyright 10.03.2009 by Bochkanov Sergey
 *************************************************************************/
-void mlptrainlm(const multilayerperceptron &network, const real_2d_array &xy, const ae_int_t npoints, const double decay, const ae_int_t restarts, ae_int_t &info, mlpreport &rep)
+void mlptrainlm(const multilayerperceptron &network, const real_2d_array &xy, const ae_int_t npoints, const double decay, const ae_int_t restarts, ae_int_t &info, mlpreport &rep, const xparams _xparams)
 {
     jmp_buf _break_jump;
     alglib_impl::ae_state _alglib_env_state;
@@ -10802,6 +10335,8 @@ void mlptrainlm(const multilayerperceptron &network, const real_2d_array &xy, co
 #endif
     }
     ae_state_set_break_jump(&_alglib_env_state, &_break_jump);
+    if( _xparams.flags!=0x0 )
+        ae_state_set_flags(&_alglib_env_state, _xparams.flags);
     alglib_impl::mlptrainlm(const_cast<alglib_impl::multilayerperceptron*>(network.c_ptr()), const_cast<alglib_impl::ae_matrix*>(xy.c_ptr()), npoints, decay, restarts, &info, const_cast<alglib_impl::mlpreport*>(rep.c_ptr()), &_alglib_env_state);
     alglib_impl::ae_state_clear(&_alglib_env_state);
     return;
@@ -10844,7 +10379,7 @@ OUTPUT PARAMETERS:
   -- ALGLIB --
      Copyright 09.12.2007 by Bochkanov Sergey
 *************************************************************************/
-void mlptrainlbfgs(const multilayerperceptron &network, const real_2d_array &xy, const ae_int_t npoints, const double decay, const ae_int_t restarts, const double wstep, const ae_int_t maxits, ae_int_t &info, mlpreport &rep)
+void mlptrainlbfgs(const multilayerperceptron &network, const real_2d_array &xy, const ae_int_t npoints, const double decay, const ae_int_t restarts, const double wstep, const ae_int_t maxits, ae_int_t &info, mlpreport &rep, const xparams _xparams)
 {
     jmp_buf _break_jump;
     alglib_impl::ae_state _alglib_env_state;
@@ -10859,6 +10394,8 @@ void mlptrainlbfgs(const multilayerperceptron &network, const real_2d_array &xy,
 #endif
     }
     ae_state_set_break_jump(&_alglib_env_state, &_break_jump);
+    if( _xparams.flags!=0x0 )
+        ae_state_set_flags(&_alglib_env_state, _xparams.flags);
     alglib_impl::mlptrainlbfgs(const_cast<alglib_impl::multilayerperceptron*>(network.c_ptr()), const_cast<alglib_impl::ae_matrix*>(xy.c_ptr()), npoints, decay, restarts, wstep, maxits, &info, const_cast<alglib_impl::mlpreport*>(rep.c_ptr()), &_alglib_env_state);
     alglib_impl::ae_state_clear(&_alglib_env_state);
     return;
@@ -10914,7 +10451,7 @@ minimum of validation set error.
   -- ALGLIB --
      Copyright 10.03.2009 by Bochkanov Sergey
 *************************************************************************/
-void mlptraines(const multilayerperceptron &network, const real_2d_array &trnxy, const ae_int_t trnsize, const real_2d_array &valxy, const ae_int_t valsize, const double decay, const ae_int_t restarts, ae_int_t &info, mlpreport &rep)
+void mlptraines(const multilayerperceptron &network, const real_2d_array &trnxy, const ae_int_t trnsize, const real_2d_array &valxy, const ae_int_t valsize, const double decay, const ae_int_t restarts, ae_int_t &info, mlpreport &rep, const xparams _xparams)
 {
     jmp_buf _break_jump;
     alglib_impl::ae_state _alglib_env_state;
@@ -10929,6 +10466,8 @@ void mlptraines(const multilayerperceptron &network, const real_2d_array &trnxy,
 #endif
     }
     ae_state_set_break_jump(&_alglib_env_state, &_break_jump);
+    if( _xparams.flags!=0x0 )
+        ae_state_set_flags(&_alglib_env_state, _xparams.flags);
     alglib_impl::mlptraines(const_cast<alglib_impl::multilayerperceptron*>(network.c_ptr()), const_cast<alglib_impl::ae_matrix*>(trnxy.c_ptr()), trnsize, const_cast<alglib_impl::ae_matrix*>(valxy.c_ptr()), valsize, decay, restarts, &info, const_cast<alglib_impl::mlpreport*>(rep.c_ptr()), &_alglib_env_state);
     alglib_impl::ae_state_clear(&_alglib_env_state);
     return;
@@ -10963,7 +10502,7 @@ OUTPUT PARAMETERS:
   -- ALGLIB --
      Copyright 09.12.2007 by Bochkanov Sergey
 *************************************************************************/
-void mlpkfoldcvlbfgs(const multilayerperceptron &network, const real_2d_array &xy, const ae_int_t npoints, const double decay, const ae_int_t restarts, const double wstep, const ae_int_t maxits, const ae_int_t foldscount, ae_int_t &info, mlpreport &rep, mlpcvreport &cvrep)
+void mlpkfoldcvlbfgs(const multilayerperceptron &network, const real_2d_array &xy, const ae_int_t npoints, const double decay, const ae_int_t restarts, const double wstep, const ae_int_t maxits, const ae_int_t foldscount, ae_int_t &info, mlpreport &rep, mlpcvreport &cvrep, const xparams _xparams)
 {
     jmp_buf _break_jump;
     alglib_impl::ae_state _alglib_env_state;
@@ -10978,6 +10517,8 @@ void mlpkfoldcvlbfgs(const multilayerperceptron &network, const real_2d_array &x
 #endif
     }
     ae_state_set_break_jump(&_alglib_env_state, &_break_jump);
+    if( _xparams.flags!=0x0 )
+        ae_state_set_flags(&_alglib_env_state, _xparams.flags);
     alglib_impl::mlpkfoldcvlbfgs(const_cast<alglib_impl::multilayerperceptron*>(network.c_ptr()), const_cast<alglib_impl::ae_matrix*>(xy.c_ptr()), npoints, decay, restarts, wstep, maxits, foldscount, &info, const_cast<alglib_impl::mlpreport*>(rep.c_ptr()), const_cast<alglib_impl::mlpcvreport*>(cvrep.c_ptr()), &_alglib_env_state);
     alglib_impl::ae_state_clear(&_alglib_env_state);
     return;
@@ -11010,7 +10551,7 @@ OUTPUT PARAMETERS:
   -- ALGLIB --
      Copyright 09.12.2007 by Bochkanov Sergey
 *************************************************************************/
-void mlpkfoldcvlm(const multilayerperceptron &network, const real_2d_array &xy, const ae_int_t npoints, const double decay, const ae_int_t restarts, const ae_int_t foldscount, ae_int_t &info, mlpreport &rep, mlpcvreport &cvrep)
+void mlpkfoldcvlm(const multilayerperceptron &network, const real_2d_array &xy, const ae_int_t npoints, const double decay, const ae_int_t restarts, const ae_int_t foldscount, ae_int_t &info, mlpreport &rep, mlpcvreport &cvrep, const xparams _xparams)
 {
     jmp_buf _break_jump;
     alglib_impl::ae_state _alglib_env_state;
@@ -11025,6 +10566,8 @@ void mlpkfoldcvlm(const multilayerperceptron &network, const real_2d_array &xy, 
 #endif
     }
     ae_state_set_break_jump(&_alglib_env_state, &_break_jump);
+    if( _xparams.flags!=0x0 )
+        ae_state_set_flags(&_alglib_env_state, _xparams.flags);
     alglib_impl::mlpkfoldcvlm(const_cast<alglib_impl::multilayerperceptron*>(network.c_ptr()), const_cast<alglib_impl::ae_matrix*>(xy.c_ptr()), npoints, decay, restarts, foldscount, &info, const_cast<alglib_impl::mlpreport*>(rep.c_ptr()), const_cast<alglib_impl::mlpcvreport*>(cvrep.c_ptr()), &_alglib_env_state);
     alglib_impl::ae_state_clear(&_alglib_env_state);
     return;
@@ -11034,36 +10577,16 @@ void mlpkfoldcvlm(const multilayerperceptron &network, const real_2d_array &xy, 
 This function estimates generalization error using cross-validation on the
 current dataset with current training settings.
 
-FOR USERS OF COMMERCIAL EDITION:
-
-  ! Commercial version of ALGLIB includes two  important  improvements  of
-  ! this function:
-  ! * multicore support (C++ and C# computational cores)
-  ! * SSE support (C++ computational core)
+  ! COMMERCIAL EDITION OF ALGLIB:
   !
-  ! Second improvement gives constant  speedup (2-3X).  First  improvement
-  ! gives  close-to-linear  speedup  on   multicore   systems.   Following
-  ! operations can be executed in parallel:
-  ! * FoldsCount cross-validation rounds (always)
-  ! * NRestarts training sessions performed within each of
-  !   cross-validation rounds (if NRestarts>1)
-  ! * gradient calculation over large dataset (if dataset is large enough)
+  ! Commercial Edition of ALGLIB includes following important improvements
+  ! of this function:
+  ! * high-performance native backend with same C# interface (C# version)
+  ! * multithreading support (C++ and C# versions)
   !
-  ! In order to use multicore features you have to:
-  ! * use commercial version of ALGLIB
-  ! * call  this  function  with  "smp_"  prefix,  which  indicates  that
-  !   multicore code will be used (for multicore support)
-  !
-  ! In order to use SSE features you have to:
-  ! * use commercial version of ALGLIB on Intel processors
-  ! * use C++ computational core
-  !
-  ! This note is given for users of commercial edition; if  you  use  GPL
-  ! edition, you still will be able to call smp-version of this function,
-  ! but all computations will be done serially.
-  !
-  ! We recommend you to carefully read ALGLIB Reference  Manual,  section
-  ! called 'SMP support', before using parallel version of this function.
+  ! We recommend you to read 'Working with commercial version' section  of
+  ! ALGLIB Reference Manual in order to find out how to  use  performance-
+  ! related features provided by commercial edition of ALGLIB.
 
 INPUT PARAMETERS:
     S           -   trainer object
@@ -11110,7 +10633,7 @@ NOTE: on classification problems Rep.RMSError/Rep.AvgError/Rep.AvgRelError
   -- ALGLIB --
      Copyright 23.07.2012 by Bochkanov Sergey
 *************************************************************************/
-void mlpkfoldcv(const mlptrainer &s, const multilayerperceptron &network, const ae_int_t nrestarts, const ae_int_t foldscount, mlpreport &rep)
+void mlpkfoldcv(const mlptrainer &s, const multilayerperceptron &network, const ae_int_t nrestarts, const ae_int_t foldscount, mlpreport &rep, const xparams _xparams)
 {
     jmp_buf _break_jump;
     alglib_impl::ae_state _alglib_env_state;
@@ -11125,28 +10648,9 @@ void mlpkfoldcv(const mlptrainer &s, const multilayerperceptron &network, const 
 #endif
     }
     ae_state_set_break_jump(&_alglib_env_state, &_break_jump);
+    if( _xparams.flags!=0x0 )
+        ae_state_set_flags(&_alglib_env_state, _xparams.flags);
     alglib_impl::mlpkfoldcv(const_cast<alglib_impl::mlptrainer*>(s.c_ptr()), const_cast<alglib_impl::multilayerperceptron*>(network.c_ptr()), nrestarts, foldscount, const_cast<alglib_impl::mlpreport*>(rep.c_ptr()), &_alglib_env_state);
-    alglib_impl::ae_state_clear(&_alglib_env_state);
-    return;
-}
-
-
-void smp_mlpkfoldcv(const mlptrainer &s, const multilayerperceptron &network, const ae_int_t nrestarts, const ae_int_t foldscount, mlpreport &rep)
-{
-    jmp_buf _break_jump;
-    alglib_impl::ae_state _alglib_env_state;
-    alglib_impl::ae_state_init(&_alglib_env_state);
-    if( setjmp(_break_jump) )
-    {
-#if !defined(AE_NO_EXCEPTIONS)
-        _ALGLIB_CPP_EXCEPTION(_alglib_env_state.error_msg);
-#else
-        _ALGLIB_SET_ERROR_FLAG(_alglib_env_state.error_msg);
-        return;
-#endif
-    }
-    ae_state_set_break_jump(&_alglib_env_state, &_break_jump);
-    alglib_impl::_pexec_mlpkfoldcv(const_cast<alglib_impl::mlptrainer*>(s.c_ptr()), const_cast<alglib_impl::multilayerperceptron*>(network.c_ptr()), nrestarts, foldscount, const_cast<alglib_impl::mlpreport*>(rep.c_ptr()), &_alglib_env_state);
     alglib_impl::ae_state_clear(&_alglib_env_state);
     return;
 }
@@ -11166,7 +10670,7 @@ OUTPUT PARAMETERS:
   -- ALGLIB --
      Copyright 23.07.2012 by Bochkanov Sergey
 *************************************************************************/
-void mlpcreatetrainer(const ae_int_t nin, const ae_int_t nout, mlptrainer &s)
+void mlpcreatetrainer(const ae_int_t nin, const ae_int_t nout, mlptrainer &s, const xparams _xparams)
 {
     jmp_buf _break_jump;
     alglib_impl::ae_state _alglib_env_state;
@@ -11181,6 +10685,8 @@ void mlpcreatetrainer(const ae_int_t nin, const ae_int_t nout, mlptrainer &s)
 #endif
     }
     ae_state_set_break_jump(&_alglib_env_state, &_break_jump);
+    if( _xparams.flags!=0x0 )
+        ae_state_set_flags(&_alglib_env_state, _xparams.flags);
     alglib_impl::mlpcreatetrainer(nin, nout, const_cast<alglib_impl::mlptrainer*>(s.c_ptr()), &_alglib_env_state);
     alglib_impl::ae_state_clear(&_alglib_env_state);
     return;
@@ -11201,7 +10707,7 @@ OUTPUT PARAMETERS:
   -- ALGLIB --
      Copyright 23.07.2012 by Bochkanov Sergey
 *************************************************************************/
-void mlpcreatetrainercls(const ae_int_t nin, const ae_int_t nclasses, mlptrainer &s)
+void mlpcreatetrainercls(const ae_int_t nin, const ae_int_t nclasses, mlptrainer &s, const xparams _xparams)
 {
     jmp_buf _break_jump;
     alglib_impl::ae_state _alglib_env_state;
@@ -11216,6 +10722,8 @@ void mlpcreatetrainercls(const ae_int_t nin, const ae_int_t nclasses, mlptrainer
 #endif
     }
     ae_state_set_break_jump(&_alglib_env_state, &_break_jump);
+    if( _xparams.flags!=0x0 )
+        ae_state_set_flags(&_alglib_env_state, _xparams.flags);
     alglib_impl::mlpcreatetrainercls(nin, nclasses, const_cast<alglib_impl::mlptrainer*>(s.c_ptr()), &_alglib_env_state);
     alglib_impl::ae_state_clear(&_alglib_env_state);
     return;
@@ -11255,7 +10763,7 @@ datasetformat is used:
   -- ALGLIB --
      Copyright 23.07.2012 by Bochkanov Sergey
 *************************************************************************/
-void mlpsetdataset(const mlptrainer &s, const real_2d_array &xy, const ae_int_t npoints)
+void mlpsetdataset(const mlptrainer &s, const real_2d_array &xy, const ae_int_t npoints, const xparams _xparams)
 {
     jmp_buf _break_jump;
     alglib_impl::ae_state _alglib_env_state;
@@ -11270,6 +10778,8 @@ void mlpsetdataset(const mlptrainer &s, const real_2d_array &xy, const ae_int_t 
 #endif
     }
     ae_state_set_break_jump(&_alglib_env_state, &_break_jump);
+    if( _xparams.flags!=0x0 )
+        ae_state_set_flags(&_alglib_env_state, _xparams.flags);
     alglib_impl::mlpsetdataset(const_cast<alglib_impl::mlptrainer*>(s.c_ptr()), const_cast<alglib_impl::ae_matrix*>(xy.c_ptr()), npoints, &_alglib_env_state);
     alglib_impl::ae_state_clear(&_alglib_env_state);
     return;
@@ -11310,7 +10820,7 @@ datasetformat is used:
   -- ALGLIB --
      Copyright 23.07.2012 by Bochkanov Sergey
 *************************************************************************/
-void mlpsetsparsedataset(const mlptrainer &s, const sparsematrix &xy, const ae_int_t npoints)
+void mlpsetsparsedataset(const mlptrainer &s, const sparsematrix &xy, const ae_int_t npoints, const xparams _xparams)
 {
     jmp_buf _break_jump;
     alglib_impl::ae_state _alglib_env_state;
@@ -11325,6 +10835,8 @@ void mlpsetsparsedataset(const mlptrainer &s, const sparsematrix &xy, const ae_i
 #endif
     }
     ae_state_set_break_jump(&_alglib_env_state, &_break_jump);
+    if( _xparams.flags!=0x0 )
+        ae_state_set_flags(&_alglib_env_state, _xparams.flags);
     alglib_impl::mlpsetsparsedataset(const_cast<alglib_impl::mlptrainer*>(s.c_ptr()), const_cast<alglib_impl::sparsematrix*>(xy.c_ptr()), npoints, &_alglib_env_state);
     alglib_impl::ae_state_clear(&_alglib_env_state);
     return;
@@ -11346,7 +10858,7 @@ NOTE: by default network uses some small nonzero value for weight decay.
   -- ALGLIB --
      Copyright 23.07.2012 by Bochkanov Sergey
 *************************************************************************/
-void mlpsetdecay(const mlptrainer &s, const double decay)
+void mlpsetdecay(const mlptrainer &s, const double decay, const xparams _xparams)
 {
     jmp_buf _break_jump;
     alglib_impl::ae_state _alglib_env_state;
@@ -11361,6 +10873,8 @@ void mlpsetdecay(const mlptrainer &s, const double decay)
 #endif
     }
     ae_state_set_break_jump(&_alglib_env_state, &_break_jump);
+    if( _xparams.flags!=0x0 )
+        ae_state_set_flags(&_alglib_env_state, _xparams.flags);
     alglib_impl::mlpsetdecay(const_cast<alglib_impl::mlptrainer*>(s.c_ptr()), decay, &_alglib_env_state);
     alglib_impl::ae_state_clear(&_alglib_env_state);
     return;
@@ -11392,7 +10906,7 @@ NOTE: these stopping criteria are used for all kinds of neural training  -
   -- ALGLIB --
      Copyright 23.07.2012 by Bochkanov Sergey
 *************************************************************************/
-void mlpsetcond(const mlptrainer &s, const double wstep, const ae_int_t maxits)
+void mlpsetcond(const mlptrainer &s, const double wstep, const ae_int_t maxits, const xparams _xparams)
 {
     jmp_buf _break_jump;
     alglib_impl::ae_state _alglib_env_state;
@@ -11407,6 +10921,8 @@ void mlpsetcond(const mlptrainer &s, const double wstep, const ae_int_t maxits)
 #endif
     }
     ae_state_set_break_jump(&_alglib_env_state, &_break_jump);
+    if( _xparams.flags!=0x0 )
+        ae_state_set_flags(&_alglib_env_state, _xparams.flags);
     alglib_impl::mlpsetcond(const_cast<alglib_impl::mlptrainer*>(s.c_ptr()), wstep, maxits, &_alglib_env_state);
     alglib_impl::ae_state_clear(&_alglib_env_state);
     return;
@@ -11429,7 +10945,7 @@ INPUT PARAMETERS:
   -- ALGLIB --
      Copyright 23.07.2012 by Bochkanov Sergey
 *************************************************************************/
-void mlpsetalgobatch(const mlptrainer &s)
+void mlpsetalgobatch(const mlptrainer &s, const xparams _xparams)
 {
     jmp_buf _break_jump;
     alglib_impl::ae_state _alglib_env_state;
@@ -11444,6 +10960,8 @@ void mlpsetalgobatch(const mlptrainer &s)
 #endif
     }
     ae_state_set_break_jump(&_alglib_env_state, &_break_jump);
+    if( _xparams.flags!=0x0 )
+        ae_state_set_flags(&_alglib_env_state, _xparams.flags);
     alglib_impl::mlpsetalgobatch(const_cast<alglib_impl::mlptrainer*>(s.c_ptr()), &_alglib_env_state);
     alglib_impl::ae_state_clear(&_alglib_env_state);
     return;
@@ -11457,35 +10975,16 @@ positions is performed, best network is chosen.
 
 Training is performed using current training algorithm.
 
-FOR USERS OF COMMERCIAL EDITION:
-
-  ! Commercial version of ALGLIB includes two  important  improvements  of
-  ! this function:
-  ! * multicore support (C++ and C# computational cores)
-  ! * SSE support (C++ computational core)
+  ! COMMERCIAL EDITION OF ALGLIB:
   !
-  ! Second improvement gives constant  speedup (2-3X).  First  improvement
-  ! gives  close-to-linear  speedup  on   multicore   systems.   Following
-  ! operations can be executed in parallel:
-  ! * NRestarts training sessions performed within each of
-  !   cross-validation rounds (if NRestarts>1)
-  ! * gradient calculation over large dataset (if dataset is large enough)
+  ! Commercial Edition of ALGLIB includes following important improvements
+  ! of this function:
+  ! * high-performance native backend with same C# interface (C# version)
+  ! * multithreading support (C++ and C# versions)
   !
-  ! In order to use multicore features you have to:
-  ! * use commercial version of ALGLIB
-  ! * call  this  function  with  "smp_"  prefix,  which  indicates  that
-  !   multicore code will be used (for multicore support)
-  !
-  ! In order to use SSE features you have to:
-  ! * use commercial version of ALGLIB on Intel processors
-  ! * use C++ computational core
-  !
-  ! This note is given for users of commercial edition; if  you  use  GPL
-  ! edition, you still will be able to call smp-version of this function,
-  ! but all computations will be done serially.
-  !
-  ! We recommend you to carefully read ALGLIB Reference  Manual,  section
-  ! called 'SMP support', before using parallel version of this function.
+  ! We recommend you to read 'Working with commercial version' section  of
+  ! ALGLIB Reference Manual in order to find out how to  use  performance-
+  ! related features provided by commercial edition of ALGLIB.
 
 INPUT PARAMETERS:
     S           -   trainer object
@@ -11511,7 +11010,7 @@ NOTE: this method uses sum-of-squares error function for training.
   -- ALGLIB --
      Copyright 23.07.2012 by Bochkanov Sergey
 *************************************************************************/
-void mlptrainnetwork(const mlptrainer &s, const multilayerperceptron &network, const ae_int_t nrestarts, mlpreport &rep)
+void mlptrainnetwork(const mlptrainer &s, const multilayerperceptron &network, const ae_int_t nrestarts, mlpreport &rep, const xparams _xparams)
 {
     jmp_buf _break_jump;
     alglib_impl::ae_state _alglib_env_state;
@@ -11526,28 +11025,9 @@ void mlptrainnetwork(const mlptrainer &s, const multilayerperceptron &network, c
 #endif
     }
     ae_state_set_break_jump(&_alglib_env_state, &_break_jump);
+    if( _xparams.flags!=0x0 )
+        ae_state_set_flags(&_alglib_env_state, _xparams.flags);
     alglib_impl::mlptrainnetwork(const_cast<alglib_impl::mlptrainer*>(s.c_ptr()), const_cast<alglib_impl::multilayerperceptron*>(network.c_ptr()), nrestarts, const_cast<alglib_impl::mlpreport*>(rep.c_ptr()), &_alglib_env_state);
-    alglib_impl::ae_state_clear(&_alglib_env_state);
-    return;
-}
-
-
-void smp_mlptrainnetwork(const mlptrainer &s, const multilayerperceptron &network, const ae_int_t nrestarts, mlpreport &rep)
-{
-    jmp_buf _break_jump;
-    alglib_impl::ae_state _alglib_env_state;
-    alglib_impl::ae_state_init(&_alglib_env_state);
-    if( setjmp(_break_jump) )
-    {
-#if !defined(AE_NO_EXCEPTIONS)
-        _ALGLIB_CPP_EXCEPTION(_alglib_env_state.error_msg);
-#else
-        _ALGLIB_SET_ERROR_FLAG(_alglib_env_state.error_msg);
-        return;
-#endif
-    }
-    ae_state_set_break_jump(&_alglib_env_state, &_break_jump);
-    alglib_impl::_pexec_mlptrainnetwork(const_cast<alglib_impl::mlptrainer*>(s.c_ptr()), const_cast<alglib_impl::multilayerperceptron*>(network.c_ptr()), nrestarts, const_cast<alglib_impl::mlpreport*>(rep.c_ptr()), &_alglib_env_state);
     alglib_impl::ae_state_clear(&_alglib_env_state);
     return;
 }
@@ -11604,7 +11084,7 @@ NOTE: it is expected that trainer object settings are NOT  changed  during
   -- ALGLIB --
      Copyright 23.07.2012 by Bochkanov Sergey
 *************************************************************************/
-void mlpstarttraining(const mlptrainer &s, const multilayerperceptron &network, const bool randomstart)
+void mlpstarttraining(const mlptrainer &s, const multilayerperceptron &network, const bool randomstart, const xparams _xparams)
 {
     jmp_buf _break_jump;
     alglib_impl::ae_state _alglib_env_state;
@@ -11619,6 +11099,8 @@ void mlpstarttraining(const mlptrainer &s, const multilayerperceptron &network, 
 #endif
     }
     ae_state_set_break_jump(&_alglib_env_state, &_break_jump);
+    if( _xparams.flags!=0x0 )
+        ae_state_set_flags(&_alglib_env_state, _xparams.flags);
     alglib_impl::mlpstarttraining(const_cast<alglib_impl::mlptrainer*>(s.c_ptr()), const_cast<alglib_impl::multilayerperceptron*>(network.c_ptr()), randomstart, &_alglib_env_state);
     alglib_impl::ae_state_clear(&_alglib_env_state);
     return;
@@ -11629,33 +11111,16 @@ IMPORTANT: this is an "expert" version of the MLPTrain() function.  We  do
            not recommend you to use it unless you are pretty sure that you
            need ability to monitor training progress.
 
-FOR USERS OF COMMERCIAL EDITION:
-
-  ! Commercial version of ALGLIB includes two  important  improvements  of
-  ! this function:
-  ! * multicore support (C++ and C# computational cores)
-  ! * SSE support (C++ computational core)
+  ! COMMERCIAL EDITION OF ALGLIB:
   !
-  ! Second improvement gives constant  speedup (2-3X).  First  improvement
-  ! gives  close-to-linear  speedup  on   multicore   systems.   Following
-  ! operations can be executed in parallel:
-  ! * gradient calculation over large dataset (if dataset is large enough)
+  ! Commercial Edition of ALGLIB includes following important improvements
+  ! of this function:
+  ! * high-performance native backend with same C# interface (C# version)
+  ! * multithreading support (C++ and C# versions)
   !
-  ! In order to use multicore features you have to:
-  ! * use commercial version of ALGLIB
-  ! * call  this  function  with  "smp_"  prefix,  which  indicates  that
-  !   multicore code will be used (for multicore support)
-  !
-  ! In order to use SSE features you have to:
-  ! * use commercial version of ALGLIB on Intel processors
-  ! * use C++ computational core
-  !
-  ! This note is given for users of commercial edition; if  you  use  GPL
-  ! edition, you still will be able to call smp-version of this function,
-  ! but all computations will be done serially.
-  !
-  ! We recommend you to carefully read ALGLIB Reference  Manual,  section
-  ! called 'SMP support', before using parallel version of this function.
+  ! We recommend you to read 'Working with commercial version' section  of
+  ! ALGLIB Reference Manual in order to find out how to  use  performance-
+  ! related features provided by commercial edition of ALGLIB.
 
 This function performs step-by-step training of the neural  network.  Here
 "step-by-step" means that training starts  with  MLPStartTraining()  call,
@@ -11715,7 +11180,7 @@ NOTE: It  is  expected that Network is the same one which  was  passed  to
   -- ALGLIB --
      Copyright 23.07.2012 by Bochkanov Sergey
 *************************************************************************/
-bool mlpcontinuetraining(const mlptrainer &s, const multilayerperceptron &network)
+bool mlpcontinuetraining(const mlptrainer &s, const multilayerperceptron &network, const xparams _xparams)
 {
     jmp_buf _break_jump;
     alglib_impl::ae_state _alglib_env_state;
@@ -11730,28 +11195,9 @@ bool mlpcontinuetraining(const mlptrainer &s, const multilayerperceptron &networ
 #endif
     }
     ae_state_set_break_jump(&_alglib_env_state, &_break_jump);
+    if( _xparams.flags!=0x0 )
+        ae_state_set_flags(&_alglib_env_state, _xparams.flags);
     ae_bool result = alglib_impl::mlpcontinuetraining(const_cast<alglib_impl::mlptrainer*>(s.c_ptr()), const_cast<alglib_impl::multilayerperceptron*>(network.c_ptr()), &_alglib_env_state);
-    alglib_impl::ae_state_clear(&_alglib_env_state);
-    return *(reinterpret_cast<bool*>(&result));
-}
-
-
-bool smp_mlpcontinuetraining(const mlptrainer &s, const multilayerperceptron &network)
-{
-    jmp_buf _break_jump;
-    alglib_impl::ae_state _alglib_env_state;
-    alglib_impl::ae_state_init(&_alglib_env_state);
-    if( setjmp(_break_jump) )
-    {
-#if !defined(AE_NO_EXCEPTIONS)
-        _ALGLIB_CPP_EXCEPTION(_alglib_env_state.error_msg);
-#else
-        _ALGLIB_SET_ERROR_FLAG(_alglib_env_state.error_msg);
-        return 0;
-#endif
-    }
-    ae_state_set_break_jump(&_alglib_env_state, &_break_jump);
-    ae_bool result = alglib_impl::_pexec_mlpcontinuetraining(const_cast<alglib_impl::mlptrainer*>(s.c_ptr()), const_cast<alglib_impl::multilayerperceptron*>(network.c_ptr()), &_alglib_env_state);
     alglib_impl::ae_state_clear(&_alglib_env_state);
     return *(reinterpret_cast<bool*>(&result));
 }
@@ -11781,7 +11227,7 @@ OUTPUT PARAMETERS:
   -- ALGLIB --
      Copyright 17.02.2009 by Bochkanov Sergey
 *************************************************************************/
-void mlpebagginglm(const mlpensemble &ensemble, const real_2d_array &xy, const ae_int_t npoints, const double decay, const ae_int_t restarts, ae_int_t &info, mlpreport &rep, mlpcvreport &ooberrors)
+void mlpebagginglm(const mlpensemble &ensemble, const real_2d_array &xy, const ae_int_t npoints, const double decay, const ae_int_t restarts, ae_int_t &info, mlpreport &rep, mlpcvreport &ooberrors, const xparams _xparams)
 {
     jmp_buf _break_jump;
     alglib_impl::ae_state _alglib_env_state;
@@ -11796,6 +11242,8 @@ void mlpebagginglm(const mlpensemble &ensemble, const real_2d_array &xy, const a
 #endif
     }
     ae_state_set_break_jump(&_alglib_env_state, &_break_jump);
+    if( _xparams.flags!=0x0 )
+        ae_state_set_flags(&_alglib_env_state, _xparams.flags);
     alglib_impl::mlpebagginglm(const_cast<alglib_impl::mlpensemble*>(ensemble.c_ptr()), const_cast<alglib_impl::ae_matrix*>(xy.c_ptr()), npoints, decay, restarts, &info, const_cast<alglib_impl::mlpreport*>(rep.c_ptr()), const_cast<alglib_impl::mlpcvreport*>(ooberrors.c_ptr()), &_alglib_env_state);
     alglib_impl::ae_state_clear(&_alglib_env_state);
     return;
@@ -11829,7 +11277,7 @@ OUTPUT PARAMETERS:
   -- ALGLIB --
      Copyright 17.02.2009 by Bochkanov Sergey
 *************************************************************************/
-void mlpebagginglbfgs(const mlpensemble &ensemble, const real_2d_array &xy, const ae_int_t npoints, const double decay, const ae_int_t restarts, const double wstep, const ae_int_t maxits, ae_int_t &info, mlpreport &rep, mlpcvreport &ooberrors)
+void mlpebagginglbfgs(const mlpensemble &ensemble, const real_2d_array &xy, const ae_int_t npoints, const double decay, const ae_int_t restarts, const double wstep, const ae_int_t maxits, ae_int_t &info, mlpreport &rep, mlpcvreport &ooberrors, const xparams _xparams)
 {
     jmp_buf _break_jump;
     alglib_impl::ae_state _alglib_env_state;
@@ -11844,6 +11292,8 @@ void mlpebagginglbfgs(const mlpensemble &ensemble, const real_2d_array &xy, cons
 #endif
     }
     ae_state_set_break_jump(&_alglib_env_state, &_break_jump);
+    if( _xparams.flags!=0x0 )
+        ae_state_set_flags(&_alglib_env_state, _xparams.flags);
     alglib_impl::mlpebagginglbfgs(const_cast<alglib_impl::mlpensemble*>(ensemble.c_ptr()), const_cast<alglib_impl::ae_matrix*>(xy.c_ptr()), npoints, decay, restarts, wstep, maxits, &info, const_cast<alglib_impl::mlpreport*>(rep.c_ptr()), const_cast<alglib_impl::mlpcvreport*>(ooberrors.c_ptr()), &_alglib_env_state);
     alglib_impl::ae_state_clear(&_alglib_env_state);
     return;
@@ -11873,7 +11323,7 @@ OUTPUT PARAMETERS:
   -- ALGLIB --
      Copyright 10.03.2009 by Bochkanov Sergey
 *************************************************************************/
-void mlpetraines(const mlpensemble &ensemble, const real_2d_array &xy, const ae_int_t npoints, const double decay, const ae_int_t restarts, ae_int_t &info, mlpreport &rep)
+void mlpetraines(const mlpensemble &ensemble, const real_2d_array &xy, const ae_int_t npoints, const double decay, const ae_int_t restarts, ae_int_t &info, mlpreport &rep, const xparams _xparams)
 {
     jmp_buf _break_jump;
     alglib_impl::ae_state _alglib_env_state;
@@ -11888,6 +11338,8 @@ void mlpetraines(const mlpensemble &ensemble, const real_2d_array &xy, const ae_
 #endif
     }
     ae_state_set_break_jump(&_alglib_env_state, &_break_jump);
+    if( _xparams.flags!=0x0 )
+        ae_state_set_flags(&_alglib_env_state, _xparams.flags);
     alglib_impl::mlpetraines(const_cast<alglib_impl::mlpensemble*>(ensemble.c_ptr()), const_cast<alglib_impl::ae_matrix*>(xy.c_ptr()), npoints, decay, restarts, &info, const_cast<alglib_impl::mlpreport*>(rep.c_ptr()), &_alglib_env_state);
     alglib_impl::ae_state_clear(&_alglib_env_state);
     return;
@@ -11899,37 +11351,16 @@ current dataset and early stopping training algorithm. Each early stopping
 round performs NRestarts  random  restarts  (thus,  EnsembleSize*NRestarts
 training rounds is performed in total).
 
-FOR USERS OF COMMERCIAL EDITION:
-
-  ! Commercial version of ALGLIB includes two  important  improvements  of
-  ! this function:
-  ! * multicore support (C++ and C# computational cores)
-  ! * SSE support (C++ computational core)
+  ! COMMERCIAL EDITION OF ALGLIB:
   !
-  ! Second improvement gives constant  speedup (2-3X).  First  improvement
-  ! gives  close-to-linear  speedup  on   multicore   systems.   Following
-  ! operations can be executed in parallel:
-  ! * EnsembleSize  training  sessions  performed  for  each  of  ensemble
-  !   members (always parallelized)
-  ! * NRestarts  training  sessions  performed  within  each  of  training
-  !   sessions (if NRestarts>1)
-  ! * gradient calculation over large dataset (if dataset is large enough)
+  ! Commercial Edition of ALGLIB includes following important improvements
+  ! of this function:
+  ! * high-performance native backend with same C# interface (C# version)
+  ! * multithreading support (C++ and C# versions)
   !
-  ! In order to use multicore features you have to:
-  ! * use commercial version of ALGLIB
-  ! * call  this  function  with  "smp_"  prefix,  which  indicates  that
-  !   multicore code will be used (for multicore support)
-  !
-  ! In order to use SSE features you have to:
-  ! * use commercial version of ALGLIB on Intel processors
-  ! * use C++ computational core
-  !
-  ! This note is given for users of commercial edition; if  you  use  GPL
-  ! edition, you still will be able to call smp-version of this function,
-  ! but all computations will be done serially.
-  !
-  ! We recommend you to carefully read ALGLIB Reference  Manual,  section
-  ! called 'SMP support', before using parallel version of this function.
+  ! We recommend you to read 'Working with commercial version' section  of
+  ! ALGLIB Reference Manual in order to find out how to  use  performance-
+  ! related features provided by commercial edition of ALGLIB.
 
 INPUT PARAMETERS:
     S           -   trainer object;
@@ -11958,7 +11389,7 @@ NOTE: this method uses sum-of-squares error function for training.
   -- ALGLIB --
      Copyright 22.08.2012 by Bochkanov Sergey
 *************************************************************************/
-void mlptrainensemblees(const mlptrainer &s, const mlpensemble &ensemble, const ae_int_t nrestarts, mlpreport &rep)
+void mlptrainensemblees(const mlptrainer &s, const mlpensemble &ensemble, const ae_int_t nrestarts, mlpreport &rep, const xparams _xparams)
 {
     jmp_buf _break_jump;
     alglib_impl::ae_state _alglib_env_state;
@@ -11973,28 +11404,9 @@ void mlptrainensemblees(const mlptrainer &s, const mlpensemble &ensemble, const 
 #endif
     }
     ae_state_set_break_jump(&_alglib_env_state, &_break_jump);
+    if( _xparams.flags!=0x0 )
+        ae_state_set_flags(&_alglib_env_state, _xparams.flags);
     alglib_impl::mlptrainensemblees(const_cast<alglib_impl::mlptrainer*>(s.c_ptr()), const_cast<alglib_impl::mlpensemble*>(ensemble.c_ptr()), nrestarts, const_cast<alglib_impl::mlpreport*>(rep.c_ptr()), &_alglib_env_state);
-    alglib_impl::ae_state_clear(&_alglib_env_state);
-    return;
-}
-
-
-void smp_mlptrainensemblees(const mlptrainer &s, const mlpensemble &ensemble, const ae_int_t nrestarts, mlpreport &rep)
-{
-    jmp_buf _break_jump;
-    alglib_impl::ae_state _alglib_env_state;
-    alglib_impl::ae_state_init(&_alglib_env_state);
-    if( setjmp(_break_jump) )
-    {
-#if !defined(AE_NO_EXCEPTIONS)
-        _ALGLIB_CPP_EXCEPTION(_alglib_env_state.error_msg);
-#else
-        _ALGLIB_SET_ERROR_FLAG(_alglib_env_state.error_msg);
-        return;
-#endif
-    }
-    ae_state_set_break_jump(&_alglib_env_state, &_break_jump);
-    alglib_impl::_pexec_mlptrainensemblees(const_cast<alglib_impl::mlptrainer*>(s.c_ptr()), const_cast<alglib_impl::mlpensemble*>(ensemble.c_ptr()), nrestarts, const_cast<alglib_impl::mlpreport*>(rep.c_ptr()), &_alglib_env_state);
     alglib_impl::ae_state_clear(&_alglib_env_state);
     return;
 }
@@ -12533,7 +11945,7 @@ empty, i.e. it does not contain dataset. You should use it as follows:
   -- ALGLIB --
      Copyright 10.07.2012 by Bochkanov Sergey
 *************************************************************************/
-void clusterizercreate(clusterizerstate &s)
+void clusterizercreate(clusterizerstate &s, const xparams _xparams)
 {
     jmp_buf _break_jump;
     alglib_impl::ae_state _alglib_env_state;
@@ -12548,6 +11960,8 @@ void clusterizercreate(clusterizerstate &s)
 #endif
     }
     ae_state_set_break_jump(&_alglib_env_state, &_break_jump);
+    if( _xparams.flags!=0x0 )
+        ae_state_set_flags(&_alglib_env_state, _xparams.flags);
     alglib_impl::clusterizercreate(const_cast<alglib_impl::clusterizerstate*>(s.c_ptr()), &_alglib_env_state);
     alglib_impl::ae_state_clear(&_alglib_env_state);
     return;
@@ -12602,7 +12016,7 @@ NOTE 2: different clustering algorithms have different limitations:
   -- ALGLIB --
      Copyright 10.07.2012 by Bochkanov Sergey
 *************************************************************************/
-void clusterizersetpoints(const clusterizerstate &s, const real_2d_array &xy, const ae_int_t npoints, const ae_int_t nfeatures, const ae_int_t disttype)
+void clusterizersetpoints(const clusterizerstate &s, const real_2d_array &xy, const ae_int_t npoints, const ae_int_t nfeatures, const ae_int_t disttype, const xparams _xparams)
 {
     jmp_buf _break_jump;
     alglib_impl::ae_state _alglib_env_state;
@@ -12617,6 +12031,8 @@ void clusterizersetpoints(const clusterizerstate &s, const real_2d_array &xy, co
 #endif
     }
     ae_state_set_break_jump(&_alglib_env_state, &_break_jump);
+    if( _xparams.flags!=0x0 )
+        ae_state_set_flags(&_alglib_env_state, _xparams.flags);
     alglib_impl::clusterizersetpoints(const_cast<alglib_impl::clusterizerstate*>(s.c_ptr()), const_cast<alglib_impl::ae_matrix*>(xy.c_ptr()), npoints, nfeatures, disttype, &_alglib_env_state);
     alglib_impl::ae_state_clear(&_alglib_env_state);
     return;
@@ -12672,7 +12088,7 @@ NOTE 2: different clustering algorithms have different limitations:
      Copyright 10.07.2012 by Bochkanov Sergey
 *************************************************************************/
 #if !defined(AE_NO_EXCEPTIONS)
-void clusterizersetpoints(const clusterizerstate &s, const real_2d_array &xy, const ae_int_t disttype)
+void clusterizersetpoints(const clusterizerstate &s, const real_2d_array &xy, const ae_int_t disttype, const xparams _xparams)
 {
     jmp_buf _break_jump;
     alglib_impl::ae_state _alglib_env_state;    
@@ -12685,6 +12101,8 @@ void clusterizersetpoints(const clusterizerstate &s, const real_2d_array &xy, co
     if( setjmp(_break_jump) )
         _ALGLIB_CPP_EXCEPTION(_alglib_env_state.error_msg);
     ae_state_set_break_jump(&_alglib_env_state, &_break_jump);
+    if( _xparams.flags!=0x0 )
+        ae_state_set_flags(&_alglib_env_state, _xparams.flags);
     alglib_impl::clusterizersetpoints(const_cast<alglib_impl::clusterizerstate*>(s.c_ptr()), const_cast<alglib_impl::ae_matrix*>(xy.c_ptr()), npoints, nfeatures, disttype, &_alglib_env_state);
 
     alglib_impl::ae_state_clear(&_alglib_env_state);
@@ -12721,7 +12139,7 @@ NOTE 1: different clustering algorithms have different limitations:
   -- ALGLIB --
      Copyright 10.07.2012 by Bochkanov Sergey
 *************************************************************************/
-void clusterizersetdistances(const clusterizerstate &s, const real_2d_array &d, const ae_int_t npoints, const bool isupper)
+void clusterizersetdistances(const clusterizerstate &s, const real_2d_array &d, const ae_int_t npoints, const bool isupper, const xparams _xparams)
 {
     jmp_buf _break_jump;
     alglib_impl::ae_state _alglib_env_state;
@@ -12736,6 +12154,8 @@ void clusterizersetdistances(const clusterizerstate &s, const real_2d_array &d, 
 #endif
     }
     ae_state_set_break_jump(&_alglib_env_state, &_break_jump);
+    if( _xparams.flags!=0x0 )
+        ae_state_set_flags(&_alglib_env_state, _xparams.flags);
     alglib_impl::clusterizersetdistances(const_cast<alglib_impl::clusterizerstate*>(s.c_ptr()), const_cast<alglib_impl::ae_matrix*>(d.c_ptr()), npoints, isupper, &_alglib_env_state);
     alglib_impl::ae_state_clear(&_alglib_env_state);
     return;
@@ -12771,7 +12191,7 @@ NOTE 1: different clustering algorithms have different limitations:
      Copyright 10.07.2012 by Bochkanov Sergey
 *************************************************************************/
 #if !defined(AE_NO_EXCEPTIONS)
-void clusterizersetdistances(const clusterizerstate &s, const real_2d_array &d, const bool isupper)
+void clusterizersetdistances(const clusterizerstate &s, const real_2d_array &d, const bool isupper, const xparams _xparams)
 {
     jmp_buf _break_jump;
     alglib_impl::ae_state _alglib_env_state;    
@@ -12783,6 +12203,8 @@ void clusterizersetdistances(const clusterizerstate &s, const real_2d_array &d, 
     if( setjmp(_break_jump) )
         _ALGLIB_CPP_EXCEPTION(_alglib_env_state.error_msg);
     ae_state_set_break_jump(&_alglib_env_state, &_break_jump);
+    if( _xparams.flags!=0x0 )
+        ae_state_set_flags(&_alglib_env_state, _xparams.flags);
     alglib_impl::clusterizersetdistances(const_cast<alglib_impl::clusterizerstate*>(s.c_ptr()), const_cast<alglib_impl::ae_matrix*>(d.c_ptr()), npoints, isupper, &_alglib_env_state);
 
     alglib_impl::ae_state_clear(&_alglib_env_state);
@@ -12813,7 +12235,7 @@ NOTE: Ward's method works correctly only with Euclidean  distance,  that's
   -- ALGLIB --
      Copyright 10.07.2012 by Bochkanov Sergey
 *************************************************************************/
-void clusterizersetahcalgo(const clusterizerstate &s, const ae_int_t algo)
+void clusterizersetahcalgo(const clusterizerstate &s, const ae_int_t algo, const xparams _xparams)
 {
     jmp_buf _break_jump;
     alglib_impl::ae_state _alglib_env_state;
@@ -12828,6 +12250,8 @@ void clusterizersetahcalgo(const clusterizerstate &s, const ae_int_t algo)
 #endif
     }
     ae_state_set_break_jump(&_alglib_env_state, &_break_jump);
+    if( _xparams.flags!=0x0 )
+        ae_state_set_flags(&_alglib_env_state, _xparams.flags);
     alglib_impl::clusterizersetahcalgo(const_cast<alglib_impl::clusterizerstate*>(s.c_ptr()), algo, &_alglib_env_state);
     alglib_impl::ae_state_clear(&_alglib_env_state);
     return;
@@ -12849,7 +12273,7 @@ INPUT PARAMETERS:
   -- ALGLIB --
      Copyright 10.07.2012 by Bochkanov Sergey
 *************************************************************************/
-void clusterizersetkmeanslimits(const clusterizerstate &s, const ae_int_t restarts, const ae_int_t maxits)
+void clusterizersetkmeanslimits(const clusterizerstate &s, const ae_int_t restarts, const ae_int_t maxits, const xparams _xparams)
 {
     jmp_buf _break_jump;
     alglib_impl::ae_state _alglib_env_state;
@@ -12864,6 +12288,8 @@ void clusterizersetkmeanslimits(const clusterizerstate &s, const ae_int_t restar
 #endif
     }
     ae_state_set_break_jump(&_alglib_env_state, &_break_jump);
+    if( _xparams.flags!=0x0 )
+        ae_state_set_flags(&_alglib_env_state, _xparams.flags);
     alglib_impl::clusterizersetkmeanslimits(const_cast<alglib_impl::clusterizerstate*>(s.c_ptr()), restarts, maxits, &_alglib_env_state);
     alglib_impl::ae_state_clear(&_alglib_env_state);
     return;
@@ -12894,7 +12320,7 @@ INPUT PARAMETERS:
   -- ALGLIB --
      Copyright 21.01.2015 by Bochkanov Sergey
 *************************************************************************/
-void clusterizersetkmeansinit(const clusterizerstate &s, const ae_int_t initalgo)
+void clusterizersetkmeansinit(const clusterizerstate &s, const ae_int_t initalgo, const xparams _xparams)
 {
     jmp_buf _break_jump;
     alglib_impl::ae_state _alglib_env_state;
@@ -12909,6 +12335,8 @@ void clusterizersetkmeansinit(const clusterizerstate &s, const ae_int_t initalgo
 #endif
     }
     ae_state_set_break_jump(&_alglib_env_state, &_break_jump);
+    if( _xparams.flags!=0x0 )
+        ae_state_set_flags(&_alglib_env_state, _xparams.flags);
     alglib_impl::clusterizersetkmeansinit(const_cast<alglib_impl::clusterizerstate*>(s.c_ptr()), initalgo, &_alglib_env_state);
     alglib_impl::ae_state_clear(&_alglib_env_state);
     return;
@@ -12931,7 +12359,7 @@ INPUT PARAMETERS:
   -- ALGLIB --
      Copyright 08.06.2017 by Bochkanov Sergey
 *************************************************************************/
-void clusterizersetseed(const clusterizerstate &s, const ae_int_t seed)
+void clusterizersetseed(const clusterizerstate &s, const ae_int_t seed, const xparams _xparams)
 {
     jmp_buf _break_jump;
     alglib_impl::ae_state _alglib_env_state;
@@ -12946,6 +12374,8 @@ void clusterizersetseed(const clusterizerstate &s, const ae_int_t seed)
 #endif
     }
     ae_state_set_break_jump(&_alglib_env_state, &_break_jump);
+    if( _xparams.flags!=0x0 )
+        ae_state_set_flags(&_alglib_env_state, _xparams.flags);
     alglib_impl::clusterizersetseed(const_cast<alglib_impl::clusterizerstate*>(s.c_ptr()), seed, &_alglib_env_state);
     alglib_impl::ae_state_clear(&_alglib_env_state);
     return;
@@ -12954,22 +12384,28 @@ void clusterizersetseed(const clusterizerstate &s, const ae_int_t seed)
 /*************************************************************************
 This function performs agglomerative hierarchical clustering
 
-COMMERCIAL EDITION OF ALGLIB:
-
-  ! Commercial version of ALGLIB includes two  important  improvements  of
-  ! this function, which can be used from C++ and C#:
-  ! * Intel MKL support (lightweight Intel MKL is shipped with ALGLIB)
-  ! * multicore support
+  ! COMMERCIAL EDITION OF ALGLIB:
   !
-  ! Agglomerative  hierarchical  clustering  algorithm  has  two   phases:
-  ! distance matrix calculation  and  clustering  itself. Only first phase
-  ! (distance matrix calculation) is accelerated by Intel MKL  and  multi-
-  ! threading. Thus, acceleration is significant only for  medium or high-
-  ! dimensional problems.
+  ! Commercial Edition of ALGLIB includes following important improvements
+  ! of this function:
+  ! * high-performance native backend with same C# interface (C# version)
+  ! * multithreading support (C++ and C# versions)
+  ! * hardware vendor (Intel) implementations of linear algebra primitives
+  !   (C++ and C# versions, x86/x64 platform)
   !
   ! We recommend you to read 'Working with commercial version' section  of
   ! ALGLIB Reference Manual in order to find out how to  use  performance-
   ! related features provided by commercial edition of ALGLIB.
+
+NOTE: Agglomerative  hierarchical  clustering  algorithm  has two  phases:
+      distance matrix calculation and clustering  itself. Only first phase
+      (distance matrix  calculation)  is  accelerated  by  Intel  MKL  and
+      multithreading. Thus, acceleration is significant only for medium or
+      high-dimensional problems.
+
+      Although activating multithreading gives some speedup  over  single-
+      threaded execution, you  should  not  expect  nearly-linear  scaling
+      with respect to cores count.
 
 INPUT PARAMETERS:
     S       -   clusterizer state, initialized by ClusterizerCreate()
@@ -12990,7 +12426,7 @@ NOTE 1: hierarchical clustering algorithms require large amounts of memory.
   -- ALGLIB --
      Copyright 10.07.2012 by Bochkanov Sergey
 *************************************************************************/
-void clusterizerrunahc(const clusterizerstate &s, ahcreport &rep)
+void clusterizerrunahc(const clusterizerstate &s, ahcreport &rep, const xparams _xparams)
 {
     jmp_buf _break_jump;
     alglib_impl::ae_state _alglib_env_state;
@@ -13005,28 +12441,9 @@ void clusterizerrunahc(const clusterizerstate &s, ahcreport &rep)
 #endif
     }
     ae_state_set_break_jump(&_alglib_env_state, &_break_jump);
+    if( _xparams.flags!=0x0 )
+        ae_state_set_flags(&_alglib_env_state, _xparams.flags);
     alglib_impl::clusterizerrunahc(const_cast<alglib_impl::clusterizerstate*>(s.c_ptr()), const_cast<alglib_impl::ahcreport*>(rep.c_ptr()), &_alglib_env_state);
-    alglib_impl::ae_state_clear(&_alglib_env_state);
-    return;
-}
-
-
-void smp_clusterizerrunahc(const clusterizerstate &s, ahcreport &rep)
-{
-    jmp_buf _break_jump;
-    alglib_impl::ae_state _alglib_env_state;
-    alglib_impl::ae_state_init(&_alglib_env_state);
-    if( setjmp(_break_jump) )
-    {
-#if !defined(AE_NO_EXCEPTIONS)
-        _ALGLIB_CPP_EXCEPTION(_alglib_env_state.error_msg);
-#else
-        _ALGLIB_SET_ERROR_FLAG(_alglib_env_state.error_msg);
-        return;
-#endif
-    }
-    ae_state_set_break_jump(&_alglib_env_state, &_break_jump);
-    alglib_impl::_pexec_clusterizerrunahc(const_cast<alglib_impl::clusterizerstate*>(s.c_ptr()), const_cast<alglib_impl::ahcreport*>(rep.c_ptr()), &_alglib_env_state);
     alglib_impl::ae_state_clear(&_alglib_env_state);
     return;
 }
@@ -13041,26 +12458,25 @@ You may change algorithm properties by calling:
 By  default,  one  restart  and  unlimited number of iterations are  used.
 Initialization algorithm is chosen automatically.
 
-COMMERCIAL EDITION OF ALGLIB:
-
-  ! Commercial version of ALGLIB includes  two important  improvements  of
-  ! this function:
-  ! * multicore support (can be used from C# and C++)
-  ! * access to high-performance C++ core (actual for C# users)
+  ! COMMERCIAL EDITION OF ALGLIB:
   !
-  ! K-means clustering  algorithm has two  phases:  selection  of  initial
-  ! centers  and  clustering  itself.  ALGLIB  parallelizes  both  phases.
-  ! Parallel version is optimized for the following  scenario:  medium  or
-  ! high-dimensional problem (20 or more dimensions) with large number  of
-  ! points and clusters. However, some speed-up can be obtained even  when
-  ! assumptions above are violated.
-  !
-  ! As for native-vs-managed comparison, working with native  core  brings
-  ! 30-40% improvement in speed over pure C# version of ALGLIB.
+  ! Commercial Edition of ALGLIB includes following important improvements
+  ! of this function:
+  ! * high-performance native backend with same C# interface (C# version)
+  ! * multithreading support (C++ and C# versions)
+  ! * hardware vendor (Intel) implementations of linear algebra primitives
+  !   (C++ and C# versions, x86/x64 platform)
   !
   ! We recommend you to read 'Working with commercial version' section  of
   ! ALGLIB Reference Manual in order to find out how to  use  performance-
   ! related features provided by commercial edition of ALGLIB.
+
+NOTE: k-means clustering  algorithm has two  phases:  selection of initial
+      centers and clustering  itself.  ALGLIB  parallelizes  both  phases.
+      Parallel version is optimized for the following  scenario: medium or
+      high-dimensional problem (8 or more dimensions) with large number of
+      points and clusters. However, some speed-up  can  be  obtained  even
+      when assumptions above are violated.
 
 INPUT PARAMETERS:
     S       -   clusterizer state, initialized by ClusterizerCreate()
@@ -13091,7 +12507,7 @@ NOTE 2: by default, k-means uses non-deterministic seed to initialize  RNG
   -- ALGLIB --
      Copyright 10.07.2012 by Bochkanov Sergey
 *************************************************************************/
-void clusterizerrunkmeans(const clusterizerstate &s, const ae_int_t k, kmeansreport &rep)
+void clusterizerrunkmeans(const clusterizerstate &s, const ae_int_t k, kmeansreport &rep, const xparams _xparams)
 {
     jmp_buf _break_jump;
     alglib_impl::ae_state _alglib_env_state;
@@ -13106,28 +12522,9 @@ void clusterizerrunkmeans(const clusterizerstate &s, const ae_int_t k, kmeansrep
 #endif
     }
     ae_state_set_break_jump(&_alglib_env_state, &_break_jump);
+    if( _xparams.flags!=0x0 )
+        ae_state_set_flags(&_alglib_env_state, _xparams.flags);
     alglib_impl::clusterizerrunkmeans(const_cast<alglib_impl::clusterizerstate*>(s.c_ptr()), k, const_cast<alglib_impl::kmeansreport*>(rep.c_ptr()), &_alglib_env_state);
-    alglib_impl::ae_state_clear(&_alglib_env_state);
-    return;
-}
-
-
-void smp_clusterizerrunkmeans(const clusterizerstate &s, const ae_int_t k, kmeansreport &rep)
-{
-    jmp_buf _break_jump;
-    alglib_impl::ae_state _alglib_env_state;
-    alglib_impl::ae_state_init(&_alglib_env_state);
-    if( setjmp(_break_jump) )
-    {
-#if !defined(AE_NO_EXCEPTIONS)
-        _ALGLIB_CPP_EXCEPTION(_alglib_env_state.error_msg);
-#else
-        _ALGLIB_SET_ERROR_FLAG(_alglib_env_state.error_msg);
-        return;
-#endif
-    }
-    ae_state_set_break_jump(&_alglib_env_state, &_break_jump);
-    alglib_impl::_pexec_clusterizerrunkmeans(const_cast<alglib_impl::clusterizerstate*>(s.c_ptr()), k, const_cast<alglib_impl::kmeansreport*>(rep.c_ptr()), &_alglib_env_state);
     alglib_impl::ae_state_clear(&_alglib_env_state);
     return;
 }
@@ -13135,18 +12532,14 @@ void smp_clusterizerrunkmeans(const clusterizerstate &s, const ae_int_t k, kmean
 /*************************************************************************
 This function returns distance matrix for dataset
 
-COMMERCIAL EDITION OF ALGLIB:
-
-  ! Commercial version of ALGLIB includes two  important  improvements  of
-  ! this function, which can be used from C++ and C#:
-  ! * Intel MKL support (lightweight Intel MKL is shipped with ALGLIB)
-  ! * multicore support
+  ! COMMERCIAL EDITION OF ALGLIB:
   !
-  ! Agglomerative  hierarchical  clustering  algorithm  has  two   phases:
-  ! distance matrix calculation  and  clustering  itself. Only first phase
-  ! (distance matrix calculation) is accelerated by Intel MKL  and  multi-
-  ! threading. Thus, acceleration is significant only for  medium or high-
-  ! dimensional problems.
+  ! Commercial Edition of ALGLIB includes following important improvements
+  ! of this function:
+  ! * high-performance native backend with same C# interface (C# version)
+  ! * multithreading support (C++ and C# versions)
+  ! * hardware vendor (Intel) implementations of linear algebra primitives
+  !   (C++ and C# versions, x86/x64 platform)
   !
   ! We recommend you to read 'Working with commercial version' section  of
   ! ALGLIB Reference Manual in order to find out how to  use  performance-
@@ -13190,7 +12583,7 @@ NOTE:  different distance functions have different performance penalty:
   -- ALGLIB --
      Copyright 10.07.2012 by Bochkanov Sergey
 *************************************************************************/
-void clusterizergetdistances(const real_2d_array &xy, const ae_int_t npoints, const ae_int_t nfeatures, const ae_int_t disttype, real_2d_array &d)
+void clusterizergetdistances(const real_2d_array &xy, const ae_int_t npoints, const ae_int_t nfeatures, const ae_int_t disttype, real_2d_array &d, const xparams _xparams)
 {
     jmp_buf _break_jump;
     alglib_impl::ae_state _alglib_env_state;
@@ -13205,28 +12598,9 @@ void clusterizergetdistances(const real_2d_array &xy, const ae_int_t npoints, co
 #endif
     }
     ae_state_set_break_jump(&_alglib_env_state, &_break_jump);
+    if( _xparams.flags!=0x0 )
+        ae_state_set_flags(&_alglib_env_state, _xparams.flags);
     alglib_impl::clusterizergetdistances(const_cast<alglib_impl::ae_matrix*>(xy.c_ptr()), npoints, nfeatures, disttype, const_cast<alglib_impl::ae_matrix*>(d.c_ptr()), &_alglib_env_state);
-    alglib_impl::ae_state_clear(&_alglib_env_state);
-    return;
-}
-
-
-void smp_clusterizergetdistances(const real_2d_array &xy, const ae_int_t npoints, const ae_int_t nfeatures, const ae_int_t disttype, real_2d_array &d)
-{
-    jmp_buf _break_jump;
-    alglib_impl::ae_state _alglib_env_state;
-    alglib_impl::ae_state_init(&_alglib_env_state);
-    if( setjmp(_break_jump) )
-    {
-#if !defined(AE_NO_EXCEPTIONS)
-        _ALGLIB_CPP_EXCEPTION(_alglib_env_state.error_msg);
-#else
-        _ALGLIB_SET_ERROR_FLAG(_alglib_env_state.error_msg);
-        return;
-#endif
-    }
-    ae_state_set_break_jump(&_alglib_env_state, &_break_jump);
-    alglib_impl::_pexec_clusterizergetdistances(const_cast<alglib_impl::ae_matrix*>(xy.c_ptr()), npoints, nfeatures, disttype, const_cast<alglib_impl::ae_matrix*>(d.c_ptr()), &_alglib_env_state);
     alglib_impl::ae_state_clear(&_alglib_env_state);
     return;
 }
@@ -13274,7 +12648,7 @@ NOTE: this subroutine is optimized for moderate values of K. Say, for  K=5
   -- ALGLIB --
      Copyright 10.07.2012 by Bochkanov Sergey
 *************************************************************************/
-void clusterizergetkclusters(const ahcreport &rep, const ae_int_t k, integer_1d_array &cidx, integer_1d_array &cz)
+void clusterizergetkclusters(const ahcreport &rep, const ae_int_t k, integer_1d_array &cidx, integer_1d_array &cz, const xparams _xparams)
 {
     jmp_buf _break_jump;
     alglib_impl::ae_state _alglib_env_state;
@@ -13289,6 +12663,8 @@ void clusterizergetkclusters(const ahcreport &rep, const ae_int_t k, integer_1d_
 #endif
     }
     ae_state_set_break_jump(&_alglib_env_state, &_break_jump);
+    if( _xparams.flags!=0x0 )
+        ae_state_set_flags(&_alglib_env_state, _xparams.flags);
     alglib_impl::clusterizergetkclusters(const_cast<alglib_impl::ahcreport*>(rep.c_ptr()), k, const_cast<alglib_impl::ae_vector*>(cidx.c_ptr()), const_cast<alglib_impl::ae_vector*>(cz.c_ptr()), &_alglib_env_state);
     alglib_impl::ae_state_clear(&_alglib_env_state);
     return;
@@ -13343,7 +12719,7 @@ NOTE: this subroutine is optimized for moderate values of K. Say, for  K=5
   -- ALGLIB --
      Copyright 10.07.2012 by Bochkanov Sergey
 *************************************************************************/
-void clusterizerseparatedbydist(const ahcreport &rep, const double r, ae_int_t &k, integer_1d_array &cidx, integer_1d_array &cz)
+void clusterizerseparatedbydist(const ahcreport &rep, const double r, ae_int_t &k, integer_1d_array &cidx, integer_1d_array &cz, const xparams _xparams)
 {
     jmp_buf _break_jump;
     alglib_impl::ae_state _alglib_env_state;
@@ -13358,6 +12734,8 @@ void clusterizerseparatedbydist(const ahcreport &rep, const double r, ae_int_t &
 #endif
     }
     ae_state_set_break_jump(&_alglib_env_state, &_break_jump);
+    if( _xparams.flags!=0x0 )
+        ae_state_set_flags(&_alglib_env_state, _xparams.flags);
     alglib_impl::clusterizerseparatedbydist(const_cast<alglib_impl::ahcreport*>(rep.c_ptr()), r, &k, const_cast<alglib_impl::ae_vector*>(cidx.c_ptr()), const_cast<alglib_impl::ae_vector*>(cz.c_ptr()), &_alglib_env_state);
     alglib_impl::ae_state_clear(&_alglib_env_state);
     return;
@@ -13412,7 +12790,7 @@ NOTE: this subroutine is optimized for moderate values of K. Say, for  K=5
   -- ALGLIB --
      Copyright 10.07.2012 by Bochkanov Sergey
 *************************************************************************/
-void clusterizerseparatedbycorr(const ahcreport &rep, const double r, ae_int_t &k, integer_1d_array &cidx, integer_1d_array &cz)
+void clusterizerseparatedbycorr(const ahcreport &rep, const double r, ae_int_t &k, integer_1d_array &cidx, integer_1d_array &cz, const xparams _xparams)
 {
     jmp_buf _break_jump;
     alglib_impl::ae_state _alglib_env_state;
@@ -13427,6 +12805,8 @@ void clusterizerseparatedbycorr(const ahcreport &rep, const double r, ae_int_t &
 #endif
     }
     ae_state_set_break_jump(&_alglib_env_state, &_break_jump);
+    if( _xparams.flags!=0x0 )
+        ae_state_set_flags(&_alglib_env_state, _xparams.flags);
     alglib_impl::clusterizerseparatedbycorr(const_cast<alglib_impl::ahcreport*>(rep.c_ptr()), r, &k, const_cast<alglib_impl::ae_vector*>(cidx.c_ptr()), const_cast<alglib_impl::ae_vector*>(cz.c_ptr()), &_alglib_env_state);
     alglib_impl::ae_state_clear(&_alglib_env_state);
     return;
@@ -13435,7 +12815,269 @@ void clusterizerseparatedbycorr(const ahcreport &rep, const double r, ae_int_t &
 
 #if defined(AE_COMPILE_DFOREST) || !defined(AE_PARTIAL_BUILD)
 /*************************************************************************
+A random forest (decision forest) builder object.
 
+Used to store dataset and specify decision forest training algorithm settings.
+*************************************************************************/
+_decisionforestbuilder_owner::_decisionforestbuilder_owner()
+{
+    jmp_buf _break_jump;
+    alglib_impl::ae_state _state;
+    
+    alglib_impl::ae_state_init(&_state);
+    if( setjmp(_break_jump) )
+    {
+        if( p_struct!=NULL )
+        {
+            alglib_impl::_decisionforestbuilder_destroy(p_struct);
+            alglib_impl::ae_free(p_struct);
+        }
+        p_struct = NULL;
+#if !defined(AE_NO_EXCEPTIONS)
+        _ALGLIB_CPP_EXCEPTION(_state.error_msg);
+#else
+        _ALGLIB_SET_ERROR_FLAG(_state.error_msg);
+        return;
+#endif
+    }
+    alglib_impl::ae_state_set_break_jump(&_state, &_break_jump);
+    p_struct = NULL;
+    p_struct = (alglib_impl::decisionforestbuilder*)alglib_impl::ae_malloc(sizeof(alglib_impl::decisionforestbuilder), &_state);
+    memset(p_struct, 0, sizeof(alglib_impl::decisionforestbuilder));
+    alglib_impl::_decisionforestbuilder_init(p_struct, &_state, ae_false);
+    ae_state_clear(&_state);
+}
+
+_decisionforestbuilder_owner::_decisionforestbuilder_owner(const _decisionforestbuilder_owner &rhs)
+{
+    jmp_buf _break_jump;
+    alglib_impl::ae_state _state;
+    
+    alglib_impl::ae_state_init(&_state);
+    if( setjmp(_break_jump) )
+    {
+        if( p_struct!=NULL )
+        {
+            alglib_impl::_decisionforestbuilder_destroy(p_struct);
+            alglib_impl::ae_free(p_struct);
+        }
+        p_struct = NULL;
+#if !defined(AE_NO_EXCEPTIONS)
+        _ALGLIB_CPP_EXCEPTION(_state.error_msg);
+#else
+        _ALGLIB_SET_ERROR_FLAG(_state.error_msg);
+        return;
+#endif
+    }
+    alglib_impl::ae_state_set_break_jump(&_state, &_break_jump);
+    p_struct = NULL;
+    alglib_impl::ae_assert(rhs.p_struct!=NULL, "ALGLIB: decisionforestbuilder copy constructor failure (source is not initialized)", &_state);
+    p_struct = (alglib_impl::decisionforestbuilder*)alglib_impl::ae_malloc(sizeof(alglib_impl::decisionforestbuilder), &_state);
+    memset(p_struct, 0, sizeof(alglib_impl::decisionforestbuilder));
+    alglib_impl::_decisionforestbuilder_init_copy(p_struct, const_cast<alglib_impl::decisionforestbuilder*>(rhs.p_struct), &_state, ae_false);
+    ae_state_clear(&_state);
+}
+
+_decisionforestbuilder_owner& _decisionforestbuilder_owner::operator=(const _decisionforestbuilder_owner &rhs)
+{
+    if( this==&rhs )
+        return *this;
+    jmp_buf _break_jump;
+    alglib_impl::ae_state _state;
+    
+    alglib_impl::ae_state_init(&_state);
+    if( setjmp(_break_jump) )
+    {
+#if !defined(AE_NO_EXCEPTIONS)
+        _ALGLIB_CPP_EXCEPTION(_state.error_msg);
+#else
+        _ALGLIB_SET_ERROR_FLAG(_state.error_msg);
+        return *this;
+#endif
+    }
+    alglib_impl::ae_state_set_break_jump(&_state, &_break_jump);
+    alglib_impl::ae_assert(p_struct!=NULL, "ALGLIB: decisionforestbuilder assignment constructor failure (destination is not initialized)", &_state);
+    alglib_impl::ae_assert(rhs.p_struct!=NULL, "ALGLIB: decisionforestbuilder assignment constructor failure (source is not initialized)", &_state);
+    alglib_impl::_decisionforestbuilder_destroy(p_struct);
+    memset(p_struct, 0, sizeof(alglib_impl::decisionforestbuilder));
+    alglib_impl::_decisionforestbuilder_init_copy(p_struct, const_cast<alglib_impl::decisionforestbuilder*>(rhs.p_struct), &_state, ae_false);
+    ae_state_clear(&_state);
+    return *this;
+}
+
+_decisionforestbuilder_owner::~_decisionforestbuilder_owner()
+{
+    if( p_struct!=NULL )
+    {
+        alglib_impl::_decisionforestbuilder_destroy(p_struct);
+        ae_free(p_struct);
+    }
+}
+
+alglib_impl::decisionforestbuilder* _decisionforestbuilder_owner::c_ptr()
+{
+    return p_struct;
+}
+
+alglib_impl::decisionforestbuilder* _decisionforestbuilder_owner::c_ptr() const
+{
+    return const_cast<alglib_impl::decisionforestbuilder*>(p_struct);
+}
+decisionforestbuilder::decisionforestbuilder() : _decisionforestbuilder_owner() 
+{
+}
+
+decisionforestbuilder::decisionforestbuilder(const decisionforestbuilder &rhs):_decisionforestbuilder_owner(rhs) 
+{
+}
+
+decisionforestbuilder& decisionforestbuilder::operator=(const decisionforestbuilder &rhs)
+{
+    if( this==&rhs )
+        return *this;
+    _decisionforestbuilder_owner::operator=(rhs);
+    return *this;
+}
+
+decisionforestbuilder::~decisionforestbuilder()
+{
+}
+
+
+/*************************************************************************
+Buffer object which is used to perform  various  requests  (usually  model
+inference) in the multithreaded mode (multiple threads working  with  same
+DF object).
+
+This object should be created with DFCreateBuffer().
+*************************************************************************/
+_decisionforestbuffer_owner::_decisionforestbuffer_owner()
+{
+    jmp_buf _break_jump;
+    alglib_impl::ae_state _state;
+    
+    alglib_impl::ae_state_init(&_state);
+    if( setjmp(_break_jump) )
+    {
+        if( p_struct!=NULL )
+        {
+            alglib_impl::_decisionforestbuffer_destroy(p_struct);
+            alglib_impl::ae_free(p_struct);
+        }
+        p_struct = NULL;
+#if !defined(AE_NO_EXCEPTIONS)
+        _ALGLIB_CPP_EXCEPTION(_state.error_msg);
+#else
+        _ALGLIB_SET_ERROR_FLAG(_state.error_msg);
+        return;
+#endif
+    }
+    alglib_impl::ae_state_set_break_jump(&_state, &_break_jump);
+    p_struct = NULL;
+    p_struct = (alglib_impl::decisionforestbuffer*)alglib_impl::ae_malloc(sizeof(alglib_impl::decisionforestbuffer), &_state);
+    memset(p_struct, 0, sizeof(alglib_impl::decisionforestbuffer));
+    alglib_impl::_decisionforestbuffer_init(p_struct, &_state, ae_false);
+    ae_state_clear(&_state);
+}
+
+_decisionforestbuffer_owner::_decisionforestbuffer_owner(const _decisionforestbuffer_owner &rhs)
+{
+    jmp_buf _break_jump;
+    alglib_impl::ae_state _state;
+    
+    alglib_impl::ae_state_init(&_state);
+    if( setjmp(_break_jump) )
+    {
+        if( p_struct!=NULL )
+        {
+            alglib_impl::_decisionforestbuffer_destroy(p_struct);
+            alglib_impl::ae_free(p_struct);
+        }
+        p_struct = NULL;
+#if !defined(AE_NO_EXCEPTIONS)
+        _ALGLIB_CPP_EXCEPTION(_state.error_msg);
+#else
+        _ALGLIB_SET_ERROR_FLAG(_state.error_msg);
+        return;
+#endif
+    }
+    alglib_impl::ae_state_set_break_jump(&_state, &_break_jump);
+    p_struct = NULL;
+    alglib_impl::ae_assert(rhs.p_struct!=NULL, "ALGLIB: decisionforestbuffer copy constructor failure (source is not initialized)", &_state);
+    p_struct = (alglib_impl::decisionforestbuffer*)alglib_impl::ae_malloc(sizeof(alglib_impl::decisionforestbuffer), &_state);
+    memset(p_struct, 0, sizeof(alglib_impl::decisionforestbuffer));
+    alglib_impl::_decisionforestbuffer_init_copy(p_struct, const_cast<alglib_impl::decisionforestbuffer*>(rhs.p_struct), &_state, ae_false);
+    ae_state_clear(&_state);
+}
+
+_decisionforestbuffer_owner& _decisionforestbuffer_owner::operator=(const _decisionforestbuffer_owner &rhs)
+{
+    if( this==&rhs )
+        return *this;
+    jmp_buf _break_jump;
+    alglib_impl::ae_state _state;
+    
+    alglib_impl::ae_state_init(&_state);
+    if( setjmp(_break_jump) )
+    {
+#if !defined(AE_NO_EXCEPTIONS)
+        _ALGLIB_CPP_EXCEPTION(_state.error_msg);
+#else
+        _ALGLIB_SET_ERROR_FLAG(_state.error_msg);
+        return *this;
+#endif
+    }
+    alglib_impl::ae_state_set_break_jump(&_state, &_break_jump);
+    alglib_impl::ae_assert(p_struct!=NULL, "ALGLIB: decisionforestbuffer assignment constructor failure (destination is not initialized)", &_state);
+    alglib_impl::ae_assert(rhs.p_struct!=NULL, "ALGLIB: decisionforestbuffer assignment constructor failure (source is not initialized)", &_state);
+    alglib_impl::_decisionforestbuffer_destroy(p_struct);
+    memset(p_struct, 0, sizeof(alglib_impl::decisionforestbuffer));
+    alglib_impl::_decisionforestbuffer_init_copy(p_struct, const_cast<alglib_impl::decisionforestbuffer*>(rhs.p_struct), &_state, ae_false);
+    ae_state_clear(&_state);
+    return *this;
+}
+
+_decisionforestbuffer_owner::~_decisionforestbuffer_owner()
+{
+    if( p_struct!=NULL )
+    {
+        alglib_impl::_decisionforestbuffer_destroy(p_struct);
+        ae_free(p_struct);
+    }
+}
+
+alglib_impl::decisionforestbuffer* _decisionforestbuffer_owner::c_ptr()
+{
+    return p_struct;
+}
+
+alglib_impl::decisionforestbuffer* _decisionforestbuffer_owner::c_ptr() const
+{
+    return const_cast<alglib_impl::decisionforestbuffer*>(p_struct);
+}
+decisionforestbuffer::decisionforestbuffer() : _decisionforestbuffer_owner() 
+{
+}
+
+decisionforestbuffer::decisionforestbuffer(const decisionforestbuffer &rhs):_decisionforestbuffer_owner(rhs) 
+{
+}
+
+decisionforestbuffer& decisionforestbuffer::operator=(const decisionforestbuffer &rhs)
+{
+    if( this==&rhs )
+        return *this;
+    _decisionforestbuffer_owner::operator=(rhs);
+    return *this;
+}
+
+decisionforestbuffer::~decisionforestbuffer()
+{
+}
+
+
+/*************************************************************************
+Decision forest (random forest) model.
 *************************************************************************/
 _decisionforest_owner::_decisionforest_owner()
 {
@@ -13563,7 +13205,78 @@ decisionforest::~decisionforest()
 
 
 /*************************************************************************
+Decision forest training report.
 
+=== training/oob errors ==================================================
+
+Following fields store training set errors:
+* relclserror           -   fraction of misclassified cases, [0,1]
+* avgce                 -   average cross-entropy in bits per symbol
+* rmserror              -   root-mean-square error
+* avgerror              -   average error
+* avgrelerror           -   average relative error
+
+Out-of-bag estimates are stored in fields with same names, but "oob" prefix.
+
+For classification problems:
+* RMS, AVG and AVGREL errors are calculated for posterior probabilities
+
+For regression problems:
+* RELCLS and AVGCE errors are zero
+
+=== variable importance ==================================================
+
+Following fields are used to store variable importance information:
+
+* topvars               -   variables ordered from the most  important  to
+                            less  important  ones  (according  to  current
+                            choice of importance raiting).
+                            For example, topvars[0] contains index of  the
+                            most important variable, and topvars[0:2]  are
+                            indexes of 3 most important ones and so on.
+
+* varimportances        -   array[nvars], ratings (the  larger,  the  more
+                            important the variable  is,  always  in  [0,1]
+                            range).
+                            By default, filled  by  zeros  (no  importance
+                            ratings are  provided  unless  you  explicitly
+                            request them).
+                            Zero rating means that variable is not important,
+                            however you will rarely encounter such a thing,
+                            in many cases  unimportant  variables  produce
+                            nearly-zero (but nonzero) ratings.
+
+Variable importance report must be EXPLICITLY requested by calling:
+* dfbuildersetimportancegini() function, if you need out-of-bag Gini-based
+  importance rating also known as MDI  (fast to  calculate,  resistant  to
+  overfitting  issues,   but   has   some   bias  towards  continuous  and
+  high-cardinality categorical variables)
+* dfbuildersetimportancetrngini() function, if you need training set Gini-
+  -based importance rating (what other packages typically report).
+* dfbuildersetimportancepermutation() function, if you  need  permutation-
+  based importance rating also known as MDA (slower to calculate, but less
+  biased)
+* dfbuildersetimportancenone() function,  if  you  do  not  need  importance
+  ratings - ratings will be zero, topvars[] will be [0,1,2,...]
+
+Different importance ratings (Gini or permutation) produce  non-comparable
+values. Although in all cases rating values lie in [0,1] range, there  are
+exist differences:
+* informally speaking, Gini importance rating tends to divide "unit amount
+  of importance"  between  several  important  variables, i.e. it produces
+  estimates which roughly sum to 1.0 (or less than 1.0, if your  task  can
+  not be solved exactly). If all variables  are  equally  important,  they
+  will have same rating,  roughly  1/NVars,  even  if  every  variable  is
+  critically important.
+* from the other side, permutation importance tells us what percentage  of
+  the model predictive power will be ruined  by  permuting  this  specific
+  variable. It does not produce estimates which  sum  to  one.  Critically
+  important variable will have rating close  to  1.0,  and  you  may  have
+  multiple variables with such a rating.
+
+More information on variable importance ratings can be found  in  comments
+on the dfbuildersetimportancegini() and dfbuildersetimportancepermutation()
+functions.
 *************************************************************************/
 _dfreport_owner::_dfreport_owner()
 {
@@ -13669,11 +13382,11 @@ alglib_impl::dfreport* _dfreport_owner::c_ptr() const
 {
     return const_cast<alglib_impl::dfreport*>(p_struct);
 }
-dfreport::dfreport() : _dfreport_owner() ,relclserror(p_struct->relclserror),avgce(p_struct->avgce),rmserror(p_struct->rmserror),avgerror(p_struct->avgerror),avgrelerror(p_struct->avgrelerror),oobrelclserror(p_struct->oobrelclserror),oobavgce(p_struct->oobavgce),oobrmserror(p_struct->oobrmserror),oobavgerror(p_struct->oobavgerror),oobavgrelerror(p_struct->oobavgrelerror)
+dfreport::dfreport() : _dfreport_owner() ,relclserror(p_struct->relclserror),avgce(p_struct->avgce),rmserror(p_struct->rmserror),avgerror(p_struct->avgerror),avgrelerror(p_struct->avgrelerror),oobrelclserror(p_struct->oobrelclserror),oobavgce(p_struct->oobavgce),oobrmserror(p_struct->oobrmserror),oobavgerror(p_struct->oobavgerror),oobavgrelerror(p_struct->oobavgrelerror),topvars(&p_struct->topvars),varimportances(&p_struct->varimportances)
 {
 }
 
-dfreport::dfreport(const dfreport &rhs):_dfreport_owner(rhs) ,relclserror(p_struct->relclserror),avgce(p_struct->avgce),rmserror(p_struct->rmserror),avgerror(p_struct->avgerror),avgrelerror(p_struct->avgrelerror),oobrelclserror(p_struct->oobrelclserror),oobavgce(p_struct->oobavgce),oobrmserror(p_struct->oobrmserror),oobavgerror(p_struct->oobavgerror),oobavgrelerror(p_struct->oobavgrelerror)
+dfreport::dfreport(const dfreport &rhs):_dfreport_owner(rhs) ,relclserror(p_struct->relclserror),avgce(p_struct->avgce),rmserror(p_struct->rmserror),avgerror(p_struct->avgerror),avgrelerror(p_struct->avgrelerror),oobrelclserror(p_struct->oobrelclserror),oobavgce(p_struct->oobavgce),oobrmserror(p_struct->oobrmserror),oobavgerror(p_struct->oobavgerror),oobavgrelerror(p_struct->oobavgrelerror),topvars(&p_struct->topvars),varimportances(&p_struct->varimportances)
 {
 }
 
@@ -13837,39 +13550,33 @@ void dfunserialize(const std::istream &s_in, decisionforest &obj)
 }
 
 /*************************************************************************
-This subroutine builds random decision forest.
+This function creates buffer  structure  which  can  be  used  to  perform
+parallel inference requests.
 
-INPUT PARAMETERS:
-    XY          -   training set
-    NPoints     -   training set size, NPoints>=1
-    NVars       -   number of independent variables, NVars>=1
-    NClasses    -   task type:
-                    * NClasses=1 - regression task with one
-                                   dependent variable
-                    * NClasses>1 - classification task with
-                                   NClasses classes.
-    NTrees      -   number of trees in a forest, NTrees>=1.
-                    recommended values: 50-100.
-    R           -   percent of a training set used to build
-                    individual trees. 0<R<=1.
-                    recommended values: 0.1 <= R <= 0.66.
+DF subpackage  provides two sets of computing functions - ones  which  use
+internal buffer of DF model  (these  functions are single-threaded because
+they use same buffer, which can not  shared  between  threads),  and  ones
+which use external buffer.
 
-OUTPUT PARAMETERS:
-    Info        -   return code:
-                    * -2, if there is a point with class number
-                          outside of [0..NClasses-1].
-                    * -1, if incorrect parameters was passed
-                          (NPoints<1, NVars<1, NClasses<1, NTrees<1, R<=0
-                          or R>1).
-                    *  1, if task has been solved
-    DF          -   model built
-    Rep         -   training report, contains error on a training set
-                    and out-of-bag estimates of generalization error.
+This function is used to initialize external buffer.
+
+INPUT PARAMETERS
+    Model       -   DF model which is associated with newly created buffer
+
+OUTPUT PARAMETERS
+    Buf         -   external buffer.
+
+
+IMPORTANT: buffer object should be used only with model which was used  to
+           initialize buffer. Any attempt to  use  buffer  with  different
+           object is dangerous - you  may   get  integrity  check  failure
+           (exception) because sizes of internal  arrays  do  not  fit  to
+           dimensions of the model structure.
 
   -- ALGLIB --
-     Copyright 19.02.2009 by Bochkanov Sergey
+     Copyright 15.02.2019 by Bochkanov Sergey
 *************************************************************************/
-void dfbuildrandomdecisionforest(const real_2d_array &xy, const ae_int_t npoints, const ae_int_t nvars, const ae_int_t nclasses, const ae_int_t ntrees, const double r, ae_int_t &info, decisionforest &df, dfreport &rep)
+void dfcreatebuffer(const decisionforest &model, decisionforestbuffer &buf, const xparams _xparams)
 {
     jmp_buf _break_jump;
     alglib_impl::ae_state _alglib_env_state;
@@ -13884,48 +13591,44 @@ void dfbuildrandomdecisionforest(const real_2d_array &xy, const ae_int_t npoints
 #endif
     }
     ae_state_set_break_jump(&_alglib_env_state, &_break_jump);
-    alglib_impl::dfbuildrandomdecisionforest(const_cast<alglib_impl::ae_matrix*>(xy.c_ptr()), npoints, nvars, nclasses, ntrees, r, &info, const_cast<alglib_impl::decisionforest*>(df.c_ptr()), const_cast<alglib_impl::dfreport*>(rep.c_ptr()), &_alglib_env_state);
+    if( _xparams.flags!=0x0 )
+        ae_state_set_flags(&_alglib_env_state, _xparams.flags);
+    alglib_impl::dfcreatebuffer(const_cast<alglib_impl::decisionforest*>(model.c_ptr()), const_cast<alglib_impl::decisionforestbuffer*>(buf.c_ptr()), &_alglib_env_state);
     alglib_impl::ae_state_clear(&_alglib_env_state);
     return;
 }
 
 /*************************************************************************
-This subroutine builds random decision forest.
-This function gives ability to tune number of variables used when choosing
-best split.
+This subroutine creates DecisionForestBuilder  object  which  is  used  to
+train decision forests.
+
+By default, new builder stores empty dataset and some  reasonable  default
+settings. At the very least, you should specify dataset prior to  building
+decision forest. You can also tweak settings of  the  forest  construction
+algorithm (recommended, although default setting should work well).
+
+Following actions are mandatory:
+* calling dfbuildersetdataset() to specify dataset
+* calling dfbuilderbuildrandomforest()  to  build  decision  forest  using
+  current dataset and default settings
+
+Additionally, you may call:
+* dfbuildersetrndvars() or dfbuildersetrndvarsratio() to specify number of
+  variables randomly chosen for each split
+* dfbuildersetsubsampleratio() to specify fraction of the dataset randomly
+  subsampled to build each tree
+* dfbuildersetseed() to control random seed chosen for tree construction
 
 INPUT PARAMETERS:
-    XY          -   training set
-    NPoints     -   training set size, NPoints>=1
-    NVars       -   number of independent variables, NVars>=1
-    NClasses    -   task type:
-                    * NClasses=1 - regression task with one
-                                   dependent variable
-                    * NClasses>1 - classification task with
-                                   NClasses classes.
-    NTrees      -   number of trees in a forest, NTrees>=1.
-                    recommended values: 50-100.
-    NRndVars    -   number of variables used when choosing best split
-    R           -   percent of a training set used to build
-                    individual trees. 0<R<=1.
-                    recommended values: 0.1 <= R <= 0.66.
+    none
 
 OUTPUT PARAMETERS:
-    Info        -   return code:
-                    * -2, if there is a point with class number
-                          outside of [0..NClasses-1].
-                    * -1, if incorrect parameters was passed
-                          (NPoints<1, NVars<1, NClasses<1, NTrees<1, R<=0
-                          or R>1).
-                    *  1, if task has been solved
-    DF          -   model built
-    Rep         -   training report, contains error on a training set
-                    and out-of-bag estimates of generalization error.
+    S           -   decision forest builder
 
   -- ALGLIB --
-     Copyright 19.02.2009 by Bochkanov Sergey
+     Copyright 21.05.2018 by Bochkanov Sergey
 *************************************************************************/
-void dfbuildrandomdecisionforestx1(const real_2d_array &xy, const ae_int_t npoints, const ae_int_t nvars, const ae_int_t nclasses, const ae_int_t ntrees, const ae_int_t nrndvars, const double r, ae_int_t &info, decisionforest &df, dfreport &rep)
+void dfbuildercreate(decisionforestbuilder &s, const xparams _xparams)
 {
     jmp_buf _break_jump;
     alglib_impl::ae_state _alglib_env_state;
@@ -13940,17 +13643,863 @@ void dfbuildrandomdecisionforestx1(const real_2d_array &xy, const ae_int_t npoin
 #endif
     }
     ae_state_set_break_jump(&_alglib_env_state, &_break_jump);
-    alglib_impl::dfbuildrandomdecisionforestx1(const_cast<alglib_impl::ae_matrix*>(xy.c_ptr()), npoints, nvars, nclasses, ntrees, nrndvars, r, &info, const_cast<alglib_impl::decisionforest*>(df.c_ptr()), const_cast<alglib_impl::dfreport*>(rep.c_ptr()), &_alglib_env_state);
+    if( _xparams.flags!=0x0 )
+        ae_state_set_flags(&_alglib_env_state, _xparams.flags);
+    alglib_impl::dfbuildercreate(const_cast<alglib_impl::decisionforestbuilder*>(s.c_ptr()), &_alglib_env_state);
     alglib_impl::ae_state_clear(&_alglib_env_state);
     return;
 }
 
 /*************************************************************************
-Procesing
+This subroutine adds dense dataset to the internal storage of the  builder
+object. Specifying your dataset in the dense format means that  the  dense
+version of the forest construction algorithm will be invoked.
+
+INPUT PARAMETERS:
+    S           -   decision forest builder object
+    XY          -   array[NPoints,NVars+1] (minimum size; actual size  can
+                    be larger, only leading part is used anyway), dataset:
+                    * first NVars elements of each row store values of the
+                      independent variables
+                    * last  column  store class number (in 0...NClasses-1)
+                      or real value of the dependent variable
+    NPoints     -   number of rows in the dataset, NPoints>=1
+    NVars       -   number of independent variables, NVars>=1
+    NClasses    -   indicates type of the problem being solved:
+                    * NClasses>=2 means  that  classification  problem  is
+                      solved  (last  column  of  the  dataset stores class
+                      number)
+                    * NClasses=1 means that regression problem  is  solved
+                      (last column of the dataset stores variable value)
+
+OUTPUT PARAMETERS:
+    S           -   decision forest builder
+
+  -- ALGLIB --
+     Copyright 21.05.2018 by Bochkanov Sergey
+*************************************************************************/
+void dfbuildersetdataset(const decisionforestbuilder &s, const real_2d_array &xy, const ae_int_t npoints, const ae_int_t nvars, const ae_int_t nclasses, const xparams _xparams)
+{
+    jmp_buf _break_jump;
+    alglib_impl::ae_state _alglib_env_state;
+    alglib_impl::ae_state_init(&_alglib_env_state);
+    if( setjmp(_break_jump) )
+    {
+#if !defined(AE_NO_EXCEPTIONS)
+        _ALGLIB_CPP_EXCEPTION(_alglib_env_state.error_msg);
+#else
+        _ALGLIB_SET_ERROR_FLAG(_alglib_env_state.error_msg);
+        return;
+#endif
+    }
+    ae_state_set_break_jump(&_alglib_env_state, &_break_jump);
+    if( _xparams.flags!=0x0 )
+        ae_state_set_flags(&_alglib_env_state, _xparams.flags);
+    alglib_impl::dfbuildersetdataset(const_cast<alglib_impl::decisionforestbuilder*>(s.c_ptr()), const_cast<alglib_impl::ae_matrix*>(xy.c_ptr()), npoints, nvars, nclasses, &_alglib_env_state);
+    alglib_impl::ae_state_clear(&_alglib_env_state);
+    return;
+}
+
+/*************************************************************************
+This function sets number  of  variables  (in  [1,NVars]  range)  used  by
+decision forest construction algorithm.
+
+The default option is to use roughly sqrt(NVars) variables.
+
+INPUT PARAMETERS:
+    S           -   decision forest builder object
+    RndVars     -   number of randomly selected variables; values  outside
+                    of [1,NVars] range are silently clipped.
+
+OUTPUT PARAMETERS:
+    S           -   decision forest builder
+
+  -- ALGLIB --
+     Copyright 21.05.2018 by Bochkanov Sergey
+*************************************************************************/
+void dfbuildersetrndvars(const decisionforestbuilder &s, const ae_int_t rndvars, const xparams _xparams)
+{
+    jmp_buf _break_jump;
+    alglib_impl::ae_state _alglib_env_state;
+    alglib_impl::ae_state_init(&_alglib_env_state);
+    if( setjmp(_break_jump) )
+    {
+#if !defined(AE_NO_EXCEPTIONS)
+        _ALGLIB_CPP_EXCEPTION(_alglib_env_state.error_msg);
+#else
+        _ALGLIB_SET_ERROR_FLAG(_alglib_env_state.error_msg);
+        return;
+#endif
+    }
+    ae_state_set_break_jump(&_alglib_env_state, &_break_jump);
+    if( _xparams.flags!=0x0 )
+        ae_state_set_flags(&_alglib_env_state, _xparams.flags);
+    alglib_impl::dfbuildersetrndvars(const_cast<alglib_impl::decisionforestbuilder*>(s.c_ptr()), rndvars, &_alglib_env_state);
+    alglib_impl::ae_state_clear(&_alglib_env_state);
+    return;
+}
+
+/*************************************************************************
+This function sets number of variables used by decision forest construction
+algorithm as a fraction of total variable count (0,1) range.
+
+The default option is to use roughly sqrt(NVars) variables.
+
+INPUT PARAMETERS:
+    S           -   decision forest builder object
+    F           -   round(NVars*F) variables are selected
+
+OUTPUT PARAMETERS:
+    S           -   decision forest builder
+
+  -- ALGLIB --
+     Copyright 21.05.2018 by Bochkanov Sergey
+*************************************************************************/
+void dfbuildersetrndvarsratio(const decisionforestbuilder &s, const double f, const xparams _xparams)
+{
+    jmp_buf _break_jump;
+    alglib_impl::ae_state _alglib_env_state;
+    alglib_impl::ae_state_init(&_alglib_env_state);
+    if( setjmp(_break_jump) )
+    {
+#if !defined(AE_NO_EXCEPTIONS)
+        _ALGLIB_CPP_EXCEPTION(_alglib_env_state.error_msg);
+#else
+        _ALGLIB_SET_ERROR_FLAG(_alglib_env_state.error_msg);
+        return;
+#endif
+    }
+    ae_state_set_break_jump(&_alglib_env_state, &_break_jump);
+    if( _xparams.flags!=0x0 )
+        ae_state_set_flags(&_alglib_env_state, _xparams.flags);
+    alglib_impl::dfbuildersetrndvarsratio(const_cast<alglib_impl::decisionforestbuilder*>(s.c_ptr()), f, &_alglib_env_state);
+    alglib_impl::ae_state_clear(&_alglib_env_state);
+    return;
+}
+
+/*************************************************************************
+This function tells decision forest builder to automatically choose number
+of  variables  used  by  decision forest construction  algorithm.  Roughly
+sqrt(NVars) variables will be used.
+
+INPUT PARAMETERS:
+    S           -   decision forest builder object
+
+OUTPUT PARAMETERS:
+    S           -   decision forest builder
+
+  -- ALGLIB --
+     Copyright 21.05.2018 by Bochkanov Sergey
+*************************************************************************/
+void dfbuildersetrndvarsauto(const decisionforestbuilder &s, const xparams _xparams)
+{
+    jmp_buf _break_jump;
+    alglib_impl::ae_state _alglib_env_state;
+    alglib_impl::ae_state_init(&_alglib_env_state);
+    if( setjmp(_break_jump) )
+    {
+#if !defined(AE_NO_EXCEPTIONS)
+        _ALGLIB_CPP_EXCEPTION(_alglib_env_state.error_msg);
+#else
+        _ALGLIB_SET_ERROR_FLAG(_alglib_env_state.error_msg);
+        return;
+#endif
+    }
+    ae_state_set_break_jump(&_alglib_env_state, &_break_jump);
+    if( _xparams.flags!=0x0 )
+        ae_state_set_flags(&_alglib_env_state, _xparams.flags);
+    alglib_impl::dfbuildersetrndvarsauto(const_cast<alglib_impl::decisionforestbuilder*>(s.c_ptr()), &_alglib_env_state);
+    alglib_impl::ae_state_clear(&_alglib_env_state);
+    return;
+}
+
+/*************************************************************************
+This function sets size of dataset subsample generated the decision forest
+construction algorithm. Size is specified as a fraction of  total  dataset
+size.
+
+The default option is to use 50% of the dataset for training, 50% for  the
+OOB estimates. You can decrease fraction F down to 10%, 1% or  even  below
+in order to reduce overfitting.
+
+INPUT PARAMETERS:
+    S           -   decision forest builder object
+    F           -   fraction of the dataset to use, in (0,1] range. Values
+                    outside of this range will  be  silently  clipped.  At
+                    least one element is always selected for the  training
+                    set.
+
+OUTPUT PARAMETERS:
+    S           -   decision forest builder
+
+  -- ALGLIB --
+     Copyright 21.05.2018 by Bochkanov Sergey
+*************************************************************************/
+void dfbuildersetsubsampleratio(const decisionforestbuilder &s, const double f, const xparams _xparams)
+{
+    jmp_buf _break_jump;
+    alglib_impl::ae_state _alglib_env_state;
+    alglib_impl::ae_state_init(&_alglib_env_state);
+    if( setjmp(_break_jump) )
+    {
+#if !defined(AE_NO_EXCEPTIONS)
+        _ALGLIB_CPP_EXCEPTION(_alglib_env_state.error_msg);
+#else
+        _ALGLIB_SET_ERROR_FLAG(_alglib_env_state.error_msg);
+        return;
+#endif
+    }
+    ae_state_set_break_jump(&_alglib_env_state, &_break_jump);
+    if( _xparams.flags!=0x0 )
+        ae_state_set_flags(&_alglib_env_state, _xparams.flags);
+    alglib_impl::dfbuildersetsubsampleratio(const_cast<alglib_impl::decisionforestbuilder*>(s.c_ptr()), f, &_alglib_env_state);
+    alglib_impl::ae_state_clear(&_alglib_env_state);
+    return;
+}
+
+/*************************************************************************
+This function sets seed used by internal RNG for  random  subsampling  and
+random selection of variable subsets.
+
+By default random seed is used, i.e. every time you build decision forest,
+we seed generator with new value  obtained  from  system-wide  RNG.  Thus,
+decision forest builder returns non-deterministic results. You can  change
+such behavior by specyfing fixed positive seed value.
+
+INPUT PARAMETERS:
+    S           -   decision forest builder object
+    SeedVal     -   seed value:
+                    * positive values are used for seeding RNG with fixed
+                      seed, i.e. subsequent runs on same data will return
+                      same decision forests
+                    * non-positive seed means that random seed is used
+                      for every run of builder, i.e. subsequent  runs  on
+                      same  datasets  will  return   slightly   different
+                      decision forests
+
+OUTPUT PARAMETERS:
+    S           -   decision forest builder, see
+
+  -- ALGLIB --
+     Copyright 21.05.2018 by Bochkanov Sergey
+*************************************************************************/
+void dfbuildersetseed(const decisionforestbuilder &s, const ae_int_t seedval, const xparams _xparams)
+{
+    jmp_buf _break_jump;
+    alglib_impl::ae_state _alglib_env_state;
+    alglib_impl::ae_state_init(&_alglib_env_state);
+    if( setjmp(_break_jump) )
+    {
+#if !defined(AE_NO_EXCEPTIONS)
+        _ALGLIB_CPP_EXCEPTION(_alglib_env_state.error_msg);
+#else
+        _ALGLIB_SET_ERROR_FLAG(_alglib_env_state.error_msg);
+        return;
+#endif
+    }
+    ae_state_set_break_jump(&_alglib_env_state, &_break_jump);
+    if( _xparams.flags!=0x0 )
+        ae_state_set_flags(&_alglib_env_state, _xparams.flags);
+    alglib_impl::dfbuildersetseed(const_cast<alglib_impl::decisionforestbuilder*>(s.c_ptr()), seedval, &_alglib_env_state);
+    alglib_impl::ae_state_clear(&_alglib_env_state);
+    return;
+}
+
+/*************************************************************************
+This function sets random decision forest construction algorithm.
+
+As for now, only one decision forest construction algorithm is supported -
+a dense "baseline" RDF algorithm.
+
+INPUT PARAMETERS:
+    S           -   decision forest builder object
+    AlgoType    -   algorithm type:
+                    * 0 = baseline dense RDF
+
+OUTPUT PARAMETERS:
+    S           -   decision forest builder, see
+
+  -- ALGLIB --
+     Copyright 21.05.2018 by Bochkanov Sergey
+*************************************************************************/
+void dfbuildersetrdfalgo(const decisionforestbuilder &s, const ae_int_t algotype, const xparams _xparams)
+{
+    jmp_buf _break_jump;
+    alglib_impl::ae_state _alglib_env_state;
+    alglib_impl::ae_state_init(&_alglib_env_state);
+    if( setjmp(_break_jump) )
+    {
+#if !defined(AE_NO_EXCEPTIONS)
+        _ALGLIB_CPP_EXCEPTION(_alglib_env_state.error_msg);
+#else
+        _ALGLIB_SET_ERROR_FLAG(_alglib_env_state.error_msg);
+        return;
+#endif
+    }
+    ae_state_set_break_jump(&_alglib_env_state, &_break_jump);
+    if( _xparams.flags!=0x0 )
+        ae_state_set_flags(&_alglib_env_state, _xparams.flags);
+    alglib_impl::dfbuildersetrdfalgo(const_cast<alglib_impl::decisionforestbuilder*>(s.c_ptr()), algotype, &_alglib_env_state);
+    alglib_impl::ae_state_clear(&_alglib_env_state);
+    return;
+}
+
+/*************************************************************************
+This  function  sets  split  selection  algorithm used by decision  forest
+classifier. You may choose several algorithms, with  different  speed  and
+quality of the results.
+
+INPUT PARAMETERS:
+    S           -   decision forest builder object
+    SplitStrength-  split type:
+                    * 0 = split at the random position, fastest one
+                    * 1 = split at the middle of the range
+                    * 2 = strong split at the best point of the range (default)
+
+OUTPUT PARAMETERS:
+    S           -   decision forest builder, see
+
+  -- ALGLIB --
+     Copyright 21.05.2018 by Bochkanov Sergey
+*************************************************************************/
+void dfbuildersetrdfsplitstrength(const decisionforestbuilder &s, const ae_int_t splitstrength, const xparams _xparams)
+{
+    jmp_buf _break_jump;
+    alglib_impl::ae_state _alglib_env_state;
+    alglib_impl::ae_state_init(&_alglib_env_state);
+    if( setjmp(_break_jump) )
+    {
+#if !defined(AE_NO_EXCEPTIONS)
+        _ALGLIB_CPP_EXCEPTION(_alglib_env_state.error_msg);
+#else
+        _ALGLIB_SET_ERROR_FLAG(_alglib_env_state.error_msg);
+        return;
+#endif
+    }
+    ae_state_set_break_jump(&_alglib_env_state, &_break_jump);
+    if( _xparams.flags!=0x0 )
+        ae_state_set_flags(&_alglib_env_state, _xparams.flags);
+    alglib_impl::dfbuildersetrdfsplitstrength(const_cast<alglib_impl::decisionforestbuilder*>(s.c_ptr()), splitstrength, &_alglib_env_state);
+    alglib_impl::ae_state_clear(&_alglib_env_state);
+    return;
+}
+
+/*************************************************************************
+This  function  tells  decision  forest  construction  algorithm  to   use
+Gini impurity based variable importance estimation (also known as MDI).
+
+This version of importance estimation algorithm analyzes mean decrease  in
+impurity (MDI) on training sample during  splits.  The result  is  divided
+by impurity at the root node in order to produce estimate in [0,1] range.
+
+Such estimates are fast to calculate and beautifully  normalized  (sum  to
+one) but have following downsides:
+* They ALWAYS sum to 1.0, even if output is completely unpredictable. I.e.
+  MDI allows to order variables by importance, but does not  tell us about
+  "absolute" importances of variables
+* there exist some bias towards continuous and high-cardinality categorical
+  variables
+
+NOTE: informally speaking, MDA (permutation importance) rating answers the
+      question  "what  part  of  the  model  predictive power is ruined by
+      permuting k-th variable?" while MDI tells us "what part of the model
+      predictive power was achieved due to usage of k-th variable".
+
+      Thus, MDA rates each variable independently at "0 to 1"  scale while
+      MDI (and OOB-MDI too) tends to divide "unit  amount  of  importance"
+      between several important variables.
+
+      If  all  variables  are  equally  important,  they  will  have  same
+      MDI/OOB-MDI rating, equal (for OOB-MDI: roughly equal)  to  1/NVars.
+      However, roughly  same  picture  will  be  produced   for  the  "all
+      variables provide information no one is critical" situation  and for
+      the "all variables are critical, drop any one, everything is ruined"
+      situation.
+
+      Contrary to that, MDA will rate critical variable as ~1.0 important,
+      and important but non-critical variable will  have  less  than  unit
+      rating.
+
+NOTE: quite an often MDA and MDI return same results. It generally happens
+      on problems with low test set error (a few  percents  at  most)  and
+      large enough training set to avoid overfitting.
+
+      The difference between MDA, MDI and OOB-MDI becomes  important  only
+      on "hard" tasks with high test set error and/or small training set.
+
+INPUT PARAMETERS:
+    S           -   decision forest builder object
+
+OUTPUT PARAMETERS:
+    S           -   decision forest builder object. Next call to the forest
+                    construction function will produce:
+                    * importance estimates in rep.varimportances field
+                    * variable ranks in rep.topvars field
+
+  -- ALGLIB --
+     Copyright 29.07.2019 by Bochkanov Sergey
+*************************************************************************/
+void dfbuildersetimportancetrngini(const decisionforestbuilder &s, const xparams _xparams)
+{
+    jmp_buf _break_jump;
+    alglib_impl::ae_state _alglib_env_state;
+    alglib_impl::ae_state_init(&_alglib_env_state);
+    if( setjmp(_break_jump) )
+    {
+#if !defined(AE_NO_EXCEPTIONS)
+        _ALGLIB_CPP_EXCEPTION(_alglib_env_state.error_msg);
+#else
+        _ALGLIB_SET_ERROR_FLAG(_alglib_env_state.error_msg);
+        return;
+#endif
+    }
+    ae_state_set_break_jump(&_alglib_env_state, &_break_jump);
+    if( _xparams.flags!=0x0 )
+        ae_state_set_flags(&_alglib_env_state, _xparams.flags);
+    alglib_impl::dfbuildersetimportancetrngini(const_cast<alglib_impl::decisionforestbuilder*>(s.c_ptr()), &_alglib_env_state);
+    alglib_impl::ae_state_clear(&_alglib_env_state);
+    return;
+}
+
+/*************************************************************************
+This  function  tells  decision  forest  construction  algorithm  to   use
+out-of-bag version of Gini variable importance estimation (also  known  as
+OOB-MDI).
+
+This version of importance estimation algorithm analyzes mean decrease  in
+impurity (MDI) on out-of-bag sample during splits. The result  is  divided
+by impurity at the root node in order to produce estimate in [0,1] range.
+
+Such estimates are fast to calculate and resistant to  overfitting  issues
+(thanks to the  out-of-bag  estimates  used). However, OOB Gini rating has
+following downsides:
+* there exist some bias towards continuous and high-cardinality categorical
+  variables
+* Gini rating allows us to order variables by importance, but it  is  hard
+  to define importance of the variable by itself.
+
+NOTE: informally speaking, MDA (permutation importance) rating answers the
+      question  "what  part  of  the  model  predictive power is ruined by
+      permuting k-th variable?" while MDI tells us "what part of the model
+      predictive power was achieved due to usage of k-th variable".
+
+      Thus, MDA rates each variable independently at "0 to 1"  scale while
+      MDI (and OOB-MDI too) tends to divide "unit  amount  of  importance"
+      between several important variables.
+
+      If  all  variables  are  equally  important,  they  will  have  same
+      MDI/OOB-MDI rating, equal (for OOB-MDI: roughly equal)  to  1/NVars.
+      However, roughly  same  picture  will  be  produced   for  the  "all
+      variables provide information no one is critical" situation  and for
+      the "all variables are critical, drop any one, everything is ruined"
+      situation.
+
+      Contrary to that, MDA will rate critical variable as ~1.0 important,
+      and important but non-critical variable will  have  less  than  unit
+      rating.
+
+NOTE: quite an often MDA and MDI return same results. It generally happens
+      on problems with low test set error (a few  percents  at  most)  and
+      large enough training set to avoid overfitting.
+
+      The difference between MDA, MDI and OOB-MDI becomes  important  only
+      on "hard" tasks with high test set error and/or small training set.
+
+INPUT PARAMETERS:
+    S           -   decision forest builder object
+
+OUTPUT PARAMETERS:
+    S           -   decision forest builder object. Next call to the forest
+                    construction function will produce:
+                    * importance estimates in rep.varimportances field
+                    * variable ranks in rep.topvars field
+
+  -- ALGLIB --
+     Copyright 29.07.2019 by Bochkanov Sergey
+*************************************************************************/
+void dfbuildersetimportanceoobgini(const decisionforestbuilder &s, const xparams _xparams)
+{
+    jmp_buf _break_jump;
+    alglib_impl::ae_state _alglib_env_state;
+    alglib_impl::ae_state_init(&_alglib_env_state);
+    if( setjmp(_break_jump) )
+    {
+#if !defined(AE_NO_EXCEPTIONS)
+        _ALGLIB_CPP_EXCEPTION(_alglib_env_state.error_msg);
+#else
+        _ALGLIB_SET_ERROR_FLAG(_alglib_env_state.error_msg);
+        return;
+#endif
+    }
+    ae_state_set_break_jump(&_alglib_env_state, &_break_jump);
+    if( _xparams.flags!=0x0 )
+        ae_state_set_flags(&_alglib_env_state, _xparams.flags);
+    alglib_impl::dfbuildersetimportanceoobgini(const_cast<alglib_impl::decisionforestbuilder*>(s.c_ptr()), &_alglib_env_state);
+    alglib_impl::ae_state_clear(&_alglib_env_state);
+    return;
+}
+
+/*************************************************************************
+This  function  tells  decision  forest  construction  algorithm  to   use
+permutation variable importance estimator (also known as MDA).
+
+This version of importance estimation algorithm analyzes mean increase  in
+out-of-bag sum of squared  residuals  after  random  permutation  of  J-th
+variable. The result is divided by error computed with all variables being
+perturbed in order to produce R-squared-like estimate in [0,1] range.
+
+Such estimate  is  slower to calculate than Gini-based rating  because  it
+needs multiple inference runs for each of variables being studied.
+
+ALGLIB uses parallelized and highly  optimized  algorithm  which  analyzes
+path through the decision tree and allows  to  handle  most  perturbations
+in O(1) time; nevertheless, requesting MDA importances may increase forest
+construction time from 10% to 200% (or more,  if  you  have  thousands  of
+variables).
+
+However, MDA rating has following benefits over Gini-based ones:
+* no bias towards specific variable types
+* ability to directly evaluate "absolute" importance of some  variable  at
+  "0 to 1" scale (contrary to Gini-based rating, which returns comparative
+  importances).
+
+NOTE: informally speaking, MDA (permutation importance) rating answers the
+      question  "what  part  of  the  model  predictive power is ruined by
+      permuting k-th variable?" while MDI tells us "what part of the model
+      predictive power was achieved due to usage of k-th variable".
+
+      Thus, MDA rates each variable independently at "0 to 1"  scale while
+      MDI (and OOB-MDI too) tends to divide "unit  amount  of  importance"
+      between several important variables.
+
+      If  all  variables  are  equally  important,  they  will  have  same
+      MDI/OOB-MDI rating, equal (for OOB-MDI: roughly equal)  to  1/NVars.
+      However, roughly  same  picture  will  be  produced   for  the  "all
+      variables provide information no one is critical" situation  and for
+      the "all variables are critical, drop any one, everything is ruined"
+      situation.
+
+      Contrary to that, MDA will rate critical variable as ~1.0 important,
+      and important but non-critical variable will  have  less  than  unit
+      rating.
+
+NOTE: quite an often MDA and MDI return same results. It generally happens
+      on problems with low test set error (a few  percents  at  most)  and
+      large enough training set to avoid overfitting.
+
+      The difference between MDA, MDI and OOB-MDI becomes  important  only
+      on "hard" tasks with high test set error and/or small training set.
+
+INPUT PARAMETERS:
+    S           -   decision forest builder object
+
+OUTPUT PARAMETERS:
+    S           -   decision forest builder object. Next call to the forest
+                    construction function will produce:
+                    * importance estimates in rep.varimportances field
+                    * variable ranks in rep.topvars field
+
+  -- ALGLIB --
+     Copyright 29.07.2019 by Bochkanov Sergey
+*************************************************************************/
+void dfbuildersetimportancepermutation(const decisionforestbuilder &s, const xparams _xparams)
+{
+    jmp_buf _break_jump;
+    alglib_impl::ae_state _alglib_env_state;
+    alglib_impl::ae_state_init(&_alglib_env_state);
+    if( setjmp(_break_jump) )
+    {
+#if !defined(AE_NO_EXCEPTIONS)
+        _ALGLIB_CPP_EXCEPTION(_alglib_env_state.error_msg);
+#else
+        _ALGLIB_SET_ERROR_FLAG(_alglib_env_state.error_msg);
+        return;
+#endif
+    }
+    ae_state_set_break_jump(&_alglib_env_state, &_break_jump);
+    if( _xparams.flags!=0x0 )
+        ae_state_set_flags(&_alglib_env_state, _xparams.flags);
+    alglib_impl::dfbuildersetimportancepermutation(const_cast<alglib_impl::decisionforestbuilder*>(s.c_ptr()), &_alglib_env_state);
+    alglib_impl::ae_state_clear(&_alglib_env_state);
+    return;
+}
+
+/*************************************************************************
+This  function  tells  decision  forest  construction  algorithm  to  skip
+variable importance estimation.
+
+INPUT PARAMETERS:
+    S           -   decision forest builder object
+
+OUTPUT PARAMETERS:
+    S           -   decision forest builder object. Next call to the forest
+                    construction function will result in forest being built
+                    without variable importance estimation.
+
+  -- ALGLIB --
+     Copyright 29.07.2019 by Bochkanov Sergey
+*************************************************************************/
+void dfbuildersetimportancenone(const decisionforestbuilder &s, const xparams _xparams)
+{
+    jmp_buf _break_jump;
+    alglib_impl::ae_state _alglib_env_state;
+    alglib_impl::ae_state_init(&_alglib_env_state);
+    if( setjmp(_break_jump) )
+    {
+#if !defined(AE_NO_EXCEPTIONS)
+        _ALGLIB_CPP_EXCEPTION(_alglib_env_state.error_msg);
+#else
+        _ALGLIB_SET_ERROR_FLAG(_alglib_env_state.error_msg);
+        return;
+#endif
+    }
+    ae_state_set_break_jump(&_alglib_env_state, &_break_jump);
+    if( _xparams.flags!=0x0 )
+        ae_state_set_flags(&_alglib_env_state, _xparams.flags);
+    alglib_impl::dfbuildersetimportancenone(const_cast<alglib_impl::decisionforestbuilder*>(s.c_ptr()), &_alglib_env_state);
+    alglib_impl::ae_state_clear(&_alglib_env_state);
+    return;
+}
+
+/*************************************************************************
+This function is an alias for dfbuilderpeekprogress(), left in ALGLIB  for
+backward compatibility reasons.
+
+  -- ALGLIB --
+     Copyright 21.05.2018 by Bochkanov Sergey
+*************************************************************************/
+double dfbuildergetprogress(const decisionforestbuilder &s, const xparams _xparams)
+{
+    jmp_buf _break_jump;
+    alglib_impl::ae_state _alglib_env_state;
+    alglib_impl::ae_state_init(&_alglib_env_state);
+    if( setjmp(_break_jump) )
+    {
+#if !defined(AE_NO_EXCEPTIONS)
+        _ALGLIB_CPP_EXCEPTION(_alglib_env_state.error_msg);
+#else
+        _ALGLIB_SET_ERROR_FLAG(_alglib_env_state.error_msg);
+        return 0;
+#endif
+    }
+    ae_state_set_break_jump(&_alglib_env_state, &_break_jump);
+    if( _xparams.flags!=0x0 )
+        ae_state_set_flags(&_alglib_env_state, _xparams.flags);
+    double result = alglib_impl::dfbuildergetprogress(const_cast<alglib_impl::decisionforestbuilder*>(s.c_ptr()), &_alglib_env_state);
+    alglib_impl::ae_state_clear(&_alglib_env_state);
+    return *(reinterpret_cast<double*>(&result));
+}
+
+/*************************************************************************
+This function is used to peek into  decision  forest  construction process
+from some other thread and get current progress indicator.
+
+It returns value in [0,1].
+
+INPUT PARAMETERS:
+    S           -   decision forest builder object used  to  build  forest
+                    in some other thread
+
+RESULT:
+    progress value, in [0,1]
+
+  -- ALGLIB --
+     Copyright 21.05.2018 by Bochkanov Sergey
+*************************************************************************/
+double dfbuilderpeekprogress(const decisionforestbuilder &s, const xparams _xparams)
+{
+    jmp_buf _break_jump;
+    alglib_impl::ae_state _alglib_env_state;
+    alglib_impl::ae_state_init(&_alglib_env_state);
+    if( setjmp(_break_jump) )
+    {
+#if !defined(AE_NO_EXCEPTIONS)
+        _ALGLIB_CPP_EXCEPTION(_alglib_env_state.error_msg);
+#else
+        _ALGLIB_SET_ERROR_FLAG(_alglib_env_state.error_msg);
+        return 0;
+#endif
+    }
+    ae_state_set_break_jump(&_alglib_env_state, &_break_jump);
+    if( _xparams.flags!=0x0 )
+        ae_state_set_flags(&_alglib_env_state, _xparams.flags);
+    double result = alglib_impl::dfbuilderpeekprogress(const_cast<alglib_impl::decisionforestbuilder*>(s.c_ptr()), &_alglib_env_state);
+    alglib_impl::ae_state_clear(&_alglib_env_state);
+    return *(reinterpret_cast<double*>(&result));
+}
+
+/*************************************************************************
+This subroutine builds decision forest according to current settings using
+dataset internally stored in the builder object. Dense algorithm is used.
+
+NOTE: this   function   uses   dense  algorithm  for  forest  construction
+      independently from the dataset format (dense or sparse).
+
+NOTE: forest built with this function is  stored  in-memory  using  64-bit
+      data structures for offsets/indexes/split values. It is possible  to
+      convert  forest  into  more  memory-efficient   compressed    binary
+      representation.  Depending  on  the  problem  properties,  3.7x-5.7x
+      compression factors are possible.
+
+      The downsides of compression are (a) slight reduction in  the  model
+      accuracy and (b) ~1.5x reduction in  the  inference  speed  (due  to
+      increased complexity of the storage format).
+
+      See comments on dfbinarycompression() for more info.
+
+Default settings are used by the algorithm; you can tweak  them  with  the
+help of the following functions:
+* dfbuildersetrfactor() - to control a fraction of the  dataset  used  for
+  subsampling
+* dfbuildersetrandomvars() - to control number of variables randomly chosen
+  for decision rule creation
+
+  ! COMMERCIAL EDITION OF ALGLIB:
+  !
+  ! Commercial Edition of ALGLIB includes following important improvements
+  ! of this function:
+  ! * high-performance native backend with same C# interface (C# version)
+  ! * multithreading support (C++ and C# versions)
+  !
+  ! We recommend you to read 'Working with commercial version' section  of
+  ! ALGLIB Reference Manual in order to find out how to  use  performance-
+  ! related features provided by commercial edition of ALGLIB.
+
+INPUT PARAMETERS:
+    S           -   decision forest builder object
+    NTrees      -   NTrees>=1, number of trees to train
+
+OUTPUT PARAMETERS:
+    DF          -   decision forest. You can compress this forest to  more
+                    compact 16-bit representation with dfbinarycompression()
+    Rep         -   report, see below for information on its fields.
+
+=== report information produced by forest construction function ==========
+
+Decision forest training report includes following information:
+* training set errors
+* out-of-bag estimates of errors
+* variable importance ratings
+
+Following fields are used to store information:
+* training set errors are stored in rep.relclserror, rep.avgce, rep.rmserror,
+  rep.avgerror and rep.avgrelerror
+* out-of-bag estimates of errors are stored in rep.oobrelclserror, rep.oobavgce,
+  rep.oobrmserror, rep.oobavgerror and rep.oobavgrelerror
+
+Variable importance reports, if requested by dfbuildersetimportancegini(),
+dfbuildersetimportancetrngini() or dfbuildersetimportancepermutation()
+call, are stored in:
+* rep.varimportances field stores importance ratings
+* rep.topvars stores variable indexes ordered from the most important to
+  less important ones
+
+You can find more information about report fields in:
+* comments on dfreport structure
+* comments on dfbuildersetimportancegini function
+* comments on dfbuildersetimportancetrngini function
+* comments on dfbuildersetimportancepermutation function
+
+  -- ALGLIB --
+     Copyright 21.05.2018 by Bochkanov Sergey
+*************************************************************************/
+void dfbuilderbuildrandomforest(const decisionforestbuilder &s, const ae_int_t ntrees, decisionforest &df, dfreport &rep, const xparams _xparams)
+{
+    jmp_buf _break_jump;
+    alglib_impl::ae_state _alglib_env_state;
+    alglib_impl::ae_state_init(&_alglib_env_state);
+    if( setjmp(_break_jump) )
+    {
+#if !defined(AE_NO_EXCEPTIONS)
+        _ALGLIB_CPP_EXCEPTION(_alglib_env_state.error_msg);
+#else
+        _ALGLIB_SET_ERROR_FLAG(_alglib_env_state.error_msg);
+        return;
+#endif
+    }
+    ae_state_set_break_jump(&_alglib_env_state, &_break_jump);
+    if( _xparams.flags!=0x0 )
+        ae_state_set_flags(&_alglib_env_state, _xparams.flags);
+    alglib_impl::dfbuilderbuildrandomforest(const_cast<alglib_impl::decisionforestbuilder*>(s.c_ptr()), ntrees, const_cast<alglib_impl::decisionforest*>(df.c_ptr()), const_cast<alglib_impl::dfreport*>(rep.c_ptr()), &_alglib_env_state);
+    alglib_impl::ae_state_clear(&_alglib_env_state);
+    return;
+}
+
+/*************************************************************************
+This function performs binary compression of the decision forest.
+
+Original decision forest produced by the  forest  builder  is stored using
+64-bit representation for all numbers - offsets, variable  indexes,  split
+points.
+
+It is possible to significantly reduce model size by means of:
+* using compressed  dynamic encoding for integers  (offsets  and  variable
+  indexes), which uses just 1 byte to store small ints  (less  than  128),
+  just 2 bytes for larger values (less than 128^2) and so on
+* storing floating point numbers using 8-bit exponent and 16-bit mantissa
+
+As  result,  model  needs  significantly  less  memory (compression factor
+depends on  variable and class counts). In particular:
+* NVars<128   and NClasses<128 result in 4.4x-5.7x model size reduction
+* NVars<16384 and NClasses<128 result in 3.7x-4.5x model size reduction
+
+Such storage format performs lossless compression  of  all  integers,  but
+compression of floating point values (split values) is lossy, with roughly
+0.01% relative error introduced during rounding. Thus, we recommend you to
+re-evaluate model accuracy after compression.
+
+Another downside  of  compression  is  ~1.5x reduction  in  the  inference
+speed due to necessity of dynamic decompression of the compressed model.
+
+INPUT PARAMETERS:
+    DF      -   decision forest built by forest builder
+
+OUTPUT PARAMETERS:
+    DF      -   replaced by compressed forest
+
+RESULT:
+    compression factor (in-RAM size of the compressed model vs than of the
+    uncompressed one), positive number larger than 1.0
+
+  -- ALGLIB --
+     Copyright 22.07.2019 by Bochkanov Sergey
+*************************************************************************/
+double dfbinarycompression(const decisionforest &df, const xparams _xparams)
+{
+    jmp_buf _break_jump;
+    alglib_impl::ae_state _alglib_env_state;
+    alglib_impl::ae_state_init(&_alglib_env_state);
+    if( setjmp(_break_jump) )
+    {
+#if !defined(AE_NO_EXCEPTIONS)
+        _ALGLIB_CPP_EXCEPTION(_alglib_env_state.error_msg);
+#else
+        _ALGLIB_SET_ERROR_FLAG(_alglib_env_state.error_msg);
+        return 0;
+#endif
+    }
+    ae_state_set_break_jump(&_alglib_env_state, &_break_jump);
+    if( _xparams.flags!=0x0 )
+        ae_state_set_flags(&_alglib_env_state, _xparams.flags);
+    double result = alglib_impl::dfbinarycompression(const_cast<alglib_impl::decisionforest*>(df.c_ptr()), &_alglib_env_state);
+    alglib_impl::ae_state_clear(&_alglib_env_state);
+    return *(reinterpret_cast<double*>(&result));
+}
+
+/*************************************************************************
+Inference using decision forest
+
+IMPORTANT: this  function  is  thread-unsafe  and  may   modify   internal
+           structures of the model! You can not use same model  object for
+           parallel evaluation from several threads.
+
+           Use dftsprocess()  with  independent  thread-local  buffers  if
+           you need thread-safe evaluation.
 
 INPUT PARAMETERS:
     DF      -   decision forest model
-    X       -   input vector,  array[0..NVars-1].
+    X       -   input vector,  array[NVars]
+    Y       -   possibly preallocated buffer, reallocated if too small
 
 OUTPUT PARAMETERS:
     Y       -   result. Regression estimate when solving regression  task,
@@ -13958,10 +14507,11 @@ OUTPUT PARAMETERS:
 
 See also DFProcessI.
 
+
   -- ALGLIB --
      Copyright 16.02.2009 by Bochkanov Sergey
 *************************************************************************/
-void dfprocess(const decisionforest &df, const real_1d_array &x, real_1d_array &y)
+void dfprocess(const decisionforest &df, const real_1d_array &x, real_1d_array &y, const xparams _xparams)
 {
     jmp_buf _break_jump;
     alglib_impl::ae_state _alglib_env_state;
@@ -13976,6 +14526,8 @@ void dfprocess(const decisionforest &df, const real_1d_array &x, real_1d_array &
 #endif
     }
     ae_state_set_break_jump(&_alglib_env_state, &_break_jump);
+    if( _xparams.flags!=0x0 )
+        ae_state_set_flags(&_alglib_env_state, _xparams.flags);
     alglib_impl::dfprocess(const_cast<alglib_impl::decisionforest*>(df.c_ptr()), const_cast<alglib_impl::ae_vector*>(x.c_ptr()), const_cast<alglib_impl::ae_vector*>(y.c_ptr()), &_alglib_env_state);
     alglib_impl::ae_state_clear(&_alglib_env_state);
     return;
@@ -13989,10 +14541,17 @@ This function allocates new array on each call,  so  it  is  significantly
 slower than its 'non-interactive' counterpart, but it is  more  convenient
 when you call it from command line.
 
+IMPORTANT: this  function  is  thread-unsafe  and  may   modify   internal
+           structures of the model! You can not use same model  object for
+           parallel evaluation from several threads.
+
+           Use dftsprocess()  with  independent  thread-local  buffers  if
+           you need thread-safe evaluation.
+
   -- ALGLIB --
      Copyright 28.02.2010 by Bochkanov Sergey
 *************************************************************************/
-void dfprocessi(const decisionforest &df, const real_1d_array &x, real_1d_array &y)
+void dfprocessi(const decisionforest &df, const real_1d_array &x, real_1d_array &y, const xparams _xparams)
 {
     jmp_buf _break_jump;
     alglib_impl::ae_state _alglib_env_state;
@@ -14007,7 +14566,158 @@ void dfprocessi(const decisionforest &df, const real_1d_array &x, real_1d_array 
 #endif
     }
     ae_state_set_break_jump(&_alglib_env_state, &_break_jump);
+    if( _xparams.flags!=0x0 )
+        ae_state_set_flags(&_alglib_env_state, _xparams.flags);
     alglib_impl::dfprocessi(const_cast<alglib_impl::decisionforest*>(df.c_ptr()), const_cast<alglib_impl::ae_vector*>(x.c_ptr()), const_cast<alglib_impl::ae_vector*>(y.c_ptr()), &_alglib_env_state);
+    alglib_impl::ae_state_clear(&_alglib_env_state);
+    return;
+}
+
+/*************************************************************************
+This function returns first component of the  inferred  vector  (i.e.  one
+with index #0).
+
+It is a convenience wrapper for dfprocess() intended for either:
+* 1-dimensional regression problems
+* 2-class classification problems
+
+In the former case this function returns inference result as scalar, which
+is definitely more convenient that wrapping it as vector.  In  the  latter
+case it returns probability of object belonging to class #0.
+
+If you call it for anything different from two cases above, it  will  work
+as defined, i.e. return y[0], although it is of less use in such cases.
+
+IMPORTANT: this function is thread-unsafe and modifies internal structures
+           of the model! You can not use same model  object  for  parallel
+           evaluation from several threads.
+
+           Use dftsprocess() with  independent  thread-local  buffers,  if
+           you need thread-safe evaluation.
+
+INPUT PARAMETERS:
+    Model   -   DF model
+    X       -   input vector,  array[0..NVars-1].
+
+RESULT:
+    Y[0]
+
+  -- ALGLIB --
+     Copyright 15.02.2019 by Bochkanov Sergey
+*************************************************************************/
+double dfprocess0(const decisionforest &model, const real_1d_array &x, const xparams _xparams)
+{
+    jmp_buf _break_jump;
+    alglib_impl::ae_state _alglib_env_state;
+    alglib_impl::ae_state_init(&_alglib_env_state);
+    if( setjmp(_break_jump) )
+    {
+#if !defined(AE_NO_EXCEPTIONS)
+        _ALGLIB_CPP_EXCEPTION(_alglib_env_state.error_msg);
+#else
+        _ALGLIB_SET_ERROR_FLAG(_alglib_env_state.error_msg);
+        return 0;
+#endif
+    }
+    ae_state_set_break_jump(&_alglib_env_state, &_break_jump);
+    if( _xparams.flags!=0x0 )
+        ae_state_set_flags(&_alglib_env_state, _xparams.flags);
+    double result = alglib_impl::dfprocess0(const_cast<alglib_impl::decisionforest*>(model.c_ptr()), const_cast<alglib_impl::ae_vector*>(x.c_ptr()), &_alglib_env_state);
+    alglib_impl::ae_state_clear(&_alglib_env_state);
+    return *(reinterpret_cast<double*>(&result));
+}
+
+/*************************************************************************
+This function returns most probable class number for an  input  X.  It  is
+same as calling  dfprocess(model,x,y), then determining i=argmax(y[i]) and
+returning i.
+
+A class number in [0,NOut) range in returned for classification  problems,
+-1 is returned when this function is called for regression problems.
+
+IMPORTANT: this function is thread-unsafe and modifies internal structures
+           of the model! You can not use same model  object  for  parallel
+           evaluation from several threads.
+
+           Use dftsprocess()  with independent  thread-local  buffers,  if
+           you need thread-safe evaluation.
+
+INPUT PARAMETERS:
+    Model   -   decision forest model
+    X       -   input vector,  array[0..NVars-1].
+
+RESULT:
+    class number, -1 for regression tasks
+
+  -- ALGLIB --
+     Copyright 15.02.2019 by Bochkanov Sergey
+*************************************************************************/
+ae_int_t dfclassify(const decisionforest &model, const real_1d_array &x, const xparams _xparams)
+{
+    jmp_buf _break_jump;
+    alglib_impl::ae_state _alglib_env_state;
+    alglib_impl::ae_state_init(&_alglib_env_state);
+    if( setjmp(_break_jump) )
+    {
+#if !defined(AE_NO_EXCEPTIONS)
+        _ALGLIB_CPP_EXCEPTION(_alglib_env_state.error_msg);
+#else
+        _ALGLIB_SET_ERROR_FLAG(_alglib_env_state.error_msg);
+        return 0;
+#endif
+    }
+    ae_state_set_break_jump(&_alglib_env_state, &_break_jump);
+    if( _xparams.flags!=0x0 )
+        ae_state_set_flags(&_alglib_env_state, _xparams.flags);
+    alglib_impl::ae_int_t result = alglib_impl::dfclassify(const_cast<alglib_impl::decisionforest*>(model.c_ptr()), const_cast<alglib_impl::ae_vector*>(x.c_ptr()), &_alglib_env_state);
+    alglib_impl::ae_state_clear(&_alglib_env_state);
+    return *(reinterpret_cast<ae_int_t*>(&result));
+}
+
+/*************************************************************************
+Inference using decision forest
+
+Thread-safe procesing using external buffer for temporaries.
+
+This function is thread-safe (i.e .  you  can  use  same  DF   model  from
+multiple threads) as long as you use different buffer objects for different
+threads.
+
+INPUT PARAMETERS:
+    DF      -   decision forest model
+    Buf     -   buffer object, must be  allocated  specifically  for  this
+                model with dfcreatebuffer().
+    X       -   input vector,  array[NVars]
+    Y       -   possibly preallocated buffer, reallocated if too small
+
+OUTPUT PARAMETERS:
+    Y       -   result. Regression estimate when solving regression  task,
+                vector of posterior probabilities for classification task.
+
+See also DFProcessI.
+
+
+  -- ALGLIB --
+     Copyright 16.02.2009 by Bochkanov Sergey
+*************************************************************************/
+void dftsprocess(const decisionforest &df, const decisionforestbuffer &buf, const real_1d_array &x, real_1d_array &y, const xparams _xparams)
+{
+    jmp_buf _break_jump;
+    alglib_impl::ae_state _alglib_env_state;
+    alglib_impl::ae_state_init(&_alglib_env_state);
+    if( setjmp(_break_jump) )
+    {
+#if !defined(AE_NO_EXCEPTIONS)
+        _ALGLIB_CPP_EXCEPTION(_alglib_env_state.error_msg);
+#else
+        _ALGLIB_SET_ERROR_FLAG(_alglib_env_state.error_msg);
+        return;
+#endif
+    }
+    ae_state_set_break_jump(&_alglib_env_state, &_break_jump);
+    if( _xparams.flags!=0x0 )
+        ae_state_set_flags(&_alglib_env_state, _xparams.flags);
+    alglib_impl::dftsprocess(const_cast<alglib_impl::decisionforest*>(df.c_ptr()), const_cast<alglib_impl::decisionforestbuffer*>(buf.c_ptr()), const_cast<alglib_impl::ae_vector*>(x.c_ptr()), const_cast<alglib_impl::ae_vector*>(y.c_ptr()), &_alglib_env_state);
     alglib_impl::ae_state_clear(&_alglib_env_state);
     return;
 }
@@ -14027,7 +14737,7 @@ RESULT:
   -- ALGLIB --
      Copyright 16.02.2009 by Bochkanov Sergey
 *************************************************************************/
-double dfrelclserror(const decisionforest &df, const real_2d_array &xy, const ae_int_t npoints)
+double dfrelclserror(const decisionforest &df, const real_2d_array &xy, const ae_int_t npoints, const xparams _xparams)
 {
     jmp_buf _break_jump;
     alglib_impl::ae_state _alglib_env_state;
@@ -14042,6 +14752,8 @@ double dfrelclserror(const decisionforest &df, const real_2d_array &xy, const ae
 #endif
     }
     ae_state_set_break_jump(&_alglib_env_state, &_break_jump);
+    if( _xparams.flags!=0x0 )
+        ae_state_set_flags(&_alglib_env_state, _xparams.flags);
     double result = alglib_impl::dfrelclserror(const_cast<alglib_impl::decisionforest*>(df.c_ptr()), const_cast<alglib_impl::ae_matrix*>(xy.c_ptr()), npoints, &_alglib_env_state);
     alglib_impl::ae_state_clear(&_alglib_env_state);
     return *(reinterpret_cast<double*>(&result));
@@ -14062,7 +14774,7 @@ RESULT:
   -- ALGLIB --
      Copyright 16.02.2009 by Bochkanov Sergey
 *************************************************************************/
-double dfavgce(const decisionforest &df, const real_2d_array &xy, const ae_int_t npoints)
+double dfavgce(const decisionforest &df, const real_2d_array &xy, const ae_int_t npoints, const xparams _xparams)
 {
     jmp_buf _break_jump;
     alglib_impl::ae_state _alglib_env_state;
@@ -14077,6 +14789,8 @@ double dfavgce(const decisionforest &df, const real_2d_array &xy, const ae_int_t
 #endif
     }
     ae_state_set_break_jump(&_alglib_env_state, &_break_jump);
+    if( _xparams.flags!=0x0 )
+        ae_state_set_flags(&_alglib_env_state, _xparams.flags);
     double result = alglib_impl::dfavgce(const_cast<alglib_impl::decisionforest*>(df.c_ptr()), const_cast<alglib_impl::ae_matrix*>(xy.c_ptr()), npoints, &_alglib_env_state);
     alglib_impl::ae_state_clear(&_alglib_env_state);
     return *(reinterpret_cast<double*>(&result));
@@ -14099,7 +14813,7 @@ RESULT:
   -- ALGLIB --
      Copyright 16.02.2009 by Bochkanov Sergey
 *************************************************************************/
-double dfrmserror(const decisionforest &df, const real_2d_array &xy, const ae_int_t npoints)
+double dfrmserror(const decisionforest &df, const real_2d_array &xy, const ae_int_t npoints, const xparams _xparams)
 {
     jmp_buf _break_jump;
     alglib_impl::ae_state _alglib_env_state;
@@ -14114,6 +14828,8 @@ double dfrmserror(const decisionforest &df, const real_2d_array &xy, const ae_in
 #endif
     }
     ae_state_set_break_jump(&_alglib_env_state, &_break_jump);
+    if( _xparams.flags!=0x0 )
+        ae_state_set_flags(&_alglib_env_state, _xparams.flags);
     double result = alglib_impl::dfrmserror(const_cast<alglib_impl::decisionforest*>(df.c_ptr()), const_cast<alglib_impl::ae_matrix*>(xy.c_ptr()), npoints, &_alglib_env_state);
     alglib_impl::ae_state_clear(&_alglib_env_state);
     return *(reinterpret_cast<double*>(&result));
@@ -14135,7 +14851,7 @@ RESULT:
   -- ALGLIB --
      Copyright 16.02.2009 by Bochkanov Sergey
 *************************************************************************/
-double dfavgerror(const decisionforest &df, const real_2d_array &xy, const ae_int_t npoints)
+double dfavgerror(const decisionforest &df, const real_2d_array &xy, const ae_int_t npoints, const xparams _xparams)
 {
     jmp_buf _break_jump;
     alglib_impl::ae_state _alglib_env_state;
@@ -14150,6 +14866,8 @@ double dfavgerror(const decisionforest &df, const real_2d_array &xy, const ae_in
 #endif
     }
     ae_state_set_break_jump(&_alglib_env_state, &_break_jump);
+    if( _xparams.flags!=0x0 )
+        ae_state_set_flags(&_alglib_env_state, _xparams.flags);
     double result = alglib_impl::dfavgerror(const_cast<alglib_impl::decisionforest*>(df.c_ptr()), const_cast<alglib_impl::ae_matrix*>(xy.c_ptr()), npoints, &_alglib_env_state);
     alglib_impl::ae_state_clear(&_alglib_env_state);
     return *(reinterpret_cast<double*>(&result));
@@ -14171,7 +14889,7 @@ RESULT:
   -- ALGLIB --
      Copyright 16.02.2009 by Bochkanov Sergey
 *************************************************************************/
-double dfavgrelerror(const decisionforest &df, const real_2d_array &xy, const ae_int_t npoints)
+double dfavgrelerror(const decisionforest &df, const real_2d_array &xy, const ae_int_t npoints, const xparams _xparams)
 {
     jmp_buf _break_jump;
     alglib_impl::ae_state _alglib_env_state;
@@ -14186,22 +14904,22 @@ double dfavgrelerror(const decisionforest &df, const real_2d_array &xy, const ae
 #endif
     }
     ae_state_set_break_jump(&_alglib_env_state, &_break_jump);
+    if( _xparams.flags!=0x0 )
+        ae_state_set_flags(&_alglib_env_state, _xparams.flags);
     double result = alglib_impl::dfavgrelerror(const_cast<alglib_impl::decisionforest*>(df.c_ptr()), const_cast<alglib_impl::ae_matrix*>(xy.c_ptr()), npoints, &_alglib_env_state);
     alglib_impl::ae_state_clear(&_alglib_env_state);
     return *(reinterpret_cast<double*>(&result));
 }
-#endif
 
-#if defined(AE_COMPILE_DATACOMP) || !defined(AE_PARTIAL_BUILD)
 /*************************************************************************
-k-means++ clusterization.
-Backward compatibility function, we recommend to use CLUSTERING subpackage
-as better replacement.
+This subroutine builds random decision forest.
+
+--------- DEPRECATED VERSION! USE DECISION FOREST BUILDER OBJECT ---------
 
   -- ALGLIB --
-     Copyright 21.03.2009 by Bochkanov Sergey
+     Copyright 19.02.2009 by Bochkanov Sergey
 *************************************************************************/
-void kmeansgenerate(const real_2d_array &xy, const ae_int_t npoints, const ae_int_t nvars, const ae_int_t k, const ae_int_t restarts, ae_int_t &info, real_2d_array &c, integer_1d_array &xyc)
+void dfbuildrandomdecisionforest(const real_2d_array &xy, const ae_int_t npoints, const ae_int_t nvars, const ae_int_t nclasses, const ae_int_t ntrees, const double r, ae_int_t &info, decisionforest &df, dfreport &rep, const xparams _xparams)
 {
     jmp_buf _break_jump;
     alglib_impl::ae_state _alglib_env_state;
@@ -14216,6 +14934,1590 @@ void kmeansgenerate(const real_2d_array &xy, const ae_int_t npoints, const ae_in
 #endif
     }
     ae_state_set_break_jump(&_alglib_env_state, &_break_jump);
+    if( _xparams.flags!=0x0 )
+        ae_state_set_flags(&_alglib_env_state, _xparams.flags);
+    alglib_impl::dfbuildrandomdecisionforest(const_cast<alglib_impl::ae_matrix*>(xy.c_ptr()), npoints, nvars, nclasses, ntrees, r, &info, const_cast<alglib_impl::decisionforest*>(df.c_ptr()), const_cast<alglib_impl::dfreport*>(rep.c_ptr()), &_alglib_env_state);
+    alglib_impl::ae_state_clear(&_alglib_env_state);
+    return;
+}
+
+/*************************************************************************
+This subroutine builds random decision forest.
+
+--------- DEPRECATED VERSION! USE DECISION FOREST BUILDER OBJECT ---------
+
+  -- ALGLIB --
+     Copyright 19.02.2009 by Bochkanov Sergey
+*************************************************************************/
+void dfbuildrandomdecisionforestx1(const real_2d_array &xy, const ae_int_t npoints, const ae_int_t nvars, const ae_int_t nclasses, const ae_int_t ntrees, const ae_int_t nrndvars, const double r, ae_int_t &info, decisionforest &df, dfreport &rep, const xparams _xparams)
+{
+    jmp_buf _break_jump;
+    alglib_impl::ae_state _alglib_env_state;
+    alglib_impl::ae_state_init(&_alglib_env_state);
+    if( setjmp(_break_jump) )
+    {
+#if !defined(AE_NO_EXCEPTIONS)
+        _ALGLIB_CPP_EXCEPTION(_alglib_env_state.error_msg);
+#else
+        _ALGLIB_SET_ERROR_FLAG(_alglib_env_state.error_msg);
+        return;
+#endif
+    }
+    ae_state_set_break_jump(&_alglib_env_state, &_break_jump);
+    if( _xparams.flags!=0x0 )
+        ae_state_set_flags(&_alglib_env_state, _xparams.flags);
+    alglib_impl::dfbuildrandomdecisionforestx1(const_cast<alglib_impl::ae_matrix*>(xy.c_ptr()), npoints, nvars, nclasses, ntrees, nrndvars, r, &info, const_cast<alglib_impl::decisionforest*>(df.c_ptr()), const_cast<alglib_impl::dfreport*>(rep.c_ptr()), &_alglib_env_state);
+    alglib_impl::ae_state_clear(&_alglib_env_state);
+    return;
+}
+#endif
+
+#if defined(AE_COMPILE_KNN) || !defined(AE_PARTIAL_BUILD)
+/*************************************************************************
+Buffer object which is used to perform  various  requests  (usually  model
+inference) in the multithreaded mode (multiple threads working  with  same
+KNN object).
+
+This object should be created with KNNCreateBuffer().
+*************************************************************************/
+_knnbuffer_owner::_knnbuffer_owner()
+{
+    jmp_buf _break_jump;
+    alglib_impl::ae_state _state;
+    
+    alglib_impl::ae_state_init(&_state);
+    if( setjmp(_break_jump) )
+    {
+        if( p_struct!=NULL )
+        {
+            alglib_impl::_knnbuffer_destroy(p_struct);
+            alglib_impl::ae_free(p_struct);
+        }
+        p_struct = NULL;
+#if !defined(AE_NO_EXCEPTIONS)
+        _ALGLIB_CPP_EXCEPTION(_state.error_msg);
+#else
+        _ALGLIB_SET_ERROR_FLAG(_state.error_msg);
+        return;
+#endif
+    }
+    alglib_impl::ae_state_set_break_jump(&_state, &_break_jump);
+    p_struct = NULL;
+    p_struct = (alglib_impl::knnbuffer*)alglib_impl::ae_malloc(sizeof(alglib_impl::knnbuffer), &_state);
+    memset(p_struct, 0, sizeof(alglib_impl::knnbuffer));
+    alglib_impl::_knnbuffer_init(p_struct, &_state, ae_false);
+    ae_state_clear(&_state);
+}
+
+_knnbuffer_owner::_knnbuffer_owner(const _knnbuffer_owner &rhs)
+{
+    jmp_buf _break_jump;
+    alglib_impl::ae_state _state;
+    
+    alglib_impl::ae_state_init(&_state);
+    if( setjmp(_break_jump) )
+    {
+        if( p_struct!=NULL )
+        {
+            alglib_impl::_knnbuffer_destroy(p_struct);
+            alglib_impl::ae_free(p_struct);
+        }
+        p_struct = NULL;
+#if !defined(AE_NO_EXCEPTIONS)
+        _ALGLIB_CPP_EXCEPTION(_state.error_msg);
+#else
+        _ALGLIB_SET_ERROR_FLAG(_state.error_msg);
+        return;
+#endif
+    }
+    alglib_impl::ae_state_set_break_jump(&_state, &_break_jump);
+    p_struct = NULL;
+    alglib_impl::ae_assert(rhs.p_struct!=NULL, "ALGLIB: knnbuffer copy constructor failure (source is not initialized)", &_state);
+    p_struct = (alglib_impl::knnbuffer*)alglib_impl::ae_malloc(sizeof(alglib_impl::knnbuffer), &_state);
+    memset(p_struct, 0, sizeof(alglib_impl::knnbuffer));
+    alglib_impl::_knnbuffer_init_copy(p_struct, const_cast<alglib_impl::knnbuffer*>(rhs.p_struct), &_state, ae_false);
+    ae_state_clear(&_state);
+}
+
+_knnbuffer_owner& _knnbuffer_owner::operator=(const _knnbuffer_owner &rhs)
+{
+    if( this==&rhs )
+        return *this;
+    jmp_buf _break_jump;
+    alglib_impl::ae_state _state;
+    
+    alglib_impl::ae_state_init(&_state);
+    if( setjmp(_break_jump) )
+    {
+#if !defined(AE_NO_EXCEPTIONS)
+        _ALGLIB_CPP_EXCEPTION(_state.error_msg);
+#else
+        _ALGLIB_SET_ERROR_FLAG(_state.error_msg);
+        return *this;
+#endif
+    }
+    alglib_impl::ae_state_set_break_jump(&_state, &_break_jump);
+    alglib_impl::ae_assert(p_struct!=NULL, "ALGLIB: knnbuffer assignment constructor failure (destination is not initialized)", &_state);
+    alglib_impl::ae_assert(rhs.p_struct!=NULL, "ALGLIB: knnbuffer assignment constructor failure (source is not initialized)", &_state);
+    alglib_impl::_knnbuffer_destroy(p_struct);
+    memset(p_struct, 0, sizeof(alglib_impl::knnbuffer));
+    alglib_impl::_knnbuffer_init_copy(p_struct, const_cast<alglib_impl::knnbuffer*>(rhs.p_struct), &_state, ae_false);
+    ae_state_clear(&_state);
+    return *this;
+}
+
+_knnbuffer_owner::~_knnbuffer_owner()
+{
+    if( p_struct!=NULL )
+    {
+        alglib_impl::_knnbuffer_destroy(p_struct);
+        ae_free(p_struct);
+    }
+}
+
+alglib_impl::knnbuffer* _knnbuffer_owner::c_ptr()
+{
+    return p_struct;
+}
+
+alglib_impl::knnbuffer* _knnbuffer_owner::c_ptr() const
+{
+    return const_cast<alglib_impl::knnbuffer*>(p_struct);
+}
+knnbuffer::knnbuffer() : _knnbuffer_owner() 
+{
+}
+
+knnbuffer::knnbuffer(const knnbuffer &rhs):_knnbuffer_owner(rhs) 
+{
+}
+
+knnbuffer& knnbuffer::operator=(const knnbuffer &rhs)
+{
+    if( this==&rhs )
+        return *this;
+    _knnbuffer_owner::operator=(rhs);
+    return *this;
+}
+
+knnbuffer::~knnbuffer()
+{
+}
+
+
+/*************************************************************************
+A KNN builder object; this object encapsulates  dataset  and  all  related
+settings, it is used to create an actual instance of KNN model.
+*************************************************************************/
+_knnbuilder_owner::_knnbuilder_owner()
+{
+    jmp_buf _break_jump;
+    alglib_impl::ae_state _state;
+    
+    alglib_impl::ae_state_init(&_state);
+    if( setjmp(_break_jump) )
+    {
+        if( p_struct!=NULL )
+        {
+            alglib_impl::_knnbuilder_destroy(p_struct);
+            alglib_impl::ae_free(p_struct);
+        }
+        p_struct = NULL;
+#if !defined(AE_NO_EXCEPTIONS)
+        _ALGLIB_CPP_EXCEPTION(_state.error_msg);
+#else
+        _ALGLIB_SET_ERROR_FLAG(_state.error_msg);
+        return;
+#endif
+    }
+    alglib_impl::ae_state_set_break_jump(&_state, &_break_jump);
+    p_struct = NULL;
+    p_struct = (alglib_impl::knnbuilder*)alglib_impl::ae_malloc(sizeof(alglib_impl::knnbuilder), &_state);
+    memset(p_struct, 0, sizeof(alglib_impl::knnbuilder));
+    alglib_impl::_knnbuilder_init(p_struct, &_state, ae_false);
+    ae_state_clear(&_state);
+}
+
+_knnbuilder_owner::_knnbuilder_owner(const _knnbuilder_owner &rhs)
+{
+    jmp_buf _break_jump;
+    alglib_impl::ae_state _state;
+    
+    alglib_impl::ae_state_init(&_state);
+    if( setjmp(_break_jump) )
+    {
+        if( p_struct!=NULL )
+        {
+            alglib_impl::_knnbuilder_destroy(p_struct);
+            alglib_impl::ae_free(p_struct);
+        }
+        p_struct = NULL;
+#if !defined(AE_NO_EXCEPTIONS)
+        _ALGLIB_CPP_EXCEPTION(_state.error_msg);
+#else
+        _ALGLIB_SET_ERROR_FLAG(_state.error_msg);
+        return;
+#endif
+    }
+    alglib_impl::ae_state_set_break_jump(&_state, &_break_jump);
+    p_struct = NULL;
+    alglib_impl::ae_assert(rhs.p_struct!=NULL, "ALGLIB: knnbuilder copy constructor failure (source is not initialized)", &_state);
+    p_struct = (alglib_impl::knnbuilder*)alglib_impl::ae_malloc(sizeof(alglib_impl::knnbuilder), &_state);
+    memset(p_struct, 0, sizeof(alglib_impl::knnbuilder));
+    alglib_impl::_knnbuilder_init_copy(p_struct, const_cast<alglib_impl::knnbuilder*>(rhs.p_struct), &_state, ae_false);
+    ae_state_clear(&_state);
+}
+
+_knnbuilder_owner& _knnbuilder_owner::operator=(const _knnbuilder_owner &rhs)
+{
+    if( this==&rhs )
+        return *this;
+    jmp_buf _break_jump;
+    alglib_impl::ae_state _state;
+    
+    alglib_impl::ae_state_init(&_state);
+    if( setjmp(_break_jump) )
+    {
+#if !defined(AE_NO_EXCEPTIONS)
+        _ALGLIB_CPP_EXCEPTION(_state.error_msg);
+#else
+        _ALGLIB_SET_ERROR_FLAG(_state.error_msg);
+        return *this;
+#endif
+    }
+    alglib_impl::ae_state_set_break_jump(&_state, &_break_jump);
+    alglib_impl::ae_assert(p_struct!=NULL, "ALGLIB: knnbuilder assignment constructor failure (destination is not initialized)", &_state);
+    alglib_impl::ae_assert(rhs.p_struct!=NULL, "ALGLIB: knnbuilder assignment constructor failure (source is not initialized)", &_state);
+    alglib_impl::_knnbuilder_destroy(p_struct);
+    memset(p_struct, 0, sizeof(alglib_impl::knnbuilder));
+    alglib_impl::_knnbuilder_init_copy(p_struct, const_cast<alglib_impl::knnbuilder*>(rhs.p_struct), &_state, ae_false);
+    ae_state_clear(&_state);
+    return *this;
+}
+
+_knnbuilder_owner::~_knnbuilder_owner()
+{
+    if( p_struct!=NULL )
+    {
+        alglib_impl::_knnbuilder_destroy(p_struct);
+        ae_free(p_struct);
+    }
+}
+
+alglib_impl::knnbuilder* _knnbuilder_owner::c_ptr()
+{
+    return p_struct;
+}
+
+alglib_impl::knnbuilder* _knnbuilder_owner::c_ptr() const
+{
+    return const_cast<alglib_impl::knnbuilder*>(p_struct);
+}
+knnbuilder::knnbuilder() : _knnbuilder_owner() 
+{
+}
+
+knnbuilder::knnbuilder(const knnbuilder &rhs):_knnbuilder_owner(rhs) 
+{
+}
+
+knnbuilder& knnbuilder::operator=(const knnbuilder &rhs)
+{
+    if( this==&rhs )
+        return *this;
+    _knnbuilder_owner::operator=(rhs);
+    return *this;
+}
+
+knnbuilder::~knnbuilder()
+{
+}
+
+
+/*************************************************************************
+KNN model, can be used for classification or regression
+*************************************************************************/
+_knnmodel_owner::_knnmodel_owner()
+{
+    jmp_buf _break_jump;
+    alglib_impl::ae_state _state;
+    
+    alglib_impl::ae_state_init(&_state);
+    if( setjmp(_break_jump) )
+    {
+        if( p_struct!=NULL )
+        {
+            alglib_impl::_knnmodel_destroy(p_struct);
+            alglib_impl::ae_free(p_struct);
+        }
+        p_struct = NULL;
+#if !defined(AE_NO_EXCEPTIONS)
+        _ALGLIB_CPP_EXCEPTION(_state.error_msg);
+#else
+        _ALGLIB_SET_ERROR_FLAG(_state.error_msg);
+        return;
+#endif
+    }
+    alglib_impl::ae_state_set_break_jump(&_state, &_break_jump);
+    p_struct = NULL;
+    p_struct = (alglib_impl::knnmodel*)alglib_impl::ae_malloc(sizeof(alglib_impl::knnmodel), &_state);
+    memset(p_struct, 0, sizeof(alglib_impl::knnmodel));
+    alglib_impl::_knnmodel_init(p_struct, &_state, ae_false);
+    ae_state_clear(&_state);
+}
+
+_knnmodel_owner::_knnmodel_owner(const _knnmodel_owner &rhs)
+{
+    jmp_buf _break_jump;
+    alglib_impl::ae_state _state;
+    
+    alglib_impl::ae_state_init(&_state);
+    if( setjmp(_break_jump) )
+    {
+        if( p_struct!=NULL )
+        {
+            alglib_impl::_knnmodel_destroy(p_struct);
+            alglib_impl::ae_free(p_struct);
+        }
+        p_struct = NULL;
+#if !defined(AE_NO_EXCEPTIONS)
+        _ALGLIB_CPP_EXCEPTION(_state.error_msg);
+#else
+        _ALGLIB_SET_ERROR_FLAG(_state.error_msg);
+        return;
+#endif
+    }
+    alglib_impl::ae_state_set_break_jump(&_state, &_break_jump);
+    p_struct = NULL;
+    alglib_impl::ae_assert(rhs.p_struct!=NULL, "ALGLIB: knnmodel copy constructor failure (source is not initialized)", &_state);
+    p_struct = (alglib_impl::knnmodel*)alglib_impl::ae_malloc(sizeof(alglib_impl::knnmodel), &_state);
+    memset(p_struct, 0, sizeof(alglib_impl::knnmodel));
+    alglib_impl::_knnmodel_init_copy(p_struct, const_cast<alglib_impl::knnmodel*>(rhs.p_struct), &_state, ae_false);
+    ae_state_clear(&_state);
+}
+
+_knnmodel_owner& _knnmodel_owner::operator=(const _knnmodel_owner &rhs)
+{
+    if( this==&rhs )
+        return *this;
+    jmp_buf _break_jump;
+    alglib_impl::ae_state _state;
+    
+    alglib_impl::ae_state_init(&_state);
+    if( setjmp(_break_jump) )
+    {
+#if !defined(AE_NO_EXCEPTIONS)
+        _ALGLIB_CPP_EXCEPTION(_state.error_msg);
+#else
+        _ALGLIB_SET_ERROR_FLAG(_state.error_msg);
+        return *this;
+#endif
+    }
+    alglib_impl::ae_state_set_break_jump(&_state, &_break_jump);
+    alglib_impl::ae_assert(p_struct!=NULL, "ALGLIB: knnmodel assignment constructor failure (destination is not initialized)", &_state);
+    alglib_impl::ae_assert(rhs.p_struct!=NULL, "ALGLIB: knnmodel assignment constructor failure (source is not initialized)", &_state);
+    alglib_impl::_knnmodel_destroy(p_struct);
+    memset(p_struct, 0, sizeof(alglib_impl::knnmodel));
+    alglib_impl::_knnmodel_init_copy(p_struct, const_cast<alglib_impl::knnmodel*>(rhs.p_struct), &_state, ae_false);
+    ae_state_clear(&_state);
+    return *this;
+}
+
+_knnmodel_owner::~_knnmodel_owner()
+{
+    if( p_struct!=NULL )
+    {
+        alglib_impl::_knnmodel_destroy(p_struct);
+        ae_free(p_struct);
+    }
+}
+
+alglib_impl::knnmodel* _knnmodel_owner::c_ptr()
+{
+    return p_struct;
+}
+
+alglib_impl::knnmodel* _knnmodel_owner::c_ptr() const
+{
+    return const_cast<alglib_impl::knnmodel*>(p_struct);
+}
+knnmodel::knnmodel() : _knnmodel_owner() 
+{
+}
+
+knnmodel::knnmodel(const knnmodel &rhs):_knnmodel_owner(rhs) 
+{
+}
+
+knnmodel& knnmodel::operator=(const knnmodel &rhs)
+{
+    if( this==&rhs )
+        return *this;
+    _knnmodel_owner::operator=(rhs);
+    return *this;
+}
+
+knnmodel::~knnmodel()
+{
+}
+
+
+/*************************************************************************
+KNN training report.
+
+Following fields store training set errors:
+* relclserror       -   fraction of misclassified cases, [0,1]
+* avgce             -   average cross-entropy in bits per symbol
+* rmserror          -   root-mean-square error
+* avgerror          -   average error
+* avgrelerror       -   average relative error
+
+For classification problems:
+* RMS, AVG and AVGREL errors are calculated for posterior probabilities
+
+For regression problems:
+* RELCLS and AVGCE errors are zero
+*************************************************************************/
+_knnreport_owner::_knnreport_owner()
+{
+    jmp_buf _break_jump;
+    alglib_impl::ae_state _state;
+    
+    alglib_impl::ae_state_init(&_state);
+    if( setjmp(_break_jump) )
+    {
+        if( p_struct!=NULL )
+        {
+            alglib_impl::_knnreport_destroy(p_struct);
+            alglib_impl::ae_free(p_struct);
+        }
+        p_struct = NULL;
+#if !defined(AE_NO_EXCEPTIONS)
+        _ALGLIB_CPP_EXCEPTION(_state.error_msg);
+#else
+        _ALGLIB_SET_ERROR_FLAG(_state.error_msg);
+        return;
+#endif
+    }
+    alglib_impl::ae_state_set_break_jump(&_state, &_break_jump);
+    p_struct = NULL;
+    p_struct = (alglib_impl::knnreport*)alglib_impl::ae_malloc(sizeof(alglib_impl::knnreport), &_state);
+    memset(p_struct, 0, sizeof(alglib_impl::knnreport));
+    alglib_impl::_knnreport_init(p_struct, &_state, ae_false);
+    ae_state_clear(&_state);
+}
+
+_knnreport_owner::_knnreport_owner(const _knnreport_owner &rhs)
+{
+    jmp_buf _break_jump;
+    alglib_impl::ae_state _state;
+    
+    alglib_impl::ae_state_init(&_state);
+    if( setjmp(_break_jump) )
+    {
+        if( p_struct!=NULL )
+        {
+            alglib_impl::_knnreport_destroy(p_struct);
+            alglib_impl::ae_free(p_struct);
+        }
+        p_struct = NULL;
+#if !defined(AE_NO_EXCEPTIONS)
+        _ALGLIB_CPP_EXCEPTION(_state.error_msg);
+#else
+        _ALGLIB_SET_ERROR_FLAG(_state.error_msg);
+        return;
+#endif
+    }
+    alglib_impl::ae_state_set_break_jump(&_state, &_break_jump);
+    p_struct = NULL;
+    alglib_impl::ae_assert(rhs.p_struct!=NULL, "ALGLIB: knnreport copy constructor failure (source is not initialized)", &_state);
+    p_struct = (alglib_impl::knnreport*)alglib_impl::ae_malloc(sizeof(alglib_impl::knnreport), &_state);
+    memset(p_struct, 0, sizeof(alglib_impl::knnreport));
+    alglib_impl::_knnreport_init_copy(p_struct, const_cast<alglib_impl::knnreport*>(rhs.p_struct), &_state, ae_false);
+    ae_state_clear(&_state);
+}
+
+_knnreport_owner& _knnreport_owner::operator=(const _knnreport_owner &rhs)
+{
+    if( this==&rhs )
+        return *this;
+    jmp_buf _break_jump;
+    alglib_impl::ae_state _state;
+    
+    alglib_impl::ae_state_init(&_state);
+    if( setjmp(_break_jump) )
+    {
+#if !defined(AE_NO_EXCEPTIONS)
+        _ALGLIB_CPP_EXCEPTION(_state.error_msg);
+#else
+        _ALGLIB_SET_ERROR_FLAG(_state.error_msg);
+        return *this;
+#endif
+    }
+    alglib_impl::ae_state_set_break_jump(&_state, &_break_jump);
+    alglib_impl::ae_assert(p_struct!=NULL, "ALGLIB: knnreport assignment constructor failure (destination is not initialized)", &_state);
+    alglib_impl::ae_assert(rhs.p_struct!=NULL, "ALGLIB: knnreport assignment constructor failure (source is not initialized)", &_state);
+    alglib_impl::_knnreport_destroy(p_struct);
+    memset(p_struct, 0, sizeof(alglib_impl::knnreport));
+    alglib_impl::_knnreport_init_copy(p_struct, const_cast<alglib_impl::knnreport*>(rhs.p_struct), &_state, ae_false);
+    ae_state_clear(&_state);
+    return *this;
+}
+
+_knnreport_owner::~_knnreport_owner()
+{
+    if( p_struct!=NULL )
+    {
+        alglib_impl::_knnreport_destroy(p_struct);
+        ae_free(p_struct);
+    }
+}
+
+alglib_impl::knnreport* _knnreport_owner::c_ptr()
+{
+    return p_struct;
+}
+
+alglib_impl::knnreport* _knnreport_owner::c_ptr() const
+{
+    return const_cast<alglib_impl::knnreport*>(p_struct);
+}
+knnreport::knnreport() : _knnreport_owner() ,relclserror(p_struct->relclserror),avgce(p_struct->avgce),rmserror(p_struct->rmserror),avgerror(p_struct->avgerror),avgrelerror(p_struct->avgrelerror)
+{
+}
+
+knnreport::knnreport(const knnreport &rhs):_knnreport_owner(rhs) ,relclserror(p_struct->relclserror),avgce(p_struct->avgce),rmserror(p_struct->rmserror),avgerror(p_struct->avgerror),avgrelerror(p_struct->avgrelerror)
+{
+}
+
+knnreport& knnreport::operator=(const knnreport &rhs)
+{
+    if( this==&rhs )
+        return *this;
+    _knnreport_owner::operator=(rhs);
+    return *this;
+}
+
+knnreport::~knnreport()
+{
+}
+
+
+/*************************************************************************
+This function serializes data structure to string.
+
+Important properties of s_out:
+* it contains alphanumeric characters, dots, underscores, minus signs
+* these symbols are grouped into words, which are separated by spaces
+  and Windows-style (CR+LF) newlines
+* although  serializer  uses  spaces and CR+LF as separators, you can 
+  replace any separator character by arbitrary combination of spaces,
+  tabs, Windows or Unix newlines. It allows flexible reformatting  of
+  the  string  in  case you want to include it into text or XML file. 
+  But you should not insert separators into the middle of the "words"
+  nor you should change case of letters.
+* s_out can be freely moved between 32-bit and 64-bit systems, little
+  and big endian machines, and so on. You can serialize structure  on
+  32-bit machine and unserialize it on 64-bit one (or vice versa), or
+  serialize  it  on  SPARC  and  unserialize  on  x86.  You  can also 
+  serialize  it  in  C++ version of ALGLIB and unserialize in C# one, 
+  and vice versa.
+*************************************************************************/
+void knnserialize(knnmodel &obj, std::string &s_out)
+{
+    jmp_buf _break_jump;
+    alglib_impl::ae_state state;
+    alglib_impl::ae_serializer serializer;
+    alglib_impl::ae_int_t ssize;
+
+    alglib_impl::ae_state_init(&state);
+    if( setjmp(_break_jump) )
+    {
+#if !defined(AE_NO_EXCEPTIONS)
+        _ALGLIB_CPP_EXCEPTION(state.error_msg);
+#else
+        _ALGLIB_SET_ERROR_FLAG(state.error_msg);
+        return;
+#endif
+    }
+    ae_state_set_break_jump(&state, &_break_jump);
+    alglib_impl::ae_serializer_init(&serializer);
+    alglib_impl::ae_serializer_alloc_start(&serializer);
+    alglib_impl::knnalloc(&serializer, obj.c_ptr(), &state);
+    ssize = alglib_impl::ae_serializer_get_alloc_size(&serializer);
+    s_out.clear();
+    s_out.reserve((size_t)(ssize+1));
+    alglib_impl::ae_serializer_sstart_str(&serializer, &s_out);
+    alglib_impl::knnserialize(&serializer, obj.c_ptr(), &state);
+    alglib_impl::ae_serializer_stop(&serializer, &state);
+    alglib_impl::ae_assert( s_out.length()<=(size_t)ssize, "ALGLIB: serialization integrity error", &state);
+    alglib_impl::ae_serializer_clear(&serializer);
+    alglib_impl::ae_state_clear(&state);
+}
+/*************************************************************************
+This function unserializes data structure from string.
+*************************************************************************/
+void knnunserialize(const std::string &s_in, knnmodel &obj)
+{
+    jmp_buf _break_jump;
+    alglib_impl::ae_state state;
+    alglib_impl::ae_serializer serializer;
+
+    alglib_impl::ae_state_init(&state);
+    if( setjmp(_break_jump) )
+    {
+#if !defined(AE_NO_EXCEPTIONS)
+        _ALGLIB_CPP_EXCEPTION(state.error_msg);
+#else
+        _ALGLIB_SET_ERROR_FLAG(state.error_msg);
+        return;
+#endif
+    }
+    ae_state_set_break_jump(&state, &_break_jump);
+    alglib_impl::ae_serializer_init(&serializer);
+    alglib_impl::ae_serializer_ustart_str(&serializer, &s_in);
+    alglib_impl::knnunserialize(&serializer, obj.c_ptr(), &state);
+    alglib_impl::ae_serializer_stop(&serializer, &state);
+    alglib_impl::ae_serializer_clear(&serializer);
+    alglib_impl::ae_state_clear(&state);
+}
+
+
+/*************************************************************************
+This function serializes data structure to C++ stream.
+
+Data stream generated by this function is same as  string  representation
+generated  by  string  version  of  serializer - alphanumeric characters,
+dots, underscores, minus signs, which are grouped into words separated by
+spaces and CR+LF.
+
+We recommend you to read comments on string version of serializer to find
+out more about serialization of AlGLIB objects.
+*************************************************************************/
+void knnserialize(knnmodel &obj, std::ostream &s_out)
+{
+    jmp_buf _break_jump;
+    alglib_impl::ae_state state;
+    alglib_impl::ae_serializer serializer;
+
+    alglib_impl::ae_state_init(&state);
+    if( setjmp(_break_jump) )
+    {
+#if !defined(AE_NO_EXCEPTIONS)
+        _ALGLIB_CPP_EXCEPTION(state.error_msg);
+#else
+        _ALGLIB_SET_ERROR_FLAG(state.error_msg);
+        return;
+#endif
+    }
+    ae_state_set_break_jump(&state, &_break_jump);
+    alglib_impl::ae_serializer_init(&serializer);
+    alglib_impl::ae_serializer_alloc_start(&serializer);
+    alglib_impl::knnalloc(&serializer, obj.c_ptr(), &state);
+    alglib_impl::ae_serializer_get_alloc_size(&serializer); // not actually needed, but we have to ask
+    alglib_impl::ae_serializer_sstart_stream(&serializer, &s_out);
+    alglib_impl::knnserialize(&serializer, obj.c_ptr(), &state);
+    alglib_impl::ae_serializer_stop(&serializer, &state);
+    alglib_impl::ae_serializer_clear(&serializer);
+    alglib_impl::ae_state_clear(&state);
+}
+/*************************************************************************
+This function unserializes data structure from stream.
+*************************************************************************/
+void knnunserialize(const std::istream &s_in, knnmodel &obj)
+{
+    jmp_buf _break_jump;
+    alglib_impl::ae_state state;
+    alglib_impl::ae_serializer serializer;
+
+    alglib_impl::ae_state_init(&state);
+    if( setjmp(_break_jump) )
+    {
+#if !defined(AE_NO_EXCEPTIONS)
+        _ALGLIB_CPP_EXCEPTION(state.error_msg);
+#else
+        _ALGLIB_SET_ERROR_FLAG(state.error_msg);
+        return;
+#endif
+    }
+    ae_state_set_break_jump(&state, &_break_jump);
+    alglib_impl::ae_serializer_init(&serializer);
+    alglib_impl::ae_serializer_ustart_stream(&serializer, &s_in);
+    alglib_impl::knnunserialize(&serializer, obj.c_ptr(), &state);
+    alglib_impl::ae_serializer_stop(&serializer, &state);
+    alglib_impl::ae_serializer_clear(&serializer);
+    alglib_impl::ae_state_clear(&state);
+}
+
+/*************************************************************************
+This function creates buffer  structure  which  can  be  used  to  perform
+parallel KNN requests.
+
+KNN subpackage provides two sets of computing functions - ones  which  use
+internal buffer of KNN model (these  functions are single-threaded because
+they use same buffer, which can not  shared  between  threads),  and  ones
+which use external buffer.
+
+This function is used to initialize external buffer.
+
+INPUT PARAMETERS
+    Model       -   KNN model which is associated with newly created buffer
+
+OUTPUT PARAMETERS
+    Buf         -   external buffer.
+
+
+IMPORTANT: buffer object should be used only with model which was used  to
+           initialize buffer. Any attempt to  use  buffer  with  different
+           object is dangerous - you  may   get  integrity  check  failure
+           (exception) because sizes of internal  arrays  do  not  fit  to
+           dimensions of the model structure.
+
+  -- ALGLIB --
+     Copyright 15.02.2019 by Bochkanov Sergey
+*************************************************************************/
+void knncreatebuffer(const knnmodel &model, knnbuffer &buf, const xparams _xparams)
+{
+    jmp_buf _break_jump;
+    alglib_impl::ae_state _alglib_env_state;
+    alglib_impl::ae_state_init(&_alglib_env_state);
+    if( setjmp(_break_jump) )
+    {
+#if !defined(AE_NO_EXCEPTIONS)
+        _ALGLIB_CPP_EXCEPTION(_alglib_env_state.error_msg);
+#else
+        _ALGLIB_SET_ERROR_FLAG(_alglib_env_state.error_msg);
+        return;
+#endif
+    }
+    ae_state_set_break_jump(&_alglib_env_state, &_break_jump);
+    if( _xparams.flags!=0x0 )
+        ae_state_set_flags(&_alglib_env_state, _xparams.flags);
+    alglib_impl::knncreatebuffer(const_cast<alglib_impl::knnmodel*>(model.c_ptr()), const_cast<alglib_impl::knnbuffer*>(buf.c_ptr()), &_alglib_env_state);
+    alglib_impl::ae_state_clear(&_alglib_env_state);
+    return;
+}
+
+/*************************************************************************
+This subroutine creates KNNBuilder object which is used to train KNN models.
+
+By default, new builder stores empty dataset and some  reasonable  default
+settings. At the very least, you should specify dataset prior to  building
+KNN model. You can also tweak settings of the model construction algorithm
+(recommended, although default settings should work well).
+
+Following actions are mandatory:
+* calling knnbuildersetdataset() to specify dataset
+* calling knnbuilderbuildknnmodel() to build KNN model using current
+  dataset and default settings
+
+Additionally, you may call:
+* knnbuildersetnorm() to change norm being used
+
+INPUT PARAMETERS:
+    none
+
+OUTPUT PARAMETERS:
+    S           -   KNN builder
+
+  -- ALGLIB --
+     Copyright 15.02.2019 by Bochkanov Sergey
+*************************************************************************/
+void knnbuildercreate(knnbuilder &s, const xparams _xparams)
+{
+    jmp_buf _break_jump;
+    alglib_impl::ae_state _alglib_env_state;
+    alglib_impl::ae_state_init(&_alglib_env_state);
+    if( setjmp(_break_jump) )
+    {
+#if !defined(AE_NO_EXCEPTIONS)
+        _ALGLIB_CPP_EXCEPTION(_alglib_env_state.error_msg);
+#else
+        _ALGLIB_SET_ERROR_FLAG(_alglib_env_state.error_msg);
+        return;
+#endif
+    }
+    ae_state_set_break_jump(&_alglib_env_state, &_break_jump);
+    if( _xparams.flags!=0x0 )
+        ae_state_set_flags(&_alglib_env_state, _xparams.flags);
+    alglib_impl::knnbuildercreate(const_cast<alglib_impl::knnbuilder*>(s.c_ptr()), &_alglib_env_state);
+    alglib_impl::ae_state_clear(&_alglib_env_state);
+    return;
+}
+
+/*************************************************************************
+Specifies regression problem (one or more continuous  output variables are
+predicted). There also exists "classification" version of this function.
+
+This subroutine adds dense dataset to the internal storage of the  builder
+object. Specifying your dataset in the dense format means that  the  dense
+version of the KNN construction algorithm will be invoked.
+
+INPUT PARAMETERS:
+    S           -   KNN builder object
+    XY          -   array[NPoints,NVars+NOut] (note: actual  size  can  be
+                    larger, only leading part is used anyway), dataset:
+                    * first NVars elements of each row store values of the
+                      independent variables
+                    * next NOut elements store  values  of  the  dependent
+                      variables
+    NPoints     -   number of rows in the dataset, NPoints>=1
+    NVars       -   number of independent variables, NVars>=1
+    NOut        -   number of dependent variables, NOut>=1
+
+OUTPUT PARAMETERS:
+    S           -   KNN builder
+
+  -- ALGLIB --
+     Copyright 15.02.2019 by Bochkanov Sergey
+*************************************************************************/
+void knnbuildersetdatasetreg(const knnbuilder &s, const real_2d_array &xy, const ae_int_t npoints, const ae_int_t nvars, const ae_int_t nout, const xparams _xparams)
+{
+    jmp_buf _break_jump;
+    alglib_impl::ae_state _alglib_env_state;
+    alglib_impl::ae_state_init(&_alglib_env_state);
+    if( setjmp(_break_jump) )
+    {
+#if !defined(AE_NO_EXCEPTIONS)
+        _ALGLIB_CPP_EXCEPTION(_alglib_env_state.error_msg);
+#else
+        _ALGLIB_SET_ERROR_FLAG(_alglib_env_state.error_msg);
+        return;
+#endif
+    }
+    ae_state_set_break_jump(&_alglib_env_state, &_break_jump);
+    if( _xparams.flags!=0x0 )
+        ae_state_set_flags(&_alglib_env_state, _xparams.flags);
+    alglib_impl::knnbuildersetdatasetreg(const_cast<alglib_impl::knnbuilder*>(s.c_ptr()), const_cast<alglib_impl::ae_matrix*>(xy.c_ptr()), npoints, nvars, nout, &_alglib_env_state);
+    alglib_impl::ae_state_clear(&_alglib_env_state);
+    return;
+}
+
+/*************************************************************************
+Specifies classification problem (two  or  more  classes  are  predicted).
+There also exists "regression" version of this function.
+
+This subroutine adds dense dataset to the internal storage of the  builder
+object. Specifying your dataset in the dense format means that  the  dense
+version of the KNN construction algorithm will be invoked.
+
+INPUT PARAMETERS:
+    S           -   KNN builder object
+    XY          -   array[NPoints,NVars+1] (note:   actual   size  can  be
+                    larger, only leading part is used anyway), dataset:
+                    * first NVars elements of each row store values of the
+                      independent variables
+                    * next element stores class index, in [0,NClasses)
+    NPoints     -   number of rows in the dataset, NPoints>=1
+    NVars       -   number of independent variables, NVars>=1
+    NClasses    -   number of classes, NClasses>=2
+
+OUTPUT PARAMETERS:
+    S           -   KNN builder
+
+  -- ALGLIB --
+     Copyright 15.02.2019 by Bochkanov Sergey
+*************************************************************************/
+void knnbuildersetdatasetcls(const knnbuilder &s, const real_2d_array &xy, const ae_int_t npoints, const ae_int_t nvars, const ae_int_t nclasses, const xparams _xparams)
+{
+    jmp_buf _break_jump;
+    alglib_impl::ae_state _alglib_env_state;
+    alglib_impl::ae_state_init(&_alglib_env_state);
+    if( setjmp(_break_jump) )
+    {
+#if !defined(AE_NO_EXCEPTIONS)
+        _ALGLIB_CPP_EXCEPTION(_alglib_env_state.error_msg);
+#else
+        _ALGLIB_SET_ERROR_FLAG(_alglib_env_state.error_msg);
+        return;
+#endif
+    }
+    ae_state_set_break_jump(&_alglib_env_state, &_break_jump);
+    if( _xparams.flags!=0x0 )
+        ae_state_set_flags(&_alglib_env_state, _xparams.flags);
+    alglib_impl::knnbuildersetdatasetcls(const_cast<alglib_impl::knnbuilder*>(s.c_ptr()), const_cast<alglib_impl::ae_matrix*>(xy.c_ptr()), npoints, nvars, nclasses, &_alglib_env_state);
+    alglib_impl::ae_state_clear(&_alglib_env_state);
+    return;
+}
+
+/*************************************************************************
+This function sets norm type used for neighbor search.
+
+INPUT PARAMETERS:
+    S           -   decision forest builder object
+    NormType    -   norm type:
+                    * 0      inf-norm
+                    * 1      1-norm
+                    * 2      Euclidean norm (default)
+
+OUTPUT PARAMETERS:
+    S           -   decision forest builder
+
+  -- ALGLIB --
+     Copyright 15.02.2019 by Bochkanov Sergey
+*************************************************************************/
+void knnbuildersetnorm(const knnbuilder &s, const ae_int_t nrmtype, const xparams _xparams)
+{
+    jmp_buf _break_jump;
+    alglib_impl::ae_state _alglib_env_state;
+    alglib_impl::ae_state_init(&_alglib_env_state);
+    if( setjmp(_break_jump) )
+    {
+#if !defined(AE_NO_EXCEPTIONS)
+        _ALGLIB_CPP_EXCEPTION(_alglib_env_state.error_msg);
+#else
+        _ALGLIB_SET_ERROR_FLAG(_alglib_env_state.error_msg);
+        return;
+#endif
+    }
+    ae_state_set_break_jump(&_alglib_env_state, &_break_jump);
+    if( _xparams.flags!=0x0 )
+        ae_state_set_flags(&_alglib_env_state, _xparams.flags);
+    alglib_impl::knnbuildersetnorm(const_cast<alglib_impl::knnbuilder*>(s.c_ptr()), nrmtype, &_alglib_env_state);
+    alglib_impl::ae_state_clear(&_alglib_env_state);
+    return;
+}
+
+/*************************************************************************
+This subroutine builds KNN model  according  to  current  settings,  using
+dataset internally stored in the builder object.
+
+The model being built performs inference using Eps-approximate  K  nearest
+neighbors search algorithm, with:
+* K=1,  Eps=0 corresponding to the "nearest neighbor algorithm"
+* K>1,  Eps=0 corresponding to the "K nearest neighbors algorithm"
+* K>=1, Eps>0 corresponding to "approximate nearest neighbors algorithm"
+
+An approximate KNN is a good option for high-dimensional  datasets  (exact
+KNN works slowly when dimensions count grows).
+
+An ALGLIB implementation of kd-trees is used to perform k-nn searches.
+
+  ! COMMERCIAL EDITION OF ALGLIB:
+  !
+  ! Commercial Edition of ALGLIB includes following important improvements
+  ! of this function:
+  ! * high-performance native backend with same C# interface (C# version)
+  ! * multithreading support (C++ and C# versions)
+  !
+  ! We recommend you to read 'Working with commercial version' section  of
+  ! ALGLIB Reference Manual in order to find out how to  use  performance-
+  ! related features provided by commercial edition of ALGLIB.
+
+INPUT PARAMETERS:
+    S       -   KNN builder object
+    K       -   number of neighbors to search for, K>=1
+    Eps     -   approximation factor:
+                * Eps=0 means that exact kNN search is performed
+                * Eps>0 means that (1+Eps)-approximate search is performed
+
+OUTPUT PARAMETERS:
+    Model       -   KNN model
+    Rep         -   report
+
+  -- ALGLIB --
+     Copyright 15.02.2019 by Bochkanov Sergey
+*************************************************************************/
+void knnbuilderbuildknnmodel(const knnbuilder &s, const ae_int_t k, const double eps, knnmodel &model, knnreport &rep, const xparams _xparams)
+{
+    jmp_buf _break_jump;
+    alglib_impl::ae_state _alglib_env_state;
+    alglib_impl::ae_state_init(&_alglib_env_state);
+    if( setjmp(_break_jump) )
+    {
+#if !defined(AE_NO_EXCEPTIONS)
+        _ALGLIB_CPP_EXCEPTION(_alglib_env_state.error_msg);
+#else
+        _ALGLIB_SET_ERROR_FLAG(_alglib_env_state.error_msg);
+        return;
+#endif
+    }
+    ae_state_set_break_jump(&_alglib_env_state, &_break_jump);
+    if( _xparams.flags!=0x0 )
+        ae_state_set_flags(&_alglib_env_state, _xparams.flags);
+    alglib_impl::knnbuilderbuildknnmodel(const_cast<alglib_impl::knnbuilder*>(s.c_ptr()), k, eps, const_cast<alglib_impl::knnmodel*>(model.c_ptr()), const_cast<alglib_impl::knnreport*>(rep.c_ptr()), &_alglib_env_state);
+    alglib_impl::ae_state_clear(&_alglib_env_state);
+    return;
+}
+
+/*************************************************************************
+Changing search settings of KNN model.
+
+K and EPS parameters of KNN  (AKNN)  search  are  specified  during  model
+construction. However, plain KNN algorithm with Euclidean distance  allows
+you to change them at any moment.
+
+NOTE: future versions of KNN model may support advanced versions  of  KNN,
+      such as NCA or LMNN. It is possible that such algorithms won't allow
+      you to change search settings on the fly. If you call this  function
+      for an algorithm which does not support on-the-fly changes, it  will
+      throw an exception.
+
+INPUT PARAMETERS:
+    Model   -   KNN model
+    K       -   K>=1, neighbors count
+    EPS     -   accuracy of the EPS-approximate NN search. Set to 0.0,  if
+                you want to perform "classic" KNN search.  Specify  larger
+                values  if  you  need  to  speed-up  high-dimensional  KNN
+                queries.
+
+OUTPUT PARAMETERS:
+    nothing on success, exception on failure
+
+  -- ALGLIB --
+     Copyright 15.02.2019 by Bochkanov Sergey
+*************************************************************************/
+void knnrewritekeps(const knnmodel &model, const ae_int_t k, const double eps, const xparams _xparams)
+{
+    jmp_buf _break_jump;
+    alglib_impl::ae_state _alglib_env_state;
+    alglib_impl::ae_state_init(&_alglib_env_state);
+    if( setjmp(_break_jump) )
+    {
+#if !defined(AE_NO_EXCEPTIONS)
+        _ALGLIB_CPP_EXCEPTION(_alglib_env_state.error_msg);
+#else
+        _ALGLIB_SET_ERROR_FLAG(_alglib_env_state.error_msg);
+        return;
+#endif
+    }
+    ae_state_set_break_jump(&_alglib_env_state, &_break_jump);
+    if( _xparams.flags!=0x0 )
+        ae_state_set_flags(&_alglib_env_state, _xparams.flags);
+    alglib_impl::knnrewritekeps(const_cast<alglib_impl::knnmodel*>(model.c_ptr()), k, eps, &_alglib_env_state);
+    alglib_impl::ae_state_clear(&_alglib_env_state);
+    return;
+}
+
+/*************************************************************************
+Inference using KNN model.
+
+See also knnprocess0(), knnprocessi() and knnclassify() for options with a
+bit more convenient interface.
+
+IMPORTANT: this function is thread-unsafe and modifies internal structures
+           of the model! You can not use same model  object  for  parallel
+           evaluation from several threads.
+
+           Use knntsprocess() with independent  thread-local  buffers,  if
+           you need thread-safe evaluation.
+
+INPUT PARAMETERS:
+    Model   -   KNN model
+    X       -   input vector,  array[0..NVars-1].
+    Y       -   possible preallocated buffer. Reused if long enough.
+
+OUTPUT PARAMETERS:
+    Y       -   result. Regression estimate when solving regression  task,
+                vector of posterior probabilities for classification task.
+
+  -- ALGLIB --
+     Copyright 15.02.2019 by Bochkanov Sergey
+*************************************************************************/
+void knnprocess(const knnmodel &model, const real_1d_array &x, real_1d_array &y, const xparams _xparams)
+{
+    jmp_buf _break_jump;
+    alglib_impl::ae_state _alglib_env_state;
+    alglib_impl::ae_state_init(&_alglib_env_state);
+    if( setjmp(_break_jump) )
+    {
+#if !defined(AE_NO_EXCEPTIONS)
+        _ALGLIB_CPP_EXCEPTION(_alglib_env_state.error_msg);
+#else
+        _ALGLIB_SET_ERROR_FLAG(_alglib_env_state.error_msg);
+        return;
+#endif
+    }
+    ae_state_set_break_jump(&_alglib_env_state, &_break_jump);
+    if( _xparams.flags!=0x0 )
+        ae_state_set_flags(&_alglib_env_state, _xparams.flags);
+    alglib_impl::knnprocess(const_cast<alglib_impl::knnmodel*>(model.c_ptr()), const_cast<alglib_impl::ae_vector*>(x.c_ptr()), const_cast<alglib_impl::ae_vector*>(y.c_ptr()), &_alglib_env_state);
+    alglib_impl::ae_state_clear(&_alglib_env_state);
+    return;
+}
+
+/*************************************************************************
+This function returns first component of the  inferred  vector  (i.e.  one
+with index #0).
+
+It is a convenience wrapper for knnprocess() intended for either:
+* 1-dimensional regression problems
+* 2-class classification problems
+
+In the former case this function returns inference result as scalar, which
+is definitely more convenient that wrapping it as vector.  In  the  latter
+case it returns probability of object belonging to class #0.
+
+If you call it for anything different from two cases above, it  will  work
+as defined, i.e. return y[0], although it is of less use in such cases.
+
+IMPORTANT: this function is thread-unsafe and modifies internal structures
+           of the model! You can not use same model  object  for  parallel
+           evaluation from several threads.
+
+           Use knntsprocess() with independent  thread-local  buffers,  if
+           you need thread-safe evaluation.
+
+INPUT PARAMETERS:
+    Model   -   KNN model
+    X       -   input vector,  array[0..NVars-1].
+
+RESULT:
+    Y[0]
+
+  -- ALGLIB --
+     Copyright 15.02.2019 by Bochkanov Sergey
+*************************************************************************/
+double knnprocess0(const knnmodel &model, const real_1d_array &x, const xparams _xparams)
+{
+    jmp_buf _break_jump;
+    alglib_impl::ae_state _alglib_env_state;
+    alglib_impl::ae_state_init(&_alglib_env_state);
+    if( setjmp(_break_jump) )
+    {
+#if !defined(AE_NO_EXCEPTIONS)
+        _ALGLIB_CPP_EXCEPTION(_alglib_env_state.error_msg);
+#else
+        _ALGLIB_SET_ERROR_FLAG(_alglib_env_state.error_msg);
+        return 0;
+#endif
+    }
+    ae_state_set_break_jump(&_alglib_env_state, &_break_jump);
+    if( _xparams.flags!=0x0 )
+        ae_state_set_flags(&_alglib_env_state, _xparams.flags);
+    double result = alglib_impl::knnprocess0(const_cast<alglib_impl::knnmodel*>(model.c_ptr()), const_cast<alglib_impl::ae_vector*>(x.c_ptr()), &_alglib_env_state);
+    alglib_impl::ae_state_clear(&_alglib_env_state);
+    return *(reinterpret_cast<double*>(&result));
+}
+
+/*************************************************************************
+This function returns most probable class number for an  input  X.  It  is
+same as calling knnprocess(model,x,y), then determining i=argmax(y[i]) and
+returning i.
+
+A class number in [0,NOut) range in returned for classification  problems,
+-1 is returned when this function is called for regression problems.
+
+IMPORTANT: this function is thread-unsafe and modifies internal structures
+           of the model! You can not use same model  object  for  parallel
+           evaluation from several threads.
+
+           Use knntsprocess() with independent  thread-local  buffers,  if
+           you need thread-safe evaluation.
+
+INPUT PARAMETERS:
+    Model   -   KNN model
+    X       -   input vector,  array[0..NVars-1].
+
+RESULT:
+    class number, -1 for regression tasks
+
+  -- ALGLIB --
+     Copyright 15.02.2019 by Bochkanov Sergey
+*************************************************************************/
+ae_int_t knnclassify(const knnmodel &model, const real_1d_array &x, const xparams _xparams)
+{
+    jmp_buf _break_jump;
+    alglib_impl::ae_state _alglib_env_state;
+    alglib_impl::ae_state_init(&_alglib_env_state);
+    if( setjmp(_break_jump) )
+    {
+#if !defined(AE_NO_EXCEPTIONS)
+        _ALGLIB_CPP_EXCEPTION(_alglib_env_state.error_msg);
+#else
+        _ALGLIB_SET_ERROR_FLAG(_alglib_env_state.error_msg);
+        return 0;
+#endif
+    }
+    ae_state_set_break_jump(&_alglib_env_state, &_break_jump);
+    if( _xparams.flags!=0x0 )
+        ae_state_set_flags(&_alglib_env_state, _xparams.flags);
+    alglib_impl::ae_int_t result = alglib_impl::knnclassify(const_cast<alglib_impl::knnmodel*>(model.c_ptr()), const_cast<alglib_impl::ae_vector*>(x.c_ptr()), &_alglib_env_state);
+    alglib_impl::ae_state_clear(&_alglib_env_state);
+    return *(reinterpret_cast<ae_int_t*>(&result));
+}
+
+/*************************************************************************
+'interactive' variant of knnprocess()  for  languages  like  Python  which
+support constructs like "y = knnprocessi(model,x)" and interactive mode of
+the interpreter.
+
+This function allocates new array on each call,  so  it  is  significantly
+slower than its 'non-interactive' counterpart, but it is  more  convenient
+when you call it from command line.
+
+IMPORTANT: this  function  is  thread-unsafe  and  may   modify   internal
+           structures of the model! You can not use same model  object for
+           parallel evaluation from several threads.
+
+           Use knntsprocess()  with  independent  thread-local  buffers if
+           you need thread-safe evaluation.
+
+  -- ALGLIB --
+     Copyright 15.02.2019 by Bochkanov Sergey
+*************************************************************************/
+void knnprocessi(const knnmodel &model, const real_1d_array &x, real_1d_array &y, const xparams _xparams)
+{
+    jmp_buf _break_jump;
+    alglib_impl::ae_state _alglib_env_state;
+    alglib_impl::ae_state_init(&_alglib_env_state);
+    if( setjmp(_break_jump) )
+    {
+#if !defined(AE_NO_EXCEPTIONS)
+        _ALGLIB_CPP_EXCEPTION(_alglib_env_state.error_msg);
+#else
+        _ALGLIB_SET_ERROR_FLAG(_alglib_env_state.error_msg);
+        return;
+#endif
+    }
+    ae_state_set_break_jump(&_alglib_env_state, &_break_jump);
+    if( _xparams.flags!=0x0 )
+        ae_state_set_flags(&_alglib_env_state, _xparams.flags);
+    alglib_impl::knnprocessi(const_cast<alglib_impl::knnmodel*>(model.c_ptr()), const_cast<alglib_impl::ae_vector*>(x.c_ptr()), const_cast<alglib_impl::ae_vector*>(y.c_ptr()), &_alglib_env_state);
+    alglib_impl::ae_state_clear(&_alglib_env_state);
+    return;
+}
+
+/*************************************************************************
+Thread-safe procesing using external buffer for temporaries.
+
+This function is thread-safe (i.e .  you  can  use  same  KNN  model  from
+multiple threads) as long as you use different buffer objects for different
+threads.
+
+INPUT PARAMETERS:
+    Model   -   KNN model
+    Buf     -   buffer object, must be  allocated  specifically  for  this
+                model with knncreatebuffer().
+    X       -   input vector,  array[NVars]
+
+OUTPUT PARAMETERS:
+    Y       -   result, array[NOut].   Regression  estimate  when  solving
+                regression task,  vector  of  posterior  probabilities for
+                a classification task.
+
+  -- ALGLIB --
+     Copyright 15.02.2019 by Bochkanov Sergey
+*************************************************************************/
+void knntsprocess(const knnmodel &model, const knnbuffer &buf, const real_1d_array &x, real_1d_array &y, const xparams _xparams)
+{
+    jmp_buf _break_jump;
+    alglib_impl::ae_state _alglib_env_state;
+    alglib_impl::ae_state_init(&_alglib_env_state);
+    if( setjmp(_break_jump) )
+    {
+#if !defined(AE_NO_EXCEPTIONS)
+        _ALGLIB_CPP_EXCEPTION(_alglib_env_state.error_msg);
+#else
+        _ALGLIB_SET_ERROR_FLAG(_alglib_env_state.error_msg);
+        return;
+#endif
+    }
+    ae_state_set_break_jump(&_alglib_env_state, &_break_jump);
+    if( _xparams.flags!=0x0 )
+        ae_state_set_flags(&_alglib_env_state, _xparams.flags);
+    alglib_impl::knntsprocess(const_cast<alglib_impl::knnmodel*>(model.c_ptr()), const_cast<alglib_impl::knnbuffer*>(buf.c_ptr()), const_cast<alglib_impl::ae_vector*>(x.c_ptr()), const_cast<alglib_impl::ae_vector*>(y.c_ptr()), &_alglib_env_state);
+    alglib_impl::ae_state_clear(&_alglib_env_state);
+    return;
+}
+
+/*************************************************************************
+Relative classification error on the test set
+
+INPUT PARAMETERS:
+    Model   -   KNN model
+    XY      -   test set
+    NPoints -   test set size
+
+RESULT:
+    percent of incorrectly classified cases.
+    Zero if model solves regression task.
+
+NOTE: if  you  need several different kinds of error metrics, it is better
+      to use knnallerrors() which computes all error metric  with just one
+      pass over dataset.
+
+  -- ALGLIB --
+     Copyright 15.02.2019 by Bochkanov Sergey
+*************************************************************************/
+double knnrelclserror(const knnmodel &model, const real_2d_array &xy, const ae_int_t npoints, const xparams _xparams)
+{
+    jmp_buf _break_jump;
+    alglib_impl::ae_state _alglib_env_state;
+    alglib_impl::ae_state_init(&_alglib_env_state);
+    if( setjmp(_break_jump) )
+    {
+#if !defined(AE_NO_EXCEPTIONS)
+        _ALGLIB_CPP_EXCEPTION(_alglib_env_state.error_msg);
+#else
+        _ALGLIB_SET_ERROR_FLAG(_alglib_env_state.error_msg);
+        return 0;
+#endif
+    }
+    ae_state_set_break_jump(&_alglib_env_state, &_break_jump);
+    if( _xparams.flags!=0x0 )
+        ae_state_set_flags(&_alglib_env_state, _xparams.flags);
+    double result = alglib_impl::knnrelclserror(const_cast<alglib_impl::knnmodel*>(model.c_ptr()), const_cast<alglib_impl::ae_matrix*>(xy.c_ptr()), npoints, &_alglib_env_state);
+    alglib_impl::ae_state_clear(&_alglib_env_state);
+    return *(reinterpret_cast<double*>(&result));
+}
+
+/*************************************************************************
+Average cross-entropy (in bits per element) on the test set
+
+INPUT PARAMETERS:
+    Model   -   KNN model
+    XY      -   test set
+    NPoints -   test set size
+
+RESULT:
+    CrossEntropy/NPoints.
+    Zero if model solves regression task.
+
+NOTE: the cross-entropy metric is too unstable when used to  evaluate  KNN
+      models (such models can report exactly  zero probabilities),  so  we
+      do not recommend using it.
+
+NOTE: if  you  need several different kinds of error metrics, it is better
+      to use knnallerrors() which computes all error metric  with just one
+      pass over dataset.
+
+  -- ALGLIB --
+     Copyright 15.02.2019 by Bochkanov Sergey
+*************************************************************************/
+double knnavgce(const knnmodel &model, const real_2d_array &xy, const ae_int_t npoints, const xparams _xparams)
+{
+    jmp_buf _break_jump;
+    alglib_impl::ae_state _alglib_env_state;
+    alglib_impl::ae_state_init(&_alglib_env_state);
+    if( setjmp(_break_jump) )
+    {
+#if !defined(AE_NO_EXCEPTIONS)
+        _ALGLIB_CPP_EXCEPTION(_alglib_env_state.error_msg);
+#else
+        _ALGLIB_SET_ERROR_FLAG(_alglib_env_state.error_msg);
+        return 0;
+#endif
+    }
+    ae_state_set_break_jump(&_alglib_env_state, &_break_jump);
+    if( _xparams.flags!=0x0 )
+        ae_state_set_flags(&_alglib_env_state, _xparams.flags);
+    double result = alglib_impl::knnavgce(const_cast<alglib_impl::knnmodel*>(model.c_ptr()), const_cast<alglib_impl::ae_matrix*>(xy.c_ptr()), npoints, &_alglib_env_state);
+    alglib_impl::ae_state_clear(&_alglib_env_state);
+    return *(reinterpret_cast<double*>(&result));
+}
+
+/*************************************************************************
+RMS error on the test set.
+
+Its meaning for regression task is obvious. As for classification problems,
+RMS error means error when estimating posterior probabilities.
+
+INPUT PARAMETERS:
+    Model   -   KNN model
+    XY      -   test set
+    NPoints -   test set size
+
+RESULT:
+    root mean square error.
+
+NOTE: if  you  need several different kinds of error metrics, it is better
+      to use knnallerrors() which computes all error metric  with just one
+      pass over dataset.
+
+  -- ALGLIB --
+     Copyright 15.02.2019 by Bochkanov Sergey
+*************************************************************************/
+double knnrmserror(const knnmodel &model, const real_2d_array &xy, const ae_int_t npoints, const xparams _xparams)
+{
+    jmp_buf _break_jump;
+    alglib_impl::ae_state _alglib_env_state;
+    alglib_impl::ae_state_init(&_alglib_env_state);
+    if( setjmp(_break_jump) )
+    {
+#if !defined(AE_NO_EXCEPTIONS)
+        _ALGLIB_CPP_EXCEPTION(_alglib_env_state.error_msg);
+#else
+        _ALGLIB_SET_ERROR_FLAG(_alglib_env_state.error_msg);
+        return 0;
+#endif
+    }
+    ae_state_set_break_jump(&_alglib_env_state, &_break_jump);
+    if( _xparams.flags!=0x0 )
+        ae_state_set_flags(&_alglib_env_state, _xparams.flags);
+    double result = alglib_impl::knnrmserror(const_cast<alglib_impl::knnmodel*>(model.c_ptr()), const_cast<alglib_impl::ae_matrix*>(xy.c_ptr()), npoints, &_alglib_env_state);
+    alglib_impl::ae_state_clear(&_alglib_env_state);
+    return *(reinterpret_cast<double*>(&result));
+}
+
+/*************************************************************************
+Average error on the test set
+
+Its meaning for regression task is obvious. As for classification problems,
+average error means error when estimating posterior probabilities.
+
+INPUT PARAMETERS:
+    Model   -   KNN model
+    XY      -   test set
+    NPoints -   test set size
+
+RESULT:
+    average error
+
+NOTE: if  you  need several different kinds of error metrics, it is better
+      to use knnallerrors() which computes all error metric  with just one
+      pass over dataset.
+
+  -- ALGLIB --
+     Copyright 15.02.2019 by Bochkanov Sergey
+*************************************************************************/
+double knnavgerror(const knnmodel &model, const real_2d_array &xy, const ae_int_t npoints, const xparams _xparams)
+{
+    jmp_buf _break_jump;
+    alglib_impl::ae_state _alglib_env_state;
+    alglib_impl::ae_state_init(&_alglib_env_state);
+    if( setjmp(_break_jump) )
+    {
+#if !defined(AE_NO_EXCEPTIONS)
+        _ALGLIB_CPP_EXCEPTION(_alglib_env_state.error_msg);
+#else
+        _ALGLIB_SET_ERROR_FLAG(_alglib_env_state.error_msg);
+        return 0;
+#endif
+    }
+    ae_state_set_break_jump(&_alglib_env_state, &_break_jump);
+    if( _xparams.flags!=0x0 )
+        ae_state_set_flags(&_alglib_env_state, _xparams.flags);
+    double result = alglib_impl::knnavgerror(const_cast<alglib_impl::knnmodel*>(model.c_ptr()), const_cast<alglib_impl::ae_matrix*>(xy.c_ptr()), npoints, &_alglib_env_state);
+    alglib_impl::ae_state_clear(&_alglib_env_state);
+    return *(reinterpret_cast<double*>(&result));
+}
+
+/*************************************************************************
+Average relative error on the test set
+
+Its meaning for regression task is obvious. As for classification problems,
+average relative error means error when estimating posterior probabilities.
+
+INPUT PARAMETERS:
+    Model   -   KNN model
+    XY      -   test set
+    NPoints -   test set size
+
+RESULT:
+    average relative error
+
+NOTE: if  you  need several different kinds of error metrics, it is better
+      to use knnallerrors() which computes all error metric  with just one
+      pass over dataset.
+
+  -- ALGLIB --
+     Copyright 15.02.2019 by Bochkanov Sergey
+*************************************************************************/
+double knnavgrelerror(const knnmodel &model, const real_2d_array &xy, const ae_int_t npoints, const xparams _xparams)
+{
+    jmp_buf _break_jump;
+    alglib_impl::ae_state _alglib_env_state;
+    alglib_impl::ae_state_init(&_alglib_env_state);
+    if( setjmp(_break_jump) )
+    {
+#if !defined(AE_NO_EXCEPTIONS)
+        _ALGLIB_CPP_EXCEPTION(_alglib_env_state.error_msg);
+#else
+        _ALGLIB_SET_ERROR_FLAG(_alglib_env_state.error_msg);
+        return 0;
+#endif
+    }
+    ae_state_set_break_jump(&_alglib_env_state, &_break_jump);
+    if( _xparams.flags!=0x0 )
+        ae_state_set_flags(&_alglib_env_state, _xparams.flags);
+    double result = alglib_impl::knnavgrelerror(const_cast<alglib_impl::knnmodel*>(model.c_ptr()), const_cast<alglib_impl::ae_matrix*>(xy.c_ptr()), npoints, &_alglib_env_state);
+    alglib_impl::ae_state_clear(&_alglib_env_state);
+    return *(reinterpret_cast<double*>(&result));
+}
+
+/*************************************************************************
+Calculates all kinds of errors for the model in one call.
+
+INPUT PARAMETERS:
+    Model   -   KNN model
+    XY      -   test set:
+                * one row per point
+                * first NVars columns store independent variables
+                * depending on problem type:
+                  * next column stores class number in [0,NClasses) -  for
+                    classification problems
+                  * next NOut columns  store  dependent  variables  -  for
+                    regression problems
+    NPoints -   test set size, NPoints>=0
+
+OUTPUT PARAMETERS:
+    Rep     -   following fields are loaded with errors for both regression
+                and classification models:
+                * rep.rmserror - RMS error for the output
+                * rep.avgerror - average error
+                * rep.avgrelerror - average relative error
+                following fields are set only  for classification  models,
+                zero for regression ones:
+                * relclserror   - relative classification error, in [0,1]
+                * avgce - average cross-entropy in bits per dataset entry
+
+NOTE: the cross-entropy metric is too unstable when used to  evaluate  KNN
+      models (such models can report exactly  zero probabilities),  so  we
+      do not recommend using it.
+
+  -- ALGLIB --
+     Copyright 15.02.2019 by Bochkanov Sergey
+*************************************************************************/
+void knnallerrors(const knnmodel &model, const real_2d_array &xy, const ae_int_t npoints, knnreport &rep, const xparams _xparams)
+{
+    jmp_buf _break_jump;
+    alglib_impl::ae_state _alglib_env_state;
+    alglib_impl::ae_state_init(&_alglib_env_state);
+    if( setjmp(_break_jump) )
+    {
+#if !defined(AE_NO_EXCEPTIONS)
+        _ALGLIB_CPP_EXCEPTION(_alglib_env_state.error_msg);
+#else
+        _ALGLIB_SET_ERROR_FLAG(_alglib_env_state.error_msg);
+        return;
+#endif
+    }
+    ae_state_set_break_jump(&_alglib_env_state, &_break_jump);
+    if( _xparams.flags!=0x0 )
+        ae_state_set_flags(&_alglib_env_state, _xparams.flags);
+    alglib_impl::knnallerrors(const_cast<alglib_impl::knnmodel*>(model.c_ptr()), const_cast<alglib_impl::ae_matrix*>(xy.c_ptr()), npoints, const_cast<alglib_impl::knnreport*>(rep.c_ptr()), &_alglib_env_state);
+    alglib_impl::ae_state_clear(&_alglib_env_state);
+    return;
+}
+#endif
+
+#if defined(AE_COMPILE_DATACOMP) || !defined(AE_PARTIAL_BUILD)
+/*************************************************************************
+k-means++ clusterization.
+Backward compatibility function, we recommend to use CLUSTERING subpackage
+as better replacement.
+
+  -- ALGLIB --
+     Copyright 21.03.2009 by Bochkanov Sergey
+*************************************************************************/
+void kmeansgenerate(const real_2d_array &xy, const ae_int_t npoints, const ae_int_t nvars, const ae_int_t k, const ae_int_t restarts, ae_int_t &info, real_2d_array &c, integer_1d_array &xyc, const xparams _xparams)
+{
+    jmp_buf _break_jump;
+    alglib_impl::ae_state _alglib_env_state;
+    alglib_impl::ae_state_init(&_alglib_env_state);
+    if( setjmp(_break_jump) )
+    {
+#if !defined(AE_NO_EXCEPTIONS)
+        _ALGLIB_CPP_EXCEPTION(_alglib_env_state.error_msg);
+#else
+        _ALGLIB_SET_ERROR_FLAG(_alglib_env_state.error_msg);
+        return;
+#endif
+    }
+    ae_state_set_break_jump(&_alglib_env_state, &_break_jump);
+    if( _xparams.flags!=0x0 )
+        ae_state_set_flags(&_alglib_env_state, _xparams.flags);
     alglib_impl::kmeansgenerate(const_cast<alglib_impl::ae_matrix*>(xy.c_ptr()), npoints, nvars, k, restarts, &info, const_cast<alglib_impl::ae_matrix*>(c.c_ptr()), const_cast<alglib_impl::ae_vector*>(xyc.c_ptr()), &_alglib_env_state);
     alglib_impl::ae_state_clear(&_alglib_env_state);
     return;
@@ -14537,7 +16839,17 @@ static void mlptrain_mthreadcv(mlptrainer* s,
      ae_int_t dfold,
      /* Real    */ ae_matrix* cvy,
      ae_shared_pool* pooldatacv,
+     ae_int_t wcount,
      ae_state *_state);
+ae_bool _trypexec_mlptrain_mthreadcv(mlptrainer* s,
+    ae_int_t rowsize,
+    ae_int_t nrestarts,
+    /* Integer */ ae_vector* folds,
+    ae_int_t fold,
+    ae_int_t dfold,
+    /* Real    */ ae_matrix* cvy,
+    ae_shared_pool* pooldatacv,
+    ae_int_t wcount, ae_state *_state);
 static void mlptrain_mlptrainnetworkx(mlptrainer* s,
      ae_int_t nrestarts,
      ae_int_t algokind,
@@ -14550,6 +16862,17 @@ static void mlptrain_mlptrainnetworkx(mlptrainer* s,
      ae_bool isrootcall,
      ae_shared_pool* sessions,
      ae_state *_state);
+ae_bool _trypexec_mlptrain_mlptrainnetworkx(mlptrainer* s,
+    ae_int_t nrestarts,
+    ae_int_t algokind,
+    /* Integer */ ae_vector* trnsubset,
+    ae_int_t trnsubsetsize,
+    /* Integer */ ae_vector* valsubset,
+    ae_int_t valsubsetsize,
+    multilayerperceptron* network,
+    mlpreport* rep,
+    ae_bool isrootcall,
+    ae_shared_pool* sessions, ae_state *_state);
 static void mlptrain_mlptrainensemblex(mlptrainer* s,
      mlpensemble* ensemble,
      ae_int_t idx0,
@@ -14560,6 +16883,15 @@ static void mlptrain_mlptrainensemblex(mlptrainer* s,
      ae_bool isrootcall,
      ae_shared_pool* esessions,
      ae_state *_state);
+ae_bool _trypexec_mlptrain_mlptrainensemblex(mlptrainer* s,
+    mlpensemble* ensemble,
+    ae_int_t idx0,
+    ae_int_t idx1,
+    ae_int_t nrestarts,
+    ae_int_t trainingmethod,
+    sinteger* ngrad,
+    ae_bool isrootcall,
+    ae_shared_pool* esessions, ae_state *_state);
 static void mlptrain_mlpstarttrainingx(mlptrainer* s,
      ae_bool randomstart,
      ae_int_t algokind,
@@ -14607,10 +16939,10 @@ static void mlptrain_initmlpetrnsessions(multilayerperceptron* individualnetwork
 
 #endif
 #if defined(AE_COMPILE_CLUSTERING) || !defined(AE_PARTIAL_BUILD)
-static double clustering_parallelcomplexity = 200000;
 static ae_int_t clustering_kmeansblocksize = 32;
 static ae_int_t clustering_kmeansparalleldim = 8;
-static ae_int_t clustering_kmeansparallelk = 8;
+static ae_int_t clustering_kmeansparallelk = 4;
+static double clustering_complexitymultiplier = 1.0;
 static void clustering_selectinitialcenters(/* Real    */ ae_matrix* xy,
      ae_int_t npoints,
      ae_int_t nvars,
@@ -14642,6 +16974,14 @@ static void clustering_evaluatedistancematrixrec(/* Real    */ ae_matrix* xy,
      ae_int_t j0,
      ae_int_t j1,
      ae_state *_state);
+ae_bool _trypexec_clustering_evaluatedistancematrixrec(/* Real    */ ae_matrix* xy,
+    ae_int_t nfeatures,
+    ae_int_t disttype,
+    /* Real    */ ae_matrix* d,
+    ae_int_t i0,
+    ae_int_t i1,
+    ae_int_t j0,
+    ae_int_t j1, ae_state *_state);
 
 
 #endif
@@ -14650,60 +16990,201 @@ static ae_int_t dforest_innernodewidth = 3;
 static ae_int_t dforest_leafnodewidth = 2;
 static ae_int_t dforest_dfusestrongsplits = 1;
 static ae_int_t dforest_dfuseevs = 2;
-static ae_int_t dforest_dffirstversion = 0;
-static ae_int_t dforest_dfclserror(decisionforest* df,
-     /* Real    */ ae_matrix* xy,
-     ae_int_t npoints,
+static ae_int_t dforest_dfuncompressedv0 = 0;
+static ae_int_t dforest_dfcompressedv0 = 1;
+static ae_int_t dforest_needtrngini = 1;
+static ae_int_t dforest_needoobgini = 2;
+static ae_int_t dforest_needpermutation = 3;
+static ae_int_t dforest_permutationimportancebatchsize = 512;
+static void dforest_buildrandomtree(decisionforestbuilder* s,
+     ae_int_t treeidx0,
+     ae_int_t treeidx1,
      ae_state *_state);
-static void dforest_dfprocessinternal(decisionforest* df,
-     ae_int_t offs,
-     /* Real    */ ae_vector* x,
-     /* Real    */ ae_vector* y,
-     ae_state *_state);
-static void dforest_dfbuildtree(/* Real    */ ae_matrix* xy,
-     ae_int_t npoints,
-     ae_int_t nvars,
-     ae_int_t nclasses,
-     ae_int_t nfeatures,
-     ae_int_t nvarsinpool,
-     ae_int_t flags,
-     dfinternalbuffers* bufs,
+ae_bool _trypexec_dforest_buildrandomtree(decisionforestbuilder* s,
+    ae_int_t treeidx0,
+    ae_int_t treeidx1, ae_state *_state);
+static void dforest_buildrandomtreerec(decisionforestbuilder* s,
+     dfworkbuf* workbuf,
+     ae_int_t workingset,
+     ae_int_t varstoselect,
+     /* Real    */ ae_vector* treebuf,
+     dfvotebuf* votebuf,
      hqrndstate* rs,
-     ae_state *_state);
-static void dforest_dfbuildtreerec(/* Real    */ ae_matrix* xy,
-     ae_int_t npoints,
-     ae_int_t nvars,
-     ae_int_t nclasses,
-     ae_int_t nfeatures,
-     ae_int_t nvarsinpool,
-     ae_int_t flags,
-     ae_int_t* numprocessed,
+     ae_int_t idx0,
      ae_int_t idx1,
-     ae_int_t idx2,
-     dfinternalbuffers* bufs,
-     hqrndstate* rs,
+     ae_int_t oobidx0,
+     ae_int_t oobidx1,
+     double meanloss,
+     double topmostmeanloss,
+     ae_int_t* treesize,
      ae_state *_state);
-static void dforest_dfsplitc(/* Real    */ ae_vector* x,
+static void dforest_estimatevariableimportance(decisionforestbuilder* s,
+     ae_int_t sessionseed,
+     decisionforest* df,
+     ae_int_t ntrees,
+     dfreport* rep,
+     ae_state *_state);
+ae_bool _trypexec_dforest_estimatevariableimportance(decisionforestbuilder* s,
+    ae_int_t sessionseed,
+    decisionforest* df,
+    ae_int_t ntrees,
+    dfreport* rep, ae_state *_state);
+static void dforest_estimatepermutationimportances(decisionforestbuilder* s,
+     decisionforest* df,
+     ae_int_t ntrees,
+     ae_shared_pool* permpool,
+     ae_int_t idx0,
+     ae_int_t idx1,
+     ae_state *_state);
+ae_bool _trypexec_dforest_estimatepermutationimportances(decisionforestbuilder* s,
+    decisionforest* df,
+    ae_int_t ntrees,
+    ae_shared_pool* permpool,
+    ae_int_t idx0,
+    ae_int_t idx1, ae_state *_state);
+static void dforest_cleanreport(decisionforestbuilder* s,
+     dfreport* rep,
+     ae_state *_state);
+static double dforest_meannrms2(ae_int_t nclasses,
+     /* Integer */ ae_vector* trnlabelsi,
+     /* Real    */ ae_vector* trnlabelsr,
+     ae_int_t trnidx0,
+     ae_int_t trnidx1,
+     /* Integer */ ae_vector* tstlabelsi,
+     /* Real    */ ae_vector* tstlabelsr,
+     ae_int_t tstidx0,
+     ae_int_t tstidx1,
+     /* Integer */ ae_vector* tmpi,
+     ae_state *_state);
+static void dforest_choosecurrentsplitdense(decisionforestbuilder* s,
+     dfworkbuf* workbuf,
+     ae_int_t* varsinpool,
+     ae_int_t varstoselect,
+     hqrndstate* rs,
+     ae_int_t idx0,
+     ae_int_t idx1,
+     ae_int_t* varbest,
+     double* splitbest,
+     ae_state *_state);
+static void dforest_evaluatedensesplit(decisionforestbuilder* s,
+     dfworkbuf* workbuf,
+     hqrndstate* rs,
+     ae_int_t splitvar,
+     ae_int_t idx0,
+     ae_int_t idx1,
+     ae_int_t* info,
+     double* split,
+     double* rms,
+     ae_state *_state);
+static void dforest_classifiersplit(decisionforestbuilder* s,
+     dfworkbuf* workbuf,
+     /* Real    */ ae_vector* x,
      /* Integer */ ae_vector* c,
-     /* Integer */ ae_vector* cntbuf,
      ae_int_t n,
-     ae_int_t nc,
-     ae_int_t flags,
+     hqrndstate* rs,
      ae_int_t* info,
      double* threshold,
      double* e,
      /* Real    */ ae_vector* sortrbuf,
      /* Integer */ ae_vector* sortibuf,
      ae_state *_state);
-static void dforest_dfsplitr(/* Real    */ ae_vector* x,
+static void dforest_regressionsplit(decisionforestbuilder* s,
+     dfworkbuf* workbuf,
+     /* Real    */ ae_vector* x,
      /* Real    */ ae_vector* y,
      ae_int_t n,
-     ae_int_t flags,
      ae_int_t* info,
      double* threshold,
      double* e,
      /* Real    */ ae_vector* sortrbuf,
      /* Real    */ ae_vector* sortrbuf2,
+     ae_state *_state);
+static double dforest_getsplit(decisionforestbuilder* s,
+     double a,
+     double b,
+     hqrndstate* rs,
+     ae_state *_state);
+static void dforest_outputleaf(decisionforestbuilder* s,
+     dfworkbuf* workbuf,
+     /* Real    */ ae_vector* treebuf,
+     dfvotebuf* votebuf,
+     ae_int_t idx0,
+     ae_int_t idx1,
+     ae_int_t oobidx0,
+     ae_int_t oobidx1,
+     ae_int_t* treesize,
+     double leafval,
+     ae_state *_state);
+static void dforest_analyzeandpreprocessdataset(decisionforestbuilder* s,
+     ae_state *_state);
+static void dforest_mergetrees(decisionforestbuilder* s,
+     decisionforest* df,
+     ae_state *_state);
+static void dforest_processvotingresults(decisionforestbuilder* s,
+     ae_int_t ntrees,
+     dfvotebuf* buf,
+     dfreport* rep,
+     ae_state *_state);
+static double dforest_binarycompression(decisionforest* df,
+     ae_bool usemantissa8,
+     ae_state *_state);
+static ae_int_t dforest_computecompressedsizerec(decisionforest* df,
+     ae_bool usemantissa8,
+     ae_int_t treeroot,
+     ae_int_t treepos,
+     /* Integer */ ae_vector* compressedsizes,
+     ae_bool savecompressedsizes,
+     ae_state *_state);
+static void dforest_compressrec(decisionforest* df,
+     ae_bool usemantissa8,
+     ae_int_t treeroot,
+     ae_int_t treepos,
+     /* Integer */ ae_vector* compressedsizes,
+     ae_vector* buf,
+     ae_int_t* dstoffs,
+     ae_state *_state);
+static ae_int_t dforest_computecompresseduintsize(ae_int_t v,
+     ae_state *_state);
+static void dforest_streamuint(ae_vector* buf,
+     ae_int_t* offs,
+     ae_int_t v,
+     ae_state *_state);
+static ae_int_t dforest_unstreamuint(ae_vector* buf,
+     ae_int_t* offs,
+     ae_state *_state);
+static void dforest_streamfloat(ae_vector* buf,
+     ae_bool usemantissa8,
+     ae_int_t* offs,
+     double v,
+     ae_state *_state);
+static double dforest_unstreamfloat(ae_vector* buf,
+     ae_bool usemantissa8,
+     ae_int_t* offs,
+     ae_state *_state);
+static ae_int_t dforest_dfclserror(decisionforest* df,
+     /* Real    */ ae_matrix* xy,
+     ae_int_t npoints,
+     ae_state *_state);
+static void dforest_dfprocessinternaluncompressed(decisionforest* df,
+     ae_int_t subtreeroot,
+     ae_int_t nodeoffs,
+     /* Real    */ ae_vector* x,
+     /* Real    */ ae_vector* y,
+     ae_state *_state);
+static void dforest_dfprocessinternalcompressed(decisionforest* df,
+     ae_int_t offs,
+     /* Real    */ ae_vector* x,
+     /* Real    */ ae_vector* y,
+     ae_state *_state);
+static double dforest_xfastpow(double r, ae_int_t n, ae_state *_state);
+
+
+#endif
+#if defined(AE_COMPILE_KNN) || !defined(AE_PARTIAL_BUILD)
+static ae_int_t knn_knnfirstversion = 0;
+static void knn_clearreport(knnreport* rep, ae_state *_state);
+static void knn_processinternal(knnmodel* model,
+     knnbuffer* buf,
      ae_state *_state);
 
 
@@ -14731,22 +17212,15 @@ one of the reduced versions:
 
 It should be noted that, unlike LDA, PCA does not use class labels.
 
-COMMERCIAL EDITION OF ALGLIB:
-
-  ! Commercial version of ALGLIB includes two  important  improvements  of
-  ! this function, which can be used from C++ and C#:
-  ! * multithreading support
-  ! * Intel MKL support (lightweight Intel MKL is shipped with ALGLIB)
-  !
-  ! Multithreading typically gives sublinear (wrt to cores count) speedup,
-  ! because only some parts of the algorithm can be parallelized.
-  !
-  ! Intel MKL gives approximately constant  (with  respect  to  number  of
-  ! worker threads) acceleration factor which depends on CPU  being  used,
-  ! problem  size  and  "baseline"  ALGLIB  edition  which  is  used   for
-  ! comparison. Best results are achieved  for  high-dimensional  problems
-  ! (NVars is at least 256).
-  !
+  ! COMMERCIAL EDITION OF ALGLIB:
+  ! 
+  ! Commercial Edition of ALGLIB includes following important improvements
+  ! of this function:
+  ! * high-performance native backend with same C# interface (C# version)
+  ! * multithreading support (C++ and C# versions)
+  ! * hardware vendor (Intel) implementations of linear algebra primitives
+  !   (C++ and C# versions, x86/x64 platform)
+  ! 
   ! We recommend you to read 'Working with commercial version' section  of
   ! ALGLIB Reference Manual in order to find out how to  use  performance-
   ! related features provided by commercial edition of ALGLIB.
@@ -14793,7 +17267,12 @@ void pcabuildbasis(/* Real    */ ae_matrix* x,
     double kurtosis;
 
     ae_frame_make(_state, &_frame_block);
-    memset(&a, 0, sizeof(a));    memset(&u, 0, sizeof(u));    memset(&vt, 0, sizeof(vt));    memset(&m, 0, sizeof(m));    memset(&t, 0, sizeof(t));    *info = 0;
+    memset(&a, 0, sizeof(a));
+    memset(&u, 0, sizeof(u));
+    memset(&vt, 0, sizeof(vt));
+    memset(&m, 0, sizeof(m));
+    memset(&t, 0, sizeof(t));
+    *info = 0;
     ae_vector_clear(s2);
     ae_matrix_clear(v);
     ae_matrix_init(&a, 0, 0, DT_REAL, _state, ae_true);
@@ -14891,20 +17370,6 @@ void pcabuildbasis(/* Real    */ ae_matrix* x,
 
 
 /*************************************************************************
-Single-threaded stub. HPC ALGLIB replaces it by multithreaded code.
-*************************************************************************/
-void _pexec_pcabuildbasis(/* Real    */ ae_matrix* x,
-    ae_int_t npoints,
-    ae_int_t nvars,
-    ae_int_t* info,
-    /* Real    */ ae_vector* s2,
-    /* Real    */ ae_matrix* v, ae_state *_state)
-{
-    pcabuildbasis(x,npoints,nvars,info,s2,v, _state);
-}
-
-
-/*************************************************************************
 Principal components analysis
 
 This function performs truncated PCA, i.e. returns just a few most important
@@ -14916,24 +17381,15 @@ it is better to use pcabuildbasis() function.
 
 It should be noted that, unlike LDA, PCA does not use class labels.
 
-COMMERCIAL EDITION OF ALGLIB:
-
-  ! Commercial version of ALGLIB includes two  important  improvements  of
-  ! this function, which can be used from C++ and C#:
-  ! * multithreading support
-  ! * Intel MKL support (lightweight Intel MKL is shipped with ALGLIB)
-  !
-  ! For a situation  when  you  need  just  a  few  eigenvectors  (~1-10),
-  ! multithreading typically gives sublinear (wrt to cores count) speedup.
-  ! For larger  problems  it  may  give  you  nearly  linear  increase  in
-  ! performance.
-  !
-  ! Intel MKL gives approximately constant  (with  respect  to  number  of
-  ! worker threads) acceleration factor which depends on CPU  being  used,
-  ! problem  size  and  "baseline"  ALGLIB  edition  which  is  used   for
-  ! comparison. Best results are achieved  for  high-dimensional  problems
-  ! (NVars is at least 256).
-  !
+  ! COMMERCIAL EDITION OF ALGLIB:
+  ! 
+  ! Commercial Edition of ALGLIB includes following important improvements
+  ! of this function:
+  ! * high-performance native backend with same C# interface (C# version)
+  ! * multithreading support (C++ and C# versions)
+  ! * hardware vendor (Intel) implementations of linear algebra primitives
+  !   (C++ and C# versions, x86/x64 platform)
+  ! 
   ! We recommend you to read 'Working with commercial version' section  of
   ! ALGLIB Reference Manual in order to find out how to  use  performance-
   ! related features provided by commercial edition of ALGLIB.
@@ -14943,7 +17399,7 @@ INPUT PARAMETERS:
                     matrix contains ONLY INDEPENDENT VARIABLES.
     NPoints     -   dataset size, NPoints>=0
     NVars       -   number of independent variables, NVars>=1
-    NNeeded     -   number of requested directions, in [1,NVars] range;
+    NNeeded     -   number of requested components, in [1,NVars] range;
                     this function is efficient only for NNeeded<<NVars.
     Eps         -   desired  precision  of  vectors  returned;  underlying
                     solver will stop iterations as soon as absolute  error
@@ -14983,40 +17439,26 @@ void pcatruncatedsubspace(/* Real    */ ae_matrix* x,
 {
     ae_frame _frame_block;
     ae_matrix a;
-    ae_matrix z;
-    ae_matrix q;
     ae_matrix b;
-    ae_matrix r;
     ae_vector means;
-    ae_vector tau;
-    ae_matrix u;
-    ae_matrix vt;
-    ae_vector m;
-    ae_vector t;
     ae_int_t i;
     ae_int_t j;
     ae_int_t k;
-    ae_int_t nwork;
     double vv;
-    hqrndstate rs;
     eigsubspacestate solver;
     eigsubspacereport rep;
 
     ae_frame_make(_state, &_frame_block);
-    memset(&a, 0, sizeof(a));    memset(&z, 0, sizeof(z));    memset(&q, 0, sizeof(q));    memset(&b, 0, sizeof(b));    memset(&r, 0, sizeof(r));    memset(&means, 0, sizeof(means));    memset(&tau, 0, sizeof(tau));    memset(&u, 0, sizeof(u));    memset(&vt, 0, sizeof(vt));    memset(&m, 0, sizeof(m));    memset(&t, 0, sizeof(t));    memset(&rs, 0, sizeof(rs));    memset(&solver, 0, sizeof(solver));    memset(&rep, 0, sizeof(rep));    ae_vector_clear(s2);
+    memset(&a, 0, sizeof(a));
+    memset(&b, 0, sizeof(b));
+    memset(&means, 0, sizeof(means));
+    memset(&solver, 0, sizeof(solver));
+    memset(&rep, 0, sizeof(rep));
+    ae_vector_clear(s2);
     ae_matrix_clear(v);
     ae_matrix_init(&a, 0, 0, DT_REAL, _state, ae_true);
-    ae_matrix_init(&z, 0, 0, DT_REAL, _state, ae_true);
-    ae_matrix_init(&q, 0, 0, DT_REAL, _state, ae_true);
     ae_matrix_init(&b, 0, 0, DT_REAL, _state, ae_true);
-    ae_matrix_init(&r, 0, 0, DT_REAL, _state, ae_true);
     ae_vector_init(&means, 0, DT_REAL, _state, ae_true);
-    ae_vector_init(&tau, 0, DT_REAL, _state, ae_true);
-    ae_matrix_init(&u, 0, 0, DT_REAL, _state, ae_true);
-    ae_matrix_init(&vt, 0, 0, DT_REAL, _state, ae_true);
-    ae_vector_init(&m, 0, DT_REAL, _state, ae_true);
-    ae_vector_init(&t, 0, DT_REAL, _state, ae_true);
-    _hqrndstate_init(&rs, _state, ae_true);
     _eigsubspacestate_init(&solver, _state, ae_true);
     _eigsubspacereport_init(&rep, _state, ae_true);
 
@@ -15026,13 +17468,8 @@ void pcatruncatedsubspace(/* Real    */ ae_matrix* x,
     ae_assert(nneeded<=nvars, "PCATruncatedSubspace: nneeded>nvars", _state);
     ae_assert(maxits>=0, "PCATruncatedSubspace: maxits<0", _state);
     ae_assert(ae_isfinite(eps, _state)&&ae_fp_greater_eq(eps,(double)(0)), "PCATruncatedSubspace: eps<0 or is not finite", _state);
-    
-    /*
-     * Initialize parameters
-     */
-    nwork = ae_maxint(2*nneeded, nneeded+8, _state);
-    nwork = ae_minint(nwork, nvars, _state);
-    hqrndseed(3463, 9854, &rs, _state);
+    ae_assert(x->rows>=npoints, "PCATruncatedSubspace: rows(x)<npoints", _state);
+    ae_assert(x->cols>=nvars||npoints==0, "PCATruncatedSubspace: cols(x)<nvars", _state);
     
     /*
      * Special case: NPoints=0
@@ -15110,18 +17547,234 @@ void pcatruncatedsubspace(/* Real    */ ae_matrix* x,
 
 
 /*************************************************************************
-Single-threaded stub. HPC ALGLIB replaces it by multithreaded code.
+Sparse truncated principal components analysis
+
+This function performs sparse truncated PCA, i.e. returns just a few  most
+important principal components for a sparse input X.
+
+Internally it uses iterative eigensolver which is very efficient when only
+a minor fraction of full basis is required.
+
+It should be noted that, unlike LDA, PCA does not use class labels.
+
+  ! COMMERCIAL EDITION OF ALGLIB:
+  ! 
+  ! Commercial Edition of ALGLIB includes following important improvements
+  ! of this function:
+  ! * high-performance native backend with same C# interface (C# version)
+  ! * multithreading support (C++ and C# versions)
+  ! * hardware vendor (Intel) implementations of linear algebra primitives
+  !   (C++ and C# versions, x86/x64 platform)
+  ! 
+  ! We recommend you to read 'Working with commercial version' section  of
+  ! ALGLIB Reference Manual in order to find out how to  use  performance-
+  ! related features provided by commercial edition of ALGLIB.
+
+INPUT PARAMETERS:
+    X           -   sparse dataset, sparse  npoints*nvars  matrix.  It  is
+                    recommended to use CRS sparse storage format;  non-CRS
+                    input will be internally converted to CRS.
+                    Matrix contains ONLY INDEPENDENT VARIABLES,  and  must
+                    be EXACTLY npoints*nvars.
+    NPoints     -   dataset size, NPoints>=0
+    NVars       -   number of independent variables, NVars>=1
+    NNeeded     -   number of requested components, in [1,NVars] range;
+                    this function is efficient only for NNeeded<<NVars.
+    Eps         -   desired  precision  of  vectors  returned;  underlying
+                    solver will stop iterations as soon as absolute  error
+                    in corresponding singular values  reduces  to  roughly
+                    eps*MAX(lambda[]), with lambda[] being array of  eigen
+                    values.
+                    Zero value means that  algorithm  performs  number  of
+                    iterations  specified  by  maxits  parameter,  without
+                    paying attention to precision.
+    MaxIts      -   number of iterations performed by  subspace  iteration
+                    method. Zero value means that no  limit  on  iteration
+                    count is placed (eps-based stopping condition is used).
+                    
+
+OUTPUT PARAMETERS:
+    S2          -   array[NNeeded]. Variance values corresponding
+                    to basis vectors.
+    V           -   array[NVars,NNeeded]
+                    matrix, whose columns store basis vectors.
+                    
+NOTE: passing eps=0 and maxits=0 results in small eps  being  selected  as
+      a stopping condition. Exact value of automatically selected  eps  is
+      version-dependent.
+
+NOTE: zero  MaxIts  is  silently  replaced  by some reasonable value which
+      prevents eternal loops (possible when inputs are degenerate and  too
+      stringent stopping criteria are specified). In  current  version  it
+      is 50+2*NVars.
+
+  -- ALGLIB --
+     Copyright 10.01.2017 by Bochkanov Sergey
 *************************************************************************/
-void _pexec_pcatruncatedsubspace(/* Real    */ ae_matrix* x,
-    ae_int_t npoints,
-    ae_int_t nvars,
-    ae_int_t nneeded,
-    double eps,
-    ae_int_t maxits,
-    /* Real    */ ae_vector* s2,
-    /* Real    */ ae_matrix* v, ae_state *_state)
+void pcatruncatedsubspacesparse(sparsematrix* x,
+     ae_int_t npoints,
+     ae_int_t nvars,
+     ae_int_t nneeded,
+     double eps,
+     ae_int_t maxits,
+     /* Real    */ ae_vector* s2,
+     /* Real    */ ae_matrix* v,
+     ae_state *_state)
 {
-    pcatruncatedsubspace(x,npoints,nvars,nneeded,eps,maxits,s2,v, _state);
+    ae_frame _frame_block;
+    sparsematrix xcrs;
+    ae_vector b1;
+    ae_vector c1;
+    ae_vector z1;
+    ae_int_t i;
+    ae_int_t j;
+    ae_int_t k;
+    double vv;
+    ae_vector means;
+    eigsubspacestate solver;
+    eigsubspacereport rep;
+
+    ae_frame_make(_state, &_frame_block);
+    memset(&xcrs, 0, sizeof(xcrs));
+    memset(&b1, 0, sizeof(b1));
+    memset(&c1, 0, sizeof(c1));
+    memset(&z1, 0, sizeof(z1));
+    memset(&means, 0, sizeof(means));
+    memset(&solver, 0, sizeof(solver));
+    memset(&rep, 0, sizeof(rep));
+    ae_vector_clear(s2);
+    ae_matrix_clear(v);
+    _sparsematrix_init(&xcrs, _state, ae_true);
+    ae_vector_init(&b1, 0, DT_REAL, _state, ae_true);
+    ae_vector_init(&c1, 0, DT_REAL, _state, ae_true);
+    ae_vector_init(&z1, 0, DT_REAL, _state, ae_true);
+    ae_vector_init(&means, 0, DT_REAL, _state, ae_true);
+    _eigsubspacestate_init(&solver, _state, ae_true);
+    _eigsubspacereport_init(&rep, _state, ae_true);
+
+    ae_assert(npoints>=0, "PCATruncatedSubspaceSparse: npoints<0", _state);
+    ae_assert(nvars>=1, "PCATruncatedSubspaceSparse: nvars<1", _state);
+    ae_assert(nneeded>0, "PCATruncatedSubspaceSparse: nneeded<1", _state);
+    ae_assert(nneeded<=nvars, "PCATruncatedSubspaceSparse: nneeded>nvars", _state);
+    ae_assert(maxits>=0, "PCATruncatedSubspaceSparse: maxits<0", _state);
+    ae_assert(ae_isfinite(eps, _state)&&ae_fp_greater_eq(eps,(double)(0)), "PCATruncatedSubspaceSparse: eps<0 or is not finite", _state);
+    if( npoints>0 )
+    {
+        ae_assert(sparsegetnrows(x, _state)==npoints, "PCATruncatedSubspaceSparse: rows(x)!=npoints", _state);
+        ae_assert(sparsegetncols(x, _state)==nvars, "PCATruncatedSubspaceSparse: cols(x)!=nvars", _state);
+    }
+    
+    /*
+     * Special case: NPoints=0
+     */
+    if( npoints==0 )
+    {
+        ae_vector_set_length(s2, nneeded, _state);
+        ae_matrix_set_length(v, nvars, nneeded, _state);
+        for(i=0; i<=nvars-1; i++)
+        {
+            s2->ptr.p_double[i] = (double)(0);
+        }
+        for(i=0; i<=nvars-1; i++)
+        {
+            for(j=0; j<=nneeded-1; j++)
+            {
+                if( i==j )
+                {
+                    v->ptr.pp_double[i][j] = (double)(1);
+                }
+                else
+                {
+                    v->ptr.pp_double[i][j] = (double)(0);
+                }
+            }
+        }
+        ae_frame_leave(_state);
+        return;
+    }
+    
+    /*
+     * If input data are not in CRS format, perform conversion to CRS
+     */
+    if( !sparseiscrs(x, _state) )
+    {
+        sparsecopytocrs(x, &xcrs, _state);
+        pcatruncatedsubspacesparse(&xcrs, npoints, nvars, nneeded, eps, maxits, s2, v, _state);
+        ae_frame_leave(_state);
+        return;
+    }
+    
+    /*
+     * Initialize parameters, prepare buffers
+     */
+    ae_vector_set_length(&b1, npoints, _state);
+    ae_vector_set_length(&z1, nvars, _state);
+    if( ae_fp_eq(eps,(double)(0))&&maxits==0 )
+    {
+        eps = 1.0E-6;
+    }
+    if( maxits==0 )
+    {
+        maxits = 50+2*nvars;
+    }
+    
+    /*
+     * Calculate mean values
+     */
+    vv = (double)1/(double)npoints;
+    for(i=0; i<=npoints-1; i++)
+    {
+        b1.ptr.p_double[i] = vv;
+    }
+    sparsemtv(x, &b1, &means, _state);
+    
+    /*
+     * Find eigenvalues with subspace iteration solver
+     */
+    eigsubspacecreate(nvars, nneeded, &solver, _state);
+    eigsubspacesetcond(&solver, eps, maxits, _state);
+    eigsubspaceoocstart(&solver, 0, _state);
+    while(eigsubspaceooccontinue(&solver, _state))
+    {
+        ae_assert(solver.requesttype==0, "PCATruncatedSubspace: integrity check failed", _state);
+        for(k=0; k<=solver.requestsize-1; k++)
+        {
+            
+            /*
+             * Calculate B1=(X-meansX)*Zk
+             */
+            ae_v_move(&z1.ptr.p_double[0], 1, &solver.x.ptr.pp_double[0][k], solver.x.stride, ae_v_len(0,nvars-1));
+            sparsemv(x, &z1, &b1, _state);
+            vv = ae_v_dotproduct(&solver.x.ptr.pp_double[0][k], solver.x.stride, &means.ptr.p_double[0], 1, ae_v_len(0,nvars-1));
+            for(i=0; i<=npoints-1; i++)
+            {
+                b1.ptr.p_double[i] = b1.ptr.p_double[i]-vv;
+            }
+            
+            /*
+             * Calculate (X-meansX)^T*B1
+             */
+            sparsemtv(x, &b1, &c1, _state);
+            vv = (double)(0);
+            for(i=0; i<=npoints-1; i++)
+            {
+                vv = vv+b1.ptr.p_double[i];
+            }
+            for(j=0; j<=nvars-1; j++)
+            {
+                solver.ax.ptr.pp_double[j][k] = c1.ptr.p_double[j]-vv*means.ptr.p_double[j];
+            }
+        }
+    }
+    eigsubspaceoocstop(&solver, s2, v, &rep, _state);
+    if( npoints!=1 )
+    {
+        for(i=0; i<=nneeded-1; i++)
+        {
+            s2->ptr.p_double[i] = s2->ptr.p_double[i]/(npoints-1);
+        }
+    }
+    ae_frame_leave(_state);
 }
 
 
@@ -15342,7 +17995,8 @@ void dsnormalize(/* Real    */ ae_matrix* xy,
     double kurtosis;
 
     ae_frame_make(_state, &_frame_block);
-    memset(&tmp, 0, sizeof(tmp));    *info = 0;
+    memset(&tmp, 0, sizeof(tmp));
+    *info = 0;
     ae_vector_clear(means);
     ae_vector_clear(sigmas);
     ae_vector_init(&tmp, 0, DT_REAL, _state, ae_true);
@@ -15406,7 +18060,8 @@ void dsnormalizec(/* Real    */ ae_matrix* xy,
     double kurtosis;
 
     ae_frame_make(_state, &_frame_block);
-    memset(&tmp, 0, sizeof(tmp));    *info = 0;
+    memset(&tmp, 0, sizeof(tmp));
+    *info = 0;
     ae_vector_clear(means);
     ae_vector_clear(sigmas);
     ae_vector_init(&tmp, 0, DT_REAL, _state, ae_true);
@@ -15463,7 +18118,9 @@ double dsgetmeanmindistance(/* Real    */ ae_matrix* xy,
     double result;
 
     ae_frame_make(_state, &_frame_block);
-    memset(&tmp, 0, sizeof(tmp));    memset(&tmp2, 0, sizeof(tmp2));    ae_vector_init(&tmp, 0, DT_REAL, _state, ae_true);
+    memset(&tmp, 0, sizeof(tmp));
+    memset(&tmp2, 0, sizeof(tmp2));
+    ae_vector_init(&tmp, 0, DT_REAL, _state, ae_true);
     ae_vector_init(&tmp2, 0, DT_REAL, _state, ae_true);
 
     
@@ -15527,7 +18184,8 @@ void dstie(/* Real    */ ae_vector* a,
     ae_vector tmp;
 
     ae_frame_make(_state, &_frame_block);
-    memset(&tmp, 0, sizeof(tmp));    ae_vector_clear(ties);
+    memset(&tmp, 0, sizeof(tmp));
+    ae_vector_clear(ties);
     *tiecount = 0;
     ae_vector_clear(p1);
     ae_vector_clear(p2);
@@ -15596,7 +18254,8 @@ void dstiefasti(/* Real    */ ae_vector* a,
     ae_vector tmp;
 
     ae_frame_make(_state, &_frame_block);
-    memset(&tmp, 0, sizeof(tmp));    *tiecount = 0;
+    memset(&tmp, 0, sizeof(tmp));
+    *tiecount = 0;
     ae_vector_init(&tmp, 0, DT_INT, _state, ae_true);
 
     
@@ -15693,7 +18352,10 @@ void dsoptimalsplit2(/* Real    */ ae_vector* a,
     ae_frame_make(_state, &_frame_block);
     memset(&_a, 0, sizeof(_a));
     memset(&_c, 0, sizeof(_c));
-    memset(&ties, 0, sizeof(ties));    memset(&p1, 0, sizeof(p1));    memset(&p2, 0, sizeof(p2));    ae_vector_init_copy(&_a, a, _state, ae_true);
+    memset(&ties, 0, sizeof(ties));
+    memset(&p1, 0, sizeof(p1));
+    memset(&p2, 0, sizeof(p2));
+    ae_vector_init_copy(&_a, a, _state, ae_true);
     a = &_a;
     ae_vector_init_copy(&_c, c, _state, ae_true);
     c = &_c;
@@ -16105,7 +18767,13 @@ void dssplitk(/* Real    */ ae_vector* a,
     ae_frame_make(_state, &_frame_block);
     memset(&_a, 0, sizeof(_a));
     memset(&_c, 0, sizeof(_c));
-    memset(&ties, 0, sizeof(ties));    memset(&p1, 0, sizeof(p1));    memset(&p2, 0, sizeof(p2));    memset(&cnt, 0, sizeof(cnt));    memset(&bestsizes, 0, sizeof(bestsizes));    memset(&cursizes, 0, sizeof(cursizes));    ae_vector_init_copy(&_a, a, _state, ae_true);
+    memset(&ties, 0, sizeof(ties));
+    memset(&p1, 0, sizeof(p1));
+    memset(&p2, 0, sizeof(p2));
+    memset(&cnt, 0, sizeof(cnt));
+    memset(&bestsizes, 0, sizeof(bestsizes));
+    memset(&cursizes, 0, sizeof(cursizes));
+    ae_vector_init_copy(&_a, a, _state, ae_true);
     a = &_a;
     ae_vector_init_copy(&_c, c, _state, ae_true);
     c = &_c;
@@ -16366,7 +19034,14 @@ void dsoptimalsplitk(/* Real    */ ae_vector* a,
     ae_frame_make(_state, &_frame_block);
     memset(&_a, 0, sizeof(_a));
     memset(&_c, 0, sizeof(_c));
-    memset(&ties, 0, sizeof(ties));    memset(&p1, 0, sizeof(p1));    memset(&p2, 0, sizeof(p2));    memset(&cnt, 0, sizeof(cnt));    memset(&cnt2, 0, sizeof(cnt2));    memset(&cv, 0, sizeof(cv));    memset(&splits, 0, sizeof(splits));    ae_vector_init_copy(&_a, a, _state, ae_true);
+    memset(&ties, 0, sizeof(ties));
+    memset(&p1, 0, sizeof(p1));
+    memset(&p2, 0, sizeof(p2));
+    memset(&cnt, 0, sizeof(cnt));
+    memset(&cnt2, 0, sizeof(cnt2));
+    memset(&cv, 0, sizeof(cv));
+    memset(&splits, 0, sizeof(splits));
+    ae_vector_init_copy(&_a, a, _state, ae_true);
     a = &_a;
     ae_vector_init_copy(&_c, c, _state, ae_true);
     c = &_c;
@@ -16753,7 +19428,11 @@ void mlpcreate0(ae_int_t nin,
     ae_int_t lastproc;
 
     ae_frame_make(_state, &_frame_block);
-    memset(&lsizes, 0, sizeof(lsizes));    memset(&ltypes, 0, sizeof(ltypes));    memset(&lconnfirst, 0, sizeof(lconnfirst));    memset(&lconnlast, 0, sizeof(lconnlast));    _multilayerperceptron_clear(network);
+    memset(&lsizes, 0, sizeof(lsizes));
+    memset(&ltypes, 0, sizeof(ltypes));
+    memset(&lconnfirst, 0, sizeof(lconnfirst));
+    memset(&lconnlast, 0, sizeof(lconnlast));
+    _multilayerperceptron_clear(network);
     ae_vector_init(&lsizes, 0, DT_INT, _state, ae_true);
     ae_vector_init(&ltypes, 0, DT_INT, _state, ae_true);
     ae_vector_init(&lconnfirst, 0, DT_INT, _state, ae_true);
@@ -16807,7 +19486,11 @@ void mlpcreate1(ae_int_t nin,
     ae_int_t lastproc;
 
     ae_frame_make(_state, &_frame_block);
-    memset(&lsizes, 0, sizeof(lsizes));    memset(&ltypes, 0, sizeof(ltypes));    memset(&lconnfirst, 0, sizeof(lconnfirst));    memset(&lconnlast, 0, sizeof(lconnlast));    _multilayerperceptron_clear(network);
+    memset(&lsizes, 0, sizeof(lsizes));
+    memset(&ltypes, 0, sizeof(ltypes));
+    memset(&lconnfirst, 0, sizeof(lconnfirst));
+    memset(&lconnlast, 0, sizeof(lconnlast));
+    _multilayerperceptron_clear(network);
     ae_vector_init(&lsizes, 0, DT_INT, _state, ae_true);
     ae_vector_init(&ltypes, 0, DT_INT, _state, ae_true);
     ae_vector_init(&lconnfirst, 0, DT_INT, _state, ae_true);
@@ -16865,7 +19548,11 @@ void mlpcreate2(ae_int_t nin,
     ae_int_t lastproc;
 
     ae_frame_make(_state, &_frame_block);
-    memset(&lsizes, 0, sizeof(lsizes));    memset(&ltypes, 0, sizeof(ltypes));    memset(&lconnfirst, 0, sizeof(lconnfirst));    memset(&lconnlast, 0, sizeof(lconnlast));    _multilayerperceptron_clear(network);
+    memset(&lsizes, 0, sizeof(lsizes));
+    memset(&ltypes, 0, sizeof(ltypes));
+    memset(&lconnfirst, 0, sizeof(lconnfirst));
+    memset(&lconnlast, 0, sizeof(lconnlast));
+    _multilayerperceptron_clear(network);
     ae_vector_init(&lsizes, 0, DT_INT, _state, ae_true);
     ae_vector_init(&ltypes, 0, DT_INT, _state, ae_true);
     ae_vector_init(&lconnfirst, 0, DT_INT, _state, ae_true);
@@ -16935,7 +19622,11 @@ void mlpcreateb0(ae_int_t nin,
     ae_int_t i;
 
     ae_frame_make(_state, &_frame_block);
-    memset(&lsizes, 0, sizeof(lsizes));    memset(&ltypes, 0, sizeof(ltypes));    memset(&lconnfirst, 0, sizeof(lconnfirst));    memset(&lconnlast, 0, sizeof(lconnlast));    _multilayerperceptron_clear(network);
+    memset(&lsizes, 0, sizeof(lsizes));
+    memset(&ltypes, 0, sizeof(ltypes));
+    memset(&lconnfirst, 0, sizeof(lconnfirst));
+    memset(&lconnlast, 0, sizeof(lconnlast));
+    _multilayerperceptron_clear(network);
     ae_vector_init(&lsizes, 0, DT_INT, _state, ae_true);
     ae_vector_init(&ltypes, 0, DT_INT, _state, ae_true);
     ae_vector_init(&lconnfirst, 0, DT_INT, _state, ae_true);
@@ -17008,7 +19699,11 @@ void mlpcreateb1(ae_int_t nin,
     ae_int_t i;
 
     ae_frame_make(_state, &_frame_block);
-    memset(&lsizes, 0, sizeof(lsizes));    memset(&ltypes, 0, sizeof(ltypes));    memset(&lconnfirst, 0, sizeof(lconnfirst));    memset(&lconnlast, 0, sizeof(lconnlast));    _multilayerperceptron_clear(network);
+    memset(&lsizes, 0, sizeof(lsizes));
+    memset(&ltypes, 0, sizeof(ltypes));
+    memset(&lconnfirst, 0, sizeof(lconnfirst));
+    memset(&lconnlast, 0, sizeof(lconnlast));
+    _multilayerperceptron_clear(network);
     ae_vector_init(&lsizes, 0, DT_INT, _state, ae_true);
     ae_vector_init(&ltypes, 0, DT_INT, _state, ae_true);
     ae_vector_init(&lconnfirst, 0, DT_INT, _state, ae_true);
@@ -17084,7 +19779,11 @@ void mlpcreateb2(ae_int_t nin,
     ae_int_t i;
 
     ae_frame_make(_state, &_frame_block);
-    memset(&lsizes, 0, sizeof(lsizes));    memset(&ltypes, 0, sizeof(ltypes));    memset(&lconnfirst, 0, sizeof(lconnfirst));    memset(&lconnlast, 0, sizeof(lconnlast));    _multilayerperceptron_clear(network);
+    memset(&lsizes, 0, sizeof(lsizes));
+    memset(&ltypes, 0, sizeof(ltypes));
+    memset(&lconnfirst, 0, sizeof(lconnfirst));
+    memset(&lconnlast, 0, sizeof(lconnlast));
+    _multilayerperceptron_clear(network);
     ae_vector_init(&lsizes, 0, DT_INT, _state, ae_true);
     ae_vector_init(&ltypes, 0, DT_INT, _state, ae_true);
     ae_vector_init(&lconnfirst, 0, DT_INT, _state, ae_true);
@@ -17162,7 +19861,11 @@ void mlpcreater0(ae_int_t nin,
     ae_int_t i;
 
     ae_frame_make(_state, &_frame_block);
-    memset(&lsizes, 0, sizeof(lsizes));    memset(&ltypes, 0, sizeof(ltypes));    memset(&lconnfirst, 0, sizeof(lconnfirst));    memset(&lconnlast, 0, sizeof(lconnlast));    _multilayerperceptron_clear(network);
+    memset(&lsizes, 0, sizeof(lsizes));
+    memset(&ltypes, 0, sizeof(ltypes));
+    memset(&lconnfirst, 0, sizeof(lconnfirst));
+    memset(&lconnlast, 0, sizeof(lconnlast));
+    _multilayerperceptron_clear(network);
     ae_vector_init(&lsizes, 0, DT_INT, _state, ae_true);
     ae_vector_init(&ltypes, 0, DT_INT, _state, ae_true);
     ae_vector_init(&lconnfirst, 0, DT_INT, _state, ae_true);
@@ -17227,7 +19930,11 @@ void mlpcreater1(ae_int_t nin,
     ae_int_t i;
 
     ae_frame_make(_state, &_frame_block);
-    memset(&lsizes, 0, sizeof(lsizes));    memset(&ltypes, 0, sizeof(ltypes));    memset(&lconnfirst, 0, sizeof(lconnfirst));    memset(&lconnlast, 0, sizeof(lconnlast));    _multilayerperceptron_clear(network);
+    memset(&lsizes, 0, sizeof(lsizes));
+    memset(&ltypes, 0, sizeof(ltypes));
+    memset(&lconnfirst, 0, sizeof(lconnfirst));
+    memset(&lconnlast, 0, sizeof(lconnlast));
+    _multilayerperceptron_clear(network);
     ae_vector_init(&lsizes, 0, DT_INT, _state, ae_true);
     ae_vector_init(&ltypes, 0, DT_INT, _state, ae_true);
     ae_vector_init(&lconnfirst, 0, DT_INT, _state, ae_true);
@@ -17295,7 +20002,11 @@ void mlpcreater2(ae_int_t nin,
     ae_int_t i;
 
     ae_frame_make(_state, &_frame_block);
-    memset(&lsizes, 0, sizeof(lsizes));    memset(&ltypes, 0, sizeof(ltypes));    memset(&lconnfirst, 0, sizeof(lconnfirst));    memset(&lconnlast, 0, sizeof(lconnlast));    _multilayerperceptron_clear(network);
+    memset(&lsizes, 0, sizeof(lsizes));
+    memset(&ltypes, 0, sizeof(ltypes));
+    memset(&lconnfirst, 0, sizeof(lconnfirst));
+    memset(&lconnlast, 0, sizeof(lconnlast));
+    _multilayerperceptron_clear(network);
     ae_vector_init(&lsizes, 0, DT_INT, _state, ae_true);
     ae_vector_init(&ltypes, 0, DT_INT, _state, ae_true);
     ae_vector_init(&lconnfirst, 0, DT_INT, _state, ae_true);
@@ -17363,7 +20074,11 @@ void mlpcreatec0(ae_int_t nin,
     ae_int_t lastproc;
 
     ae_frame_make(_state, &_frame_block);
-    memset(&lsizes, 0, sizeof(lsizes));    memset(&ltypes, 0, sizeof(ltypes));    memset(&lconnfirst, 0, sizeof(lconnfirst));    memset(&lconnlast, 0, sizeof(lconnlast));    _multilayerperceptron_clear(network);
+    memset(&lsizes, 0, sizeof(lsizes));
+    memset(&ltypes, 0, sizeof(ltypes));
+    memset(&lconnfirst, 0, sizeof(lconnfirst));
+    memset(&lconnlast, 0, sizeof(lconnlast));
+    _multilayerperceptron_clear(network);
     ae_vector_init(&lsizes, 0, DT_INT, _state, ae_true);
     ae_vector_init(&ltypes, 0, DT_INT, _state, ae_true);
     ae_vector_init(&lconnfirst, 0, DT_INT, _state, ae_true);
@@ -17417,7 +20132,11 @@ void mlpcreatec1(ae_int_t nin,
     ae_int_t lastproc;
 
     ae_frame_make(_state, &_frame_block);
-    memset(&lsizes, 0, sizeof(lsizes));    memset(&ltypes, 0, sizeof(ltypes));    memset(&lconnfirst, 0, sizeof(lconnfirst));    memset(&lconnlast, 0, sizeof(lconnlast));    _multilayerperceptron_clear(network);
+    memset(&lsizes, 0, sizeof(lsizes));
+    memset(&ltypes, 0, sizeof(ltypes));
+    memset(&lconnfirst, 0, sizeof(lconnfirst));
+    memset(&lconnlast, 0, sizeof(lconnlast));
+    _multilayerperceptron_clear(network);
     ae_vector_init(&lsizes, 0, DT_INT, _state, ae_true);
     ae_vector_init(&ltypes, 0, DT_INT, _state, ae_true);
     ae_vector_init(&lconnfirst, 0, DT_INT, _state, ae_true);
@@ -17474,7 +20193,11 @@ void mlpcreatec2(ae_int_t nin,
     ae_int_t lastproc;
 
     ae_frame_make(_state, &_frame_block);
-    memset(&lsizes, 0, sizeof(lsizes));    memset(&ltypes, 0, sizeof(ltypes));    memset(&lconnfirst, 0, sizeof(lconnfirst));    memset(&lconnlast, 0, sizeof(lconnlast));    _multilayerperceptron_clear(network);
+    memset(&lsizes, 0, sizeof(lsizes));
+    memset(&ltypes, 0, sizeof(ltypes));
+    memset(&lconnfirst, 0, sizeof(lconnfirst));
+    memset(&lconnlast, 0, sizeof(lconnlast));
+    _multilayerperceptron_clear(network);
     ae_vector_init(&lsizes, 0, DT_INT, _state, ae_true);
     ae_vector_init(&ltypes, 0, DT_INT, _state, ae_true);
     ae_vector_init(&lconnfirst, 0, DT_INT, _state, ae_true);
@@ -17557,7 +20280,9 @@ void mlpcopyshared(multilayerperceptron* network1,
     smlpgrad sgrad;
 
     ae_frame_make(_state, &_frame_block);
-    memset(&buf, 0, sizeof(buf));    memset(&sgrad, 0, sizeof(sgrad));    _mlpbuffers_init(&buf, _state, ae_true);
+    memset(&buf, 0, sizeof(buf));
+    memset(&sgrad, 0, sizeof(sgrad));
+    _mlpbuffers_init(&buf, _state, ae_true);
     _smlpgrad_init(&sgrad, _state, ae_true);
 
     
@@ -18024,7 +20749,8 @@ void mlprandomize(multilayerperceptron* network, ae_state *_state)
     double wscale;
 
     ae_frame_make(_state, &_frame_block);
-    memset(&r, 0, sizeof(r));    _hqrndstate_init(&r, _state, ae_true);
+    memset(&r, 0, sizeof(r));
+    _hqrndstate_init(&r, _state, ae_true);
 
     hqrndrandomize(&r, _state);
     mlpproperties(network, &nin, &nout, &wcount, _state);
@@ -18293,7 +21019,9 @@ void mlpinitpreprocessor(multilayerperceptron* network,
     double s;
 
     ae_frame_make(_state, &_frame_block);
-    memset(&means, 0, sizeof(means));    memset(&sigmas, 0, sizeof(sigmas));    ae_vector_init(&means, 0, DT_REAL, _state, ae_true);
+    memset(&means, 0, sizeof(means));
+    memset(&sigmas, 0, sizeof(sigmas));
+    ae_vector_init(&means, 0, DT_REAL, _state, ae_true);
     ae_vector_init(&sigmas, 0, DT_REAL, _state, ae_true);
 
     mlpproperties(network, &nin, &nout, &wcount, _state);
@@ -18439,7 +21167,9 @@ void mlpinitpreprocessorsparse(multilayerperceptron* network,
     ae_int_t j;
 
     ae_frame_make(_state, &_frame_block);
-    memset(&means, 0, sizeof(means));    memset(&sigmas, 0, sizeof(sigmas));    ae_vector_init(&means, 0, DT_REAL, _state, ae_true);
+    memset(&means, 0, sizeof(means));
+    memset(&sigmas, 0, sizeof(sigmas));
+    ae_vector_init(&means, 0, DT_REAL, _state, ae_true);
     ae_vector_init(&sigmas, 0, DT_REAL, _state, ae_true);
 
     mlpproperties(network, &nin, &nout, &wcount, _state);
@@ -18605,7 +21335,9 @@ void mlpinitpreprocessorsubset(multilayerperceptron* network,
     ae_int_t j;
 
     ae_frame_make(_state, &_frame_block);
-    memset(&means, 0, sizeof(means));    memset(&sigmas, 0, sizeof(sigmas));    ae_vector_init(&means, 0, DT_REAL, _state, ae_true);
+    memset(&means, 0, sizeof(means));
+    memset(&sigmas, 0, sizeof(sigmas));
+    ae_vector_init(&means, 0, DT_REAL, _state, ae_true);
     ae_vector_init(&sigmas, 0, DT_REAL, _state, ae_true);
 
     ae_assert(setsize>=0, "MLPInitPreprocessorSubset: SetSize<0", _state);
@@ -18784,7 +21516,9 @@ void mlpinitpreprocessorsparsesubset(multilayerperceptron* network,
     ae_int_t j;
 
     ae_frame_make(_state, &_frame_block);
-    memset(&means, 0, sizeof(means));    memset(&sigmas, 0, sizeof(sigmas));    ae_vector_init(&means, 0, DT_REAL, _state, ae_true);
+    memset(&means, 0, sizeof(means));
+    memset(&sigmas, 0, sizeof(sigmas));
+    ae_vector_init(&means, 0, DT_REAL, _state, ae_true);
     ae_vector_init(&sigmas, 0, DT_REAL, _state, ae_true);
 
     ae_assert(setsize>=0, "MLPInitPreprocessorSparseSubset: SetSize<0", _state);
@@ -19658,33 +22392,16 @@ void mlpprocessi(multilayerperceptron* network,
 /*************************************************************************
 Error of the neural network on dataset.
 
-
-FOR USERS OF COMMERCIAL EDITION:
-
-  ! Commercial version of ALGLIB includes two  important  improvements  of
-  ! this function:
-  ! * multicore support (C++ and C# computational cores)
-  ! * SSE support 
-  !
-  ! First improvement gives close-to-linear speedup on multicore systems.
-  ! Second improvement gives constant speedup (2-3x, depending on your CPU)
-  !
-  ! In order to use multicore features you have to:
-  ! * use commercial version of ALGLIB
-  ! * call  this  function  with  "smp_"  prefix,  which  indicates  that
-  !   multicore code will be used (for multicore support)
-  !
-  ! In order to use SSE features you have to:
-  ! * use commercial version of ALGLIB on Intel processors
-  ! * use C++ computational core
-  !
-  ! This note is given for users of commercial edition; if  you  use  GPL
-  ! edition, you still will be able to call smp-version of this function,
-  ! but all computations will be done serially.
-  !
-  ! We recommend you to carefully read ALGLIB Reference  Manual,  section
-  ! called 'SMP support', before using parallel version of this function.
-
+  ! COMMERCIAL EDITION OF ALGLIB:
+  ! 
+  ! Commercial Edition of ALGLIB includes following important improvements
+  ! of this function:
+  ! * high-performance native backend with same C# interface (C# version)
+  ! * multithreading support (C++ and C# versions)
+  ! 
+  ! We recommend you to read 'Working with commercial version' section  of
+  ! ALGLIB Reference Manual in order to find out how to  use  performance-
+  ! related features provided by commercial edition of ALGLIB.
 
 INPUT PARAMETERS:
     Network     -   neural network;
@@ -19743,46 +22460,18 @@ double mlperror(multilayerperceptron* network,
 
 
 /*************************************************************************
-Single-threaded stub. HPC ALGLIB replaces it by multithreaded code.
-*************************************************************************/
-double _pexec_mlperror(multilayerperceptron* network,
-    /* Real    */ ae_matrix* xy,
-    ae_int_t npoints, ae_state *_state)
-{
-    return mlperror(network,xy,npoints, _state);
-}
-
-
-/*************************************************************************
 Error of the neural network on dataset given by sparse matrix.
 
-
-FOR USERS OF COMMERCIAL EDITION:
-
-  ! Commercial version of ALGLIB includes two  important  improvements  of
-  ! this function:
-  ! * multicore support (C++ and C# computational cores)
-  ! * SSE support 
-  !
-  ! First improvement gives close-to-linear speedup on multicore systems.
-  ! Second improvement gives constant speedup (2-3x, depending on your CPU)
-  !
-  ! In order to use multicore features you have to:
-  ! * use commercial version of ALGLIB
-  ! * call  this  function  with  "smp_"  prefix,  which  indicates  that
-  !   multicore code will be used (for multicore support)
-  !
-  ! In order to use SSE features you have to:
-  ! * use commercial version of ALGLIB on Intel processors
-  ! * use C++ computational core
-  !
-  ! This note is given for users of commercial edition; if  you  use  GPL
-  ! edition, you still will be able to call smp-version of this function,
-  ! but all computations will be done serially.
-  !
-  ! We recommend you to carefully read ALGLIB Reference  Manual,  section
-  ! called 'SMP support', before using parallel version of this function.
-
+  ! COMMERCIAL EDITION OF ALGLIB:
+  ! 
+  ! Commercial Edition of ALGLIB includes following important improvements
+  ! of this function:
+  ! * high-performance native backend with same C# interface (C# version)
+  ! * multithreading support (C++ and C# versions)
+  ! 
+  ! We recommend you to read 'Working with commercial version' section  of
+  ! ALGLIB Reference Manual in order to find out how to  use  performance-
+  ! related features provided by commercial edition of ALGLIB.
 
 INPUT PARAMETERS:
     Network     -   neural network
@@ -19842,17 +22531,6 @@ double mlperrorsparse(multilayerperceptron* network,
     mlpallerrorsx(network, &network->dummydxy, xy, npoints, 1, &network->dummyidx, 0, npoints, 0, &network->buf, &network->err, _state);
     result = ae_sqr(network->err.rmserror, _state)*npoints*mlpgetoutputscount(network, _state)/2;
     return result;
-}
-
-
-/*************************************************************************
-Single-threaded stub. HPC ALGLIB replaces it by multithreaded code.
-*************************************************************************/
-double _pexec_mlperrorsparse(multilayerperceptron* network,
-    sparsematrix* xy,
-    ae_int_t npoints, ae_state *_state)
-{
-    return mlperrorsparse(network,xy,npoints, _state);
 }
 
 
@@ -19923,33 +22601,16 @@ double mlperrorn(multilayerperceptron* network,
 /*************************************************************************
 Classification error of the neural network on dataset.
 
-
-FOR USERS OF COMMERCIAL EDITION:
-
-  ! Commercial version of ALGLIB includes two  important  improvements  of
-  ! this function:
-  ! * multicore support (C++ and C# computational cores)
-  ! * SSE support 
-  !
-  ! First improvement gives close-to-linear speedup on multicore  systems.
-  ! Second improvement gives constant speedup (2-3x depending on your CPU)
-  !
-  ! In order to use multicore features you have to:
-  ! * use commercial version of ALGLIB
-  ! * call  this  function  with  "smp_"  prefix,  which  indicates  that
-  !   multicore code will be used (for multicore support)
-  !
-  ! In order to use SSE features you have to:
-  ! * use commercial version of ALGLIB on Intel processors
-  ! * use C++ computational core
-  !
-  ! This note is given for users of commercial edition; if  you  use  GPL
-  ! edition, you still will be able to call smp-version of this function,
-  ! but all computations will be done serially.
-  !
-  ! We recommend you to carefully read ALGLIB Reference  Manual,  section
-  ! called 'SMP support', before using parallel version of this function.
-
+  ! COMMERCIAL EDITION OF ALGLIB:
+  ! 
+  ! Commercial Edition of ALGLIB includes following important improvements
+  ! of this function:
+  ! * high-performance native backend with same C# interface (C# version)
+  ! * multithreading support (C++ and C# versions)
+  ! 
+  ! We recommend you to read 'Working with commercial version' section  of
+  ! ALGLIB Reference Manual in order to find out how to  use  performance-
+  ! related features provided by commercial edition of ALGLIB.
 
 INPUT PARAMETERS:
     Network     -   neural network;
@@ -20008,46 +22669,18 @@ ae_int_t mlpclserror(multilayerperceptron* network,
 
 
 /*************************************************************************
-Single-threaded stub. HPC ALGLIB replaces it by multithreaded code.
-*************************************************************************/
-ae_int_t _pexec_mlpclserror(multilayerperceptron* network,
-    /* Real    */ ae_matrix* xy,
-    ae_int_t npoints, ae_state *_state)
-{
-    return mlpclserror(network,xy,npoints, _state);
-}
-
-
-/*************************************************************************
 Relative classification error on the test set.
 
-
-FOR USERS OF COMMERCIAL EDITION:
-
-  ! Commercial version of ALGLIB includes two  important  improvements  of
-  ! this function:
-  ! * multicore support (C++ and C# computational cores)
-  ! * SSE support 
-  !
-  ! First improvement gives close-to-linear speedup on multicore  systems.
-  ! Second improvement gives constant speedup (2-3x depending on your CPU)
-  !
-  ! In order to use multicore features you have to:
-  ! * use commercial version of ALGLIB
-  ! * call  this  function  with  "smp_"  prefix,  which  indicates  that
-  !   multicore code will be used (for multicore support)
-  !
-  ! In order to use SSE features you have to:
-  ! * use commercial version of ALGLIB on Intel processors
-  ! * use C++ computational core
-  !
-  ! This note is given for users of commercial edition; if  you  use  GPL
-  ! edition, you still will be able to call smp-version of this function,
-  ! but all computations will be done serially.
-  !
-  ! We recommend you to carefully read ALGLIB Reference  Manual,  section
-  ! called 'SMP support', before using parallel version of this function.
-
+  ! COMMERCIAL EDITION OF ALGLIB:
+  ! 
+  ! Commercial Edition of ALGLIB includes following important improvements
+  ! of this function:
+  ! * high-performance native backend with same C# interface (C# version)
+  ! * multithreading support (C++ and C# versions)
+  ! 
+  ! We recommend you to read 'Working with commercial version' section  of
+  ! ALGLIB Reference Manual in order to find out how to  use  performance-
+  ! related features provided by commercial edition of ALGLIB.
 
 INPUT PARAMETERS:
     Network     -   neural network;
@@ -20113,46 +22746,18 @@ double mlprelclserror(multilayerperceptron* network,
 
 
 /*************************************************************************
-Single-threaded stub. HPC ALGLIB replaces it by multithreaded code.
-*************************************************************************/
-double _pexec_mlprelclserror(multilayerperceptron* network,
-    /* Real    */ ae_matrix* xy,
-    ae_int_t npoints, ae_state *_state)
-{
-    return mlprelclserror(network,xy,npoints, _state);
-}
-
-
-/*************************************************************************
 Relative classification error on the test set given by sparse matrix.
 
-
-FOR USERS OF COMMERCIAL EDITION:
-
-  ! Commercial version of ALGLIB includes two  important  improvements  of
-  ! this function:
-  ! * multicore support (C++ and C# computational cores)
-  ! * SSE support 
-  !
-  ! First improvement gives close-to-linear speedup on multicore  systems.
-  ! Second improvement gives constant speedup (2-3x depending on your CPU)
-  !
-  ! In order to use multicore features you have to:
-  ! * use commercial version of ALGLIB
-  ! * call  this  function  with  "smp_"  prefix,  which  indicates  that
-  !   multicore code will be used (for multicore support)
-  !
-  ! In order to use SSE features you have to:
-  ! * use commercial version of ALGLIB on Intel processors
-  ! * use C++ computational core
-  !
-  ! This note is given for users of commercial edition; if  you  use  GPL
-  ! edition, you still will be able to call smp-version of this function,
-  ! but all computations will be done serially.
-  !
-  ! We recommend you to carefully read ALGLIB Reference  Manual,  section
-  ! called 'SMP support', before using parallel version of this function.
-
+  ! COMMERCIAL EDITION OF ALGLIB:
+  ! 
+  ! Commercial Edition of ALGLIB includes following important improvements
+  ! of this function:
+  ! * high-performance native backend with same C# interface (C# version)
+  ! * multithreading support (C++ and C# versions)
+  ! 
+  ! We recommend you to read 'Working with commercial version' section  of
+  ! ALGLIB Reference Manual in order to find out how to  use  performance-
+  ! related features provided by commercial edition of ALGLIB.
 
 INPUT PARAMETERS:
     Network     -   neural network;
@@ -20214,46 +22819,18 @@ double mlprelclserrorsparse(multilayerperceptron* network,
 
 
 /*************************************************************************
-Single-threaded stub. HPC ALGLIB replaces it by multithreaded code.
-*************************************************************************/
-double _pexec_mlprelclserrorsparse(multilayerperceptron* network,
-    sparsematrix* xy,
-    ae_int_t npoints, ae_state *_state)
-{
-    return mlprelclserrorsparse(network,xy,npoints, _state);
-}
-
-
-/*************************************************************************
 Average cross-entropy  (in bits  per element) on the test set.
 
-
-FOR USERS OF COMMERCIAL EDITION:
-
-  ! Commercial version of ALGLIB includes two  important  improvements  of
-  ! this function:
-  ! * multicore support (C++ and C# computational cores)
-  ! * SSE support 
-  !
-  ! First improvement gives close-to-linear speedup on multicore  systems.
-  ! Second improvement gives constant speedup (2-3x depending on your CPU)
-  !
-  ! In order to use multicore features you have to:
-  ! * use commercial version of ALGLIB
-  ! * call  this  function  with  "smp_"  prefix,  which  indicates  that
-  !   multicore code will be used (for multicore support)
-  !
-  ! In order to use SSE features you have to:
-  ! * use commercial version of ALGLIB on Intel processors
-  ! * use C++ computational core
-  !
-  ! This note is given for users of commercial edition; if  you  use  GPL
-  ! edition, you still will be able to call smp-version of this function,
-  ! but all computations will be done serially.
-  !
-  ! We recommend you to carefully read ALGLIB Reference  Manual,  section
-  ! called 'SMP support', before using parallel version of this function.
-
+  ! COMMERCIAL EDITION OF ALGLIB:
+  ! 
+  ! Commercial Edition of ALGLIB includes following important improvements
+  ! of this function:
+  ! * high-performance native backend with same C# interface (C# version)
+  ! * multithreading support (C++ and C# versions)
+  ! 
+  ! We recommend you to read 'Working with commercial version' section  of
+  ! ALGLIB Reference Manual in order to find out how to  use  performance-
+  ! related features provided by commercial edition of ALGLIB.
 
 INPUT PARAMETERS:
     Network     -   neural network;
@@ -20313,47 +22890,19 @@ double mlpavgce(multilayerperceptron* network,
 
 
 /*************************************************************************
-Single-threaded stub. HPC ALGLIB replaces it by multithreaded code.
-*************************************************************************/
-double _pexec_mlpavgce(multilayerperceptron* network,
-    /* Real    */ ae_matrix* xy,
-    ae_int_t npoints, ae_state *_state)
-{
-    return mlpavgce(network,xy,npoints, _state);
-}
-
-
-/*************************************************************************
 Average  cross-entropy  (in bits  per element)  on the  test set  given by
 sparse matrix.
 
-
-FOR USERS OF COMMERCIAL EDITION:
-
-  ! Commercial version of ALGLIB includes two  important  improvements  of
-  ! this function:
-  ! * multicore support (C++ and C# computational cores)
-  ! * SSE support 
-  !
-  ! First improvement gives close-to-linear speedup on multicore  systems.
-  ! Second improvement gives constant speedup (2-3x depending on your CPU)
-  !
-  ! In order to use multicore features you have to:
-  ! * use commercial version of ALGLIB
-  ! * call  this  function  with  "smp_"  prefix,  which  indicates  that
-  !   multicore code will be used (for multicore support)
-  !
-  ! In order to use SSE features you have to:
-  ! * use commercial version of ALGLIB on Intel processors
-  ! * use C++ computational core
-  !
-  ! This note is given for users of commercial edition; if  you  use  GPL
-  ! edition, you still will be able to call smp-version of this function,
-  ! but all computations will be done serially.
-  !
-  ! We recommend you to carefully read ALGLIB Reference  Manual,  section
-  ! called 'SMP support', before using parallel version of this function.
-
+  ! COMMERCIAL EDITION OF ALGLIB:
+  ! 
+  ! Commercial Edition of ALGLIB includes following important improvements
+  ! of this function:
+  ! * high-performance native backend with same C# interface (C# version)
+  ! * multithreading support (C++ and C# versions)
+  ! 
+  ! We recommend you to read 'Working with commercial version' section  of
+  ! ALGLIB Reference Manual in order to find out how to  use  performance-
+  ! related features provided by commercial edition of ALGLIB.
 
 INPUT PARAMETERS:
     Network     -   neural network;
@@ -20418,46 +22967,18 @@ double mlpavgcesparse(multilayerperceptron* network,
 
 
 /*************************************************************************
-Single-threaded stub. HPC ALGLIB replaces it by multithreaded code.
-*************************************************************************/
-double _pexec_mlpavgcesparse(multilayerperceptron* network,
-    sparsematrix* xy,
-    ae_int_t npoints, ae_state *_state)
-{
-    return mlpavgcesparse(network,xy,npoints, _state);
-}
-
-
-/*************************************************************************
 RMS error on the test set given.
 
-
-FOR USERS OF COMMERCIAL EDITION:
-
-  ! Commercial version of ALGLIB includes two  important  improvements  of
-  ! this function:
-  ! * multicore support (C++ and C# computational cores)
-  ! * SSE support 
-  !
-  ! First improvement gives close-to-linear speedup on multicore  systems.
-  ! Second improvement gives constant speedup (2-3x depending on your CPU)
-  !
-  ! In order to use multicore features you have to:
-  ! * use commercial version of ALGLIB
-  ! * call  this  function  with  "smp_"  prefix,  which  indicates  that
-  !   multicore code will be used (for multicore support)
-  !
-  ! In order to use SSE features you have to:
-  ! * use commercial version of ALGLIB on Intel processors
-  ! * use C++ computational core
-  !
-  ! This note is given for users of commercial edition; if  you  use  GPL
-  ! edition, you still will be able to call smp-version of this function,
-  ! but all computations will be done serially.
-  !
-  ! We recommend you to carefully read ALGLIB Reference  Manual,  section
-  ! called 'SMP support', before using parallel version of this function.
-
+  ! COMMERCIAL EDITION OF ALGLIB:
+  ! 
+  ! Commercial Edition of ALGLIB includes following important improvements
+  ! of this function:
+  ! * high-performance native backend with same C# interface (C# version)
+  ! * multithreading support (C++ and C# versions)
+  ! 
+  ! We recommend you to read 'Working with commercial version' section  of
+  ! ALGLIB Reference Manual in order to find out how to  use  performance-
+  ! related features provided by commercial edition of ALGLIB.
 
 INPUT PARAMETERS:
     Network     -   neural network;
@@ -20518,46 +23039,18 @@ double mlprmserror(multilayerperceptron* network,
 
 
 /*************************************************************************
-Single-threaded stub. HPC ALGLIB replaces it by multithreaded code.
-*************************************************************************/
-double _pexec_mlprmserror(multilayerperceptron* network,
-    /* Real    */ ae_matrix* xy,
-    ae_int_t npoints, ae_state *_state)
-{
-    return mlprmserror(network,xy,npoints, _state);
-}
-
-
-/*************************************************************************
 RMS error on the test set given by sparse matrix.
 
-
-FOR USERS OF COMMERCIAL EDITION:
-
-  ! Commercial version of ALGLIB includes two  important  improvements  of
-  ! this function:
-  ! * multicore support (C++ and C# computational cores)
-  ! * SSE support 
-  !
-  ! First improvement gives close-to-linear speedup on multicore  systems.
-  ! Second improvement gives constant speedup (2-3x depending on your CPU)
-  !
-  ! In order to use multicore features you have to:
-  ! * use commercial version of ALGLIB
-  ! * call  this  function  with  "smp_"  prefix,  which  indicates  that
-  !   multicore code will be used (for multicore support)
-  !
-  ! In order to use SSE features you have to:
-  ! * use commercial version of ALGLIB on Intel processors
-  ! * use C++ computational core
-  !
-  ! This note is given for users of commercial edition; if  you  use  GPL
-  ! edition, you still will be able to call smp-version of this function,
-  ! but all computations will be done serially.
-  !
-  ! We recommend you to carefully read ALGLIB Reference  Manual,  section
-  ! called 'SMP support', before using parallel version of this function.
-
+  ! COMMERCIAL EDITION OF ALGLIB:
+  ! 
+  ! Commercial Edition of ALGLIB includes following important improvements
+  ! of this function:
+  ! * high-performance native backend with same C# interface (C# version)
+  ! * multithreading support (C++ and C# versions)
+  ! 
+  ! We recommend you to read 'Working with commercial version' section  of
+  ! ALGLIB Reference Manual in order to find out how to  use  performance-
+  ! related features provided by commercial edition of ALGLIB.
 
 INPUT PARAMETERS:
     Network     -   neural network;
@@ -20623,46 +23116,18 @@ double mlprmserrorsparse(multilayerperceptron* network,
 
 
 /*************************************************************************
-Single-threaded stub. HPC ALGLIB replaces it by multithreaded code.
-*************************************************************************/
-double _pexec_mlprmserrorsparse(multilayerperceptron* network,
-    sparsematrix* xy,
-    ae_int_t npoints, ae_state *_state)
-{
-    return mlprmserrorsparse(network,xy,npoints, _state);
-}
-
-
-/*************************************************************************
 Average absolute error on the test set.
 
-
-FOR USERS OF COMMERCIAL EDITION:
-
-  ! Commercial version of ALGLIB includes two  important  improvements  of
-  ! this function:
-  ! * multicore support (C++ and C# computational cores)
-  ! * SSE support 
-  !
-  ! First improvement gives close-to-linear speedup on multicore  systems.
-  ! Second improvement gives constant speedup (2-3x depending on your CPU)
-  !
-  ! In order to use multicore features you have to:
-  ! * use commercial version of ALGLIB
-  ! * call  this  function  with  "smp_"  prefix,  which  indicates  that
-  !   multicore code will be used (for multicore support)
-  !
-  ! In order to use SSE features you have to:
-  ! * use commercial version of ALGLIB on Intel processors
-  ! * use C++ computational core
-  !
-  ! This note is given for users of commercial edition; if  you  use  GPL
-  ! edition, you still will be able to call smp-version of this function,
-  ! but all computations will be done serially.
-  !
-  ! We recommend you to carefully read ALGLIB Reference  Manual,  section
-  ! called 'SMP support', before using parallel version of this function.
-
+  ! COMMERCIAL EDITION OF ALGLIB:
+  ! 
+  ! Commercial Edition of ALGLIB includes following important improvements
+  ! of this function:
+  ! * high-performance native backend with same C# interface (C# version)
+  ! * multithreading support (C++ and C# versions)
+  ! 
+  ! We recommend you to read 'Working with commercial version' section  of
+  ! ALGLIB Reference Manual in order to find out how to  use  performance-
+  ! related features provided by commercial edition of ALGLIB.
 
 INPUT PARAMETERS:
     Network     -   neural network;
@@ -20722,46 +23187,18 @@ double mlpavgerror(multilayerperceptron* network,
 
 
 /*************************************************************************
-Single-threaded stub. HPC ALGLIB replaces it by multithreaded code.
-*************************************************************************/
-double _pexec_mlpavgerror(multilayerperceptron* network,
-    /* Real    */ ae_matrix* xy,
-    ae_int_t npoints, ae_state *_state)
-{
-    return mlpavgerror(network,xy,npoints, _state);
-}
-
-
-/*************************************************************************
 Average absolute error on the test set given by sparse matrix.
 
-
-FOR USERS OF COMMERCIAL EDITION:
-
-  ! Commercial version of ALGLIB includes two  important  improvements  of
-  ! this function:
-  ! * multicore support (C++ and C# computational cores)
-  ! * SSE support 
-  !
-  ! First improvement gives close-to-linear speedup on multicore  systems.
-  ! Second improvement gives constant speedup (2-3x depending on your CPU)
-  !
-  ! In order to use multicore features you have to:
-  ! * use commercial version of ALGLIB
-  ! * call  this  function  with  "smp_"  prefix,  which  indicates  that
-  !   multicore code will be used (for multicore support)
-  !
-  ! In order to use SSE features you have to:
-  ! * use commercial version of ALGLIB on Intel processors
-  ! * use C++ computational core
-  !
-  ! This note is given for users of commercial edition; if  you  use  GPL
-  ! edition, you still will be able to call smp-version of this function,
-  ! but all computations will be done serially.
-  !
-  ! We recommend you to carefully read ALGLIB Reference  Manual,  section
-  ! called 'SMP support', before using parallel version of this function.
-
+  ! COMMERCIAL EDITION OF ALGLIB:
+  ! 
+  ! Commercial Edition of ALGLIB includes following important improvements
+  ! of this function:
+  ! * high-performance native backend with same C# interface (C# version)
+  ! * multithreading support (C++ and C# versions)
+  ! 
+  ! We recommend you to read 'Working with commercial version' section  of
+  ! ALGLIB Reference Manual in order to find out how to  use  performance-
+  ! related features provided by commercial edition of ALGLIB.
 
 INPUT PARAMETERS:
     Network     -   neural network;
@@ -20826,46 +23263,18 @@ double mlpavgerrorsparse(multilayerperceptron* network,
 
 
 /*************************************************************************
-Single-threaded stub. HPC ALGLIB replaces it by multithreaded code.
-*************************************************************************/
-double _pexec_mlpavgerrorsparse(multilayerperceptron* network,
-    sparsematrix* xy,
-    ae_int_t npoints, ae_state *_state)
-{
-    return mlpavgerrorsparse(network,xy,npoints, _state);
-}
-
-
-/*************************************************************************
 Average relative error on the test set.
 
-
-FOR USERS OF COMMERCIAL EDITION:
-
-  ! Commercial version of ALGLIB includes two  important  improvements  of
-  ! this function:
-  ! * multicore support (C++ and C# computational cores)
-  ! * SSE support 
-  !
-  ! First improvement gives close-to-linear speedup on multicore  systems.
-  ! Second improvement gives constant speedup (2-3x depending on your CPU)
-  !
-  ! In order to use multicore features you have to:
-  ! * use commercial version of ALGLIB
-  ! * call  this  function  with  "smp_"  prefix,  which  indicates  that
-  !   multicore code will be used (for multicore support)
-  !
-  ! In order to use SSE features you have to:
-  ! * use commercial version of ALGLIB on Intel processors
-  ! * use C++ computational core
-  !
-  ! This note is given for users of commercial edition; if  you  use  GPL
-  ! edition, you still will be able to call smp-version of this function,
-  ! but all computations will be done serially.
-  !
-  ! We recommend you to carefully read ALGLIB Reference  Manual,  section
-  ! called 'SMP support', before using parallel version of this function.
-
+  ! COMMERCIAL EDITION OF ALGLIB:
+  ! 
+  ! Commercial Edition of ALGLIB includes following important improvements
+  ! of this function:
+  ! * high-performance native backend with same C# interface (C# version)
+  ! * multithreading support (C++ and C# versions)
+  ! 
+  ! We recommend you to read 'Working with commercial version' section  of
+  ! ALGLIB Reference Manual in order to find out how to  use  performance-
+  ! related features provided by commercial edition of ALGLIB.
 
 INPUT PARAMETERS:
     Network     -   neural network;
@@ -20926,46 +23335,18 @@ double mlpavgrelerror(multilayerperceptron* network,
 
 
 /*************************************************************************
-Single-threaded stub. HPC ALGLIB replaces it by multithreaded code.
-*************************************************************************/
-double _pexec_mlpavgrelerror(multilayerperceptron* network,
-    /* Real    */ ae_matrix* xy,
-    ae_int_t npoints, ae_state *_state)
-{
-    return mlpavgrelerror(network,xy,npoints, _state);
-}
-
-
-/*************************************************************************
 Average relative error on the test set given by sparse matrix.
 
-
-FOR USERS OF COMMERCIAL EDITION:
-
-  ! Commercial version of ALGLIB includes two  important  improvements  of
-  ! this function:
-  ! * multicore support (C++ and C# computational cores)
-  ! * SSE support 
-  !
-  ! First improvement gives close-to-linear speedup on multicore  systems.
-  ! Second improvement gives constant speedup (2-3x depending on your CPU)
-  !
-  ! In order to use multicore features you have to:
-  ! * use commercial version of ALGLIB
-  ! * call  this  function  with  "smp_"  prefix,  which  indicates  that
-  !   multicore code will be used (for multicore support)
-  !
-  ! In order to use SSE features you have to:
-  ! * use commercial version of ALGLIB on Intel processors
-  ! * use C++ computational core
-  !
-  ! This note is given for users of commercial edition; if  you  use  GPL
-  ! edition, you still will be able to call smp-version of this function,
-  ! but all computations will be done serially.
-  !
-  ! We recommend you to carefully read ALGLIB Reference  Manual,  section
-  ! called 'SMP support', before using parallel version of this function.
-
+  ! COMMERCIAL EDITION OF ALGLIB:
+  ! 
+  ! Commercial Edition of ALGLIB includes following important improvements
+  ! of this function:
+  ! * high-performance native backend with same C# interface (C# version)
+  ! * multithreading support (C++ and C# versions)
+  ! 
+  ! We recommend you to read 'Working with commercial version' section  of
+  ! ALGLIB Reference Manual in order to find out how to  use  performance-
+  ! related features provided by commercial edition of ALGLIB.
 
 INPUT PARAMETERS:
     Network     -   neural network;
@@ -21027,17 +23408,6 @@ double mlpavgrelerrorsparse(multilayerperceptron* network,
     mlpallerrorsx(network, &network->dummydxy, xy, npoints, 1, &network->dummyidx, 0, npoints, 0, &network->buf, &network->err, _state);
     result = network->err.avgrelerror;
     return result;
-}
-
-
-/*************************************************************************
-Single-threaded stub. HPC ALGLIB replaces it by multithreaded code.
-*************************************************************************/
-double _pexec_mlpavgrelerrorsparse(multilayerperceptron* network,
-    sparsematrix* xy,
-    ae_int_t npoints, ae_state *_state)
-{
-    return mlpavgrelerrorsparse(network,xy,npoints, _state);
 }
 
 
@@ -21194,33 +23564,16 @@ void mlpgradn(multilayerperceptron* network,
 /*************************************************************************
 Batch gradient calculation for a set of inputs/outputs
 
-
-FOR USERS OF COMMERCIAL EDITION:
-
-  ! Commercial version of ALGLIB includes two  important  improvements  of
-  ! this function:
-  ! * multicore support (C++ and C# computational cores)
-  ! * SSE support 
-  !
-  ! First improvement gives close-to-linear speedup on multicore  systems.
-  ! Second improvement gives constant speedup (2-3x depending on your CPU)
-  !
-  ! In order to use multicore features you have to:
-  ! * use commercial version of ALGLIB
-  ! * call  this  function  with  "smp_"  prefix,  which  indicates  that
-  !   multicore code will be used (for multicore support)
-  !
-  ! In order to use SSE features you have to:
-  ! * use commercial version of ALGLIB on Intel processors
-  ! * use C++ computational core
-  !
-  ! This note is given for users of commercial edition; if  you  use  GPL
-  ! edition, you still will be able to call smp-version of this function,
-  ! but all computations will be done serially.
-  !
-  ! We recommend you to carefully read ALGLIB Reference  Manual,  section
-  ! called 'SMP support', before using parallel version of this function.
-
+  ! COMMERCIAL EDITION OF ALGLIB:
+  ! 
+  ! Commercial Edition of ALGLIB includes following important improvements
+  ! of this function:
+  ! * high-performance native backend with same C# interface (C# version)
+  ! * multithreading support (C++ and C# versions)
+  ! 
+  ! We recommend you to read 'Working with commercial version' section  of
+  ! ALGLIB Reference Manual in order to find out how to  use  performance-
+  ! related features provided by commercial edition of ALGLIB.
 
 INPUT PARAMETERS:
     Network -   network initialized with one of the network creation funcs
@@ -21262,7 +23615,8 @@ void mlpgradbatch(multilayerperceptron* network,
     ae_smart_ptr _sgrad;
 
     ae_frame_make(_state, &_frame_block);
-    memset(&_sgrad, 0, sizeof(_sgrad));    *e = 0;
+    memset(&_sgrad, 0, sizeof(_sgrad));
+    *e = 0;
     ae_smart_ptr_init(&_sgrad, (void**)&sgrad, _state, ae_true);
 
     ae_assert(ssize>=0, "MLPGradBatchSparse: SSize<0", _state);
@@ -21302,49 +23656,19 @@ void mlpgradbatch(multilayerperceptron* network,
 
 
 /*************************************************************************
-Single-threaded stub. HPC ALGLIB replaces it by multithreaded code.
-*************************************************************************/
-void _pexec_mlpgradbatch(multilayerperceptron* network,
-    /* Real    */ ae_matrix* xy,
-    ae_int_t ssize,
-    double* e,
-    /* Real    */ ae_vector* grad, ae_state *_state)
-{
-    mlpgradbatch(network,xy,ssize,e,grad, _state);
-}
-
-
-/*************************************************************************
 Batch gradient calculation for a set  of inputs/outputs  given  by  sparse
 matrices
 
-
-FOR USERS OF COMMERCIAL EDITION:
-
-  ! Commercial version of ALGLIB includes two  important  improvements  of
-  ! this function:
-  ! * multicore support (C++ and C# computational cores)
-  ! * SSE support 
-  !
-  ! First improvement gives close-to-linear speedup on multicore  systems.
-  ! Second improvement gives constant speedup (2-3x depending on your CPU)
-  !
-  ! In order to use multicore features you have to:
-  ! * use commercial version of ALGLIB
-  ! * call  this  function  with  "smp_"  prefix,  which  indicates  that
-  !   multicore code will be used (for multicore support)
-  !
-  ! In order to use SSE features you have to:
-  ! * use commercial version of ALGLIB on Intel processors
-  ! * use C++ computational core
-  !
-  ! This note is given for users of commercial edition; if  you  use  GPL
-  ! edition, you still will be able to call smp-version of this function,
-  ! but all computations will be done serially.
-  !
-  ! We recommend you to carefully read ALGLIB Reference  Manual,  section
-  ! called 'SMP support', before using parallel version of this function.
-
+  ! COMMERCIAL EDITION OF ALGLIB:
+  ! 
+  ! Commercial Edition of ALGLIB includes following important improvements
+  ! of this function:
+  ! * high-performance native backend with same C# interface (C# version)
+  ! * multithreading support (C++ and C# versions)
+  ! 
+  ! We recommend you to read 'Working with commercial version' section  of
+  ! ALGLIB Reference Manual in order to find out how to  use  performance-
+  ! related features provided by commercial edition of ALGLIB.
 
 INPUT PARAMETERS:
     Network -   network initialized with one of the network creation funcs
@@ -21387,7 +23711,8 @@ void mlpgradbatchsparse(multilayerperceptron* network,
     ae_smart_ptr _sgrad;
 
     ae_frame_make(_state, &_frame_block);
-    memset(&_sgrad, 0, sizeof(_sgrad));    *e = 0;
+    memset(&_sgrad, 0, sizeof(_sgrad));
+    *e = 0;
     ae_smart_ptr_init(&_sgrad, (void**)&sgrad, _state, ae_true);
 
     ae_assert(ssize>=0, "MLPGradBatchSparse: SSize<0", _state);
@@ -21428,48 +23753,18 @@ void mlpgradbatchsparse(multilayerperceptron* network,
 
 
 /*************************************************************************
-Single-threaded stub. HPC ALGLIB replaces it by multithreaded code.
-*************************************************************************/
-void _pexec_mlpgradbatchsparse(multilayerperceptron* network,
-    sparsematrix* xy,
-    ae_int_t ssize,
-    double* e,
-    /* Real    */ ae_vector* grad, ae_state *_state)
-{
-    mlpgradbatchsparse(network,xy,ssize,e,grad, _state);
-}
-
-
-/*************************************************************************
 Batch gradient calculation for a subset of dataset
 
-
-FOR USERS OF COMMERCIAL EDITION:
-
-  ! Commercial version of ALGLIB includes two  important  improvements  of
-  ! this function:
-  ! * multicore support (C++ and C# computational cores)
-  ! * SSE support 
-  !
-  ! First improvement gives close-to-linear speedup on multicore  systems.
-  ! Second improvement gives constant speedup (2-3x depending on your CPU)
-  !
-  ! In order to use multicore features you have to:
-  ! * use commercial version of ALGLIB
-  ! * call  this  function  with  "smp_"  prefix,  which  indicates  that
-  !   multicore code will be used (for multicore support)
-  !
-  ! In order to use SSE features you have to:
-  ! * use commercial version of ALGLIB on Intel processors
-  ! * use C++ computational core
-  !
-  ! This note is given for users of commercial edition; if  you  use  GPL
-  ! edition, you still will be able to call smp-version of this function,
-  ! but all computations will be done serially.
-  !
-  ! We recommend you to carefully read ALGLIB Reference  Manual,  section
-  ! called 'SMP support', before using parallel version of this function.
-
+  ! COMMERCIAL EDITION OF ALGLIB:
+  ! 
+  ! Commercial Edition of ALGLIB includes following important improvements
+  ! of this function:
+  ! * high-performance native backend with same C# interface (C# version)
+  ! * multithreading support (C++ and C# versions)
+  ! 
+  ! We recommend you to read 'Working with commercial version' section  of
+  ! ALGLIB Reference Manual in order to find out how to  use  performance-
+  ! related features provided by commercial edition of ALGLIB.
 
 INPUT PARAMETERS:
     Network -   network initialized with one of the network creation funcs
@@ -21528,7 +23823,8 @@ void mlpgradbatchsubset(multilayerperceptron* network,
     ae_smart_ptr _sgrad;
 
     ae_frame_make(_state, &_frame_block);
-    memset(&_sgrad, 0, sizeof(_sgrad));    *e = 0;
+    memset(&_sgrad, 0, sizeof(_sgrad));
+    *e = 0;
     ae_smart_ptr_init(&_sgrad, (void**)&sgrad, _state, ae_true);
 
     ae_assert(setsize>=0, "MLPGradBatchSubset: SetSize<0", _state);
@@ -21584,51 +23880,19 @@ void mlpgradbatchsubset(multilayerperceptron* network,
 
 
 /*************************************************************************
-Single-threaded stub. HPC ALGLIB replaces it by multithreaded code.
-*************************************************************************/
-void _pexec_mlpgradbatchsubset(multilayerperceptron* network,
-    /* Real    */ ae_matrix* xy,
-    ae_int_t setsize,
-    /* Integer */ ae_vector* idx,
-    ae_int_t subsetsize,
-    double* e,
-    /* Real    */ ae_vector* grad, ae_state *_state)
-{
-    mlpgradbatchsubset(network,xy,setsize,idx,subsetsize,e,grad, _state);
-}
-
-
-/*************************************************************************
 Batch gradient calculation for a set of inputs/outputs  for  a  subset  of
 dataset given by set of indexes.
 
-
-FOR USERS OF COMMERCIAL EDITION:
-
-  ! Commercial version of ALGLIB includes two  important  improvements  of
-  ! this function:
-  ! * multicore support (C++ and C# computational cores)
-  ! * SSE support 
-  !
-  ! First improvement gives close-to-linear speedup on multicore  systems.
-  ! Second improvement gives constant speedup (2-3x depending on your CPU)
-  !
-  ! In order to use multicore features you have to:
-  ! * use commercial version of ALGLIB
-  ! * call  this  function  with  "smp_"  prefix,  which  indicates  that
-  !   multicore code will be used (for multicore support)
-  !
-  ! In order to use SSE features you have to:
-  ! * use commercial version of ALGLIB on Intel processors
-  ! * use C++ computational core
-  !
-  ! This note is given for users of commercial edition; if  you  use  GPL
-  ! edition, you still will be able to call smp-version of this function,
-  ! but all computations will be done serially.
-  !
-  ! We recommend you to carefully read ALGLIB Reference  Manual,  section
-  ! called 'SMP support', before using parallel version of this function.
-
+  ! COMMERCIAL EDITION OF ALGLIB:
+  ! 
+  ! Commercial Edition of ALGLIB includes following important improvements
+  ! of this function:
+  ! * high-performance native backend with same C# interface (C# version)
+  ! * multithreading support (C++ and C# versions)
+  ! 
+  ! We recommend you to read 'Working with commercial version' section  of
+  ! ALGLIB Reference Manual in order to find out how to  use  performance-
+  ! related features provided by commercial edition of ALGLIB.
 
 INPUT PARAMETERS:
     Network -   network initialized with one of the network creation funcs
@@ -21691,7 +23955,8 @@ void mlpgradbatchsparsesubset(multilayerperceptron* network,
     ae_smart_ptr _sgrad;
 
     ae_frame_make(_state, &_frame_block);
-    memset(&_sgrad, 0, sizeof(_sgrad));    *e = 0;
+    memset(&_sgrad, 0, sizeof(_sgrad));
+    *e = 0;
     ae_smart_ptr_init(&_sgrad, (void**)&sgrad, _state, ae_true);
 
     ae_assert(setsize>=0, "MLPGradBatchSparseSubset: SetSize<0", _state);
@@ -21748,21 +24013,6 @@ void mlpgradbatchsparsesubset(multilayerperceptron* network,
 
 
 /*************************************************************************
-Single-threaded stub. HPC ALGLIB replaces it by multithreaded code.
-*************************************************************************/
-void _pexec_mlpgradbatchsparsesubset(multilayerperceptron* network,
-    sparsematrix* xy,
-    ae_int_t setsize,
-    /* Integer */ ae_vector* idx,
-    ae_int_t subsetsize,
-    double* e,
-    /* Real    */ ae_vector* grad, ae_state *_state)
-{
-    mlpgradbatchsparsesubset(network,xy,setsize,idx,subsetsize,e,grad, _state);
-}
-
-
-/*************************************************************************
 Internal function which actually calculates batch gradient for a subset or
 full dataset, which can be represented in different formats.
 
@@ -21804,7 +24054,10 @@ void mlpgradbatchx(multilayerperceptron* network,
     ae_smart_ptr _sgrad;
 
     ae_frame_make(_state, &_frame_block);
-    memset(&_buf2, 0, sizeof(_buf2));    memset(&_pbuf, 0, sizeof(_pbuf));    memset(&_sgrad, 0, sizeof(_sgrad));    ae_smart_ptr_init(&_buf2, (void**)&buf2, _state, ae_true);
+    memset(&_buf2, 0, sizeof(_buf2));
+    memset(&_pbuf, 0, sizeof(_pbuf));
+    memset(&_sgrad, 0, sizeof(_sgrad));
+    ae_smart_ptr_init(&_buf2, (void**)&buf2, _state, ae_true);
     ae_smart_ptr_init(&_pbuf, (void**)&pbuf, _state, ae_true);
     ae_smart_ptr_init(&_sgrad, (void**)&sgrad, _state, ae_true);
 
@@ -21840,8 +24093,16 @@ void mlpgradbatchx(multilayerperceptron* network,
      *       because ProblemCost may be larger than MAXINT.
      */
     problemcost = (double)(subset1-subset0);
-    problemcost = problemcost*wcount;
-    if( subset1-subset0>=2*mlpbase_microbatchsize&&ae_fp_greater(problemcost,(double)(mlpbase_gradbasecasecost)) )
+    problemcost = problemcost*wcount*2;
+    if( ae_fp_greater_eq(problemcost,smpactivationlevel(_state))&&subset1-subset0>=2*mlpbase_microbatchsize )
+    {
+        if( _trypexec_mlpgradbatchx(network,densexy,sparsexy,datasetsize,datasettype,idx,subset0,subset1,subsettype,buf,gradbuf, _state) )
+        {
+            ae_frame_leave(_state);
+            return;
+        }
+    }
+    if( subset1-subset0>=2*mlpbase_microbatchsize&&ae_fp_greater(problemcost,spawnlevel(_state)) )
     {
         splitlength(subset1-subset0, mlpbase_microbatchsize, &len0, &len1, _state);
         mlpgradbatchx(network, densexy, sparsexy, datasetsize, datasettype, idx, subset0, subset0+len0, subsettype, buf, gradbuf, _state);
@@ -21901,6 +24162,26 @@ void mlpgradbatchx(multilayerperceptron* network,
 
 
 /*************************************************************************
+Serial stub for GPL edition.
+*************************************************************************/
+ae_bool _trypexec_mlpgradbatchx(multilayerperceptron* network,
+    /* Real    */ ae_matrix* densexy,
+    sparsematrix* sparsexy,
+    ae_int_t datasetsize,
+    ae_int_t datasettype,
+    /* Integer */ ae_vector* idx,
+    ae_int_t subset0,
+    ae_int_t subset1,
+    ae_int_t subsettype,
+    ae_shared_pool* buf,
+    ae_shared_pool* gradbuf,
+    ae_state *_state)
+{
+    return ae_false;
+}
+
+
+/*************************************************************************
 Batch gradient calculation for a set of inputs/outputs
 (natural error function is used)
 
@@ -21939,7 +24220,8 @@ void mlpgradnbatch(multilayerperceptron* network,
     ae_smart_ptr _pbuf;
 
     ae_frame_make(_state, &_frame_block);
-    memset(&_pbuf, 0, sizeof(_pbuf));    *e = 0;
+    memset(&_pbuf, 0, sizeof(_pbuf));
+    *e = 0;
     ae_smart_ptr_init(&_pbuf, (void**)&pbuf, _state, ae_true);
 
     
@@ -22324,7 +24606,8 @@ void mlpunserialize(ae_serializer* s,
     ae_vector layersizes;
 
     ae_frame_make(_state, &_frame_block);
-    memset(&layersizes, 0, sizeof(layersizes));    _multilayerperceptron_clear(network);
+    memset(&layersizes, 0, sizeof(layersizes));
+    _multilayerperceptron_clear(network);
     ae_vector_init(&layersizes, 0, DT_INT, _state, ae_true);
 
     
@@ -22418,32 +24701,16 @@ void mlpunserialize(ae_serializer* s,
 /*************************************************************************
 Calculation of all types of errors on subset of dataset.
 
-FOR USERS OF COMMERCIAL EDITION:
-
-  ! Commercial version of ALGLIB includes two  important  improvements  of
-  ! this function:
-  ! * multicore support (C++ and C# computational cores)
-  ! * SSE support 
-  !
-  ! First improvement gives close-to-linear speedup on multicore  systems.
-  ! Second improvement gives constant speedup (2-3x depending on your CPU)
-  !
-  ! In order to use multicore features you have to:
-  ! * use commercial version of ALGLIB
-  ! * call  this  function  with  "smp_"  prefix,  which  indicates  that
-  !   multicore code will be used (for multicore support)
-  !
-  ! In order to use SSE features you have to:
-  ! * use commercial version of ALGLIB on Intel processors
-  ! * use C++ computational core
-  !
-  ! This note is given for users of commercial edition; if  you  use  GPL
-  ! edition, you still will be able to call smp-version of this function,
-  ! but all computations will be done serially.
-  !
-  ! We recommend you to carefully read ALGLIB Reference  Manual,  section
-  ! called 'SMP support', before using parallel version of this function.
-
+  ! COMMERCIAL EDITION OF ALGLIB:
+  ! 
+  ! Commercial Edition of ALGLIB includes following important improvements
+  ! of this function:
+  ! * high-performance native backend with same C# interface (C# version)
+  ! * multithreading support (C++ and C# versions)
+  ! 
+  ! We recommend you to read 'Working with commercial version' section  of
+  ! ALGLIB Reference Manual in order to find out how to  use  performance-
+  ! related features provided by commercial edition of ALGLIB.
 
 INPUT PARAMETERS:
     Network -   network initialized with one of the network creation funcs
@@ -22508,48 +24775,18 @@ void mlpallerrorssubset(multilayerperceptron* network,
 
 
 /*************************************************************************
-Single-threaded stub. HPC ALGLIB replaces it by multithreaded code.
-*************************************************************************/
-void _pexec_mlpallerrorssubset(multilayerperceptron* network,
-    /* Real    */ ae_matrix* xy,
-    ae_int_t setsize,
-    /* Integer */ ae_vector* subset,
-    ae_int_t subsetsize,
-    modelerrors* rep, ae_state *_state)
-{
-    mlpallerrorssubset(network,xy,setsize,subset,subsetsize,rep, _state);
-}
-
-
-/*************************************************************************
 Calculation of all types of errors on subset of dataset.
 
-FOR USERS OF COMMERCIAL EDITION:
-
-  ! Commercial version of ALGLIB includes two  important  improvements  of
-  ! this function:
-  ! * multicore support (C++ and C# computational cores)
-  ! * SSE support 
-  !
-  ! First improvement gives close-to-linear speedup on multicore  systems.
-  ! Second improvement gives constant speedup (2-3x depending on your CPU)
-  !
-  ! In order to use multicore features you have to:
-  ! * use commercial version of ALGLIB
-  ! * call  this  function  with  "smp_"  prefix,  which  indicates  that
-  !   multicore code will be used (for multicore support)
-  !
-  ! In order to use SSE features you have to:
-  ! * use commercial version of ALGLIB on Intel processors
-  ! * use C++ computational core
-  !
-  ! This note is given for users of commercial edition; if  you  use  GPL
-  ! edition, you still will be able to call smp-version of this function,
-  ! but all computations will be done serially.
-  !
-  ! We recommend you to carefully read ALGLIB Reference  Manual,  section
-  ! called 'SMP support', before using parallel version of this function.
-
+  ! COMMERCIAL EDITION OF ALGLIB:
+  ! 
+  ! Commercial Edition of ALGLIB includes following important improvements
+  ! of this function:
+  ! * high-performance native backend with same C# interface (C# version)
+  ! * multithreading support (C++ and C# versions)
+  ! 
+  ! We recommend you to read 'Working with commercial version' section  of
+  ! ALGLIB Reference Manual in order to find out how to  use  performance-
+  ! related features provided by commercial edition of ALGLIB.
 
 INPUT PARAMETERS:
     Network -   network initialized with one of the network creation funcs
@@ -22617,49 +24854,18 @@ void mlpallerrorssparsesubset(multilayerperceptron* network,
 
 
 /*************************************************************************
-Single-threaded stub. HPC ALGLIB replaces it by multithreaded code.
-*************************************************************************/
-void _pexec_mlpallerrorssparsesubset(multilayerperceptron* network,
-    sparsematrix* xy,
-    ae_int_t setsize,
-    /* Integer */ ae_vector* subset,
-    ae_int_t subsetsize,
-    modelerrors* rep, ae_state *_state)
-{
-    mlpallerrorssparsesubset(network,xy,setsize,subset,subsetsize,rep, _state);
-}
-
-
-/*************************************************************************
 Error of the neural network on subset of dataset.
 
-
-FOR USERS OF COMMERCIAL EDITION:
-
-  ! Commercial version of ALGLIB includes two  important  improvements  of
-  ! this function:
-  ! * multicore support (C++ and C# computational cores)
-  ! * SSE support 
-  !
-  ! First improvement gives close-to-linear speedup on multicore  systems.
-  ! Second improvement gives constant speedup (2-3x depending on your CPU)
-  !
-  ! In order to use multicore features you have to:
-  ! * use commercial version of ALGLIB
-  ! * call  this  function  with  "smp_"  prefix,  which  indicates  that
-  !   multicore code will be used (for multicore support)
-  !
-  ! In order to use SSE features you have to:
-  ! * use commercial version of ALGLIB on Intel processors
-  ! * use C++ computational core
-  !
-  ! This note is given for users of commercial edition; if  you  use  GPL
-  ! edition, you still will be able to call smp-version of this function,
-  ! but all computations will be done serially.
-  !
-  ! We recommend you to carefully read ALGLIB Reference  Manual,  section
-  ! called 'SMP support', before using parallel version of this function.
-
+  ! COMMERCIAL EDITION OF ALGLIB:
+  ! 
+  ! Commercial Edition of ALGLIB includes following important improvements
+  ! of this function:
+  ! * high-performance native backend with same C# interface (C# version)
+  ! * multithreading support (C++ and C# versions)
+  ! 
+  ! We recommend you to read 'Working with commercial version' section  of
+  ! ALGLIB Reference Manual in order to find out how to  use  performance-
+  ! related features provided by commercial edition of ALGLIB.
 
 INPUT PARAMETERS:
     Network   -     neural network;
@@ -22742,48 +24948,18 @@ double mlperrorsubset(multilayerperceptron* network,
 
 
 /*************************************************************************
-Single-threaded stub. HPC ALGLIB replaces it by multithreaded code.
-*************************************************************************/
-double _pexec_mlperrorsubset(multilayerperceptron* network,
-    /* Real    */ ae_matrix* xy,
-    ae_int_t setsize,
-    /* Integer */ ae_vector* subset,
-    ae_int_t subsetsize, ae_state *_state)
-{
-    return mlperrorsubset(network,xy,setsize,subset,subsetsize, _state);
-}
-
-
-/*************************************************************************
 Error of the neural network on subset of sparse dataset.
 
-
-FOR USERS OF COMMERCIAL EDITION:
-
-  ! Commercial version of ALGLIB includes two  important  improvements  of
-  ! this function:
-  ! * multicore support (C++ and C# computational cores)
-  ! * SSE support 
-  !
-  ! First improvement gives close-to-linear speedup on multicore  systems.
-  ! Second improvement gives constant speedup (2-3x depending on your CPU)
-  !
-  ! In order to use multicore features you have to:
-  ! * use commercial version of ALGLIB
-  ! * call  this  function  with  "smp_"  prefix,  which  indicates  that
-  !   multicore code will be used (for multicore support)
-  !
-  ! In order to use SSE features you have to:
-  ! * use commercial version of ALGLIB on Intel processors
-  ! * use C++ computational core
-  !
-  ! This note is given for users of commercial edition; if  you  use  GPL
-  ! edition, you still will be able to call smp-version of this function,
-  ! but all computations will be done serially.
-  !
-  ! We recommend you to carefully read ALGLIB Reference  Manual,  section
-  ! called 'SMP support', before using parallel version of this function.
-
+  ! COMMERCIAL EDITION OF ALGLIB:
+  ! 
+  ! Commercial Edition of ALGLIB includes following important improvements
+  ! of this function:
+  ! * high-performance native backend with same C# interface (C# version)
+  ! * multithreading support (C++ and C# versions)
+  ! 
+  ! We recommend you to read 'Working with commercial version' section  of
+  ! ALGLIB Reference Manual in order to find out how to  use  performance-
+  ! related features provided by commercial edition of ALGLIB.
 
 INPUT PARAMETERS:
     Network   -     neural network;
@@ -22872,19 +25048,6 @@ double mlperrorsparsesubset(multilayerperceptron* network,
 
 
 /*************************************************************************
-Single-threaded stub. HPC ALGLIB replaces it by multithreaded code.
-*************************************************************************/
-double _pexec_mlperrorsparsesubset(multilayerperceptron* network,
-    sparsematrix* xy,
-    ae_int_t setsize,
-    /* Integer */ ae_vector* subset,
-    ae_int_t subsetsize, ae_state *_state)
-{
-    return mlperrorsparsesubset(network,xy,setsize,subset,subsetsize, _state);
-}
-
-
-/*************************************************************************
 Calculation of all types of errors at once for a subset or  full  dataset,
 which can be represented in different formats.
 
@@ -22922,9 +25085,13 @@ void mlpallerrorsx(multilayerperceptron* network,
     ae_int_t len1;
     modelerrors rep0;
     modelerrors rep1;
+    double problemcost;
 
     ae_frame_make(_state, &_frame_block);
-    memset(&_pbuf, 0, sizeof(_pbuf));    memset(&rep0, 0, sizeof(rep0));    memset(&rep1, 0, sizeof(rep1));    ae_smart_ptr_init(&_pbuf, (void**)&pbuf, _state, ae_true);
+    memset(&_pbuf, 0, sizeof(_pbuf));
+    memset(&rep0, 0, sizeof(rep0));
+    memset(&rep1, 0, sizeof(rep1));
+    ae_smart_ptr_init(&_pbuf, (void**)&pbuf, _state, ae_true);
     _modelerrors_init(&rep0, _state, ae_true);
     _modelerrors_init(&rep1, _state, ae_true);
 
@@ -22952,7 +25119,17 @@ void mlpallerrorsx(multilayerperceptron* network,
      * NOTE: it is important to use real arithmetics for ProblemCost
      *       because ProblemCost may be larger than MAXINT.
      */
-    if( subset1-subset0>=2*mlpbase_microbatchsize&&ae_fp_greater(inttoreal(subset1-subset0, _state)*inttoreal(wcount, _state),(double)(mlpbase_gradbasecasecost)) )
+    problemcost = (double)(subset1-subset0);
+    problemcost = problemcost*wcount*2;
+    if( ae_fp_greater_eq(problemcost,smpactivationlevel(_state))&&subset1-subset0>=2*mlpbase_microbatchsize )
+    {
+        if( _trypexec_mlpallerrorsx(network,densexy,sparsexy,datasetsize,datasettype,idx,subset0,subset1,subsettype,buf,rep, _state) )
+        {
+            ae_frame_leave(_state);
+            return;
+        }
+    }
+    if( subset1-subset0>=2*mlpbase_microbatchsize&&ae_fp_greater(problemcost,spawnlevel(_state)) )
     {
         splitlength(subset1-subset0, mlpbase_microbatchsize, &len0, &len1, _state);
         mlpallerrorsx(network, densexy, sparsexy, datasetsize, datasettype, idx, subset0, subset0+len0, subsettype, buf, &rep0, _state);
@@ -23056,6 +25233,26 @@ void mlpallerrorsx(multilayerperceptron* network,
      */
     ae_shared_pool_recycle(buf, &_pbuf, _state);
     ae_frame_leave(_state);
+}
+
+
+/*************************************************************************
+Serial stub for GPL edition.
+*************************************************************************/
+ae_bool _trypexec_mlpallerrorsx(multilayerperceptron* network,
+    /* Real    */ ae_matrix* densexy,
+    sparsematrix* sparsexy,
+    ae_int_t datasetsize,
+    ae_int_t datasettype,
+    /* Integer */ ae_vector* idx,
+    ae_int_t subset0,
+    ae_int_t subset1,
+    ae_int_t subsettype,
+    ae_shared_pool* buf,
+    modelerrors* rep,
+    ae_state *_state)
+{
+    return ae_false;
 }
 
 
@@ -23534,7 +25731,12 @@ static void mlpbase_mlpcreate(ae_int_t nin,
     smlpgrad sgrad;
 
     ae_frame_make(_state, &_frame_block);
-    memset(&localtemp, 0, sizeof(localtemp));    memset(&lnfirst, 0, sizeof(lnfirst));    memset(&lnsyn, 0, sizeof(lnsyn));    memset(&buf, 0, sizeof(buf));    memset(&sgrad, 0, sizeof(sgrad));    _multilayerperceptron_clear(network);
+    memset(&localtemp, 0, sizeof(localtemp));
+    memset(&lnfirst, 0, sizeof(lnfirst));
+    memset(&lnsyn, 0, sizeof(lnsyn));
+    memset(&buf, 0, sizeof(buf));
+    memset(&sgrad, 0, sizeof(sgrad));
+    _multilayerperceptron_clear(network);
     ae_vector_init(&localtemp, 0, DT_INT, _state, ae_true);
     ae_vector_init(&lnfirst, 0, DT_INT, _state, ae_true);
     ae_vector_init(&lnsyn, 0, DT_INT, _state, ae_true);
@@ -23622,8 +25824,14 @@ static void mlpbase_mlpcreate(ae_int_t nin,
     ae_vector_set_length(&network->derror, ntotal-1+1, _state);
     
     /*
-     * Fill structure: global info
+     * Fill structure:
+     * * first, fill by dummy values to avoid spurious reports by Valgrind
+     * * then fill global info header
      */
+    for(i=0; i<=ssize-1; i++)
+    {
+        network->structinfo.ptr.p_int[i] = -999999;
+    }
     network->structinfo.ptr.p_int[0] = ssize;
     network->structinfo.ptr.p_int[1] = nin;
     network->structinfo.ptr.p_int[2] = nout;
@@ -23773,7 +25981,15 @@ static void mlpbase_mlphessianbatchinternal(multilayerperceptron* network,
     ae_matrix rdy;
 
     ae_frame_make(_state, &_frame_block);
-    memset(&x, 0, sizeof(x));    memset(&desiredy, 0, sizeof(desiredy));    memset(&gt, 0, sizeof(gt));    memset(&zeros, 0, sizeof(zeros));    memset(&rx, 0, sizeof(rx));    memset(&ry, 0, sizeof(ry));    memset(&rdx, 0, sizeof(rdx));    memset(&rdy, 0, sizeof(rdy));    *e = 0;
+    memset(&x, 0, sizeof(x));
+    memset(&desiredy, 0, sizeof(desiredy));
+    memset(&gt, 0, sizeof(gt));
+    memset(&zeros, 0, sizeof(zeros));
+    memset(&rx, 0, sizeof(rx));
+    memset(&ry, 0, sizeof(ry));
+    memset(&rdx, 0, sizeof(rdx));
+    memset(&rdy, 0, sizeof(rdy));
+    *e = 0;
     ae_vector_init(&x, 0, DT_REAL, _state, ae_true);
     ae_vector_init(&desiredy, 0, DT_REAL, _state, ae_true);
     ae_vector_init(&gt, 0, DT_REAL, _state, ae_true);
@@ -25610,7 +27826,8 @@ void fisherlda(/* Real    */ ae_matrix* xy,
     ae_matrix w2;
 
     ae_frame_make(_state, &_frame_block);
-    memset(&w2, 0, sizeof(w2));    *info = 0;
+    memset(&w2, 0, sizeof(w2));
+    *info = 0;
     ae_vector_clear(w);
     ae_matrix_init(&w2, 0, 0, DT_REAL, _state, ae_true);
 
@@ -25631,26 +27848,15 @@ Subroutine finds coefficients of linear combinations which optimally separates
 training set on classes. It returns N-dimensional basis whose vector are sorted
 by quality of training set separation (in descending order).
 
-COMMERCIAL EDITION OF ALGLIB:
-
-  ! Commercial version of ALGLIB includes two important  improvements   of
-  ! this function, which can be used from C++ and C#:
-  ! * Intel MKL support (lightweight Intel MKL is shipped with ALGLIB)
-  ! * multithreading support
-  !
-  ! Intel MKL gives approximately constant  (with  respect  to  number  of
-  ! worker threads) acceleration factor which depends on CPU  being  used,
-  ! problem  size  and  "baseline"  ALGLIB  edition  which  is  used   for
-  ! comparison. Best results are achieved  for  high-dimensional  problems
-  ! (NVars is at least 256).
-  !
-  ! Multithreading is used to  accelerate  initial  phase  of  LDA,  which
-  ! includes calculation of products of large matrices.  Again,  for  best
-  ! efficiency problem must be high-dimensional.
-  !
-  ! Generally, commercial ALGLIB is several times faster than  open-source
-  ! generic C edition, and many times faster than open-source C# edition.
-  !
+  ! COMMERCIAL EDITION OF ALGLIB:
+  ! 
+  ! Commercial Edition of ALGLIB includes following important improvements
+  ! of this function:
+  ! * high-performance native backend with same C# interface (C# version)
+  ! * multithreading support (C++ and C# versions)
+  ! * hardware vendor (Intel) implementations of linear algebra primitives
+  !   (C++ and C# versions, x86/x64 platform)
+  ! 
   ! We recommend you to read 'Working with commercial version' section  of
   ! ALGLIB Reference Manual in order to find out how to  use  performance-
   ! related features provided by commercial edition of ALGLIB.
@@ -25717,7 +27923,25 @@ void fisherldan(/* Real    */ ae_matrix* xy,
     ae_vector work;
 
     ae_frame_make(_state, &_frame_block);
-    memset(&c, 0, sizeof(c));    memset(&mu, 0, sizeof(mu));    memset(&muc, 0, sizeof(muc));    memset(&nc, 0, sizeof(nc));    memset(&sw, 0, sizeof(sw));    memset(&st, 0, sizeof(st));    memset(&z, 0, sizeof(z));    memset(&z2, 0, sizeof(z2));    memset(&tm, 0, sizeof(tm));    memset(&sbroot, 0, sizeof(sbroot));    memset(&a, 0, sizeof(a));    memset(&xyc, 0, sizeof(xyc));    memset(&xyproj, 0, sizeof(xyproj));    memset(&wproj, 0, sizeof(wproj));    memset(&tf, 0, sizeof(tf));    memset(&d, 0, sizeof(d));    memset(&d2, 0, sizeof(d2));    memset(&work, 0, sizeof(work));    *info = 0;
+    memset(&c, 0, sizeof(c));
+    memset(&mu, 0, sizeof(mu));
+    memset(&muc, 0, sizeof(muc));
+    memset(&nc, 0, sizeof(nc));
+    memset(&sw, 0, sizeof(sw));
+    memset(&st, 0, sizeof(st));
+    memset(&z, 0, sizeof(z));
+    memset(&z2, 0, sizeof(z2));
+    memset(&tm, 0, sizeof(tm));
+    memset(&sbroot, 0, sizeof(sbroot));
+    memset(&a, 0, sizeof(a));
+    memset(&xyc, 0, sizeof(xyc));
+    memset(&xyproj, 0, sizeof(xyproj));
+    memset(&wproj, 0, sizeof(wproj));
+    memset(&tf, 0, sizeof(tf));
+    memset(&d, 0, sizeof(d));
+    memset(&d2, 0, sizeof(d2));
+    memset(&work, 0, sizeof(work));
+    *info = 0;
     ae_matrix_clear(w);
     ae_vector_init(&c, 0, DT_INT, _state, ae_true);
     ae_vector_init(&mu, 0, DT_REAL, _state, ae_true);
@@ -26015,20 +28239,6 @@ void fisherldan(/* Real    */ ae_matrix* xy,
         }
     }
     ae_frame_leave(_state);
-}
-
-
-/*************************************************************************
-Single-threaded stub. HPC ALGLIB replaces it by multithreaded code.
-*************************************************************************/
-void _pexec_fisherldan(/* Real    */ ae_matrix* xy,
-    ae_int_t npoints,
-    ae_int_t nvars,
-    ae_int_t nclasses,
-    ae_int_t* info,
-    /* Real    */ ae_matrix* w, ae_state *_state)
-{
-    fisherldan(xy,npoints,nvars,nclasses,info,w, _state);
 }
 
 
@@ -29220,7 +31430,8 @@ void lrbuild(/* Real    */ ae_matrix* xy,
     double sigma2;
 
     ae_frame_make(_state, &_frame_block);
-    memset(&s, 0, sizeof(s));    *info = 0;
+    memset(&s, 0, sizeof(s));
+    *info = 0;
     _linearmodel_clear(lm);
     _lrreport_clear(ar);
     ae_vector_init(&s, 0, DT_REAL, _state, ae_true);
@@ -29305,7 +31516,11 @@ void lrbuilds(/* Real    */ ae_matrix* xy,
     double kurtosis;
 
     ae_frame_make(_state, &_frame_block);
-    memset(&xyi, 0, sizeof(xyi));    memset(&x, 0, sizeof(x));    memset(&means, 0, sizeof(means));    memset(&sigmas, 0, sizeof(sigmas));    *info = 0;
+    memset(&xyi, 0, sizeof(xyi));
+    memset(&x, 0, sizeof(x));
+    memset(&means, 0, sizeof(means));
+    memset(&sigmas, 0, sizeof(sigmas));
+    *info = 0;
     _linearmodel_clear(lm);
     _lrreport_clear(ar);
     ae_matrix_init(&xyi, 0, 0, DT_REAL, _state, ae_true);
@@ -29428,7 +31643,10 @@ void lrbuildzs(/* Real    */ ae_matrix* xy,
     double kurtosis;
 
     ae_frame_make(_state, &_frame_block);
-    memset(&xyi, 0, sizeof(xyi));    memset(&x, 0, sizeof(x));    memset(&c, 0, sizeof(c));    *info = 0;
+    memset(&xyi, 0, sizeof(xyi));
+    memset(&x, 0, sizeof(x));
+    memset(&c, 0, sizeof(c));
+    *info = 0;
     _linearmodel_clear(lm);
     _lrreport_clear(ar);
     ae_matrix_init(&xyi, 0, 0, DT_REAL, _state, ae_true);
@@ -29546,7 +31764,8 @@ void lrbuildz(/* Real    */ ae_matrix* xy,
     double sigma2;
 
     ae_frame_make(_state, &_frame_block);
-    memset(&s, 0, sizeof(s));    *info = 0;
+    memset(&s, 0, sizeof(s));
+    *info = 0;
     _linearmodel_clear(lm);
     _lrreport_clear(ar);
     ae_vector_init(&s, 0, DT_REAL, _state, ae_true);
@@ -29966,7 +32185,8 @@ void lrline(/* Real    */ ae_matrix* xy,
     double p;
 
     ae_frame_make(_state, &_frame_block);
-    memset(&s, 0, sizeof(s));    *info = 0;
+    memset(&s, 0, sizeof(s));
+    *info = 0;
     *a = 0;
     *b = 0;
     ae_vector_init(&s, 0, DT_REAL, _state, ae_true);
@@ -30024,7 +32244,19 @@ static void linreg_lrinternal(/* Real    */ ae_matrix* xy,
     linearmodel tlm;
 
     ae_frame_make(_state, &_frame_block);
-    memset(&a, 0, sizeof(a));    memset(&u, 0, sizeof(u));    memset(&vt, 0, sizeof(vt));    memset(&vm, 0, sizeof(vm));    memset(&xym, 0, sizeof(xym));    memset(&b, 0, sizeof(b));    memset(&sv, 0, sizeof(sv));    memset(&t, 0, sizeof(t));    memset(&svi, 0, sizeof(svi));    memset(&work, 0, sizeof(work));    memset(&ar2, 0, sizeof(ar2));    memset(&tlm, 0, sizeof(tlm));    *info = 0;
+    memset(&a, 0, sizeof(a));
+    memset(&u, 0, sizeof(u));
+    memset(&vt, 0, sizeof(vt));
+    memset(&vm, 0, sizeof(vm));
+    memset(&xym, 0, sizeof(xym));
+    memset(&b, 0, sizeof(b));
+    memset(&sv, 0, sizeof(sv));
+    memset(&t, 0, sizeof(t));
+    memset(&svi, 0, sizeof(svi));
+    memset(&work, 0, sizeof(work));
+    memset(&ar2, 0, sizeof(ar2));
+    memset(&tlm, 0, sizeof(tlm));
+    *info = 0;
     _linearmodel_clear(lm);
     _lrreport_clear(ar);
     ae_matrix_init(&a, 0, 0, DT_REAL, _state, ae_true);
@@ -30726,7 +32958,9 @@ void filterlrma(/* Real    */ ae_vector* x,
     double p;
 
     ae_frame_make(_state, &_frame_block);
-    memset(&xy, 0, sizeof(xy));    memset(&s, 0, sizeof(s));    ae_matrix_init(&xy, 0, 0, DT_REAL, _state, ae_true);
+    memset(&xy, 0, sizeof(xy));
+    memset(&s, 0, sizeof(s));
+    ae_matrix_init(&xy, 0, 0, DT_REAL, _state, ae_true);
     ae_vector_init(&s, 0, DT_REAL, _state, ae_true);
 
     ae_assert(n>=0, "FilterLRMA: N<0", _state);
@@ -30841,7 +33075,17 @@ void mnltrainh(/* Real    */ ae_matrix* xy,
     densesolverreport solverrep;
 
     ae_frame_make(_state, &_frame_block);
-    memset(&network, 0, sizeof(network));    memset(&g, 0, sizeof(g));    memset(&h, 0, sizeof(h));    memset(&x, 0, sizeof(x));    memset(&y, 0, sizeof(y));    memset(&wbase, 0, sizeof(wbase));    memset(&wdir, 0, sizeof(wdir));    memset(&work, 0, sizeof(work));    memset(&mcstate, 0, sizeof(mcstate));    memset(&solverrep, 0, sizeof(solverrep));    *info = 0;
+    memset(&network, 0, sizeof(network));
+    memset(&g, 0, sizeof(g));
+    memset(&h, 0, sizeof(h));
+    memset(&x, 0, sizeof(x));
+    memset(&y, 0, sizeof(y));
+    memset(&wbase, 0, sizeof(wbase));
+    memset(&wdir, 0, sizeof(wdir));
+    memset(&work, 0, sizeof(work));
+    memset(&mcstate, 0, sizeof(mcstate));
+    memset(&solverrep, 0, sizeof(solverrep));
+    *info = 0;
     _logitmodel_clear(lm);
     _mnlreport_clear(rep);
     _multilayerperceptron_init(&network, _state, ae_true);
@@ -31306,7 +33550,9 @@ double mnlavgce(logitmodel* lm,
     double result;
 
     ae_frame_make(_state, &_frame_block);
-    memset(&workx, 0, sizeof(workx));    memset(&worky, 0, sizeof(worky));    ae_vector_init(&workx, 0, DT_REAL, _state, ae_true);
+    memset(&workx, 0, sizeof(workx));
+    memset(&worky, 0, sizeof(worky));
+    ae_vector_init(&workx, 0, DT_REAL, _state, ae_true);
     ae_vector_init(&worky, 0, DT_REAL, _state, ae_true);
 
     ae_assert(ae_fp_eq(lm->w.ptr.p_double[1],(double)(logit_logitvnum)), "MNLClsError: unexpected model version", _state);
@@ -31490,7 +33736,9 @@ ae_int_t mnlclserror(logitmodel* lm,
     ae_int_t result;
 
     ae_frame_make(_state, &_frame_block);
-    memset(&workx, 0, sizeof(workx));    memset(&worky, 0, sizeof(worky));    ae_vector_init(&workx, 0, DT_REAL, _state, ae_true);
+    memset(&workx, 0, sizeof(workx));
+    memset(&worky, 0, sizeof(worky));
+    ae_vector_init(&workx, 0, DT_REAL, _state, ae_true);
     ae_vector_init(&worky, 0, DT_REAL, _state, ae_true);
 
     ae_assert(ae_fp_eq(lm->w.ptr.p_double[1],(double)(logit_logitvnum)), "MNLClsError: unexpected model version", _state);
@@ -31599,7 +33847,11 @@ static void logit_mnlallerrors(logitmodel* lm,
     ae_vector dy;
 
     ae_frame_make(_state, &_frame_block);
-    memset(&buf, 0, sizeof(buf));    memset(&workx, 0, sizeof(workx));    memset(&y, 0, sizeof(y));    memset(&dy, 0, sizeof(dy));    *relcls = 0;
+    memset(&buf, 0, sizeof(buf));
+    memset(&workx, 0, sizeof(workx));
+    memset(&y, 0, sizeof(y));
+    memset(&dy, 0, sizeof(dy));
+    *relcls = 0;
     *avgce = 0;
     *rms = 0;
     *avg = 0;
@@ -33798,7 +36050,8 @@ void mlpecreate0(ae_int_t nin,
     multilayerperceptron net;
 
     ae_frame_make(_state, &_frame_block);
-    memset(&net, 0, sizeof(net));    _mlpensemble_clear(ensemble);
+    memset(&net, 0, sizeof(net));
+    _mlpensemble_clear(ensemble);
     _multilayerperceptron_init(&net, _state, ae_true);
 
     mlpcreate0(nin, nout, &net, _state);
@@ -33824,7 +36077,8 @@ void mlpecreate1(ae_int_t nin,
     multilayerperceptron net;
 
     ae_frame_make(_state, &_frame_block);
-    memset(&net, 0, sizeof(net));    _mlpensemble_clear(ensemble);
+    memset(&net, 0, sizeof(net));
+    _mlpensemble_clear(ensemble);
     _multilayerperceptron_init(&net, _state, ae_true);
 
     mlpcreate1(nin, nhid, nout, &net, _state);
@@ -33851,7 +36105,8 @@ void mlpecreate2(ae_int_t nin,
     multilayerperceptron net;
 
     ae_frame_make(_state, &_frame_block);
-    memset(&net, 0, sizeof(net));    _mlpensemble_clear(ensemble);
+    memset(&net, 0, sizeof(net));
+    _mlpensemble_clear(ensemble);
     _multilayerperceptron_init(&net, _state, ae_true);
 
     mlpcreate2(nin, nhid1, nhid2, nout, &net, _state);
@@ -33878,7 +36133,8 @@ void mlpecreateb0(ae_int_t nin,
     multilayerperceptron net;
 
     ae_frame_make(_state, &_frame_block);
-    memset(&net, 0, sizeof(net));    _mlpensemble_clear(ensemble);
+    memset(&net, 0, sizeof(net));
+    _mlpensemble_clear(ensemble);
     _multilayerperceptron_init(&net, _state, ae_true);
 
     mlpcreateb0(nin, nout, b, d, &net, _state);
@@ -33906,7 +36162,8 @@ void mlpecreateb1(ae_int_t nin,
     multilayerperceptron net;
 
     ae_frame_make(_state, &_frame_block);
-    memset(&net, 0, sizeof(net));    _mlpensemble_clear(ensemble);
+    memset(&net, 0, sizeof(net));
+    _mlpensemble_clear(ensemble);
     _multilayerperceptron_init(&net, _state, ae_true);
 
     mlpcreateb1(nin, nhid, nout, b, d, &net, _state);
@@ -33935,7 +36192,8 @@ void mlpecreateb2(ae_int_t nin,
     multilayerperceptron net;
 
     ae_frame_make(_state, &_frame_block);
-    memset(&net, 0, sizeof(net));    _mlpensemble_clear(ensemble);
+    memset(&net, 0, sizeof(net));
+    _mlpensemble_clear(ensemble);
     _multilayerperceptron_init(&net, _state, ae_true);
 
     mlpcreateb2(nin, nhid1, nhid2, nout, b, d, &net, _state);
@@ -33962,7 +36220,8 @@ void mlpecreater0(ae_int_t nin,
     multilayerperceptron net;
 
     ae_frame_make(_state, &_frame_block);
-    memset(&net, 0, sizeof(net));    _mlpensemble_clear(ensemble);
+    memset(&net, 0, sizeof(net));
+    _mlpensemble_clear(ensemble);
     _multilayerperceptron_init(&net, _state, ae_true);
 
     mlpcreater0(nin, nout, a, b, &net, _state);
@@ -33990,7 +36249,8 @@ void mlpecreater1(ae_int_t nin,
     multilayerperceptron net;
 
     ae_frame_make(_state, &_frame_block);
-    memset(&net, 0, sizeof(net));    _mlpensemble_clear(ensemble);
+    memset(&net, 0, sizeof(net));
+    _mlpensemble_clear(ensemble);
     _multilayerperceptron_init(&net, _state, ae_true);
 
     mlpcreater1(nin, nhid, nout, a, b, &net, _state);
@@ -34019,7 +36279,8 @@ void mlpecreater2(ae_int_t nin,
     multilayerperceptron net;
 
     ae_frame_make(_state, &_frame_block);
-    memset(&net, 0, sizeof(net));    _mlpensemble_clear(ensemble);
+    memset(&net, 0, sizeof(net));
+    _mlpensemble_clear(ensemble);
     _multilayerperceptron_init(&net, _state, ae_true);
 
     mlpcreater2(nin, nhid1, nhid2, nout, a, b, &net, _state);
@@ -34044,7 +36305,8 @@ void mlpecreatec0(ae_int_t nin,
     multilayerperceptron net;
 
     ae_frame_make(_state, &_frame_block);
-    memset(&net, 0, sizeof(net));    _mlpensemble_clear(ensemble);
+    memset(&net, 0, sizeof(net));
+    _mlpensemble_clear(ensemble);
     _multilayerperceptron_init(&net, _state, ae_true);
 
     mlpcreatec0(nin, nout, &net, _state);
@@ -34070,7 +36332,8 @@ void mlpecreatec1(ae_int_t nin,
     multilayerperceptron net;
 
     ae_frame_make(_state, &_frame_block);
-    memset(&net, 0, sizeof(net));    _mlpensemble_clear(ensemble);
+    memset(&net, 0, sizeof(net));
+    _mlpensemble_clear(ensemble);
     _multilayerperceptron_init(&net, _state, ae_true);
 
     mlpcreatec1(nin, nhid, nout, &net, _state);
@@ -34097,7 +36360,8 @@ void mlpecreatec2(ae_int_t nin,
     multilayerperceptron net;
 
     ae_frame_make(_state, &_frame_block);
-    memset(&net, 0, sizeof(net));    _mlpensemble_clear(ensemble);
+    memset(&net, 0, sizeof(net));
+    _mlpensemble_clear(ensemble);
     _multilayerperceptron_init(&net, _state, ae_true);
 
     mlpcreatec2(nin, nhid1, nhid2, nout, &net, _state);
@@ -34395,7 +36659,10 @@ void mlpeallerrorsx(mlpensemble* ensemble,
     modelerrors rep1;
 
     ae_frame_make(_state, &_frame_block);
-    memset(&_pbuf, 0, sizeof(_pbuf));    memset(&rep0, 0, sizeof(rep0));    memset(&rep1, 0, sizeof(rep1));    ae_smart_ptr_init(&_pbuf, (void**)&pbuf, _state, ae_true);
+    memset(&_pbuf, 0, sizeof(_pbuf));
+    memset(&rep0, 0, sizeof(rep0));
+    memset(&rep1, 0, sizeof(rep1));
+    ae_smart_ptr_init(&_pbuf, (void**)&pbuf, _state, ae_true);
     _modelerrors_init(&rep0, _state, ae_true);
     _modelerrors_init(&rep1, _state, ae_true);
 
@@ -34507,7 +36774,11 @@ void mlpeallerrorssparse(mlpensemble* ensemble,
     ae_int_t nout;
 
     ae_frame_make(_state, &_frame_block);
-    memset(&buf, 0, sizeof(buf));    memset(&workx, 0, sizeof(workx));    memset(&y, 0, sizeof(y));    memset(&dy, 0, sizeof(dy));    *relcls = 0;
+    memset(&buf, 0, sizeof(buf));
+    memset(&workx, 0, sizeof(workx));
+    memset(&y, 0, sizeof(y));
+    memset(&dy, 0, sizeof(dy));
+    *relcls = 0;
     *avgce = 0;
     *rms = 0;
     *avg = 0;
@@ -34579,7 +36850,8 @@ double mlperelclserror(mlpensemble* ensemble,
     double result;
 
     ae_frame_make(_state, &_frame_block);
-    memset(&rep, 0, sizeof(rep));    _modelerrors_init(&rep, _state, ae_true);
+    memset(&rep, 0, sizeof(rep));
+    _modelerrors_init(&rep, _state, ae_true);
 
     mlpeallerrorsx(ensemble, xy, &ensemble->network.dummysxy, npoints, 0, &ensemble->network.dummyidx, 0, npoints, 0, &ensemble->network.buf, &rep, _state);
     result = rep.relclserror;
@@ -34613,7 +36885,8 @@ double mlpeavgce(mlpensemble* ensemble,
     double result;
 
     ae_frame_make(_state, &_frame_block);
-    memset(&rep, 0, sizeof(rep));    _modelerrors_init(&rep, _state, ae_true);
+    memset(&rep, 0, sizeof(rep));
+    _modelerrors_init(&rep, _state, ae_true);
 
     mlpeallerrorsx(ensemble, xy, &ensemble->network.dummysxy, npoints, 0, &ensemble->network.dummyidx, 0, npoints, 0, &ensemble->network.buf, &rep, _state);
     result = rep.avgce;
@@ -34648,7 +36921,8 @@ double mlpermserror(mlpensemble* ensemble,
     double result;
 
     ae_frame_make(_state, &_frame_block);
-    memset(&rep, 0, sizeof(rep));    _modelerrors_init(&rep, _state, ae_true);
+    memset(&rep, 0, sizeof(rep));
+    _modelerrors_init(&rep, _state, ae_true);
 
     mlpeallerrorsx(ensemble, xy, &ensemble->network.dummysxy, npoints, 0, &ensemble->network.dummyidx, 0, npoints, 0, &ensemble->network.buf, &rep, _state);
     result = rep.rmserror;
@@ -34682,7 +36956,8 @@ double mlpeavgerror(mlpensemble* ensemble,
     double result;
 
     ae_frame_make(_state, &_frame_block);
-    memset(&rep, 0, sizeof(rep));    _modelerrors_init(&rep, _state, ae_true);
+    memset(&rep, 0, sizeof(rep));
+    _modelerrors_init(&rep, _state, ae_true);
 
     mlpeallerrorsx(ensemble, xy, &ensemble->network.dummysxy, npoints, 0, &ensemble->network.dummyidx, 0, npoints, 0, &ensemble->network.buf, &rep, _state);
     result = rep.avgerror;
@@ -34716,7 +36991,8 @@ double mlpeavgrelerror(mlpensemble* ensemble,
     double result;
 
     ae_frame_make(_state, &_frame_block);
-    memset(&rep, 0, sizeof(rep));    _modelerrors_init(&rep, _state, ae_true);
+    memset(&rep, 0, sizeof(rep));
+    _modelerrors_init(&rep, _state, ae_true);
 
     mlpeallerrorsx(ensemble, xy, &ensemble->network.dummysxy, npoints, 0, &ensemble->network.dummyidx, 0, npoints, 0, &ensemble->network.buf, &rep, _state);
     result = rep.avgrelerror;
@@ -34939,7 +37215,23 @@ void mlptrainlm(multilayerperceptron* network,
     densesolverreport solverrep;
 
     ae_frame_make(_state, &_frame_block);
-    memset(&g, 0, sizeof(g));    memset(&d, 0, sizeof(d));    memset(&h, 0, sizeof(h));    memset(&hmod, 0, sizeof(hmod));    memset(&z, 0, sizeof(z));    memset(&internalrep, 0, sizeof(internalrep));    memset(&state, 0, sizeof(state));    memset(&x, 0, sizeof(x));    memset(&y, 0, sizeof(y));    memset(&wbase, 0, sizeof(wbase));    memset(&wdir, 0, sizeof(wdir));    memset(&wt, 0, sizeof(wt));    memset(&wx, 0, sizeof(wx));    memset(&wbest, 0, sizeof(wbest));    memset(&invrep, 0, sizeof(invrep));    memset(&solverrep, 0, sizeof(solverrep));    *info = 0;
+    memset(&g, 0, sizeof(g));
+    memset(&d, 0, sizeof(d));
+    memset(&h, 0, sizeof(h));
+    memset(&hmod, 0, sizeof(hmod));
+    memset(&z, 0, sizeof(z));
+    memset(&internalrep, 0, sizeof(internalrep));
+    memset(&state, 0, sizeof(state));
+    memset(&x, 0, sizeof(x));
+    memset(&y, 0, sizeof(y));
+    memset(&wbase, 0, sizeof(wbase));
+    memset(&wdir, 0, sizeof(wdir));
+    memset(&wt, 0, sizeof(wt));
+    memset(&wx, 0, sizeof(wx));
+    memset(&wbest, 0, sizeof(wbest));
+    memset(&invrep, 0, sizeof(invrep));
+    memset(&solverrep, 0, sizeof(solverrep));
+    *info = 0;
     _mlpreport_clear(rep);
     ae_vector_init(&g, 0, DT_REAL, _state, ae_true);
     ae_vector_init(&d, 0, DT_REAL, _state, ae_true);
@@ -35292,7 +37584,11 @@ void mlptrainlbfgs(multilayerperceptron* network,
     minlbfgsstate state;
 
     ae_frame_make(_state, &_frame_block);
-    memset(&w, 0, sizeof(w));    memset(&wbest, 0, sizeof(wbest));    memset(&internalrep, 0, sizeof(internalrep));    memset(&state, 0, sizeof(state));    *info = 0;
+    memset(&w, 0, sizeof(w));
+    memset(&wbest, 0, sizeof(wbest));
+    memset(&internalrep, 0, sizeof(internalrep));
+    memset(&state, 0, sizeof(state));
+    *info = 0;
     _mlpreport_clear(rep);
     ae_vector_init(&w, 0, DT_REAL, _state, ae_true);
     ae_vector_init(&wbest, 0, DT_REAL, _state, ae_true);
@@ -35469,7 +37765,12 @@ void mlptraines(multilayerperceptron* network,
     ae_bool needrandomization;
 
     ae_frame_make(_state, &_frame_block);
-    memset(&w, 0, sizeof(w));    memset(&wbest, 0, sizeof(wbest));    memset(&wfinal, 0, sizeof(wfinal));    memset(&internalrep, 0, sizeof(internalrep));    memset(&state, 0, sizeof(state));    *info = 0;
+    memset(&w, 0, sizeof(w));
+    memset(&wbest, 0, sizeof(wbest));
+    memset(&wfinal, 0, sizeof(wfinal));
+    memset(&internalrep, 0, sizeof(internalrep));
+    memset(&state, 0, sizeof(state));
+    *info = 0;
     _mlpreport_clear(rep);
     ae_vector_init(&w, 0, DT_REAL, _state, ae_true);
     ae_vector_init(&wbest, 0, DT_REAL, _state, ae_true);
@@ -35717,36 +38018,16 @@ void mlpkfoldcvlm(multilayerperceptron* network,
 This function estimates generalization error using cross-validation on the
 current dataset with current training settings.
 
-FOR USERS OF COMMERCIAL EDITION:
-
-  ! Commercial version of ALGLIB includes two  important  improvements  of
-  ! this function:
-  ! * multicore support (C++ and C# computational cores)
-  ! * SSE support (C++ computational core)
-  !
-  ! Second improvement gives constant  speedup (2-3X).  First  improvement
-  ! gives  close-to-linear  speedup  on   multicore   systems.   Following
-  ! operations can be executed in parallel:
-  ! * FoldsCount cross-validation rounds (always)
-  ! * NRestarts training sessions performed within each of
-  !   cross-validation rounds (if NRestarts>1)
-  ! * gradient calculation over large dataset (if dataset is large enough)
-  !
-  ! In order to use multicore features you have to:
-  ! * use commercial version of ALGLIB
-  ! * call  this  function  with  "smp_"  prefix,  which  indicates  that
-  !   multicore code will be used (for multicore support)
-  !
-  ! In order to use SSE features you have to:
-  ! * use commercial version of ALGLIB on Intel processors
-  ! * use C++ computational core
-  !
-  ! This note is given for users of commercial edition; if  you  use  GPL
-  ! edition, you still will be able to call smp-version of this function,
-  ! but all computations will be done serially.
-  !
-  ! We recommend you to carefully read ALGLIB Reference  Manual,  section
-  ! called 'SMP support', before using parallel version of this function.
+  ! COMMERCIAL EDITION OF ALGLIB:
+  ! 
+  ! Commercial Edition of ALGLIB includes following important improvements
+  ! of this function:
+  ! * high-performance native backend with same C# interface (C# version)
+  ! * multithreading support (C++ and C# versions)
+  ! 
+  ! We recommend you to read 'Working with commercial version' section  of
+  ! ALGLIB Reference Manual in order to find out how to  use  performance-
+  ! related features provided by commercial edition of ALGLIB.
 
 INPUT PARAMETERS:
     S           -   trainer object
@@ -35821,7 +38102,15 @@ void mlpkfoldcv(mlptrainer* s,
     hqrndstate rs;
 
     ae_frame_make(_state, &_frame_block);
-    memset(&pooldatacv, 0, sizeof(pooldatacv));    memset(&datacv, 0, sizeof(datacv));    memset(&_sdatacv, 0, sizeof(_sdatacv));    memset(&cvy, 0, sizeof(cvy));    memset(&folds, 0, sizeof(folds));    memset(&buf, 0, sizeof(buf));    memset(&dy, 0, sizeof(dy));    memset(&rs, 0, sizeof(rs));    _mlpreport_clear(rep);
+    memset(&pooldatacv, 0, sizeof(pooldatacv));
+    memset(&datacv, 0, sizeof(datacv));
+    memset(&_sdatacv, 0, sizeof(_sdatacv));
+    memset(&cvy, 0, sizeof(cvy));
+    memset(&folds, 0, sizeof(folds));
+    memset(&buf, 0, sizeof(buf));
+    memset(&dy, 0, sizeof(dy));
+    memset(&rs, 0, sizeof(rs));
+    _mlpreport_clear(rep);
     ae_shared_pool_init(&pooldatacv, _state, ae_true);
     _mlpparallelizationcv_init(&datacv, _state, ae_true);
     ae_smart_ptr_init(&_sdatacv, (void**)&sdatacv, _state, ae_true);
@@ -35926,7 +38215,7 @@ void mlpkfoldcv(mlptrainer* s,
     /*
      * Parallelization
      */
-    mlptrain_mthreadcv(s, rowsize, nrestarts, &folds, 0, foldscount, &cvy, &pooldatacv, _state);
+    mlptrain_mthreadcv(s, rowsize, nrestarts, &folds, 0, foldscount, &cvy, &pooldatacv, wcount, _state);
     
     /*
      * Calculate value for NGrad
@@ -35969,19 +38258,6 @@ void mlpkfoldcv(mlptrainer* s,
     rep->avgerror = buf.ptr.p_double[3];
     rep->avgrelerror = buf.ptr.p_double[4];
     ae_frame_leave(_state);
-}
-
-
-/*************************************************************************
-Single-threaded stub. HPC ALGLIB replaces it by multithreaded code.
-*************************************************************************/
-void _pexec_mlpkfoldcv(mlptrainer* s,
-    multilayerperceptron* network,
-    ae_int_t nrestarts,
-    ae_int_t foldscount,
-    mlpreport* rep, ae_state *_state)
-{
-    mlpkfoldcv(s,network,nrestarts,foldscount,rep, _state);
 }
 
 
@@ -36349,35 +38625,16 @@ positions is performed, best network is chosen.
 
 Training is performed using current training algorithm.
 
-FOR USERS OF COMMERCIAL EDITION:
-
-  ! Commercial version of ALGLIB includes two  important  improvements  of
-  ! this function:
-  ! * multicore support (C++ and C# computational cores)
-  ! * SSE support (C++ computational core)
-  !
-  ! Second improvement gives constant  speedup (2-3X).  First  improvement
-  ! gives  close-to-linear  speedup  on   multicore   systems.   Following
-  ! operations can be executed in parallel:
-  ! * NRestarts training sessions performed within each of
-  !   cross-validation rounds (if NRestarts>1)
-  ! * gradient calculation over large dataset (if dataset is large enough)
-  !
-  ! In order to use multicore features you have to:
-  ! * use commercial version of ALGLIB
-  ! * call  this  function  with  "smp_"  prefix,  which  indicates  that
-  !   multicore code will be used (for multicore support)
-  !
-  ! In order to use SSE features you have to:
-  ! * use commercial version of ALGLIB on Intel processors
-  ! * use C++ computational core
-  !
-  ! This note is given for users of commercial edition; if  you  use  GPL
-  ! edition, you still will be able to call smp-version of this function,
-  ! but all computations will be done serially.
-  !
-  ! We recommend you to carefully read ALGLIB Reference  Manual,  section
-  ! called 'SMP support', before using parallel version of this function.
+  ! COMMERCIAL EDITION OF ALGLIB:
+  ! 
+  ! Commercial Edition of ALGLIB includes following important improvements
+  ! of this function:
+  ! * high-performance native backend with same C# interface (C# version)
+  ! * multithreading support (C++ and C# versions)
+  ! 
+  ! We recommend you to read 'Working with commercial version' section  of
+  ! ALGLIB Reference Manual in order to find out how to  use  performance-
+  ! related features provided by commercial edition of ALGLIB.
 
 INPUT PARAMETERS:
     S           -   trainer object
@@ -36418,7 +38675,8 @@ void mlptrainnetwork(mlptrainer* s,
     ae_shared_pool trnpool;
 
     ae_frame_make(_state, &_frame_block);
-    memset(&trnpool, 0, sizeof(trnpool));    _mlpreport_clear(rep);
+    memset(&trnpool, 0, sizeof(trnpool));
+    _mlpreport_clear(rep);
     ae_shared_pool_init(&trnpool, _state, ae_true);
 
     ae_assert(s->npoints>=0, "MLPTrainNetwork: parameter S is not initialized or is spoiled(S.NPoints<0)", _state);
@@ -36449,18 +38707,6 @@ void mlptrainnetwork(mlptrainer* s,
      */
     mlptrain_mlptrainnetworkx(s, nrestarts, -1, &s->subset, -1, &s->subset, 0, network, rep, ae_true, &trnpool, _state);
     ae_frame_leave(_state);
-}
-
-
-/*************************************************************************
-Single-threaded stub. HPC ALGLIB replaces it by multithreaded code.
-*************************************************************************/
-void _pexec_mlptrainnetwork(mlptrainer* s,
-    multilayerperceptron* network,
-    ae_int_t nrestarts,
-    mlpreport* rep, ae_state *_state)
-{
-    mlptrainnetwork(s,network,nrestarts,rep, _state);
 }
 
 
@@ -36572,33 +38818,16 @@ IMPORTANT: this is an "expert" version of the MLPTrain() function.  We  do
            not recommend you to use it unless you are pretty sure that you
            need ability to monitor training progress.
            
-FOR USERS OF COMMERCIAL EDITION:
-
-  ! Commercial version of ALGLIB includes two  important  improvements  of
-  ! this function:
-  ! * multicore support (C++ and C# computational cores)
-  ! * SSE support (C++ computational core)
-  !
-  ! Second improvement gives constant  speedup (2-3X).  First  improvement
-  ! gives  close-to-linear  speedup  on   multicore   systems.   Following
-  ! operations can be executed in parallel:
-  ! * gradient calculation over large dataset (if dataset is large enough)
-  !
-  ! In order to use multicore features you have to:
-  ! * use commercial version of ALGLIB
-  ! * call  this  function  with  "smp_"  prefix,  which  indicates  that
-  !   multicore code will be used (for multicore support)
-  !
-  ! In order to use SSE features you have to:
-  ! * use commercial version of ALGLIB on Intel processors
-  ! * use C++ computational core
-  !
-  ! This note is given for users of commercial edition; if  you  use  GPL
-  ! edition, you still will be able to call smp-version of this function,
-  ! but all computations will be done serially.
-  !
-  ! We recommend you to carefully read ALGLIB Reference  Manual,  section
-  ! called 'SMP support', before using parallel version of this function.
+  ! COMMERCIAL EDITION OF ALGLIB:
+  ! 
+  ! Commercial Edition of ALGLIB includes following important improvements
+  ! of this function:
+  ! * high-performance native backend with same C# interface (C# version)
+  ! * multithreading support (C++ and C# versions)
+  ! 
+  ! We recommend you to read 'Working with commercial version' section  of
+  ! ALGLIB Reference Manual in order to find out how to  use  performance-
+  ! related features provided by commercial edition of ALGLIB.
 
 This function performs step-by-step training of the neural  network.  Here
 "step-by-step" means that training starts  with  MLPStartTraining()  call,
@@ -36697,16 +38926,6 @@ ae_bool mlpcontinuetraining(mlptrainer* s,
         ae_v_move(&network->weights.ptr.p_double[0], 1, &s->session.network.weights.ptr.p_double[0], 1, ae_v_len(0,wcount-1));
     }
     return result;
-}
-
-
-/*************************************************************************
-Single-threaded stub. HPC ALGLIB replaces it by multithreaded code.
-*************************************************************************/
-ae_bool _pexec_mlpcontinuetraining(mlptrainer* s,
-    multilayerperceptron* network, ae_state *_state)
-{
-    return mlpcontinuetraining(s,network, _state);
 }
 
 
@@ -36853,7 +39072,11 @@ void mlpetraines(mlpensemble* ensemble,
     ae_int_t wcount;
 
     ae_frame_make(_state, &_frame_block);
-    memset(&trnxy, 0, sizeof(trnxy));    memset(&valxy, 0, sizeof(valxy));    memset(&tmprep, 0, sizeof(tmprep));    memset(&moderr, 0, sizeof(moderr));    *info = 0;
+    memset(&trnxy, 0, sizeof(trnxy));
+    memset(&valxy, 0, sizeof(valxy));
+    memset(&tmprep, 0, sizeof(tmprep));
+    memset(&moderr, 0, sizeof(moderr));
+    *info = 0;
     _mlpreport_clear(rep);
     ae_matrix_init(&trnxy, 0, 0, DT_REAL, _state, ae_true);
     ae_matrix_init(&valxy, 0, 0, DT_REAL, _state, ae_true);
@@ -36976,37 +39199,16 @@ current dataset and early stopping training algorithm. Each early stopping
 round performs NRestarts  random  restarts  (thus,  EnsembleSize*NRestarts
 training rounds is performed in total).
 
-FOR USERS OF COMMERCIAL EDITION:
-
-  ! Commercial version of ALGLIB includes two  important  improvements  of
-  ! this function:
-  ! * multicore support (C++ and C# computational cores)
-  ! * SSE support (C++ computational core)
-  !
-  ! Second improvement gives constant  speedup (2-3X).  First  improvement
-  ! gives  close-to-linear  speedup  on   multicore   systems.   Following
-  ! operations can be executed in parallel:
-  ! * EnsembleSize  training  sessions  performed  for  each  of  ensemble
-  !   members (always parallelized)
-  ! * NRestarts  training  sessions  performed  within  each  of  training
-  !   sessions (if NRestarts>1)
-  ! * gradient calculation over large dataset (if dataset is large enough)
-  !
-  ! In order to use multicore features you have to:
-  ! * use commercial version of ALGLIB
-  ! * call  this  function  with  "smp_"  prefix,  which  indicates  that
-  !   multicore code will be used (for multicore support)
-  !
-  ! In order to use SSE features you have to:
-  ! * use commercial version of ALGLIB on Intel processors
-  ! * use C++ computational core
-  !
-  ! This note is given for users of commercial edition; if  you  use  GPL
-  ! edition, you still will be able to call smp-version of this function,
-  ! but all computations will be done serially.
-  !
-  ! We recommend you to carefully read ALGLIB Reference  Manual,  section
-  ! called 'SMP support', before using parallel version of this function.
+  ! COMMERCIAL EDITION OF ALGLIB:
+  ! 
+  ! Commercial Edition of ALGLIB includes following important improvements
+  ! of this function:
+  ! * high-performance native backend with same C# interface (C# version)
+  ! * multithreading support (C++ and C# versions)
+  ! 
+  ! We recommend you to read 'Working with commercial version' section  of
+  ! ALGLIB Reference Manual in order to find out how to  use  performance-
+  ! related features provided by commercial edition of ALGLIB.
 
 INPUT PARAMETERS:
     S           -   trainer object;
@@ -37051,7 +39253,10 @@ void mlptrainensemblees(mlptrainer* s,
     modelerrors tmprep;
 
     ae_frame_make(_state, &_frame_block);
-    memset(&esessions, 0, sizeof(esessions));    memset(&sgrad, 0, sizeof(sgrad));    memset(&tmprep, 0, sizeof(tmprep));    _mlpreport_clear(rep);
+    memset(&esessions, 0, sizeof(esessions));
+    memset(&sgrad, 0, sizeof(sgrad));
+    memset(&tmprep, 0, sizeof(tmprep));
+    _mlpreport_clear(rep);
     ae_shared_pool_init(&esessions, _state, ae_true);
     _sinteger_init(&sgrad, _state, ae_true);
     _modelerrors_init(&tmprep, _state, ae_true);
@@ -37129,18 +39334,6 @@ void mlptrainensemblees(mlptrainer* s,
 
 
 /*************************************************************************
-Single-threaded stub. HPC ALGLIB replaces it by multithreaded code.
-*************************************************************************/
-void _pexec_mlptrainensemblees(mlptrainer* s,
-    mlpensemble* ensemble,
-    ae_int_t nrestarts,
-    mlpreport* rep, ae_state *_state)
-{
-    mlptrainensemblees(s,ensemble,nrestarts,rep, _state);
-}
-
-
-/*************************************************************************
 Internal cross-validation subroutine
 *************************************************************************/
 static void mlptrain_mlpkfoldcvgeneral(multilayerperceptron* n,
@@ -37179,7 +39372,14 @@ static void mlptrain_mlpkfoldcvgeneral(multilayerperceptron* n,
     ae_vector y;
 
     ae_frame_make(_state, &_frame_block);
-    memset(&network, 0, sizeof(network));    memset(&cvset, 0, sizeof(cvset));    memset(&testset, 0, sizeof(testset));    memset(&folds, 0, sizeof(folds));    memset(&internalrep, 0, sizeof(internalrep));    memset(&x, 0, sizeof(x));    memset(&y, 0, sizeof(y));    *info = 0;
+    memset(&network, 0, sizeof(network));
+    memset(&cvset, 0, sizeof(cvset));
+    memset(&testset, 0, sizeof(testset));
+    memset(&folds, 0, sizeof(folds));
+    memset(&internalrep, 0, sizeof(internalrep));
+    memset(&x, 0, sizeof(x));
+    memset(&y, 0, sizeof(y));
+    *info = 0;
     _mlpreport_clear(rep);
     _mlpcvreport_clear(cvrep);
     _multilayerperceptron_init(&network, _state, ae_true);
@@ -37374,7 +39574,8 @@ static void mlptrain_mlpkfoldsplit(/* Real    */ ae_matrix* xy,
     hqrndstate rs;
 
     ae_frame_make(_state, &_frame_block);
-    memset(&rs, 0, sizeof(rs));    ae_vector_clear(folds);
+    memset(&rs, 0, sizeof(rs));
+    ae_vector_clear(folds);
     _hqrndstate_init(&rs, _state, ae_true);
 
     
@@ -37424,6 +39625,8 @@ INPUT PARAMETERS:
                   training on I-th cross-validation set.
                   It has to be preallocated.
     PoolDataCV-   parameter for parallelization.
+    WCount    -   number of weights in network, used to make decisions on
+                  parallelization.
     
 NOTE: There are no checks on the parameters correctness.
 
@@ -37438,6 +39641,7 @@ static void mlptrain_mthreadcv(mlptrainer* s,
      ae_int_t dfold,
      /* Real    */ ae_matrix* cvy,
      ae_shared_pool* pooldatacv,
+     ae_int_t wcount,
      ae_state *_state)
 {
     ae_frame _frame_block;
@@ -37446,7 +39650,8 @@ static void mlptrain_mthreadcv(mlptrainer* s,
     ae_int_t i;
 
     ae_frame_make(_state, &_frame_block);
-    memset(&_datacv, 0, sizeof(_datacv));    ae_smart_ptr_init(&_datacv, (void**)&datacv, _state, ae_true);
+    memset(&_datacv, 0, sizeof(_datacv));
+    ae_smart_ptr_init(&_datacv, (void**)&datacv, _state, ae_true);
 
     if( fold==dfold-1 )
     {
@@ -37495,10 +39700,45 @@ static void mlptrain_mthreadcv(mlptrainer* s,
     else
     {
         ae_assert(fold<dfold-1, "MThreadCV: internal error(Fold>DFold-1).", _state);
-        mlptrain_mthreadcv(s, rowsize, nrestarts, folds, fold, (fold+dfold)/2, cvy, pooldatacv, _state);
-        mlptrain_mthreadcv(s, rowsize, nrestarts, folds, (fold+dfold)/2, dfold, cvy, pooldatacv, _state);
+        
+        /*
+         * We expect that minimum number of iterations before convergence is 100.
+         * Hence is our approach to evaluation of task complexity.
+         */
+        if( ae_fp_greater_eq(ae_maxint(nrestarts, 1, _state)*rmul3((double)(2*wcount), (double)(s->npoints), (double)(100), _state),smpactivationlevel(_state)) )
+        {
+            if( _trypexec_mlptrain_mthreadcv(s,rowsize,nrestarts,folds,fold,dfold,cvy,pooldatacv,wcount, _state) )
+            {
+                ae_frame_leave(_state);
+                return;
+            }
+        }
+        
+        /*
+         * Split task
+         */
+        mlptrain_mthreadcv(s, rowsize, nrestarts, folds, fold, (fold+dfold)/2, cvy, pooldatacv, wcount, _state);
+        mlptrain_mthreadcv(s, rowsize, nrestarts, folds, (fold+dfold)/2, dfold, cvy, pooldatacv, wcount, _state);
     }
     ae_frame_leave(_state);
+}
+
+
+/*************************************************************************
+Serial stub for GPL edition.
+*************************************************************************/
+ae_bool _trypexec_mlptrain_mthreadcv(mlptrainer* s,
+    ae_int_t rowsize,
+    ae_int_t nrestarts,
+    /* Integer */ ae_vector* folds,
+    ae_int_t fold,
+    ae_int_t dfold,
+    /* Real    */ ae_matrix* cvy,
+    ae_shared_pool* pooldatacv,
+    ae_int_t wcount,
+    ae_state *_state)
+{
+    return ae_false;
 }
 
 
@@ -37559,7 +39799,11 @@ static void mlptrain_mlptrainnetworkx(mlptrainer* s,
     ae_smart_ptr _psession;
 
     ae_frame_make(_state, &_frame_block);
-    memset(&modrep, 0, sizeof(modrep));    memset(&rep0, 0, sizeof(rep0));    memset(&rep1, 0, sizeof(rep1));    memset(&_psession, 0, sizeof(_psession));    _modelerrors_init(&modrep, _state, ae_true);
+    memset(&modrep, 0, sizeof(modrep));
+    memset(&rep0, 0, sizeof(rep0));
+    memset(&rep1, 0, sizeof(rep1));
+    memset(&_psession, 0, sizeof(_psession));
+    _modelerrors_init(&modrep, _state, ae_true);
     _mlpreport_init(&rep0, _state, ae_true);
     _mlpreport_init(&rep1, _state, ae_true);
     ae_smart_ptr_init(&_psession, (void**)&psession, _state, ae_true);
@@ -37571,6 +39815,20 @@ static void mlptrain_mlptrainnetworkx(mlptrainer* s,
      */
     if( isrootcall )
     {
+        
+        /*
+         * Try parallelization
+         * We expect that minimum number of iterations before convergence is 100.
+         * Hence is our approach to evaluation of task complexity.
+         */
+        if( ae_fp_greater_eq(ae_maxint(nrestarts, 1, _state)*rmul3((double)(2*wcount), (double)(s->npoints), (double)(100), _state),smpactivationlevel(_state)) )
+        {
+            if( _trypexec_mlptrain_mlptrainnetworkx(s,nrestarts,algokind,trnsubset,trnsubsetsize,valsubset,valsubsetsize,network,rep,isrootcall,sessions, _state) )
+            {
+                ae_frame_leave(_state);
+                return;
+            }
+        }
         
         /*
          * Check correctness of parameters
@@ -37777,6 +40035,26 @@ static void mlptrain_mlptrainnetworkx(mlptrainer* s,
 
 
 /*************************************************************************
+Serial stub for GPL edition.
+*************************************************************************/
+ae_bool _trypexec_mlptrain_mlptrainnetworkx(mlptrainer* s,
+    ae_int_t nrestarts,
+    ae_int_t algokind,
+    /* Integer */ ae_vector* trnsubset,
+    ae_int_t trnsubsetsize,
+    /* Integer */ ae_vector* valsubset,
+    ae_int_t valsubsetsize,
+    multilayerperceptron* network,
+    mlpreport* rep,
+    ae_bool isrootcall,
+    ae_shared_pool* sessions,
+    ae_state *_state)
+{
+    return ae_false;
+}
+
+
+/*************************************************************************
 This function trains neural network ensemble passed to this function using
 current dataset and early stopping training algorithm. Each early stopping
 round performs NRestarts  random  restarts  (thus,  EnsembleSize*NRestarts
@@ -37815,7 +40093,11 @@ static void mlptrain_mlptrainensemblex(mlptrainer* s,
     hqrndstate rs;
 
     ae_frame_make(_state, &_frame_block);
-    memset(&ngrad0, 0, sizeof(ngrad0));    memset(&ngrad1, 0, sizeof(ngrad1));    memset(&_psession, 0, sizeof(_psession));    memset(&rs, 0, sizeof(rs));    _sinteger_init(&ngrad0, _state, ae_true);
+    memset(&ngrad0, 0, sizeof(ngrad0));
+    memset(&ngrad1, 0, sizeof(ngrad1));
+    memset(&_psession, 0, sizeof(_psession));
+    memset(&rs, 0, sizeof(rs));
+    _sinteger_init(&ngrad0, _state, ae_true);
     _sinteger_init(&ngrad1, _state, ae_true);
     ae_smart_ptr_init(&_psession, (void**)&psession, _state, ae_true);
     _hqrndstate_init(&rs, _state, ae_true);
@@ -37862,6 +40144,20 @@ static void mlptrain_mlptrainensemblex(mlptrainer* s,
      */
     if( isrootcall )
     {
+        
+        /*
+         * Try parallelization
+         * We expect that minimum number of iterations before convergence is 100.
+         * Hence is our approach to evaluation of task complexity.
+         */
+        if( ae_fp_greater_eq(ae_maxint(nrestarts, 1, _state)*(idx1-idx0)*rmul3((double)(2*wcount), (double)(s->npoints), (double)(100), _state),smpactivationlevel(_state)) )
+        {
+            if( _trypexec_mlptrain_mlptrainensemblex(s,ensemble,idx0,idx1,nrestarts,trainingmethod,ngrad,isrootcall,esessions, _state) )
+            {
+                ae_frame_leave(_state);
+                return;
+            }
+        }
         
         /*
          * Prepare:
@@ -37981,6 +40277,24 @@ static void mlptrain_mlptrainensemblex(mlptrainer* s,
      */
     ae_shared_pool_recycle(esessions, &_psession, _state);
     ae_frame_leave(_state);
+}
+
+
+/*************************************************************************
+Serial stub for GPL edition.
+*************************************************************************/
+ae_bool _trypexec_mlptrain_mlptrainensemblex(mlptrainer* s,
+    mlpensemble* ensemble,
+    ae_int_t idx0,
+    ae_int_t idx1,
+    ae_int_t nrestarts,
+    ae_int_t trainingmethod,
+    sinteger* ngrad,
+    ae_bool isrootcall,
+    ae_shared_pool* esessions,
+    ae_state *_state)
+{
+    return ae_false;
 }
 
 
@@ -38357,7 +40671,17 @@ static void mlptrain_mlpebagginginternal(mlpensemble* ensemble,
     hqrndstate rs;
 
     ae_frame_make(_state, &_frame_block);
-    memset(&xys, 0, sizeof(xys));    memset(&s, 0, sizeof(s));    memset(&oobbuf, 0, sizeof(oobbuf));    memset(&oobcntbuf, 0, sizeof(oobcntbuf));    memset(&x, 0, sizeof(x));    memset(&y, 0, sizeof(y));    memset(&dy, 0, sizeof(dy));    memset(&dsbuf, 0, sizeof(dsbuf));    memset(&tmprep, 0, sizeof(tmprep));    memset(&rs, 0, sizeof(rs));    *info = 0;
+    memset(&xys, 0, sizeof(xys));
+    memset(&s, 0, sizeof(s));
+    memset(&oobbuf, 0, sizeof(oobbuf));
+    memset(&oobcntbuf, 0, sizeof(oobcntbuf));
+    memset(&x, 0, sizeof(x));
+    memset(&y, 0, sizeof(y));
+    memset(&dy, 0, sizeof(dy));
+    memset(&dsbuf, 0, sizeof(dsbuf));
+    memset(&tmprep, 0, sizeof(tmprep));
+    memset(&rs, 0, sizeof(rs));
+    *info = 0;
     _mlpreport_clear(rep);
     _mlpcvreport_clear(ooberrors);
     ae_matrix_init(&xys, 0, 0, DT_REAL, _state, ae_true);
@@ -38573,7 +40897,8 @@ static void mlptrain_initmlptrnsession(multilayerperceptron* networktrained,
     ae_vector dummysubset;
 
     ae_frame_make(_state, &_frame_block);
-    memset(&dummysubset, 0, sizeof(dummysubset));    ae_vector_init(&dummysubset, 0, DT_INT, _state, ae_true);
+    memset(&dummysubset, 0, sizeof(dummysubset));
+    ae_vector_init(&dummysubset, 0, DT_INT, _state, ae_true);
 
     
     /*
@@ -38640,7 +40965,10 @@ static void mlptrain_initmlptrnsessions(multilayerperceptron* networktrained,
     ae_smart_ptr _p;
 
     ae_frame_make(_state, &_frame_block);
-    memset(&dummysubset, 0, sizeof(dummysubset));    memset(&t, 0, sizeof(t));    memset(&_p, 0, sizeof(_p));    ae_vector_init(&dummysubset, 0, DT_INT, _state, ae_true);
+    memset(&dummysubset, 0, sizeof(dummysubset));
+    memset(&t, 0, sizeof(t));
+    memset(&_p, 0, sizeof(_p));
+    ae_vector_init(&dummysubset, 0, DT_INT, _state, ae_true);
     _smlptrnsession_init(&t, _state, ae_true);
     ae_smart_ptr_init(&_p, (void**)&p, _state, ae_true);
 
@@ -38685,7 +41013,8 @@ static void mlptrain_initmlpetrnsession(multilayerperceptron* individualnetwork,
     ae_vector dummysubset;
 
     ae_frame_make(_state, &_frame_block);
-    memset(&dummysubset, 0, sizeof(dummysubset));    ae_vector_init(&dummysubset, 0, DT_INT, _state, ae_true);
+    memset(&dummysubset, 0, sizeof(dummysubset));
+    ae_vector_init(&dummysubset, 0, DT_INT, _state, ae_true);
 
     
     /*
@@ -38714,7 +41043,8 @@ static void mlptrain_initmlpetrnsessions(multilayerperceptron* individualnetwork
     mlpetrnsession t;
 
     ae_frame_make(_state, &_frame_block);
-    memset(&t, 0, sizeof(t));    _mlpetrnsession_init(&t, _state, ae_true);
+    memset(&t, 0, sizeof(t));
+    _mlpetrnsession_init(&t, _state, ae_true);
 
     if( !ae_shared_pool_is_initialized(sessions) )
     {
@@ -39340,22 +41670,28 @@ void clusterizersetseed(clusterizerstate* s,
 /*************************************************************************
 This function performs agglomerative hierarchical clustering
 
-COMMERCIAL EDITION OF ALGLIB:
-
-  ! Commercial version of ALGLIB includes two  important  improvements  of
-  ! this function, which can be used from C++ and C#:
-  ! * Intel MKL support (lightweight Intel MKL is shipped with ALGLIB)
-  ! * multicore support
-  !
-  ! Agglomerative  hierarchical  clustering  algorithm  has  two   phases:
-  ! distance matrix calculation  and  clustering  itself. Only first phase
-  ! (distance matrix calculation) is accelerated by Intel MKL  and  multi-
-  ! threading. Thus, acceleration is significant only for  medium or high-
-  ! dimensional problems.
-  !
+  ! COMMERCIAL EDITION OF ALGLIB:
+  ! 
+  ! Commercial Edition of ALGLIB includes following important improvements
+  ! of this function:
+  ! * high-performance native backend with same C# interface (C# version)
+  ! * multithreading support (C++ and C# versions)
+  ! * hardware vendor (Intel) implementations of linear algebra primitives
+  !   (C++ and C# versions, x86/x64 platform)
+  ! 
   ! We recommend you to read 'Working with commercial version' section  of
   ! ALGLIB Reference Manual in order to find out how to  use  performance-
   ! related features provided by commercial edition of ALGLIB.
+
+NOTE: Agglomerative  hierarchical  clustering  algorithm  has two  phases:
+      distance matrix calculation and clustering  itself. Only first phase
+      (distance matrix  calculation)  is  accelerated  by  Intel  MKL  and 
+      multithreading. Thus, acceleration is significant only for medium or
+      high-dimensional problems.
+      
+      Although activating multithreading gives some speedup  over  single-
+      threaded execution, you  should  not  expect  nearly-linear  scaling
+      with respect to cores count.
 
 INPUT PARAMETERS:
     S       -   clusterizer state, initialized by ClusterizerCreate()
@@ -39453,16 +41789,6 @@ void clusterizerrunahc(clusterizerstate* s,
 
 
 /*************************************************************************
-Single-threaded stub. HPC ALGLIB replaces it by multithreaded code.
-*************************************************************************/
-void _pexec_clusterizerrunahc(clusterizerstate* s,
-    ahcreport* rep, ae_state *_state)
-{
-    clusterizerrunahc(s,rep, _state);
-}
-
-
-/*************************************************************************
 This function performs clustering by k-means++ algorithm.
 
 You may change algorithm properties by calling:
@@ -39472,26 +41798,25 @@ You may change algorithm properties by calling:
 By  default,  one  restart  and  unlimited number of iterations are  used.
 Initialization algorithm is chosen automatically.
 
-COMMERCIAL EDITION OF ALGLIB:
-
-  ! Commercial version of ALGLIB includes  two important  improvements  of
-  ! this function:
-  ! * multicore support (can be used from C# and C++)
-  ! * access to high-performance C++ core (actual for C# users)
-  !
-  ! K-means clustering  algorithm has two  phases:  selection  of  initial
-  ! centers  and  clustering  itself.  ALGLIB  parallelizes  both  phases.
-  ! Parallel version is optimized for the following  scenario:  medium  or
-  ! high-dimensional problem (20 or more dimensions) with large number  of
-  ! points and clusters. However, some speed-up can be obtained even  when
-  ! assumptions above are violated.
-  !
-  ! As for native-vs-managed comparison, working with native  core  brings
-  ! 30-40% improvement in speed over pure C# version of ALGLIB.
-  !
+  ! COMMERCIAL EDITION OF ALGLIB:
+  ! 
+  ! Commercial Edition of ALGLIB includes following important improvements
+  ! of this function:
+  ! * high-performance native backend with same C# interface (C# version)
+  ! * multithreading support (C++ and C# versions)
+  ! * hardware vendor (Intel) implementations of linear algebra primitives
+  !   (C++ and C# versions, x86/x64 platform)
+  ! 
   ! We recommend you to read 'Working with commercial version' section  of
   ! ALGLIB Reference Manual in order to find out how to  use  performance-
   ! related features provided by commercial edition of ALGLIB.
+
+NOTE: k-means clustering  algorithm has two  phases:  selection of initial
+      centers and clustering  itself.  ALGLIB  parallelizes  both  phases.
+      Parallel version is optimized for the following  scenario: medium or
+      high-dimensional problem (8 or more dimensions) with large number of
+      points and clusters. However, some speed-up  can  be  obtained  even 
+      when assumptions above are violated.
 
 INPUT PARAMETERS:
     S       -   clusterizer state, initialized by ClusterizerCreate()
@@ -39531,7 +41856,8 @@ void clusterizerrunkmeans(clusterizerstate* s,
     ae_matrix dummy;
 
     ae_frame_make(_state, &_frame_block);
-    memset(&dummy, 0, sizeof(dummy));    _kmeansreport_clear(rep);
+    memset(&dummy, 0, sizeof(dummy));
+    _kmeansreport_clear(rep);
     ae_matrix_init(&dummy, 0, 0, DT_REAL, _state, ae_true);
 
     ae_assert(k>=0, "ClusterizerRunKMeans: K<0", _state);
@@ -39593,32 +41919,17 @@ void clusterizerrunkmeans(clusterizerstate* s,
 
 
 /*************************************************************************
-Single-threaded stub. HPC ALGLIB replaces it by multithreaded code.
-*************************************************************************/
-void _pexec_clusterizerrunkmeans(clusterizerstate* s,
-    ae_int_t k,
-    kmeansreport* rep, ae_state *_state)
-{
-    clusterizerrunkmeans(s,k,rep, _state);
-}
-
-
-/*************************************************************************
 This function returns distance matrix for dataset
 
-COMMERCIAL EDITION OF ALGLIB:
-
-  ! Commercial version of ALGLIB includes two  important  improvements  of
-  ! this function, which can be used from C++ and C#:
-  ! * Intel MKL support (lightweight Intel MKL is shipped with ALGLIB)
-  ! * multicore support
-  !
-  ! Agglomerative  hierarchical  clustering  algorithm  has  two   phases:
-  ! distance matrix calculation  and  clustering  itself. Only first phase
-  ! (distance matrix calculation) is accelerated by Intel MKL  and  multi-
-  ! threading. Thus, acceleration is significant only for  medium or high-
-  ! dimensional problems.
-  !
+  ! COMMERCIAL EDITION OF ALGLIB:
+  ! 
+  ! Commercial Edition of ALGLIB includes following important improvements
+  ! of this function:
+  ! * high-performance native backend with same C# interface (C# version)
+  ! * multithreading support (C++ and C# versions)
+  ! * hardware vendor (Intel) implementations of linear algebra primitives
+  !   (C++ and C# versions, x86/x64 platform)
+  ! 
   ! We recommend you to read 'Working with commercial version' section  of
   ! ALGLIB Reference Manual in order to find out how to  use  performance-
   ! related features provided by commercial edition of ALGLIB.
@@ -39672,7 +41983,8 @@ void clusterizergetdistances(/* Real    */ ae_matrix* xy,
     apbuffers buf;
 
     ae_frame_make(_state, &_frame_block);
-    memset(&buf, 0, sizeof(buf));    ae_matrix_clear(d);
+    memset(&buf, 0, sizeof(buf));
+    ae_matrix_clear(d);
     _apbuffers_init(&buf, _state, ae_true);
 
     ae_assert(nfeatures>=1, "ClusterizerGetDistances: NFeatures<1", _state);
@@ -39683,19 +41995,6 @@ void clusterizergetdistances(/* Real    */ ae_matrix* xy,
     ae_assert(apservisfinitematrix(xy, npoints, nfeatures, _state), "ClusterizerGetDistances: XY contains NAN/INF", _state);
     clusterizergetdistancesbuf(&buf, xy, npoints, nfeatures, disttype, d, _state);
     ae_frame_leave(_state);
-}
-
-
-/*************************************************************************
-Single-threaded stub. HPC ALGLIB replaces it by multithreaded code.
-*************************************************************************/
-void _pexec_clusterizergetdistances(/* Real    */ ae_matrix* xy,
-    ae_int_t npoints,
-    ae_int_t nfeatures,
-    ae_int_t disttype,
-    /* Real    */ ae_matrix* d, ae_state *_state)
-{
-    clusterizergetdistances(xy,npoints,nfeatures,disttype,d, _state);
 }
 
 
@@ -40000,7 +42299,11 @@ void clusterizergetkclusters(ahcreport* rep,
     ae_int_t npoints;
 
     ae_frame_make(_state, &_frame_block);
-    memset(&presentclusters, 0, sizeof(presentclusters));    memset(&clusterindexes, 0, sizeof(clusterindexes));    memset(&clustersizes, 0, sizeof(clustersizes));    memset(&tmpidx, 0, sizeof(tmpidx));    ae_vector_clear(cidx);
+    memset(&presentclusters, 0, sizeof(presentclusters));
+    memset(&clusterindexes, 0, sizeof(clusterindexes));
+    memset(&clustersizes, 0, sizeof(clustersizes));
+    memset(&tmpidx, 0, sizeof(tmpidx));
+    ae_vector_clear(cidx);
     ae_vector_clear(cz);
     ae_vector_init(&presentclusters, 0, DT_BOOL, _state, ae_true);
     ae_vector_init(&clusterindexes, 0, DT_INT, _state, ae_true);
@@ -40272,7 +42575,8 @@ void kmeansinitbuf(kmeansbuffers* buf, ae_state *_state)
     apbuffers updateseed;
 
     ae_frame_make(_state, &_frame_block);
-    memset(&updateseed, 0, sizeof(updateseed));    _apbuffers_init(&updateseed, _state, ae_true);
+    memset(&updateseed, 0, sizeof(updateseed));
+    _apbuffers_init(&updateseed, _state, ae_true);
 
     ae_shared_pool_set_seed(&buf->updatepool, &updateseed, sizeof(updateseed), _apbuffers_init, _apbuffers_init_copy, _apbuffers_destroy, _state);
     ae_frame_leave(_state);
@@ -40364,7 +42668,8 @@ void kmeansgenerateinternal(/* Real    */ ae_matrix* xy,
     hqrndstate rs;
 
     ae_frame_make(_state, &_frame_block);
-    memset(&rs, 0, sizeof(rs));    *info = 0;
+    memset(&rs, 0, sizeof(rs));
+    *info = 0;
     *iterationscount = 0;
     ae_matrix_clear(ccol);
     ae_matrix_clear(crow);
@@ -40683,7 +42988,8 @@ void kmeansupdatedistances(/* Real    */ ae_matrix* xy,
     ae_int_t stride;
 
     ae_frame_make(_state, &_frame_block);
-    memset(&_buf, 0, sizeof(_buf));    ae_smart_ptr_init(&_buf, (void**)&buf, _state, ae_true);
+    memset(&_buf, 0, sizeof(_buf));
+    ae_smart_ptr_init(&_buf, (void**)&buf, _state, ae_true);
 
     
     /*
@@ -40710,10 +43016,16 @@ void kmeansupdatedistances(/* Real    */ ae_matrix* xy,
      *
      * NOTE: real arithmetics is used to avoid integer overflow on large problem sizes
      */
-    rcomplexity = (double)(idx1-idx0);
-    rcomplexity = rcomplexity*(cidx1-cidx0);
-    rcomplexity = rcomplexity*nvars;
-    if( ((ae_fp_greater_eq(rcomplexity,clustering_parallelcomplexity)&&idx1-idx0>=2*clustering_kmeansblocksize)&&nvars>=clustering_kmeansparalleldim)&&cidx1-cidx0>=clustering_kmeansparallelk )
+    rcomplexity = 2*rmul3((double)(idx1-idx0), (double)(cidx1-cidx0), (double)(nvars), _state);
+    if( ae_fp_greater_eq(rcomplexity,smpactivationlevel(_state))&&idx1-idx0>=2*clustering_kmeansblocksize )
+    {
+        if( _trypexec_kmeansupdatedistances(xy,idx0,idx1,nvars,ct,cidx0,cidx1,xyc,xydist2,bufferpool, _state) )
+        {
+            ae_frame_leave(_state);
+            return;
+        }
+    }
+    if( ((ae_fp_greater_eq(rcomplexity,spawnlevel(_state))&&idx1-idx0>=2*clustering_kmeansblocksize)&&nvars>=clustering_kmeansparalleldim)&&cidx1-cidx0>=clustering_kmeansparallelk )
     {
         splitlength(idx1-idx0, clustering_kmeansblocksize, &task0, &task1, _state);
         kmeansupdatedistances(xy, idx0, idx0+task0, nvars, ct, cidx0, cidx1, xyc, xydist2, bufferpool, _state);
@@ -40911,6 +43223,25 @@ void kmeansupdatedistances(/* Real    */ ae_matrix* xy,
     }
     ae_shared_pool_recycle(bufferpool, &_buf, _state);
     ae_frame_leave(_state);
+}
+
+
+/*************************************************************************
+Serial stub for GPL edition.
+*************************************************************************/
+ae_bool _trypexec_kmeansupdatedistances(/* Real    */ ae_matrix* xy,
+    ae_int_t idx0,
+    ae_int_t idx1,
+    ae_int_t nvars,
+    /* Real    */ ae_matrix* ct,
+    ae_int_t cidx0,
+    ae_int_t cidx1,
+    /* Integer */ ae_vector* xyc,
+    /* Real    */ ae_vector* xydist2,
+    ae_shared_pool* bufferpool,
+    ae_state *_state)
+{
+    return ae_false;
 }
 
 
@@ -41449,7 +43780,11 @@ static void clustering_clusterizerrunahcinternal(clusterizerstate* s,
     double d01;
 
     ae_frame_make(_state, &_frame_block);
-    memset(&cidx, 0, sizeof(cidx));    memset(&csizes, 0, sizeof(csizes));    memset(&nnidx, 0, sizeof(nnidx));    memset(&cinfo, 0, sizeof(cinfo));    ae_vector_init(&cidx, 0, DT_INT, _state, ae_true);
+    memset(&cidx, 0, sizeof(cidx));
+    memset(&csizes, 0, sizeof(csizes));
+    memset(&nnidx, 0, sizeof(nnidx));
+    memset(&cinfo, 0, sizeof(cinfo));
+    ae_vector_init(&cidx, 0, DT_INT, _state, ae_true);
     ae_vector_init(&csizes, 0, DT_INT, _state, ae_true);
     ae_vector_init(&nnidx, 0, DT_INT, _state, ae_true);
     ae_matrix_init(&cinfo, 0, 0, DT_INT, _state, ae_true);
@@ -41852,6 +44187,14 @@ static void clustering_evaluatedistancematrixrec(/* Real    */ ae_matrix* xy,
     {
         return;
     }
+    rcomplexity = clustering_complexitymultiplier*rmul3((double)(i1-i0), (double)(j1-j0), (double)(nfeatures), _state);
+    if( (i1-i0>2||j1-j0>2)&&ae_fp_greater_eq(rcomplexity,smpactivationlevel(_state)) )
+    {
+        if( _trypexec_clustering_evaluatedistancematrixrec(xy,nfeatures,disttype,d,i0,i1,j0,j1, _state) )
+        {
+            return;
+        }
+    }
     
     /*
      * Try to process in parallel. Two condtions must hold in order to
@@ -41866,10 +44209,7 @@ static void clustering_evaluatedistancematrixrec(/* Real    */ ae_matrix* xy,
      *       basecases. In future versions we will be able to handle such
      *       basecases more efficiently than 1x1 cases.
      */
-    rcomplexity = (double)(i1-i0);
-    rcomplexity = rcomplexity*(j1-j0);
-    rcomplexity = rcomplexity*nfeatures;
-    if( ae_fp_greater_eq(rcomplexity,clustering_parallelcomplexity)&&(i1-i0>2||j1-j0>2) )
+    if( ae_fp_greater_eq(rcomplexity,spawnlevel(_state))&&(i1-i0>2||j1-j0>2) )
     {
         
         /*
@@ -41931,6 +44271,23 @@ static void clustering_evaluatedistancematrixrec(/* Real    */ ae_matrix* xy,
             }
         }
     }
+}
+
+
+/*************************************************************************
+Serial stub for GPL edition.
+*************************************************************************/
+ae_bool _trypexec_clustering_evaluatedistancematrixrec(/* Real    */ ae_matrix* xy,
+    ae_int_t nfeatures,
+    ae_int_t disttype,
+    /* Real    */ ae_matrix* d,
+    ae_int_t i0,
+    ae_int_t i1,
+    ae_int_t j0,
+    ae_int_t j1,
+    ae_state *_state)
+{
+    return ae_false;
 }
 
 
@@ -42148,143 +44505,747 @@ void _kmeansreport_destroy(void* _p)
 
 
 /*************************************************************************
-This subroutine builds random decision forest.
+This function creates buffer  structure  which  can  be  used  to  perform
+parallel inference requests.
 
-INPUT PARAMETERS:
-    XY          -   training set
-    NPoints     -   training set size, NPoints>=1
-    NVars       -   number of independent variables, NVars>=1
-    NClasses    -   task type:
-                    * NClasses=1 - regression task with one
-                                   dependent variable
-                    * NClasses>1 - classification task with
-                                   NClasses classes.
-    NTrees      -   number of trees in a forest, NTrees>=1.
-                    recommended values: 50-100.
-    R           -   percent of a training set used to build
-                    individual trees. 0<R<=1.
-                    recommended values: 0.1 <= R <= 0.66.
+DF subpackage  provides two sets of computing functions - ones  which  use
+internal buffer of DF model  (these  functions are single-threaded because
+they use same buffer, which can not  shared  between  threads),  and  ones
+which use external buffer.
 
-OUTPUT PARAMETERS:
-    Info        -   return code:
-                    * -2, if there is a point with class number
-                          outside of [0..NClasses-1].
-                    * -1, if incorrect parameters was passed
-                          (NPoints<1, NVars<1, NClasses<1, NTrees<1, R<=0
-                          or R>1).
-                    *  1, if task has been solved
-    DF          -   model built
-    Rep         -   training report, contains error on a training set
-                    and out-of-bag estimates of generalization error.
+This function is used to initialize external buffer.
+
+INPUT PARAMETERS
+    Model       -   DF model which is associated with newly created buffer
+
+OUTPUT PARAMETERS
+    Buf         -   external buffer.
+    
+    
+IMPORTANT: buffer object should be used only with model which was used  to
+           initialize buffer. Any attempt to  use  buffer  with  different
+           object is dangerous - you  may   get  integrity  check  failure
+           (exception) because sizes of internal  arrays  do  not  fit  to
+           dimensions of the model structure.
 
   -- ALGLIB --
-     Copyright 19.02.2009 by Bochkanov Sergey
+     Copyright 15.02.2019 by Bochkanov Sergey
 *************************************************************************/
-void dfbuildrandomdecisionforest(/* Real    */ ae_matrix* xy,
-     ae_int_t npoints,
-     ae_int_t nvars,
-     ae_int_t nclasses,
-     ae_int_t ntrees,
-     double r,
-     ae_int_t* info,
-     decisionforest* df,
-     dfreport* rep,
+void dfcreatebuffer(decisionforest* model,
+     decisionforestbuffer* buf,
      ae_state *_state)
 {
-    ae_int_t samplesize;
 
-    *info = 0;
-    _decisionforest_clear(df);
-    _dfreport_clear(rep);
+    _decisionforestbuffer_clear(buf);
 
-    if( ae_fp_less_eq(r,(double)(0))||ae_fp_greater(r,(double)(1)) )
-    {
-        *info = -1;
-        return;
-    }
-    samplesize = ae_maxint(ae_round(r*npoints, _state), 1, _state);
-    dfbuildinternal(xy, npoints, nvars, nclasses, ntrees, samplesize, ae_maxint(nvars/2, 1, _state), dforest_dfusestrongsplits+dforest_dfuseevs, info, df, rep, _state);
+    ae_vector_set_length(&buf->x, model->nvars, _state);
+    ae_vector_set_length(&buf->y, model->nclasses, _state);
 }
 
 
 /*************************************************************************
-This subroutine builds random decision forest.
-This function gives ability to tune number of variables used when choosing
-best split.
+This subroutine creates DecisionForestBuilder  object  which  is  used  to
+train decision forests.
+
+By default, new builder stores empty dataset and some  reasonable  default
+settings. At the very least, you should specify dataset prior to  building
+decision forest. You can also tweak settings of  the  forest  construction
+algorithm (recommended, although default setting should work well).
+
+Following actions are mandatory:
+* calling dfbuildersetdataset() to specify dataset
+* calling dfbuilderbuildrandomforest()  to  build  decision  forest  using
+  current dataset and default settings
+  
+Additionally, you may call:
+* dfbuildersetrndvars() or dfbuildersetrndvarsratio() to specify number of
+  variables randomly chosen for each split
+* dfbuildersetsubsampleratio() to specify fraction of the dataset randomly
+  subsampled to build each tree
+* dfbuildersetseed() to control random seed chosen for tree construction
 
 INPUT PARAMETERS:
-    XY          -   training set
-    NPoints     -   training set size, NPoints>=1
-    NVars       -   number of independent variables, NVars>=1
-    NClasses    -   task type:
-                    * NClasses=1 - regression task with one
-                                   dependent variable
-                    * NClasses>1 - classification task with
-                                   NClasses classes.
-    NTrees      -   number of trees in a forest, NTrees>=1.
-                    recommended values: 50-100.
-    NRndVars    -   number of variables used when choosing best split
-    R           -   percent of a training set used to build
-                    individual trees. 0<R<=1.
-                    recommended values: 0.1 <= R <= 0.66.
+    none
 
 OUTPUT PARAMETERS:
-    Info        -   return code:
-                    * -2, if there is a point with class number
-                          outside of [0..NClasses-1].
-                    * -1, if incorrect parameters was passed
-                          (NPoints<1, NVars<1, NClasses<1, NTrees<1, R<=0
-                          or R>1).
-                    *  1, if task has been solved
-    DF          -   model built
-    Rep         -   training report, contains error on a training set
-                    and out-of-bag estimates of generalization error.
+    S           -   decision forest builder
 
   -- ALGLIB --
-     Copyright 19.02.2009 by Bochkanov Sergey
+     Copyright 21.05.2018 by Bochkanov Sergey
 *************************************************************************/
-void dfbuildrandomdecisionforestx1(/* Real    */ ae_matrix* xy,
-     ae_int_t npoints,
-     ae_int_t nvars,
-     ae_int_t nclasses,
-     ae_int_t ntrees,
-     ae_int_t nrndvars,
-     double r,
-     ae_int_t* info,
-     decisionforest* df,
-     dfreport* rep,
-     ae_state *_state)
+void dfbuildercreate(decisionforestbuilder* s, ae_state *_state)
 {
-    ae_int_t samplesize;
 
-    *info = 0;
-    _decisionforest_clear(df);
-    _dfreport_clear(rep);
+    _decisionforestbuilder_clear(s);
 
-    if( ae_fp_less_eq(r,(double)(0))||ae_fp_greater(r,(double)(1)) )
-    {
-        *info = -1;
-        return;
-    }
-    if( nrndvars<=0||nrndvars>nvars )
-    {
-        *info = -1;
-        return;
-    }
-    samplesize = ae_maxint(ae_round(r*npoints, _state), 1, _state);
-    dfbuildinternal(xy, npoints, nvars, nclasses, ntrees, samplesize, nrndvars, dforest_dfusestrongsplits+dforest_dfuseevs, info, df, rep, _state);
+    
+    /*
+     * Empty dataset
+     */
+    s->dstype = -1;
+    s->npoints = 0;
+    s->nvars = 0;
+    s->nclasses = 1;
+    
+    /*
+     * Default training settings
+     */
+    s->rdfalgo = 0;
+    s->rdfratio = 0.5;
+    s->rdfvars = 0.0;
+    s->rdfglobalseed = 0;
+    s->rdfsplitstrength = 2;
+    s->rdfimportance = 0;
+    
+    /*
+     * Other fields
+     */
+    s->rdfprogress = 0;
+    s->rdftotal = 1;
 }
 
 
-void dfbuildinternal(/* Real    */ ae_matrix* xy,
+/*************************************************************************
+This subroutine adds dense dataset to the internal storage of the  builder
+object. Specifying your dataset in the dense format means that  the  dense
+version of the forest construction algorithm will be invoked.
+
+INPUT PARAMETERS:
+    S           -   decision forest builder object
+    XY          -   array[NPoints,NVars+1] (minimum size; actual size  can
+                    be larger, only leading part is used anyway), dataset:
+                    * first NVars elements of each row store values of the
+                      independent variables
+                    * last  column  store class number (in 0...NClasses-1)
+                      or real value of the dependent variable
+    NPoints     -   number of rows in the dataset, NPoints>=1
+    NVars       -   number of independent variables, NVars>=1 
+    NClasses    -   indicates type of the problem being solved:
+                    * NClasses>=2 means  that  classification  problem  is
+                      solved  (last  column  of  the  dataset stores class
+                      number)
+                    * NClasses=1 means that regression problem  is  solved
+                      (last column of the dataset stores variable value)
+
+OUTPUT PARAMETERS:
+    S           -   decision forest builder
+
+  -- ALGLIB --
+     Copyright 21.05.2018 by Bochkanov Sergey
+*************************************************************************/
+void dfbuildersetdataset(decisionforestbuilder* s,
+     /* Real    */ ae_matrix* xy,
      ae_int_t npoints,
      ae_int_t nvars,
      ae_int_t nclasses,
+     ae_state *_state)
+{
+    ae_int_t i;
+    ae_int_t j;
+
+
+    
+    /*
+     * Check parameters
+     */
+    ae_assert(npoints>=1, "dfbuildersetdataset: npoints<1", _state);
+    ae_assert(nvars>=1, "dfbuildersetdataset: nvars<1", _state);
+    ae_assert(nclasses>=1, "dfbuildersetdataset: nclasses<1", _state);
+    ae_assert(xy->rows>=npoints, "dfbuildersetdataset: rows(xy)<npoints", _state);
+    ae_assert(xy->cols>=nvars+1, "dfbuildersetdataset: cols(xy)<nvars+1", _state);
+    ae_assert(apservisfinitematrix(xy, npoints, nvars+1, _state), "dfbuildersetdataset: xy parameter contains INFs or NANs", _state);
+    if( nclasses>1 )
+    {
+        for(i=0; i<=npoints-1; i++)
+        {
+            j = ae_round(xy->ptr.pp_double[i][nvars], _state);
+            ae_assert(j>=0&&j<nclasses, "dfbuildersetdataset: last column of xy contains invalid class number", _state);
+        }
+    }
+    
+    /*
+     * Set dataset
+     */
+    s->dstype = 0;
+    s->npoints = npoints;
+    s->nvars = nvars;
+    s->nclasses = nclasses;
+    rvectorsetlengthatleast(&s->dsdata, npoints*nvars, _state);
+    for(i=0; i<=npoints-1; i++)
+    {
+        for(j=0; j<=nvars-1; j++)
+        {
+            s->dsdata.ptr.p_double[j*npoints+i] = xy->ptr.pp_double[i][j];
+        }
+    }
+    if( nclasses>1 )
+    {
+        ivectorsetlengthatleast(&s->dsival, npoints, _state);
+        for(i=0; i<=npoints-1; i++)
+        {
+            s->dsival.ptr.p_int[i] = ae_round(xy->ptr.pp_double[i][nvars], _state);
+        }
+    }
+    else
+    {
+        rvectorsetlengthatleast(&s->dsrval, npoints, _state);
+        for(i=0; i<=npoints-1; i++)
+        {
+            s->dsrval.ptr.p_double[i] = xy->ptr.pp_double[i][nvars];
+        }
+    }
+}
+
+
+/*************************************************************************
+This function sets number  of  variables  (in  [1,NVars]  range)  used  by
+decision forest construction algorithm.
+
+The default option is to use roughly sqrt(NVars) variables.
+
+INPUT PARAMETERS:
+    S           -   decision forest builder object
+    RndVars     -   number of randomly selected variables; values  outside
+                    of [1,NVars] range are silently clipped.
+
+OUTPUT PARAMETERS:
+    S           -   decision forest builder
+
+  -- ALGLIB --
+     Copyright 21.05.2018 by Bochkanov Sergey
+*************************************************************************/
+void dfbuildersetrndvars(decisionforestbuilder* s,
+     ae_int_t rndvars,
+     ae_state *_state)
+{
+
+
+    s->rdfvars = (double)(ae_maxint(rndvars, 1, _state));
+}
+
+
+/*************************************************************************
+This function sets number of variables used by decision forest construction
+algorithm as a fraction of total variable count (0,1) range.
+
+The default option is to use roughly sqrt(NVars) variables.
+
+INPUT PARAMETERS:
+    S           -   decision forest builder object
+    F           -   round(NVars*F) variables are selected
+
+OUTPUT PARAMETERS:
+    S           -   decision forest builder
+
+  -- ALGLIB --
+     Copyright 21.05.2018 by Bochkanov Sergey
+*************************************************************************/
+void dfbuildersetrndvarsratio(decisionforestbuilder* s,
+     double f,
+     ae_state *_state)
+{
+
+
+    ae_assert(ae_isfinite(f, _state), "dfbuildersetrndvarsratio: F is INF or NAN", _state);
+    s->rdfvars = -ae_maxreal(f, ae_machineepsilon, _state);
+}
+
+
+/*************************************************************************
+This function tells decision forest builder to automatically choose number
+of  variables  used  by  decision forest construction  algorithm.  Roughly
+sqrt(NVars) variables will be used.
+
+INPUT PARAMETERS:
+    S           -   decision forest builder object
+
+OUTPUT PARAMETERS:
+    S           -   decision forest builder
+
+  -- ALGLIB --
+     Copyright 21.05.2018 by Bochkanov Sergey
+*************************************************************************/
+void dfbuildersetrndvarsauto(decisionforestbuilder* s, ae_state *_state)
+{
+
+
+    s->rdfvars = (double)(0);
+}
+
+
+/*************************************************************************
+This function sets size of dataset subsample generated the decision forest
+construction algorithm. Size is specified as a fraction of  total  dataset
+size.
+
+The default option is to use 50% of the dataset for training, 50% for  the
+OOB estimates. You can decrease fraction F down to 10%, 1% or  even  below
+in order to reduce overfitting.
+
+INPUT PARAMETERS:
+    S           -   decision forest builder object
+    F           -   fraction of the dataset to use, in (0,1] range. Values
+                    outside of this range will  be  silently  clipped.  At
+                    least one element is always selected for the  training
+                    set.
+
+OUTPUT PARAMETERS:
+    S           -   decision forest builder
+
+  -- ALGLIB --
+     Copyright 21.05.2018 by Bochkanov Sergey
+*************************************************************************/
+void dfbuildersetsubsampleratio(decisionforestbuilder* s,
+     double f,
+     ae_state *_state)
+{
+
+
+    ae_assert(ae_isfinite(f, _state), "dfbuildersetrndvarsfraction: F is INF or NAN", _state);
+    s->rdfratio = ae_maxreal(f, ae_machineepsilon, _state);
+}
+
+
+/*************************************************************************
+This function sets seed used by internal RNG for  random  subsampling  and
+random selection of variable subsets.
+
+By default random seed is used, i.e. every time you build decision forest,
+we seed generator with new value  obtained  from  system-wide  RNG.  Thus,
+decision forest builder returns non-deterministic results. You can  change
+such behavior by specyfing fixed positive seed value.
+
+INPUT PARAMETERS:
+    S           -   decision forest builder object
+    SeedVal     -   seed value:
+                    * positive values are used for seeding RNG with fixed
+                      seed, i.e. subsequent runs on same data will return
+                      same decision forests
+                    * non-positive seed means that random seed is used
+                      for every run of builder, i.e. subsequent  runs  on
+                      same  datasets  will  return   slightly   different
+                      decision forests
+
+OUTPUT PARAMETERS:
+    S           -   decision forest builder, see
+
+  -- ALGLIB --
+     Copyright 21.05.2018 by Bochkanov Sergey
+*************************************************************************/
+void dfbuildersetseed(decisionforestbuilder* s,
+     ae_int_t seedval,
+     ae_state *_state)
+{
+
+
+    s->rdfglobalseed = seedval;
+}
+
+
+/*************************************************************************
+This function sets random decision forest construction algorithm.
+
+As for now, only one decision forest construction algorithm is supported -
+a dense "baseline" RDF algorithm.
+
+INPUT PARAMETERS:
+    S           -   decision forest builder object
+    AlgoType    -   algorithm type:
+                    * 0 = baseline dense RDF
+
+OUTPUT PARAMETERS:
+    S           -   decision forest builder, see
+
+  -- ALGLIB --
+     Copyright 21.05.2018 by Bochkanov Sergey
+*************************************************************************/
+void dfbuildersetrdfalgo(decisionforestbuilder* s,
+     ae_int_t algotype,
+     ae_state *_state)
+{
+
+
+    ae_assert(algotype==0, "dfbuildersetrdfalgo: unexpected algotype", _state);
+    s->rdfalgo = algotype;
+}
+
+
+/*************************************************************************
+This  function  sets  split  selection  algorithm used by decision  forest
+classifier. You may choose several algorithms, with  different  speed  and
+quality of the results.
+
+INPUT PARAMETERS:
+    S           -   decision forest builder object
+    SplitStrength-  split type:
+                    * 0 = split at the random position, fastest one
+                    * 1 = split at the middle of the range
+                    * 2 = strong split at the best point of the range (default)
+
+OUTPUT PARAMETERS:
+    S           -   decision forest builder, see
+
+  -- ALGLIB --
+     Copyright 21.05.2018 by Bochkanov Sergey
+*************************************************************************/
+void dfbuildersetrdfsplitstrength(decisionforestbuilder* s,
+     ae_int_t splitstrength,
+     ae_state *_state)
+{
+
+
+    ae_assert((splitstrength==0||splitstrength==1)||splitstrength==2, "dfbuildersetrdfsplitstrength: unexpected split type", _state);
+    s->rdfsplitstrength = splitstrength;
+}
+
+
+/*************************************************************************
+This  function  tells  decision  forest  construction  algorithm  to   use
+Gini impurity based variable importance estimation (also known as MDI).
+
+This version of importance estimation algorithm analyzes mean decrease  in
+impurity (MDI) on training sample during  splits.  The result  is  divided
+by impurity at the root node in order to produce estimate in [0,1] range.
+
+Such estimates are fast to calculate and beautifully  normalized  (sum  to
+one) but have following downsides:
+* They ALWAYS sum to 1.0, even if output is completely unpredictable. I.e.
+  MDI allows to order variables by importance, but does not  tell us about
+  "absolute" importances of variables
+* there exist some bias towards continuous and high-cardinality categorical
+  variables
+  
+NOTE: informally speaking, MDA (permutation importance) rating answers the
+      question  "what  part  of  the  model  predictive power is ruined by
+      permuting k-th variable?" while MDI tells us "what part of the model
+      predictive power was achieved due to usage of k-th variable".
+
+      Thus, MDA rates each variable independently at "0 to 1"  scale while
+      MDI (and OOB-MDI too) tends to divide "unit  amount  of  importance"
+      between several important variables.
+      
+      If  all  variables  are  equally  important,  they  will  have  same
+      MDI/OOB-MDI rating, equal (for OOB-MDI: roughly equal)  to  1/NVars.
+      However, roughly  same  picture  will  be  produced   for  the  "all
+      variables provide information no one is critical" situation  and for
+      the "all variables are critical, drop any one, everything is ruined"
+      situation.
+      
+      Contrary to that, MDA will rate critical variable as ~1.0 important,
+      and important but non-critical variable will  have  less  than  unit
+      rating.
+
+NOTE: quite an often MDA and MDI return same results. It generally happens
+      on problems with low test set error (a few  percents  at  most)  and
+      large enough training set to avoid overfitting.
+      
+      The difference between MDA, MDI and OOB-MDI becomes  important  only
+      on "hard" tasks with high test set error and/or small training set.
+
+INPUT PARAMETERS:
+    S           -   decision forest builder object
+
+OUTPUT PARAMETERS:
+    S           -   decision forest builder object. Next call to the forest
+                    construction function will produce:
+                    * importance estimates in rep.varimportances field
+                    * variable ranks in rep.topvars field
+
+  -- ALGLIB --
+     Copyright 29.07.2019 by Bochkanov Sergey
+*************************************************************************/
+void dfbuildersetimportancetrngini(decisionforestbuilder* s,
+     ae_state *_state)
+{
+
+
+    s->rdfimportance = dforest_needtrngini;
+}
+
+
+/*************************************************************************
+This  function  tells  decision  forest  construction  algorithm  to   use
+out-of-bag version of Gini variable importance estimation (also  known  as
+OOB-MDI).
+
+This version of importance estimation algorithm analyzes mean decrease  in
+impurity (MDI) on out-of-bag sample during splits. The result  is  divided
+by impurity at the root node in order to produce estimate in [0,1] range.
+
+Such estimates are fast to calculate and resistant to  overfitting  issues
+(thanks to the  out-of-bag  estimates  used). However, OOB Gini rating has
+following downsides:
+* there exist some bias towards continuous and high-cardinality categorical
+  variables
+* Gini rating allows us to order variables by importance, but it  is  hard
+  to define importance of the variable by itself.
+  
+NOTE: informally speaking, MDA (permutation importance) rating answers the
+      question  "what  part  of  the  model  predictive power is ruined by
+      permuting k-th variable?" while MDI tells us "what part of the model
+      predictive power was achieved due to usage of k-th variable".
+
+      Thus, MDA rates each variable independently at "0 to 1"  scale while
+      MDI (and OOB-MDI too) tends to divide "unit  amount  of  importance"
+      between several important variables.
+      
+      If  all  variables  are  equally  important,  they  will  have  same
+      MDI/OOB-MDI rating, equal (for OOB-MDI: roughly equal)  to  1/NVars.
+      However, roughly  same  picture  will  be  produced   for  the  "all
+      variables provide information no one is critical" situation  and for
+      the "all variables are critical, drop any one, everything is ruined"
+      situation.
+      
+      Contrary to that, MDA will rate critical variable as ~1.0 important,
+      and important but non-critical variable will  have  less  than  unit
+      rating.
+
+NOTE: quite an often MDA and MDI return same results. It generally happens
+      on problems with low test set error (a few  percents  at  most)  and
+      large enough training set to avoid overfitting.
+      
+      The difference between MDA, MDI and OOB-MDI becomes  important  only
+      on "hard" tasks with high test set error and/or small training set.
+
+INPUT PARAMETERS:
+    S           -   decision forest builder object
+
+OUTPUT PARAMETERS:
+    S           -   decision forest builder object. Next call to the forest
+                    construction function will produce:
+                    * importance estimates in rep.varimportances field
+                    * variable ranks in rep.topvars field
+
+  -- ALGLIB --
+     Copyright 29.07.2019 by Bochkanov Sergey
+*************************************************************************/
+void dfbuildersetimportanceoobgini(decisionforestbuilder* s,
+     ae_state *_state)
+{
+
+
+    s->rdfimportance = dforest_needoobgini;
+}
+
+
+/*************************************************************************
+This  function  tells  decision  forest  construction  algorithm  to   use
+permutation variable importance estimator (also known as MDA).
+
+This version of importance estimation algorithm analyzes mean increase  in
+out-of-bag sum of squared  residuals  after  random  permutation  of  J-th
+variable. The result is divided by error computed with all variables being
+perturbed in order to produce R-squared-like estimate in [0,1] range.
+
+Such estimate  is  slower to calculate than Gini-based rating  because  it
+needs multiple inference runs for each of variables being studied.
+
+ALGLIB uses parallelized and highly  optimized  algorithm  which  analyzes
+path through the decision tree and allows  to  handle  most  perturbations
+in O(1) time; nevertheless, requesting MDA importances may increase forest
+construction time from 10% to 200% (or more,  if  you  have  thousands  of
+variables).
+
+However, MDA rating has following benefits over Gini-based ones:
+* no bias towards specific variable types
+* ability to directly evaluate "absolute" importance of some  variable  at
+  "0 to 1" scale (contrary to Gini-based rating, which returns comparative
+  importances).
+  
+NOTE: informally speaking, MDA (permutation importance) rating answers the
+      question  "what  part  of  the  model  predictive power is ruined by
+      permuting k-th variable?" while MDI tells us "what part of the model
+      predictive power was achieved due to usage of k-th variable".
+
+      Thus, MDA rates each variable independently at "0 to 1"  scale while
+      MDI (and OOB-MDI too) tends to divide "unit  amount  of  importance"
+      between several important variables.
+      
+      If  all  variables  are  equally  important,  they  will  have  same
+      MDI/OOB-MDI rating, equal (for OOB-MDI: roughly equal)  to  1/NVars.
+      However, roughly  same  picture  will  be  produced   for  the  "all
+      variables provide information no one is critical" situation  and for
+      the "all variables are critical, drop any one, everything is ruined"
+      situation.
+      
+      Contrary to that, MDA will rate critical variable as ~1.0 important,
+      and important but non-critical variable will  have  less  than  unit
+      rating.
+
+NOTE: quite an often MDA and MDI return same results. It generally happens
+      on problems with low test set error (a few  percents  at  most)  and
+      large enough training set to avoid overfitting.
+      
+      The difference between MDA, MDI and OOB-MDI becomes  important  only
+      on "hard" tasks with high test set error and/or small training set.
+
+INPUT PARAMETERS:
+    S           -   decision forest builder object
+
+OUTPUT PARAMETERS:
+    S           -   decision forest builder object. Next call to the forest
+                    construction function will produce:
+                    * importance estimates in rep.varimportances field
+                    * variable ranks in rep.topvars field
+
+  -- ALGLIB --
+     Copyright 29.07.2019 by Bochkanov Sergey
+*************************************************************************/
+void dfbuildersetimportancepermutation(decisionforestbuilder* s,
+     ae_state *_state)
+{
+
+
+    s->rdfimportance = dforest_needpermutation;
+}
+
+
+/*************************************************************************
+This  function  tells  decision  forest  construction  algorithm  to  skip
+variable importance estimation.
+
+INPUT PARAMETERS:
+    S           -   decision forest builder object
+
+OUTPUT PARAMETERS:
+    S           -   decision forest builder object. Next call to the forest
+                    construction function will result in forest being built
+                    without variable importance estimation.
+
+  -- ALGLIB --
+     Copyright 29.07.2019 by Bochkanov Sergey
+*************************************************************************/
+void dfbuildersetimportancenone(decisionforestbuilder* s,
+     ae_state *_state)
+{
+
+
+    s->rdfimportance = 0;
+}
+
+
+/*************************************************************************
+This function is an alias for dfbuilderpeekprogress(), left in ALGLIB  for
+backward compatibility reasons.
+
+  -- ALGLIB --
+     Copyright 21.05.2018 by Bochkanov Sergey
+*************************************************************************/
+double dfbuildergetprogress(decisionforestbuilder* s, ae_state *_state)
+{
+    double result;
+
+
+    result = dfbuilderpeekprogress(s, _state);
+    return result;
+}
+
+
+/*************************************************************************
+This function is used to peek into  decision  forest  construction process
+from some other thread and get current progress indicator.
+
+It returns value in [0,1].
+
+INPUT PARAMETERS:
+    S           -   decision forest builder object used  to  build  forest
+                    in some other thread
+
+RESULT:
+    progress value, in [0,1]
+
+  -- ALGLIB --
+     Copyright 21.05.2018 by Bochkanov Sergey
+*************************************************************************/
+double dfbuilderpeekprogress(decisionforestbuilder* s, ae_state *_state)
+{
+    double result;
+
+
+    result = s->rdfprogress/ae_maxreal((double)(s->rdftotal), (double)(1), _state);
+    result = ae_maxreal(result, (double)(0), _state);
+    result = ae_minreal(result, (double)(1), _state);
+    return result;
+}
+
+
+/*************************************************************************
+This subroutine builds decision forest according to current settings using
+dataset internally stored in the builder object. Dense algorithm is used.
+
+NOTE: this   function   uses   dense  algorithm  for  forest  construction
+      independently from the dataset format (dense or sparse).
+  
+NOTE: forest built with this function is  stored  in-memory  using  64-bit
+      data structures for offsets/indexes/split values. It is possible  to
+      convert  forest  into  more  memory-efficient   compressed    binary
+      representation.  Depending  on  the  problem  properties,  3.7x-5.7x
+      compression factors are possible.
+      
+      The downsides of compression are (a) slight reduction in  the  model
+      accuracy and (b) ~1.5x reduction in  the  inference  speed  (due  to
+      increased complexity of the storage format).
+      
+      See comments on dfbinarycompression() for more info.
+
+Default settings are used by the algorithm; you can tweak  them  with  the
+help of the following functions:
+* dfbuildersetrfactor() - to control a fraction of the  dataset  used  for
+  subsampling
+* dfbuildersetrandomvars() - to control number of variables randomly chosen
+  for decision rule creation
+
+  ! COMMERCIAL EDITION OF ALGLIB:
+  ! 
+  ! Commercial Edition of ALGLIB includes following important improvements
+  ! of this function:
+  ! * high-performance native backend with same C# interface (C# version)
+  ! * multithreading support (C++ and C# versions)
+  ! 
+  ! We recommend you to read 'Working with commercial version' section  of
+  ! ALGLIB Reference Manual in order to find out how to  use  performance-
+  ! related features provided by commercial edition of ALGLIB.
+
+INPUT PARAMETERS:
+    S           -   decision forest builder object
+    NTrees      -   NTrees>=1, number of trees to train
+
+OUTPUT PARAMETERS:
+    DF          -   decision forest. You can compress this forest to  more
+                    compact 16-bit representation with dfbinarycompression()
+    Rep         -   report, see below for information on its fields.
+    
+=== report information produced by forest construction function ==========
+
+Decision forest training report includes following information:
+* training set errors
+* out-of-bag estimates of errors
+* variable importance ratings
+
+Following fields are used to store information:
+* training set errors are stored in rep.relclserror, rep.avgce, rep.rmserror,
+  rep.avgerror and rep.avgrelerror
+* out-of-bag estimates of errors are stored in rep.oobrelclserror, rep.oobavgce,
+  rep.oobrmserror, rep.oobavgerror and rep.oobavgrelerror
+
+Variable importance reports, if requested by dfbuildersetimportancegini(),
+dfbuildersetimportancetrngini() or dfbuildersetimportancepermutation()
+call, are stored in:
+* rep.varimportances field stores importance ratings
+* rep.topvars stores variable indexes ordered from the most important to
+  less important ones
+
+You can find more information about report fields in:
+* comments on dfreport structure
+* comments on dfbuildersetimportancegini function
+* comments on dfbuildersetimportancetrngini function
+* comments on dfbuildersetimportancepermutation function
+
+  -- ALGLIB --
+     Copyright 21.05.2018 by Bochkanov Sergey
+*************************************************************************/
+void dfbuilderbuildrandomforest(decisionforestbuilder* s,
      ae_int_t ntrees,
-     ae_int_t samplesize,
-     ae_int_t nfeatures,
-     ae_int_t flags,
-     ae_int_t* info,
      decisionforest* df,
      dfreport* rep,
      ae_state *_state)
@@ -42292,372 +45253,269 @@ void dfbuildinternal(/* Real    */ ae_matrix* xy,
     ae_frame _frame_block;
     ae_int_t i;
     ae_int_t j;
-    ae_int_t k;
-    ae_int_t tmpi;
-    ae_int_t lasttreeoffs;
-    ae_int_t offs;
-    ae_int_t ooboffs;
-    ae_int_t treesize;
-    ae_int_t nvarsinpool;
-    ae_bool useevs;
-    dfinternalbuffers bufs;
-    ae_vector permbuf;
-    ae_vector oobbuf;
-    ae_vector oobcntbuf;
-    ae_matrix xys;
-    ae_vector x;
-    ae_vector y;
-    ae_int_t oobcnt;
-    ae_int_t oobrelcnt;
-    double v;
-    double vmin;
-    double vmax;
-    ae_bool bflag;
-    hqrndstate rs;
+    ae_int_t nvars;
+    ae_int_t nclasses;
+    ae_int_t npoints;
+    ae_int_t trnsize;
+    ae_int_t maxtreesize;
+    ae_int_t sessionseed;
+    dfworkbuf workbufseed;
+    dfvotebuf votebufseed;
+    dftreebuf treebufseed;
 
     ae_frame_make(_state, &_frame_block);
-    memset(&bufs, 0, sizeof(bufs));    memset(&permbuf, 0, sizeof(permbuf));    memset(&oobbuf, 0, sizeof(oobbuf));    memset(&oobcntbuf, 0, sizeof(oobcntbuf));    memset(&xys, 0, sizeof(xys));    memset(&x, 0, sizeof(x));    memset(&y, 0, sizeof(y));    memset(&rs, 0, sizeof(rs));    *info = 0;
+    memset(&workbufseed, 0, sizeof(workbufseed));
+    memset(&votebufseed, 0, sizeof(votebufseed));
+    memset(&treebufseed, 0, sizeof(treebufseed));
     _decisionforest_clear(df);
     _dfreport_clear(rep);
-    _dfinternalbuffers_init(&bufs, _state, ae_true);
-    ae_vector_init(&permbuf, 0, DT_INT, _state, ae_true);
-    ae_vector_init(&oobbuf, 0, DT_REAL, _state, ae_true);
-    ae_vector_init(&oobcntbuf, 0, DT_INT, _state, ae_true);
-    ae_matrix_init(&xys, 0, 0, DT_REAL, _state, ae_true);
-    ae_vector_init(&x, 0, DT_REAL, _state, ae_true);
-    ae_vector_init(&y, 0, DT_REAL, _state, ae_true);
-    _hqrndstate_init(&rs, _state, ae_true);
+    _dfworkbuf_init(&workbufseed, _state, ae_true);
+    _dfvotebuf_init(&votebufseed, _state, ae_true);
+    _dftreebuf_init(&treebufseed, _state, ae_true);
 
+    ae_assert(ntrees>=1, "DFBuilderBuildRandomForest: ntrees<1", _state);
+    dforest_cleanreport(s, rep, _state);
+    npoints = s->npoints;
+    nvars = s->nvars;
+    nclasses = s->nclasses;
     
     /*
-     * Test for inputs
+     * Set up progress counter
      */
-    if( (((((npoints<1||samplesize<1)||samplesize>npoints)||nvars<1)||nclasses<1)||ntrees<1)||nfeatures<1 )
+    s->rdfprogress = 0;
+    s->rdftotal = ntrees*npoints;
+    if( s->rdfimportance==dforest_needpermutation )
     {
-        *info = -1;
+        s->rdftotal = s->rdftotal+ntrees*npoints;
+    }
+    
+    /*
+     * Quick exit for empty dataset
+     */
+    if( s->dstype==-1||npoints==0 )
+    {
+        ae_assert(dforest_leafnodewidth==2, "DFBuilderBuildRandomForest: integrity check failed", _state);
+        df->forestformat = dforest_dfuncompressedv0;
+        df->nvars = s->nvars;
+        df->nclasses = s->nclasses;
+        df->ntrees = 1;
+        df->bufsize = 1+dforest_leafnodewidth;
+        ae_vector_set_length(&df->trees, 1+dforest_leafnodewidth, _state);
+        df->trees.ptr.p_double[0] = (double)(1+dforest_leafnodewidth);
+        df->trees.ptr.p_double[1] = (double)(-1);
+        df->trees.ptr.p_double[2] = 0.0;
+        dfcreatebuffer(df, &df->buffer, _state);
         ae_frame_leave(_state);
         return;
     }
-    if( nclasses>1 )
-    {
-        for(i=0; i<=npoints-1; i++)
-        {
-            if( ae_round(xy->ptr.pp_double[i][nvars], _state)<0||ae_round(xy->ptr.pp_double[i][nvars], _state)>=nclasses )
-            {
-                *info = -2;
-                ae_frame_leave(_state);
-                return;
-            }
-        }
-    }
-    *info = 1;
+    ae_assert(npoints>0, "DFBuilderBuildRandomForest: integrity check failed", _state);
     
     /*
-     * Flags
+     * Analyze dataset statistics, perform preprocessing
      */
-    useevs = flags/dforest_dfuseevs%2!=0;
+    dforest_analyzeandpreprocessdataset(s, _state);
     
     /*
-     * Allocate data, prepare header
+     * Prepare "work", "vote" and "tree" pools and other settings
      */
-    treesize = 1+dforest_innernodewidth*(samplesize-1)+dforest_leafnodewidth*samplesize;
-    ae_vector_set_length(&permbuf, npoints-1+1, _state);
-    ae_vector_set_length(&bufs.treebuf, treesize-1+1, _state);
-    ae_vector_set_length(&bufs.idxbuf, npoints-1+1, _state);
-    ae_vector_set_length(&bufs.tmpbufr, npoints-1+1, _state);
-    ae_vector_set_length(&bufs.tmpbufr2, npoints-1+1, _state);
-    ae_vector_set_length(&bufs.tmpbufi, npoints-1+1, _state);
-    ae_vector_set_length(&bufs.sortrbuf, npoints, _state);
-    ae_vector_set_length(&bufs.sortrbuf2, npoints, _state);
-    ae_vector_set_length(&bufs.sortibuf, npoints, _state);
-    ae_vector_set_length(&bufs.varpool, nvars-1+1, _state);
-    ae_vector_set_length(&bufs.evsbin, nvars-1+1, _state);
-    ae_vector_set_length(&bufs.evssplits, nvars-1+1, _state);
-    ae_vector_set_length(&bufs.classibuf, 2*nclasses-1+1, _state);
-    ae_vector_set_length(&oobbuf, nclasses*npoints-1+1, _state);
-    ae_vector_set_length(&oobcntbuf, npoints-1+1, _state);
-    ae_vector_set_length(&df->trees, ntrees*treesize-1+1, _state);
-    ae_matrix_set_length(&xys, samplesize-1+1, nvars+1, _state);
-    ae_vector_set_length(&x, nvars-1+1, _state);
-    ae_vector_set_length(&y, nclasses-1+1, _state);
-    for(i=0; i<=npoints-1; i++)
-    {
-        permbuf.ptr.p_int[i] = i;
-    }
+    trnsize = ae_round(npoints*s->rdfratio, _state);
+    trnsize = ae_maxint(trnsize, 1, _state);
+    trnsize = ae_minint(trnsize, npoints, _state);
+    maxtreesize = 1+dforest_innernodewidth*(trnsize-1)+dforest_leafnodewidth*trnsize;
+    ae_vector_set_length(&workbufseed.varpool, nvars, _state);
+    ae_vector_set_length(&workbufseed.trnset, trnsize, _state);
+    ae_vector_set_length(&workbufseed.oobset, npoints-trnsize, _state);
+    ae_vector_set_length(&workbufseed.tmp0i, npoints, _state);
+    ae_vector_set_length(&workbufseed.tmp1i, npoints, _state);
+    ae_vector_set_length(&workbufseed.tmp0r, npoints, _state);
+    ae_vector_set_length(&workbufseed.tmp1r, npoints, _state);
+    ae_vector_set_length(&workbufseed.tmp2r, npoints, _state);
+    ae_vector_set_length(&workbufseed.tmp3r, npoints, _state);
+    ae_vector_set_length(&workbufseed.trnlabelsi, npoints, _state);
+    ae_vector_set_length(&workbufseed.trnlabelsr, npoints, _state);
+    ae_vector_set_length(&workbufseed.ooblabelsi, npoints, _state);
+    ae_vector_set_length(&workbufseed.ooblabelsr, npoints, _state);
+    ae_vector_set_length(&workbufseed.curvals, npoints, _state);
+    ae_vector_set_length(&workbufseed.bestvals, npoints, _state);
+    ae_vector_set_length(&workbufseed.classpriors, nclasses, _state);
+    ae_vector_set_length(&workbufseed.classtotals0, nclasses, _state);
+    ae_vector_set_length(&workbufseed.classtotals1, nclasses, _state);
+    ae_vector_set_length(&workbufseed.classtotals01, 2*nclasses, _state);
+    ae_vector_set_length(&workbufseed.treebuf, maxtreesize, _state);
+    workbufseed.trnsize = trnsize;
+    workbufseed.oobsize = npoints-trnsize;
+    ae_vector_set_length(&votebufseed.trntotals, npoints*nclasses, _state);
+    ae_vector_set_length(&votebufseed.oobtotals, npoints*nclasses, _state);
     for(i=0; i<=npoints*nclasses-1; i++)
     {
-        oobbuf.ptr.p_double[i] = (double)(0);
+        votebufseed.trntotals.ptr.p_double[i] = (double)(0);
+        votebufseed.oobtotals.ptr.p_double[i] = (double)(0);
     }
+    ae_vector_set_length(&votebufseed.trncounts, npoints, _state);
+    ae_vector_set_length(&votebufseed.oobcounts, npoints, _state);
     for(i=0; i<=npoints-1; i++)
     {
-        oobcntbuf.ptr.p_int[i] = 0;
+        votebufseed.trncounts.ptr.p_int[i] = 0;
+        votebufseed.oobcounts.ptr.p_int[i] = 0;
     }
-    
-    /*
-     * Prepare variable pool and EVS (extended variable selection/splitting) buffers
-     * (whether EVS is turned on or not):
-     * 1. detect binary variables and pre-calculate splits for them
-     * 2. detect variables with non-distinct values and exclude them from pool
-     */
+    ae_vector_set_length(&votebufseed.giniimportances, nvars, _state);
     for(i=0; i<=nvars-1; i++)
     {
-        bufs.varpool.ptr.p_int[i] = i;
+        votebufseed.giniimportances.ptr.p_double[i] = 0.0;
     }
-    nvarsinpool = nvars;
-    if( useevs )
+    treebufseed.treeidx = -1;
+    ae_shared_pool_set_seed(&s->workpool, &workbufseed, sizeof(workbufseed), _dfworkbuf_init, _dfworkbuf_init_copy, _dfworkbuf_destroy, _state);
+    ae_shared_pool_set_seed(&s->votepool, &votebufseed, sizeof(votebufseed), _dfvotebuf_init, _dfvotebuf_init_copy, _dfvotebuf_destroy, _state);
+    ae_shared_pool_set_seed(&s->treepool, &treebufseed, sizeof(treebufseed), _dftreebuf_init, _dftreebuf_init_copy, _dftreebuf_destroy, _state);
+    ae_shared_pool_set_seed(&s->treefactory, &treebufseed, sizeof(treebufseed), _dftreebuf_init, _dftreebuf_init_copy, _dftreebuf_destroy, _state);
+    
+    /*
+     * Select session seed (individual trees are constructed using
+     * combination of session and local seeds).
+     */
+    sessionseed = s->rdfglobalseed;
+    if( s->rdfglobalseed<=0 )
     {
-        for(j=0; j<=nvars-1; j++)
-        {
-            vmin = xy->ptr.pp_double[0][j];
-            vmax = vmin;
-            for(i=0; i<=npoints-1; i++)
-            {
-                v = xy->ptr.pp_double[i][j];
-                vmin = ae_minreal(vmin, v, _state);
-                vmax = ae_maxreal(vmax, v, _state);
-            }
-            if( ae_fp_eq(vmin,vmax) )
-            {
-                
-                /*
-                 * exclude variable from pool
-                 */
-                bufs.varpool.ptr.p_int[j] = bufs.varpool.ptr.p_int[nvarsinpool-1];
-                bufs.varpool.ptr.p_int[nvarsinpool-1] = -1;
-                nvarsinpool = nvarsinpool-1;
-                continue;
-            }
-            bflag = ae_false;
-            for(i=0; i<=npoints-1; i++)
-            {
-                v = xy->ptr.pp_double[i][j];
-                if( ae_fp_neq(v,vmin)&&ae_fp_neq(v,vmax) )
-                {
-                    bflag = ae_true;
-                    break;
-                }
-            }
-            if( bflag )
-            {
-                
-                /*
-                 * non-binary variable
-                 */
-                bufs.evsbin.ptr.p_bool[j] = ae_false;
-            }
-            else
-            {
-                
-                /*
-                 * Prepare
-                 */
-                bufs.evsbin.ptr.p_bool[j] = ae_true;
-                bufs.evssplits.ptr.p_double[j] = 0.5*(vmin+vmax);
-                if( ae_fp_less_eq(bufs.evssplits.ptr.p_double[j],vmin) )
-                {
-                    bufs.evssplits.ptr.p_double[j] = vmax;
-                }
-            }
-        }
+        sessionseed = ae_randominteger(30000, _state);
     }
     
     /*
-     * RANDOM FOREST FORMAT
-     * W[0]         -   size of array
-     * W[1]         -   version number
-     * W[2]         -   NVars
-     * W[3]         -   NClasses (1 for regression)
-     * W[4]         -   NTrees
-     * W[5]         -   trees offset
-     *
-     *
-     * TREE FORMAT
-     * W[Offs]      -   size of sub-array
-     *     node info:
-     * W[K+0]       -   variable number        (-1 for leaf mode)
-     * W[K+1]       -   threshold              (class/value for leaf node)
-     * W[K+2]       -   ">=" branch index      (absent for leaf node)
-     *
+     * Prepare In-and-Out-of-Bag matrix, if needed
      */
-    df->nvars = nvars;
-    df->nclasses = nclasses;
-    df->ntrees = ntrees;
-    
-    /*
-     * Build forest
-     */
-    hqrndrandomize(&rs, _state);
-    offs = 0;
-    for(i=0; i<=ntrees-1; i++)
+    s->neediobmatrix = s->rdfimportance==dforest_needpermutation;
+    if( s->neediobmatrix )
     {
         
         /*
-         * Prepare sample
+         * Prepare default state of In-and-Out-of-Bag matrix
          */
-        for(k=0; k<=samplesize-1; k++)
+        bmatrixsetlengthatleast(&s->iobmatrix, ntrees, npoints, _state);
+        for(i=0; i<=ntrees-1; i++)
         {
-            j = k+hqrnduniformi(&rs, npoints-k, _state);
-            tmpi = permbuf.ptr.p_int[k];
-            permbuf.ptr.p_int[k] = permbuf.ptr.p_int[j];
-            permbuf.ptr.p_int[j] = tmpi;
-            j = permbuf.ptr.p_int[k];
-            ae_v_move(&xys.ptr.pp_double[k][0], 1, &xy->ptr.pp_double[j][0], 1, ae_v_len(0,nvars));
-        }
-        
-        /*
-         * build tree, copy
-         */
-        dforest_dfbuildtree(&xys, samplesize, nvars, nclasses, nfeatures, nvarsinpool, flags, &bufs, &rs, _state);
-        j = ae_round(bufs.treebuf.ptr.p_double[0], _state);
-        ae_v_move(&df->trees.ptr.p_double[offs], 1, &bufs.treebuf.ptr.p_double[0], 1, ae_v_len(offs,offs+j-1));
-        lasttreeoffs = offs;
-        offs = offs+j;
-        
-        /*
-         * OOB estimates
-         */
-        for(k=samplesize; k<=npoints-1; k++)
-        {
-            for(j=0; j<=nclasses-1; j++)
+            for(j=0; j<=npoints-1; j++)
             {
-                y.ptr.p_double[j] = (double)(0);
+                s->iobmatrix.ptr.pp_bool[i][j] = ae_false;
             }
-            j = permbuf.ptr.p_int[k];
-            ae_v_move(&x.ptr.p_double[0], 1, &xy->ptr.pp_double[j][0], 1, ae_v_len(0,nvars-1));
-            dforest_dfprocessinternal(df, lasttreeoffs, &x, &y, _state);
-            ae_v_add(&oobbuf.ptr.p_double[j*nclasses], 1, &y.ptr.p_double[0], 1, ae_v_len(j*nclasses,(j+1)*nclasses-1));
-            oobcntbuf.ptr.p_int[j] = oobcntbuf.ptr.p_int[j]+1;
-        }
-    }
-    df->bufsize = offs;
-    
-    /*
-     * Normalize OOB results
-     */
-    for(i=0; i<=npoints-1; i++)
-    {
-        if( oobcntbuf.ptr.p_int[i]!=0 )
-        {
-            v = (double)1/(double)oobcntbuf.ptr.p_int[i];
-            ae_v_muld(&oobbuf.ptr.p_double[i*nclasses], 1, ae_v_len(i*nclasses,i*nclasses+nclasses-1), v);
         }
     }
     
     /*
-     * Calculate training set estimates
+     * Build trees (in parallel, if possible)
      */
-    rep->relclserror = dfrelclserror(df, xy, npoints, _state);
-    rep->avgce = dfavgce(df, xy, npoints, _state);
-    rep->rmserror = dfrmserror(df, xy, npoints, _state);
-    rep->avgerror = dfavgerror(df, xy, npoints, _state);
-    rep->avgrelerror = dfavgrelerror(df, xy, npoints, _state);
+    dforest_buildrandomtree(s, 0, ntrees, _state);
     
     /*
-     * Calculate OOB estimates.
+     * Merge trees and output result
      */
-    rep->oobrelclserror = (double)(0);
-    rep->oobavgce = (double)(0);
-    rep->oobrmserror = (double)(0);
-    rep->oobavgerror = (double)(0);
-    rep->oobavgrelerror = (double)(0);
-    oobcnt = 0;
-    oobrelcnt = 0;
-    for(i=0; i<=npoints-1; i++)
-    {
-        if( oobcntbuf.ptr.p_int[i]!=0 )
-        {
-            ooboffs = i*nclasses;
-            if( nclasses>1 )
-            {
-                
-                /*
-                 * classification-specific code
-                 */
-                k = ae_round(xy->ptr.pp_double[i][nvars], _state);
-                tmpi = 0;
-                for(j=1; j<=nclasses-1; j++)
-                {
-                    if( ae_fp_greater(oobbuf.ptr.p_double[ooboffs+j],oobbuf.ptr.p_double[ooboffs+tmpi]) )
-                    {
-                        tmpi = j;
-                    }
-                }
-                if( tmpi!=k )
-                {
-                    rep->oobrelclserror = rep->oobrelclserror+1;
-                }
-                if( ae_fp_neq(oobbuf.ptr.p_double[ooboffs+k],(double)(0)) )
-                {
-                    rep->oobavgce = rep->oobavgce-ae_log(oobbuf.ptr.p_double[ooboffs+k], _state);
-                }
-                else
-                {
-                    rep->oobavgce = rep->oobavgce-ae_log(ae_minrealnumber, _state);
-                }
-                for(j=0; j<=nclasses-1; j++)
-                {
-                    if( j==k )
-                    {
-                        rep->oobrmserror = rep->oobrmserror+ae_sqr(oobbuf.ptr.p_double[ooboffs+j]-1, _state);
-                        rep->oobavgerror = rep->oobavgerror+ae_fabs(oobbuf.ptr.p_double[ooboffs+j]-1, _state);
-                        rep->oobavgrelerror = rep->oobavgrelerror+ae_fabs(oobbuf.ptr.p_double[ooboffs+j]-1, _state);
-                        oobrelcnt = oobrelcnt+1;
-                    }
-                    else
-                    {
-                        rep->oobrmserror = rep->oobrmserror+ae_sqr(oobbuf.ptr.p_double[ooboffs+j], _state);
-                        rep->oobavgerror = rep->oobavgerror+ae_fabs(oobbuf.ptr.p_double[ooboffs+j], _state);
-                    }
-                }
-            }
-            else
-            {
-                
-                /*
-                 * regression-specific code
-                 */
-                rep->oobrmserror = rep->oobrmserror+ae_sqr(oobbuf.ptr.p_double[ooboffs]-xy->ptr.pp_double[i][nvars], _state);
-                rep->oobavgerror = rep->oobavgerror+ae_fabs(oobbuf.ptr.p_double[ooboffs]-xy->ptr.pp_double[i][nvars], _state);
-                if( ae_fp_neq(xy->ptr.pp_double[i][nvars],(double)(0)) )
-                {
-                    rep->oobavgrelerror = rep->oobavgrelerror+ae_fabs((oobbuf.ptr.p_double[ooboffs]-xy->ptr.pp_double[i][nvars])/xy->ptr.pp_double[i][nvars], _state);
-                    oobrelcnt = oobrelcnt+1;
-                }
-            }
-            
-            /*
-             * update OOB estimates count.
-             */
-            oobcnt = oobcnt+1;
-        }
-    }
-    if( oobcnt>0 )
-    {
-        rep->oobrelclserror = rep->oobrelclserror/oobcnt;
-        rep->oobavgce = rep->oobavgce/oobcnt;
-        rep->oobrmserror = ae_sqrt(rep->oobrmserror/(oobcnt*nclasses), _state);
-        rep->oobavgerror = rep->oobavgerror/(oobcnt*nclasses);
-        if( oobrelcnt>0 )
-        {
-            rep->oobavgrelerror = rep->oobavgrelerror/oobrelcnt;
-        }
-    }
+    dforest_mergetrees(s, df, _state);
+    
+    /*
+     * Process voting results and output training set and OOB errors.
+     * Finalize tree construction.
+     */
+    dforest_processvotingresults(s, ntrees, &votebufseed, rep, _state);
+    dfcreatebuffer(df, &df->buffer, _state);
+    
+    /*
+     * Perform variable importance estimation
+     */
+    dforest_estimatevariableimportance(s, sessionseed, df, ntrees, rep, _state);
+    
+    /*
+     * Update progress counter
+     */
+    s->rdfprogress = s->rdftotal;
     ae_frame_leave(_state);
 }
 
 
 /*************************************************************************
-Procesing
+This function performs binary compression of the decision forest.
+
+Original decision forest produced by the  forest  builder  is stored using
+64-bit representation for all numbers - offsets, variable  indexes,  split
+points.
+
+It is possible to significantly reduce model size by means of:
+* using compressed  dynamic encoding for integers  (offsets  and  variable
+  indexes), which uses just 1 byte to store small ints  (less  than  128),
+  just 2 bytes for larger values (less than 128^2) and so on
+* storing floating point numbers using 8-bit exponent and 16-bit mantissa
+
+As  result,  model  needs  significantly  less  memory (compression factor
+depends on  variable and class counts). In particular:
+* NVars<128   and NClasses<128 result in 4.4x-5.7x model size reduction
+* NVars<16384 and NClasses<128 result in 3.7x-4.5x model size reduction
+
+Such storage format performs lossless compression  of  all  integers,  but
+compression of floating point values (split values) is lossy, with roughly
+0.01% relative error introduced during rounding. Thus, we recommend you to
+re-evaluate model accuracy after compression.
+
+Another downside  of  compression  is  ~1.5x reduction  in  the  inference
+speed due to necessity of dynamic decompression of the compressed model.
+
+INPUT PARAMETERS:
+    DF      -   decision forest built by forest builder
+
+OUTPUT PARAMETERS:
+    DF      -   replaced by compressed forest
+
+RESULT:
+    compression factor (in-RAM size of the compressed model vs than of the
+    uncompressed one), positive number larger than 1.0
+
+  -- ALGLIB --
+     Copyright 22.07.2019 by Bochkanov Sergey
+*************************************************************************/
+double dfbinarycompression(decisionforest* df, ae_state *_state)
+{
+    double result;
+
+
+    result = dforest_binarycompression(df, ae_false, _state);
+    return result;
+}
+
+
+/*************************************************************************
+This is a 8-bit version of dfbinarycompression.
+Not recommended for external use because it is too lossy.
+
+  -- ALGLIB --
+     Copyright 22.07.2019 by Bochkanov Sergey
+*************************************************************************/
+double dfbinarycompression8(decisionforest* df, ae_state *_state)
+{
+    double result;
+
+
+    result = dforest_binarycompression(df, ae_true, _state);
+    return result;
+}
+
+
+/*************************************************************************
+Inference using decision forest
+
+IMPORTANT: this  function  is  thread-unsafe  and  may   modify   internal
+           structures of the model! You can not use same model  object for
+           parallel evaluation from several threads.
+           
+           Use dftsprocess()  with  independent  thread-local  buffers  if
+           you need thread-safe evaluation.
 
 INPUT PARAMETERS:
     DF      -   decision forest model
-    X       -   input vector,  array[0..NVars-1].
+    X       -   input vector,  array[NVars]
+    Y       -   possibly preallocated buffer, reallocated if too small
 
 OUTPUT PARAMETERS:
     Y       -   result. Regression estimate when solving regression  task,
                 vector of posterior probabilities for classification task.
 
 See also DFProcessI.
+      
 
   -- ALGLIB --
      Copyright 16.02.2009 by Bochkanov Sergey
@@ -42670,34 +45528,59 @@ void dfprocess(decisionforest* df,
     ae_int_t offs;
     ae_int_t i;
     double v;
+    ae_int_t treesize;
+    ae_bool processed;
 
 
     
     /*
-     * Proceed
+     * Process
+     *
+     * Although comments above warn you about thread-unsafety of this
+     * function, it is de facto thread-safe. However, thread safety is
+     * an accidental side-effect of the specific inference algorithm
+     * being used. It may disappear in the future versions of the DF
+     * models, so you should NOT rely on it.
      */
     if( y->cnt<df->nclasses )
     {
         ae_vector_set_length(y, df->nclasses, _state);
     }
-    offs = 0;
     for(i=0; i<=df->nclasses-1; i++)
     {
         y->ptr.p_double[i] = (double)(0);
     }
-    for(i=0; i<=df->ntrees-1; i++)
+    processed = ae_false;
+    if( df->forestformat==dforest_dfuncompressedv0 )
     {
         
         /*
-         * Process basic tree
+         * Process trees stored in uncompressed format
          */
-        dforest_dfprocessinternal(df, offs, x, y, _state);
+        offs = 0;
+        for(i=0; i<=df->ntrees-1; i++)
+        {
+            dforest_dfprocessinternaluncompressed(df, offs, offs+1, x, y, _state);
+            offs = offs+ae_round(df->trees.ptr.p_double[offs], _state);
+        }
+        processed = ae_true;
+    }
+    if( df->forestformat==dforest_dfcompressedv0 )
+    {
         
         /*
-         * Next tree
+         * Process trees stored in compressed format
          */
-        offs = offs+ae_round(df->trees.ptr.p_double[offs], _state);
+        offs = 0;
+        for(i=0; i<=df->ntrees-1; i++)
+        {
+            treesize = dforest_unstreamuint(&df->trees8, &offs, _state);
+            dforest_dfprocessinternalcompressed(df, offs, x, y, _state);
+            offs = offs+treesize;
+        }
+        processed = ae_true;
     }
+    ae_assert(processed, "DFProcess: integrity check failed (unexpected format?)", _state);
     v = (double)1/(double)df->ntrees;
     ae_v_muld(&y->ptr.p_double[0], 1, ae_v_len(0,df->nclasses-1), v);
 }
@@ -42711,6 +45594,13 @@ This function allocates new array on each call,  so  it  is  significantly
 slower than its 'non-interactive' counterpart, but it is  more  convenient
 when you call it from command line.
 
+IMPORTANT: this  function  is  thread-unsafe  and  may   modify   internal
+           structures of the model! You can not use same model  object for
+           parallel evaluation from several threads.
+           
+           Use dftsprocess()  with  independent  thread-local  buffers  if
+           you need thread-safe evaluation.
+
   -- ALGLIB --
      Copyright 28.02.2010 by Bochkanov Sergey
 *************************************************************************/
@@ -42722,6 +45612,163 @@ void dfprocessi(decisionforest* df,
 
     ae_vector_clear(y);
 
+    dfprocess(df, x, y, _state);
+}
+
+
+/*************************************************************************
+This function returns first component of the  inferred  vector  (i.e.  one
+with index #0).
+
+It is a convenience wrapper for dfprocess() intended for either:
+* 1-dimensional regression problems
+* 2-class classification problems
+
+In the former case this function returns inference result as scalar, which
+is definitely more convenient that wrapping it as vector.  In  the  latter
+case it returns probability of object belonging to class #0.
+
+If you call it for anything different from two cases above, it  will  work
+as defined, i.e. return y[0], although it is of less use in such cases.
+
+IMPORTANT: this function is thread-unsafe and modifies internal structures
+           of the model! You can not use same model  object  for  parallel
+           evaluation from several threads.
+           
+           Use dftsprocess() with  independent  thread-local  buffers,  if
+           you need thread-safe evaluation.
+
+INPUT PARAMETERS:
+    Model   -   DF model
+    X       -   input vector,  array[0..NVars-1].
+
+RESULT:
+    Y[0]
+
+  -- ALGLIB --
+     Copyright 15.02.2019 by Bochkanov Sergey
+*************************************************************************/
+double dfprocess0(decisionforest* model,
+     /* Real    */ ae_vector* x,
+     ae_state *_state)
+{
+    ae_int_t i;
+    ae_int_t nvars;
+    double result;
+
+
+    nvars = model->nvars;
+    for(i=0; i<=nvars-1; i++)
+    {
+        model->buffer.x.ptr.p_double[i] = x->ptr.p_double[i];
+    }
+    dfprocess(model, &model->buffer.x, &model->buffer.y, _state);
+    result = model->buffer.y.ptr.p_double[0];
+    return result;
+}
+
+
+/*************************************************************************
+This function returns most probable class number for an  input  X.  It  is
+same as calling  dfprocess(model,x,y), then determining i=argmax(y[i]) and
+returning i.
+
+A class number in [0,NOut) range in returned for classification  problems,
+-1 is returned when this function is called for regression problems.
+
+IMPORTANT: this function is thread-unsafe and modifies internal structures
+           of the model! You can not use same model  object  for  parallel
+           evaluation from several threads.
+           
+           Use dftsprocess()  with independent  thread-local  buffers,  if
+           you need thread-safe evaluation.
+
+INPUT PARAMETERS:
+    Model   -   decision forest model
+    X       -   input vector,  array[0..NVars-1].
+
+RESULT:
+    class number, -1 for regression tasks
+
+  -- ALGLIB --
+     Copyright 15.02.2019 by Bochkanov Sergey
+*************************************************************************/
+ae_int_t dfclassify(decisionforest* model,
+     /* Real    */ ae_vector* x,
+     ae_state *_state)
+{
+    ae_int_t i;
+    ae_int_t nvars;
+    ae_int_t nout;
+    ae_int_t result;
+
+
+    if( model->nclasses<2 )
+    {
+        result = -1;
+        return result;
+    }
+    nvars = model->nvars;
+    nout = model->nclasses;
+    for(i=0; i<=nvars-1; i++)
+    {
+        model->buffer.x.ptr.p_double[i] = x->ptr.p_double[i];
+    }
+    dfprocess(model, &model->buffer.x, &model->buffer.y, _state);
+    result = 0;
+    for(i=1; i<=nout-1; i++)
+    {
+        if( model->buffer.y.ptr.p_double[i]>model->buffer.y.ptr.p_double[result] )
+        {
+            result = i;
+        }
+    }
+    return result;
+}
+
+
+/*************************************************************************
+Inference using decision forest
+
+Thread-safe procesing using external buffer for temporaries.
+
+This function is thread-safe (i.e .  you  can  use  same  DF   model  from
+multiple threads) as long as you use different buffer objects for different
+threads.
+
+INPUT PARAMETERS:
+    DF      -   decision forest model
+    Buf     -   buffer object, must be  allocated  specifically  for  this
+                model with dfcreatebuffer().
+    X       -   input vector,  array[NVars]
+    Y       -   possibly preallocated buffer, reallocated if too small
+
+OUTPUT PARAMETERS:
+    Y       -   result. Regression estimate when solving regression  task,
+                vector of posterior probabilities for classification task.
+
+See also DFProcessI.
+      
+
+  -- ALGLIB --
+     Copyright 16.02.2009 by Bochkanov Sergey
+*************************************************************************/
+void dftsprocess(decisionforest* df,
+     decisionforestbuffer* buf,
+     /* Real    */ ae_vector* x,
+     /* Real    */ ae_vector* y,
+     ae_state *_state)
+{
+
+
+    
+    /*
+     * Although docs warn you about thread-unsafety of the dfprocess()
+     * function, it is de facto thread-safe. However, thread safety is
+     * an accidental side-effect of the specific inference algorithm
+     * being used. It may disappear in the future versions of the DF
+     * models, so you should NOT rely on it.
+     */
     dfprocess(df, x, y, _state);
 }
 
@@ -42784,7 +45831,9 @@ double dfavgce(decisionforest* df,
     double result;
 
     ae_frame_make(_state, &_frame_block);
-    memset(&x, 0, sizeof(x));    memset(&y, 0, sizeof(y));    ae_vector_init(&x, 0, DT_REAL, _state, ae_true);
+    memset(&x, 0, sizeof(x));
+    memset(&y, 0, sizeof(y));
+    ae_vector_init(&x, 0, DT_REAL, _state, ae_true);
     ae_vector_init(&y, 0, DT_REAL, _state, ae_true);
 
     ae_vector_set_length(&x, df->nvars-1+1, _state);
@@ -42857,7 +45906,9 @@ double dfrmserror(decisionforest* df,
     double result;
 
     ae_frame_make(_state, &_frame_block);
-    memset(&x, 0, sizeof(x));    memset(&y, 0, sizeof(y));    ae_vector_init(&x, 0, DT_REAL, _state, ae_true);
+    memset(&x, 0, sizeof(x));
+    memset(&y, 0, sizeof(y));
+    ae_vector_init(&x, 0, DT_REAL, _state, ae_true);
     ae_vector_init(&y, 0, DT_REAL, _state, ae_true);
 
     ae_vector_set_length(&x, df->nvars-1+1, _state);
@@ -42939,7 +45990,9 @@ double dfavgerror(decisionforest* df,
     double result;
 
     ae_frame_make(_state, &_frame_block);
-    memset(&x, 0, sizeof(x));    memset(&y, 0, sizeof(y));    ae_vector_init(&x, 0, DT_REAL, _state, ae_true);
+    memset(&x, 0, sizeof(x));
+    memset(&y, 0, sizeof(y));
+    ae_vector_init(&x, 0, DT_REAL, _state, ae_true);
     ae_vector_init(&y, 0, DT_REAL, _state, ae_true);
 
     ae_vector_set_length(&x, df->nvars-1+1, _state);
@@ -43014,7 +46067,9 @@ double dfavgrelerror(decisionforest* df,
     double result;
 
     ae_frame_make(_state, &_frame_block);
-    memset(&x, 0, sizeof(x));    memset(&y, 0, sizeof(y));    ae_vector_init(&x, 0, DT_REAL, _state, ae_true);
+    memset(&x, 0, sizeof(x));
+    memset(&y, 0, sizeof(y));
+    ae_vector_init(&x, 0, DT_REAL, _state, ae_true);
     ae_vector_init(&y, 0, DT_REAL, _state, ae_true);
 
     ae_vector_set_length(&x, df->nvars-1+1, _state);
@@ -43077,15 +46132,40 @@ OUTPUT PARAMETERS:
 *************************************************************************/
 void dfcopy(decisionforest* df1, decisionforest* df2, ae_state *_state)
 {
+    ae_int_t i;
+    ae_int_t bufsize;
 
     _decisionforest_clear(df2);
 
-    df2->nvars = df1->nvars;
-    df2->nclasses = df1->nclasses;
-    df2->ntrees = df1->ntrees;
-    df2->bufsize = df1->bufsize;
-    ae_vector_set_length(&df2->trees, df1->bufsize-1+1, _state);
-    ae_v_move(&df2->trees.ptr.p_double[0], 1, &df1->trees.ptr.p_double[0], 1, ae_v_len(0,df1->bufsize-1));
+    if( df1->forestformat==dforest_dfuncompressedv0 )
+    {
+        df2->forestformat = df1->forestformat;
+        df2->nvars = df1->nvars;
+        df2->nclasses = df1->nclasses;
+        df2->ntrees = df1->ntrees;
+        df2->bufsize = df1->bufsize;
+        ae_vector_set_length(&df2->trees, df1->bufsize, _state);
+        ae_v_move(&df2->trees.ptr.p_double[0], 1, &df1->trees.ptr.p_double[0], 1, ae_v_len(0,df1->bufsize-1));
+        dfcreatebuffer(df2, &df2->buffer, _state);
+        return;
+    }
+    if( df1->forestformat==dforest_dfcompressedv0 )
+    {
+        df2->forestformat = df1->forestformat;
+        df2->usemantissa8 = df1->usemantissa8;
+        df2->nvars = df1->nvars;
+        df2->nclasses = df1->nclasses;
+        df2->ntrees = df1->ntrees;
+        bufsize = df1->trees8.cnt;
+        ae_vector_set_length(&(df2->trees8), bufsize, _state);
+        for(i=0; i<=bufsize-1; i++)
+        {
+            df2->trees8.ptr.p_ubyte[i] = (unsigned char)(df1->trees8.ptr.p_ubyte[i]);
+        }
+        dfcreatebuffer(df2, &df2->buffer, _state);
+        return;
+    }
+    ae_assert(ae_false, "DFCopy: unexpected forest format", _state);
 }
 
 
@@ -43099,13 +46179,29 @@ void dfalloc(ae_serializer* s, decisionforest* forest, ae_state *_state)
 {
 
 
-    ae_serializer_alloc_entry(s);
-    ae_serializer_alloc_entry(s);
-    ae_serializer_alloc_entry(s);
-    ae_serializer_alloc_entry(s);
-    ae_serializer_alloc_entry(s);
-    ae_serializer_alloc_entry(s);
-    allocrealarray(s, &forest->trees, forest->bufsize, _state);
+    if( forest->forestformat==dforest_dfuncompressedv0 )
+    {
+        ae_serializer_alloc_entry(s);
+        ae_serializer_alloc_entry(s);
+        ae_serializer_alloc_entry(s);
+        ae_serializer_alloc_entry(s);
+        ae_serializer_alloc_entry(s);
+        ae_serializer_alloc_entry(s);
+        allocrealarray(s, &forest->trees, forest->bufsize, _state);
+        return;
+    }
+    if( forest->forestformat==dforest_dfcompressedv0 )
+    {
+        ae_serializer_alloc_entry(s);
+        ae_serializer_alloc_entry(s);
+        ae_serializer_alloc_entry(s);
+        ae_serializer_alloc_entry(s);
+        ae_serializer_alloc_entry(s);
+        ae_serializer_alloc_entry(s);
+        ae_serializer_alloc_byte_array(s, &forest->trees8);
+        return;
+    }
+    ae_assert(ae_false, "DFAlloc: unexpected forest format", _state);
 }
 
 
@@ -43121,13 +46217,29 @@ void dfserialize(ae_serializer* s,
 {
 
 
-    ae_serializer_serialize_int(s, getrdfserializationcode(_state), _state);
-    ae_serializer_serialize_int(s, dforest_dffirstversion, _state);
-    ae_serializer_serialize_int(s, forest->nvars, _state);
-    ae_serializer_serialize_int(s, forest->nclasses, _state);
-    ae_serializer_serialize_int(s, forest->ntrees, _state);
-    ae_serializer_serialize_int(s, forest->bufsize, _state);
-    serializerealarray(s, &forest->trees, forest->bufsize, _state);
+    if( forest->forestformat==dforest_dfuncompressedv0 )
+    {
+        ae_serializer_serialize_int(s, getrdfserializationcode(_state), _state);
+        ae_serializer_serialize_int(s, dforest_dfuncompressedv0, _state);
+        ae_serializer_serialize_int(s, forest->nvars, _state);
+        ae_serializer_serialize_int(s, forest->nclasses, _state);
+        ae_serializer_serialize_int(s, forest->ntrees, _state);
+        ae_serializer_serialize_int(s, forest->bufsize, _state);
+        serializerealarray(s, &forest->trees, forest->bufsize, _state);
+        return;
+    }
+    if( forest->forestformat==dforest_dfcompressedv0 )
+    {
+        ae_serializer_serialize_int(s, getrdfserializationcode(_state), _state);
+        ae_serializer_serialize_int(s, forest->forestformat, _state);
+        ae_serializer_serialize_bool(s, forest->usemantissa8, _state);
+        ae_serializer_serialize_int(s, forest->nvars, _state);
+        ae_serializer_serialize_int(s, forest->nclasses, _state);
+        ae_serializer_serialize_int(s, forest->ntrees, _state);
+        ae_serializer_serialize_byte_array(s, &forest->trees8, _state);
+        return;
+    }
+    ae_assert(ae_false, "DFSerialize: unexpected forest format", _state);
 }
 
 
@@ -43142,7 +46254,8 @@ void dfunserialize(ae_serializer* s,
      ae_state *_state)
 {
     ae_int_t i0;
-    ae_int_t i1;
+    ae_int_t forestformat;
+    ae_bool processed;
 
     _decisionforest_clear(forest);
 
@@ -43152,17 +46265,3242 @@ void dfunserialize(ae_serializer* s,
      */
     ae_serializer_unserialize_int(s, &i0, _state);
     ae_assert(i0==getrdfserializationcode(_state), "DFUnserialize: stream header corrupted", _state);
-    ae_serializer_unserialize_int(s, &i1, _state);
-    ae_assert(i1==dforest_dffirstversion, "DFUnserialize: stream header corrupted", _state);
     
     /*
-     * Unserialize data
+     * Read forest
      */
-    ae_serializer_unserialize_int(s, &forest->nvars, _state);
-    ae_serializer_unserialize_int(s, &forest->nclasses, _state);
-    ae_serializer_unserialize_int(s, &forest->ntrees, _state);
-    ae_serializer_unserialize_int(s, &forest->bufsize, _state);
-    unserializerealarray(s, &forest->trees, _state);
+    ae_serializer_unserialize_int(s, &forestformat, _state);
+    processed = ae_false;
+    if( forestformat==dforest_dfuncompressedv0 )
+    {
+        
+        /*
+         * Unserialize data
+         */
+        forest->forestformat = forestformat;
+        ae_serializer_unserialize_int(s, &forest->nvars, _state);
+        ae_serializer_unserialize_int(s, &forest->nclasses, _state);
+        ae_serializer_unserialize_int(s, &forest->ntrees, _state);
+        ae_serializer_unserialize_int(s, &forest->bufsize, _state);
+        unserializerealarray(s, &forest->trees, _state);
+        processed = ae_true;
+    }
+    if( forestformat==dforest_dfcompressedv0 )
+    {
+        
+        /*
+         * Unserialize data
+         */
+        forest->forestformat = forestformat;
+        ae_serializer_unserialize_bool(s, &forest->usemantissa8, _state);
+        ae_serializer_unserialize_int(s, &forest->nvars, _state);
+        ae_serializer_unserialize_int(s, &forest->nclasses, _state);
+        ae_serializer_unserialize_int(s, &forest->ntrees, _state);
+        ae_serializer_unserialize_byte_array(s, &forest->trees8, _state);
+        processed = ae_true;
+    }
+    ae_assert(processed, "DFUnserialize: unexpected forest format", _state);
+    
+    /*
+     * Prepare buffer
+     */
+    dfcreatebuffer(forest, &forest->buffer, _state);
+}
+
+
+/*************************************************************************
+This subroutine builds random decision forest.
+
+--------- DEPRECATED VERSION! USE DECISION FOREST BUILDER OBJECT ---------
+
+  -- ALGLIB --
+     Copyright 19.02.2009 by Bochkanov Sergey
+*************************************************************************/
+void dfbuildrandomdecisionforest(/* Real    */ ae_matrix* xy,
+     ae_int_t npoints,
+     ae_int_t nvars,
+     ae_int_t nclasses,
+     ae_int_t ntrees,
+     double r,
+     ae_int_t* info,
+     decisionforest* df,
+     dfreport* rep,
+     ae_state *_state)
+{
+    ae_int_t samplesize;
+
+    *info = 0;
+    _decisionforest_clear(df);
+    _dfreport_clear(rep);
+
+    if( ae_fp_less_eq(r,(double)(0))||ae_fp_greater(r,(double)(1)) )
+    {
+        *info = -1;
+        return;
+    }
+    samplesize = ae_maxint(ae_round(r*npoints, _state), 1, _state);
+    dfbuildinternal(xy, npoints, nvars, nclasses, ntrees, samplesize, ae_maxint(nvars/2, 1, _state), dforest_dfusestrongsplits+dforest_dfuseevs, info, df, rep, _state);
+}
+
+
+/*************************************************************************
+This subroutine builds random decision forest.
+
+--------- DEPRECATED VERSION! USE DECISION FOREST BUILDER OBJECT ---------
+
+  -- ALGLIB --
+     Copyright 19.02.2009 by Bochkanov Sergey
+*************************************************************************/
+void dfbuildrandomdecisionforestx1(/* Real    */ ae_matrix* xy,
+     ae_int_t npoints,
+     ae_int_t nvars,
+     ae_int_t nclasses,
+     ae_int_t ntrees,
+     ae_int_t nrndvars,
+     double r,
+     ae_int_t* info,
+     decisionforest* df,
+     dfreport* rep,
+     ae_state *_state)
+{
+    ae_int_t samplesize;
+
+    *info = 0;
+    _decisionforest_clear(df);
+    _dfreport_clear(rep);
+
+    if( ae_fp_less_eq(r,(double)(0))||ae_fp_greater(r,(double)(1)) )
+    {
+        *info = -1;
+        return;
+    }
+    if( nrndvars<=0||nrndvars>nvars )
+    {
+        *info = -1;
+        return;
+    }
+    samplesize = ae_maxint(ae_round(r*npoints, _state), 1, _state);
+    dfbuildinternal(xy, npoints, nvars, nclasses, ntrees, samplesize, nrndvars, dforest_dfusestrongsplits+dforest_dfuseevs, info, df, rep, _state);
+}
+
+
+void dfbuildinternal(/* Real    */ ae_matrix* xy,
+     ae_int_t npoints,
+     ae_int_t nvars,
+     ae_int_t nclasses,
+     ae_int_t ntrees,
+     ae_int_t samplesize,
+     ae_int_t nfeatures,
+     ae_int_t flags,
+     ae_int_t* info,
+     decisionforest* df,
+     dfreport* rep,
+     ae_state *_state)
+{
+    ae_frame _frame_block;
+    decisionforestbuilder builder;
+    ae_int_t i;
+
+    ae_frame_make(_state, &_frame_block);
+    memset(&builder, 0, sizeof(builder));
+    *info = 0;
+    _decisionforest_clear(df);
+    _dfreport_clear(rep);
+    _decisionforestbuilder_init(&builder, _state, ae_true);
+
+    
+    /*
+     * Test for inputs
+     */
+    if( (((((npoints<1||samplesize<1)||samplesize>npoints)||nvars<1)||nclasses<1)||ntrees<1)||nfeatures<1 )
+    {
+        *info = -1;
+        ae_frame_leave(_state);
+        return;
+    }
+    if( nclasses>1 )
+    {
+        for(i=0; i<=npoints-1; i++)
+        {
+            if( ae_round(xy->ptr.pp_double[i][nvars], _state)<0||ae_round(xy->ptr.pp_double[i][nvars], _state)>=nclasses )
+            {
+                *info = -2;
+                ae_frame_leave(_state);
+                return;
+            }
+        }
+    }
+    *info = 1;
+    dfbuildercreate(&builder, _state);
+    dfbuildersetdataset(&builder, xy, npoints, nvars, nclasses, _state);
+    dfbuildersetsubsampleratio(&builder, (double)samplesize/(double)npoints, _state);
+    dfbuildersetrndvars(&builder, nfeatures, _state);
+    dfbuilderbuildrandomforest(&builder, ntrees, df, rep, _state);
+    ae_frame_leave(_state);
+}
+
+
+/*************************************************************************
+Builds a range of random trees [TreeIdx0,TreeIdx1) using decision forest
+algorithm. Tree index is used to seed per-tree RNG.
+
+  -- ALGLIB --
+     Copyright 21.05.2018 by Bochkanov Sergey
+*************************************************************************/
+static void dforest_buildrandomtree(decisionforestbuilder* s,
+     ae_int_t treeidx0,
+     ae_int_t treeidx1,
+     ae_state *_state)
+{
+    ae_frame _frame_block;
+    ae_int_t treeidx;
+    ae_int_t i;
+    ae_int_t j;
+    ae_int_t npoints;
+    ae_int_t nvars;
+    ae_int_t nclasses;
+    hqrndstate rs;
+    dfworkbuf *workbuf;
+    ae_smart_ptr _workbuf;
+    dfvotebuf *votebuf;
+    ae_smart_ptr _votebuf;
+    dftreebuf *treebuf;
+    ae_smart_ptr _treebuf;
+    ae_int_t treesize;
+    ae_int_t varstoselect;
+    ae_int_t workingsetsize;
+    double meanloss;
+
+    ae_frame_make(_state, &_frame_block);
+    memset(&rs, 0, sizeof(rs));
+    memset(&_workbuf, 0, sizeof(_workbuf));
+    memset(&_votebuf, 0, sizeof(_votebuf));
+    memset(&_treebuf, 0, sizeof(_treebuf));
+    _hqrndstate_init(&rs, _state, ae_true);
+    ae_smart_ptr_init(&_workbuf, (void**)&workbuf, _state, ae_true);
+    ae_smart_ptr_init(&_votebuf, (void**)&votebuf, _state, ae_true);
+    ae_smart_ptr_init(&_treebuf, (void**)&treebuf, _state, ae_true);
+
+    
+    /*
+     * Perform parallelization
+     */
+    if( treeidx1-treeidx0>1 )
+    {
+        if( _trypexec_dforest_buildrandomtree(s,treeidx0,treeidx1, _state) )
+        {
+            ae_frame_leave(_state);
+            return;
+        }
+        j = (treeidx1-treeidx0)/2;
+        dforest_buildrandomtree(s, treeidx0, treeidx0+j, _state);
+        dforest_buildrandomtree(s, treeidx0+j, treeidx1, _state);
+        ae_frame_leave(_state);
+        return;
+    }
+    else
+    {
+        ae_assert(treeidx1-treeidx0==1, "RDF: integrity check failed", _state);
+        treeidx = treeidx0;
+    }
+    
+    /*
+     * Prepare
+     */
+    npoints = s->npoints;
+    nvars = s->nvars;
+    nclasses = s->nclasses;
+    if( s->rdfglobalseed>0 )
+    {
+        hqrndseed(s->rdfglobalseed, 1+treeidx, &rs, _state);
+    }
+    else
+    {
+        hqrndseed(ae_randominteger(30000, _state), 1+treeidx, &rs, _state);
+    }
+    
+    /*
+     * Retrieve buffers.
+     */
+    ae_shared_pool_retrieve(&s->workpool, &_workbuf, _state);
+    ae_shared_pool_retrieve(&s->votepool, &_votebuf, _state);
+    
+    /*
+     * Prepare everything for tree construction.
+     */
+    ae_assert(workbuf->trnsize>=1, "DForest: integrity check failed (34636)", _state);
+    ae_assert(workbuf->oobsize>=0, "DForest: integrity check failed (45745)", _state);
+    ae_assert(workbuf->trnsize+workbuf->oobsize==npoints, "DForest: integrity check failed (89415)", _state);
+    workingsetsize = -1;
+    workbuf->varpoolsize = 0;
+    for(i=0; i<=nvars-1; i++)
+    {
+        if( ae_fp_neq(s->dsmin.ptr.p_double[i],s->dsmax.ptr.p_double[i]) )
+        {
+            workbuf->varpool.ptr.p_int[workbuf->varpoolsize] = i;
+            inc(&workbuf->varpoolsize, _state);
+        }
+    }
+    workingsetsize = workbuf->varpoolsize;
+    ae_assert(workingsetsize>=0, "DForest: integrity check failed (73f5)", _state);
+    for(i=0; i<=npoints-1; i++)
+    {
+        workbuf->tmp0i.ptr.p_int[i] = i;
+    }
+    for(i=0; i<=workbuf->trnsize-1; i++)
+    {
+        j = hqrnduniformi(&rs, npoints-i, _state);
+        swapelementsi(&workbuf->tmp0i, i, i+j, _state);
+        workbuf->trnset.ptr.p_int[i] = workbuf->tmp0i.ptr.p_int[i];
+        if( nclasses>1 )
+        {
+            workbuf->trnlabelsi.ptr.p_int[i] = s->dsival.ptr.p_int[workbuf->tmp0i.ptr.p_int[i]];
+        }
+        else
+        {
+            workbuf->trnlabelsr.ptr.p_double[i] = s->dsrval.ptr.p_double[workbuf->tmp0i.ptr.p_int[i]];
+        }
+        if( s->neediobmatrix )
+        {
+            s->iobmatrix.ptr.pp_bool[treeidx][workbuf->trnset.ptr.p_int[i]] = ae_true;
+        }
+    }
+    for(i=0; i<=workbuf->oobsize-1; i++)
+    {
+        j = workbuf->tmp0i.ptr.p_int[workbuf->trnsize+i];
+        workbuf->oobset.ptr.p_int[i] = j;
+        if( nclasses>1 )
+        {
+            workbuf->ooblabelsi.ptr.p_int[i] = s->dsival.ptr.p_int[j];
+        }
+        else
+        {
+            workbuf->ooblabelsr.ptr.p_double[i] = s->dsrval.ptr.p_double[j];
+        }
+    }
+    varstoselect = ae_round(ae_sqrt((double)(nvars), _state), _state);
+    if( ae_fp_greater(s->rdfvars,(double)(0)) )
+    {
+        varstoselect = ae_round(s->rdfvars, _state);
+    }
+    if( ae_fp_less(s->rdfvars,(double)(0)) )
+    {
+        varstoselect = ae_round(-nvars*s->rdfvars, _state);
+    }
+    varstoselect = ae_maxint(varstoselect, 1, _state);
+    varstoselect = ae_minint(varstoselect, nvars, _state);
+    
+    /*
+     * Perform recurrent construction
+     */
+    if( s->rdfimportance==dforest_needtrngini )
+    {
+        meanloss = dforest_meannrms2(nclasses, &workbuf->trnlabelsi, &workbuf->trnlabelsr, 0, workbuf->trnsize, &workbuf->trnlabelsi, &workbuf->trnlabelsr, 0, workbuf->trnsize, &workbuf->tmpnrms2, _state);
+    }
+    else
+    {
+        meanloss = dforest_meannrms2(nclasses, &workbuf->trnlabelsi, &workbuf->trnlabelsr, 0, workbuf->trnsize, &workbuf->ooblabelsi, &workbuf->ooblabelsr, 0, workbuf->oobsize, &workbuf->tmpnrms2, _state);
+    }
+    treesize = 1;
+    dforest_buildrandomtreerec(s, workbuf, workingsetsize, varstoselect, &workbuf->treebuf, votebuf, &rs, 0, workbuf->trnsize, 0, workbuf->oobsize, meanloss, meanloss, &treesize, _state);
+    workbuf->treebuf.ptr.p_double[0] = (double)(treesize);
+    
+    /*
+     * Store tree
+     */
+    ae_shared_pool_retrieve(&s->treefactory, &_treebuf, _state);
+    ae_vector_set_length(&treebuf->treebuf, treesize, _state);
+    for(i=0; i<=treesize-1; i++)
+    {
+        treebuf->treebuf.ptr.p_double[i] = workbuf->treebuf.ptr.p_double[i];
+    }
+    treebuf->treeidx = treeidx;
+    ae_shared_pool_recycle(&s->treepool, &_treebuf, _state);
+    
+    /*
+     * Return other buffers to appropriate pools
+     */
+    ae_shared_pool_recycle(&s->workpool, &_workbuf, _state);
+    ae_shared_pool_recycle(&s->votepool, &_votebuf, _state);
+    
+    /*
+     * Update progress indicator
+     */
+    threadunsafeincby(&s->rdfprogress, npoints, _state);
+    ae_frame_leave(_state);
+}
+
+
+/*************************************************************************
+Serial stub for GPL edition.
+*************************************************************************/
+ae_bool _trypexec_dforest_buildrandomtree(decisionforestbuilder* s,
+    ae_int_t treeidx0,
+    ae_int_t treeidx1,
+    ae_state *_state)
+{
+    return ae_false;
+}
+
+
+/*************************************************************************
+Recurrent tree construction function using  caller-allocated  buffers  and
+caller-initialized RNG.
+
+Following iterms are processed:
+* items [Idx0,Idx1) of WorkBuf.TrnSet
+* items [OOBIdx0, OOBIdx1) of WorkBuf.OOBSet
+
+TreeSize on input must be 1 (header element of the tree), on output it
+contains size of the tree.
+
+OOBLoss on input must contain value of MeanNRMS2(...) computed for entire
+dataset.
+
+Variables from #0 to #WorkingSet-1 from WorkBuf.VarPool are used (for
+block algorithm: blocks, not vars)
+
+  -- ALGLIB --
+     Copyright 21.05.2018 by Bochkanov Sergey
+*************************************************************************/
+static void dforest_buildrandomtreerec(decisionforestbuilder* s,
+     dfworkbuf* workbuf,
+     ae_int_t workingset,
+     ae_int_t varstoselect,
+     /* Real    */ ae_vector* treebuf,
+     dfvotebuf* votebuf,
+     hqrndstate* rs,
+     ae_int_t idx0,
+     ae_int_t idx1,
+     ae_int_t oobidx0,
+     ae_int_t oobidx1,
+     double meanloss,
+     double topmostmeanloss,
+     ae_int_t* treesize,
+     ae_state *_state)
+{
+    ae_int_t npoints;
+    ae_int_t nclasses;
+    ae_int_t i;
+    ae_int_t j;
+    ae_int_t j0;
+    double v;
+    ae_bool labelsaresame;
+    ae_int_t offs;
+    ae_int_t varbest;
+    double splitbest;
+    ae_int_t i1;
+    ae_int_t i2;
+    ae_int_t idxtrn;
+    ae_int_t idxoob;
+    double meanloss0;
+    double meanloss1;
+
+
+    ae_assert(s->dstype==0, "not supported skbdgfsi!", _state);
+    ae_assert(idx0<idx1, "BuildRandomTreeRec: integrity check failed (3445)", _state);
+    ae_assert(oobidx0<=oobidx1, "BuildRandomTreeRec: integrity check failed (7452)", _state);
+    npoints = s->npoints;
+    nclasses = s->nclasses;
+    
+    /*
+     * Check labels: all same or not?
+     */
+    if( nclasses>1 )
+    {
+        labelsaresame = ae_true;
+        for(i=0; i<=nclasses-1; i++)
+        {
+            workbuf->classpriors.ptr.p_int[i] = 0;
+        }
+        j0 = workbuf->trnlabelsi.ptr.p_int[idx0];
+        for(i=idx0; i<=idx1-1; i++)
+        {
+            j = workbuf->trnlabelsi.ptr.p_int[i];
+            workbuf->classpriors.ptr.p_int[j] = workbuf->classpriors.ptr.p_int[j]+1;
+            labelsaresame = labelsaresame&&j0==j;
+        }
+    }
+    else
+    {
+        labelsaresame = ae_false;
+    }
+    
+    /*
+     * Leaf node
+     */
+    if( idx1-idx0==1||labelsaresame )
+    {
+        if( nclasses==1 )
+        {
+            dforest_outputleaf(s, workbuf, treebuf, votebuf, idx0, idx1, oobidx0, oobidx1, treesize, workbuf->trnlabelsr.ptr.p_double[idx0], _state);
+        }
+        else
+        {
+            dforest_outputleaf(s, workbuf, treebuf, votebuf, idx0, idx1, oobidx0, oobidx1, treesize, (double)(workbuf->trnlabelsi.ptr.p_int[idx0]), _state);
+        }
+        return;
+    }
+    
+    /*
+     * Non-leaf node.
+     * Investigate possible splits.
+     */
+    ae_assert(s->rdfalgo==0, "BuildRandomForest: unexpected algo", _state);
+    dforest_choosecurrentsplitdense(s, workbuf, &workingset, varstoselect, rs, idx0, idx1, &varbest, &splitbest, _state);
+    if( varbest<0 )
+    {
+        
+        /*
+         * No good split was found; make leaf (label is randomly chosen) and exit.
+         */
+        if( nclasses>1 )
+        {
+            v = (double)(workbuf->trnlabelsi.ptr.p_int[idx0+hqrnduniformi(rs, idx1-idx0, _state)]);
+        }
+        else
+        {
+            v = workbuf->trnlabelsr.ptr.p_double[idx0+hqrnduniformi(rs, idx1-idx0, _state)];
+        }
+        dforest_outputleaf(s, workbuf, treebuf, votebuf, idx0, idx1, oobidx0, oobidx1, treesize, v, _state);
+        return;
+    }
+    
+    /*
+     * Good split WAS found, we can perform it:
+     * * first, we split training set
+     * * then, we similarly split OOB set
+     */
+    ae_assert(s->dstype==0, "not supported 54bfdh", _state);
+    offs = npoints*varbest;
+    i1 = idx0;
+    i2 = idx1-1;
+    while(i1<=i2)
+    {
+        
+        /*
+         * Reorder indexes so that left partition is in [Idx0..I1),
+         * and right partition is in [I2+1..Idx1)
+         */
+        if( workbuf->bestvals.ptr.p_double[i1]<splitbest )
+        {
+            i1 = i1+1;
+            continue;
+        }
+        if( workbuf->bestvals.ptr.p_double[i2]>=splitbest )
+        {
+            i2 = i2-1;
+            continue;
+        }
+        j = workbuf->trnset.ptr.p_int[i1];
+        workbuf->trnset.ptr.p_int[i1] = workbuf->trnset.ptr.p_int[i2];
+        workbuf->trnset.ptr.p_int[i2] = j;
+        if( nclasses>1 )
+        {
+            j = workbuf->trnlabelsi.ptr.p_int[i1];
+            workbuf->trnlabelsi.ptr.p_int[i1] = workbuf->trnlabelsi.ptr.p_int[i2];
+            workbuf->trnlabelsi.ptr.p_int[i2] = j;
+        }
+        else
+        {
+            v = workbuf->trnlabelsr.ptr.p_double[i1];
+            workbuf->trnlabelsr.ptr.p_double[i1] = workbuf->trnlabelsr.ptr.p_double[i2];
+            workbuf->trnlabelsr.ptr.p_double[i2] = v;
+        }
+        i1 = i1+1;
+        i2 = i2-1;
+    }
+    ae_assert(i1==i2+1, "BuildRandomTreeRec: integrity check failed (45rds3)", _state);
+    idxtrn = i1;
+    if( oobidx0<oobidx1 )
+    {
+        
+        /*
+         * Unlike the training subset, the out-of-bag subset corresponding to the
+         * current sequence of decisions can be empty; thus, we have to explicitly
+         * handle situation of zero OOB subset.
+         */
+        i1 = oobidx0;
+        i2 = oobidx1-1;
+        while(i1<=i2)
+        {
+            
+            /*
+             * Reorder indexes so that left partition is in [Idx0..I1),
+             * and right partition is in [I2+1..Idx1)
+             */
+            if( s->dsdata.ptr.p_double[offs+workbuf->oobset.ptr.p_int[i1]]<splitbest )
+            {
+                i1 = i1+1;
+                continue;
+            }
+            if( s->dsdata.ptr.p_double[offs+workbuf->oobset.ptr.p_int[i2]]>=splitbest )
+            {
+                i2 = i2-1;
+                continue;
+            }
+            j = workbuf->oobset.ptr.p_int[i1];
+            workbuf->oobset.ptr.p_int[i1] = workbuf->oobset.ptr.p_int[i2];
+            workbuf->oobset.ptr.p_int[i2] = j;
+            if( nclasses>1 )
+            {
+                j = workbuf->ooblabelsi.ptr.p_int[i1];
+                workbuf->ooblabelsi.ptr.p_int[i1] = workbuf->ooblabelsi.ptr.p_int[i2];
+                workbuf->ooblabelsi.ptr.p_int[i2] = j;
+            }
+            else
+            {
+                v = workbuf->ooblabelsr.ptr.p_double[i1];
+                workbuf->ooblabelsr.ptr.p_double[i1] = workbuf->ooblabelsr.ptr.p_double[i2];
+                workbuf->ooblabelsr.ptr.p_double[i2] = v;
+            }
+            i1 = i1+1;
+            i2 = i2-1;
+        }
+        ae_assert(i1==i2+1, "BuildRandomTreeRec: integrity check failed (643fs3)", _state);
+        idxoob = i1;
+    }
+    else
+    {
+        idxoob = oobidx0;
+    }
+    
+    /*
+     * Compute estimates of NRMS2 loss over TRN or OOB subsets, update Gini importances
+     */
+    if( s->rdfimportance==dforest_needtrngini )
+    {
+        meanloss0 = dforest_meannrms2(nclasses, &workbuf->trnlabelsi, &workbuf->trnlabelsr, idx0, idxtrn, &workbuf->trnlabelsi, &workbuf->trnlabelsr, idx0, idxtrn, &workbuf->tmpnrms2, _state);
+        meanloss1 = dforest_meannrms2(nclasses, &workbuf->trnlabelsi, &workbuf->trnlabelsr, idxtrn, idx1, &workbuf->trnlabelsi, &workbuf->trnlabelsr, idxtrn, idx1, &workbuf->tmpnrms2, _state);
+    }
+    else
+    {
+        meanloss0 = dforest_meannrms2(nclasses, &workbuf->trnlabelsi, &workbuf->trnlabelsr, idx0, idxtrn, &workbuf->ooblabelsi, &workbuf->ooblabelsr, oobidx0, idxoob, &workbuf->tmpnrms2, _state);
+        meanloss1 = dforest_meannrms2(nclasses, &workbuf->trnlabelsi, &workbuf->trnlabelsr, idxtrn, idx1, &workbuf->ooblabelsi, &workbuf->ooblabelsr, idxoob, oobidx1, &workbuf->tmpnrms2, _state);
+    }
+    votebuf->giniimportances.ptr.p_double[varbest] = votebuf->giniimportances.ptr.p_double[varbest]+(meanloss-(meanloss0+meanloss1))/(topmostmeanloss+1.0e-20);
+    
+    /*
+     * Generate tree node and subtrees (recursively)
+     */
+    treebuf->ptr.p_double[*treesize] = (double)(varbest);
+    treebuf->ptr.p_double[*treesize+1] = splitbest;
+    i = *treesize;
+    *treesize = *treesize+dforest_innernodewidth;
+    dforest_buildrandomtreerec(s, workbuf, workingset, varstoselect, treebuf, votebuf, rs, idx0, idxtrn, oobidx0, idxoob, meanloss0, topmostmeanloss, treesize, _state);
+    treebuf->ptr.p_double[i+2] = (double)(*treesize);
+    dforest_buildrandomtreerec(s, workbuf, workingset, varstoselect, treebuf, votebuf, rs, idxtrn, idx1, idxoob, oobidx1, meanloss1, topmostmeanloss, treesize, _state);
+}
+
+
+/*************************************************************************
+Estimates permutation variable importance ratings for a range of dataset
+points.
+
+Initial call to this function should span entire range of the dataset,
+[Idx0,Idx1)=[0,NPoints), because function performs initialization of some
+internal structures when called with these arguments.
+
+  -- ALGLIB --
+     Copyright 21.05.2018 by Bochkanov Sergey
+*************************************************************************/
+static void dforest_estimatevariableimportance(decisionforestbuilder* s,
+     ae_int_t sessionseed,
+     decisionforest* df,
+     ae_int_t ntrees,
+     dfreport* rep,
+     ae_state *_state)
+{
+    ae_frame _frame_block;
+    ae_int_t npoints;
+    ae_int_t nvars;
+    ae_int_t nclasses;
+    ae_int_t nperm;
+    ae_int_t i;
+    ae_int_t j;
+    ae_int_t k;
+    dfvotebuf *vote;
+    ae_smart_ptr _vote;
+    ae_vector tmpr0;
+    ae_vector tmpr1;
+    ae_vector tmpi0;
+    ae_vector losses;
+    dfpermimpbuf permseed;
+    dfpermimpbuf *permresult;
+    ae_smart_ptr _permresult;
+    ae_shared_pool permpool;
+    double nopermloss;
+    double totalpermloss;
+    hqrndstate varimprs;
+
+    ae_frame_make(_state, &_frame_block);
+    memset(&_vote, 0, sizeof(_vote));
+    memset(&tmpr0, 0, sizeof(tmpr0));
+    memset(&tmpr1, 0, sizeof(tmpr1));
+    memset(&tmpi0, 0, sizeof(tmpi0));
+    memset(&losses, 0, sizeof(losses));
+    memset(&permseed, 0, sizeof(permseed));
+    memset(&_permresult, 0, sizeof(_permresult));
+    memset(&permpool, 0, sizeof(permpool));
+    memset(&varimprs, 0, sizeof(varimprs));
+    ae_smart_ptr_init(&_vote, (void**)&vote, _state, ae_true);
+    ae_vector_init(&tmpr0, 0, DT_REAL, _state, ae_true);
+    ae_vector_init(&tmpr1, 0, DT_REAL, _state, ae_true);
+    ae_vector_init(&tmpi0, 0, DT_INT, _state, ae_true);
+    ae_vector_init(&losses, 0, DT_REAL, _state, ae_true);
+    _dfpermimpbuf_init(&permseed, _state, ae_true);
+    ae_smart_ptr_init(&_permresult, (void**)&permresult, _state, ae_true);
+    ae_shared_pool_init(&permpool, _state, ae_true);
+    _hqrndstate_init(&varimprs, _state, ae_true);
+
+    npoints = s->npoints;
+    nvars = s->nvars;
+    nclasses = s->nclasses;
+    
+    /*
+     * No importance rating
+     */
+    if( s->rdfimportance==0 )
+    {
+        ae_frame_leave(_state);
+        return;
+    }
+    
+    /*
+     * Gini importance
+     */
+    if( s->rdfimportance==dforest_needtrngini||s->rdfimportance==dforest_needoobgini )
+    {
+        
+        /*
+         * Merge OOB Gini importances computed during tree generation
+         */
+        ae_shared_pool_first_recycled(&s->votepool, &_vote, _state);
+        while(vote!=NULL)
+        {
+            for(i=0; i<=nvars-1; i++)
+            {
+                rep->varimportances.ptr.p_double[i] = rep->varimportances.ptr.p_double[i]+vote->giniimportances.ptr.p_double[i]/ntrees;
+            }
+            ae_shared_pool_next_recycled(&s->votepool, &_vote, _state);
+        }
+        for(i=0; i<=nvars-1; i++)
+        {
+            rep->varimportances.ptr.p_double[i] = boundval(rep->varimportances.ptr.p_double[i], (double)(0), (double)(1), _state);
+        }
+        
+        /*
+         * Compute topvars[] array
+         */
+        ae_vector_set_length(&tmpr0, nvars, _state);
+        for(j=0; j<=nvars-1; j++)
+        {
+            tmpr0.ptr.p_double[j] = -rep->varimportances.ptr.p_double[j];
+            rep->topvars.ptr.p_int[j] = j;
+        }
+        tagsortfasti(&tmpr0, &rep->topvars, &tmpr1, &tmpi0, nvars, _state);
+        ae_frame_leave(_state);
+        return;
+    }
+    
+    /*
+     * Permutation importance
+     */
+    if( s->rdfimportance==dforest_needpermutation )
+    {
+        ae_assert(df->forestformat==dforest_dfuncompressedv0, "EstimateVariableImportance: integrity check failed (ff)", _state);
+        ae_assert(s->iobmatrix.rows>=ntrees&&s->iobmatrix.cols>=npoints, "EstimateVariableImportance: integrity check failed (IOB)", _state);
+        
+        /*
+         * Generate packed representation of the shuffle which is applied to all variables
+         *
+         * Ideally we want to apply different permutations to different variables,
+         * i.e. we have to generate and store NPoints*NVars random numbers.
+         * However due to performance and memory restrictions we prefer to use compact
+         * representation:
+         * * we store one "reference" permutation P_ref in VarImpShuffle2[0:NPoints-1]
+         * * a permutation P_j applied to variable J is obtained by circularly shifting
+         *   elements in P_ref by VarImpShuffle2[NPoints+J]
+         */
+        hqrndseed(sessionseed, 1117, &varimprs, _state);
+        ivectorsetlengthatleast(&s->varimpshuffle2, npoints+nvars, _state);
+        for(i=0; i<=npoints-1; i++)
+        {
+            s->varimpshuffle2.ptr.p_int[i] = i;
+        }
+        for(i=0; i<=npoints-2; i++)
+        {
+            j = i+hqrnduniformi(&varimprs, npoints-i, _state);
+            k = s->varimpshuffle2.ptr.p_int[i];
+            s->varimpshuffle2.ptr.p_int[i] = s->varimpshuffle2.ptr.p_int[j];
+            s->varimpshuffle2.ptr.p_int[j] = k;
+        }
+        for(i=0; i<=nvars-1; i++)
+        {
+            s->varimpshuffle2.ptr.p_int[npoints+i] = hqrnduniformi(&varimprs, npoints, _state);
+        }
+        
+        /*
+         * Prepare buffer object, seed pool
+         */
+        nperm = nvars+2;
+        ae_vector_set_length(&permseed.losses, nperm, _state);
+        for(j=0; j<=nperm-1; j++)
+        {
+            permseed.losses.ptr.p_double[j] = (double)(0);
+        }
+        ae_vector_set_length(&permseed.yv, nperm*nclasses, _state);
+        ae_vector_set_length(&permseed.xraw, nvars, _state);
+        ae_vector_set_length(&permseed.xdist, nvars, _state);
+        ae_vector_set_length(&permseed.xcur, nvars, _state);
+        ae_vector_set_length(&permseed.targety, nclasses, _state);
+        ae_vector_set_length(&permseed.startnodes, nvars, _state);
+        ae_vector_set_length(&permseed.y, nclasses, _state);
+        ae_shared_pool_set_seed(&permpool, &permseed, sizeof(permseed), _dfpermimpbuf_init, _dfpermimpbuf_init_copy, _dfpermimpbuf_destroy, _state);
+        
+        /*
+         * Recursively split subset and process (using parallel capabilities, if possible)
+         */
+        dforest_estimatepermutationimportances(s, df, ntrees, &permpool, 0, npoints, _state);
+        
+        /*
+         * Merge results
+         */
+        ae_vector_set_length(&losses, nperm, _state);
+        for(j=0; j<=nperm-1; j++)
+        {
+            losses.ptr.p_double[j] = 1.0e-20;
+        }
+        ae_shared_pool_first_recycled(&permpool, &_permresult, _state);
+        while(permresult!=NULL)
+        {
+            for(j=0; j<=nperm-1; j++)
+            {
+                losses.ptr.p_double[j] = losses.ptr.p_double[j]+permresult->losses.ptr.p_double[j];
+            }
+            ae_shared_pool_next_recycled(&permpool, &_permresult, _state);
+        }
+        
+        /*
+         * Compute importances
+         */
+        nopermloss = losses.ptr.p_double[nvars+1];
+        totalpermloss = losses.ptr.p_double[nvars];
+        for(i=0; i<=nvars-1; i++)
+        {
+            rep->varimportances.ptr.p_double[i] = 1-nopermloss/totalpermloss-(1-losses.ptr.p_double[i]/totalpermloss);
+            rep->varimportances.ptr.p_double[i] = boundval(rep->varimportances.ptr.p_double[i], (double)(0), (double)(1), _state);
+        }
+        
+        /*
+         * Compute topvars[] array
+         */
+        ae_vector_set_length(&tmpr0, nvars, _state);
+        for(j=0; j<=nvars-1; j++)
+        {
+            tmpr0.ptr.p_double[j] = -rep->varimportances.ptr.p_double[j];
+            rep->topvars.ptr.p_int[j] = j;
+        }
+        tagsortfasti(&tmpr0, &rep->topvars, &tmpr1, &tmpi0, nvars, _state);
+        ae_frame_leave(_state);
+        return;
+    }
+    ae_assert(ae_false, "EstimateVariableImportance: unexpected importance type", _state);
+    ae_frame_leave(_state);
+}
+
+
+/*************************************************************************
+Serial stub for GPL edition.
+*************************************************************************/
+ae_bool _trypexec_dforest_estimatevariableimportance(decisionforestbuilder* s,
+    ae_int_t sessionseed,
+    decisionforest* df,
+    ae_int_t ntrees,
+    dfreport* rep,
+    ae_state *_state)
+{
+    return ae_false;
+}
+
+
+/*************************************************************************
+Estimates permutation variable importance ratings for a range of dataset
+points.
+
+Initial call to this function should span entire range of the dataset,
+[Idx0,Idx1)=[0,NPoints), because function performs initialization of some
+internal structures when called with these arguments.
+
+  -- ALGLIB --
+     Copyright 21.05.2018 by Bochkanov Sergey
+*************************************************************************/
+static void dforest_estimatepermutationimportances(decisionforestbuilder* s,
+     decisionforest* df,
+     ae_int_t ntrees,
+     ae_shared_pool* permpool,
+     ae_int_t idx0,
+     ae_int_t idx1,
+     ae_state *_state)
+{
+    ae_frame _frame_block;
+    ae_int_t npoints;
+    ae_int_t nvars;
+    ae_int_t nclasses;
+    ae_int_t nperm;
+    ae_int_t i;
+    ae_int_t j;
+    ae_int_t k;
+    double v;
+    ae_int_t treeroot;
+    ae_int_t nodeoffs;
+    double prediction;
+    ae_int_t varidx;
+    ae_int_t oobcounts;
+    ae_int_t srcidx;
+    dfpermimpbuf *permimpbuf;
+    ae_smart_ptr _permimpbuf;
+
+    ae_frame_make(_state, &_frame_block);
+    memset(&_permimpbuf, 0, sizeof(_permimpbuf));
+    ae_smart_ptr_init(&_permimpbuf, (void**)&permimpbuf, _state, ae_true);
+
+    npoints = s->npoints;
+    nvars = s->nvars;
+    nclasses = s->nclasses;
+    ae_assert(df->forestformat==dforest_dfuncompressedv0, "EstimateVariableImportance: integrity check failed (ff)", _state);
+    ae_assert((idx0>=0&&idx0<=idx1)&&idx1<=npoints, "EstimateVariableImportance: integrity check failed (idx)", _state);
+    ae_assert(s->iobmatrix.rows>=ntrees&&s->iobmatrix.cols>=npoints, "EstimateVariableImportance: integrity check failed (IOB)", _state);
+    
+    /*
+     * Perform parallelization if batch is too large
+     */
+    if( idx1-idx0>dforest_permutationimportancebatchsize )
+    {
+        if( _trypexec_dforest_estimatepermutationimportances(s,df,ntrees,permpool,idx0,idx1, _state) )
+        {
+            ae_frame_leave(_state);
+            return;
+        }
+        j = (idx1-idx0)/2;
+        dforest_estimatepermutationimportances(s, df, ntrees, permpool, idx0, idx0+j, _state);
+        dforest_estimatepermutationimportances(s, df, ntrees, permpool, idx0+j, idx1, _state);
+        ae_frame_leave(_state);
+        return;
+    }
+    
+    /*
+     * Retrieve buffer object from pool
+     */
+    ae_shared_pool_retrieve(permpool, &_permimpbuf, _state);
+    
+    /*
+     * Process range of points [idx0,idx1)
+     */
+    nperm = nvars+2;
+    for(i=idx0; i<=idx1-1; i++)
+    {
+        ae_assert(s->dstype==0, "EstimateVariableImportance: unexpected dataset type", _state);
+        for(j=0; j<=nvars-1; j++)
+        {
+            permimpbuf->xraw.ptr.p_double[j] = s->dsdata.ptr.p_double[j*npoints+i];
+            srcidx = s->varimpshuffle2.ptr.p_int[(i+s->varimpshuffle2.ptr.p_int[npoints+j])%npoints];
+            permimpbuf->xdist.ptr.p_double[j] = s->dsdata.ptr.p_double[j*npoints+srcidx];
+        }
+        if( nclasses>1 )
+        {
+            for(j=0; j<=nclasses-1; j++)
+            {
+                permimpbuf->targety.ptr.p_double[j] = (double)(0);
+            }
+            permimpbuf->targety.ptr.p_double[s->dsival.ptr.p_int[i]] = (double)(1);
+        }
+        else
+        {
+            permimpbuf->targety.ptr.p_double[0] = s->dsrval.ptr.p_double[i];
+        }
+        
+        /*
+         * Process all trees, for each tree compute NPerm losses corresponding
+         * to various permutations of variable values
+         */
+        for(j=0; j<=nperm*nclasses-1; j++)
+        {
+            permimpbuf->yv.ptr.p_double[j] = (double)(0);
+        }
+        oobcounts = 0;
+        treeroot = 0;
+        for(k=0; k<=ntrees-1; k++)
+        {
+            if( !s->iobmatrix.ptr.pp_bool[k][i] )
+            {
+                
+                /*
+                 * Process original (unperturbed) point and analyze path from the
+                 * tree root to the final leaf. Output prediction to RawPrediction.
+                 *
+                 * Additionally, for each variable in [0,NVars-1] save offset of
+                 * the first split on this variable. It allows us to quickly compute
+                 * tree decision when perturbation does not change decision path.
+                 */
+                ae_assert(df->forestformat==dforest_dfuncompressedv0, "EstimateVariableImportance: integrity check failed (ff)", _state);
+                nodeoffs = treeroot+1;
+                for(j=0; j<=nvars-1; j++)
+                {
+                    permimpbuf->startnodes.ptr.p_int[j] = -1;
+                }
+                prediction = (double)(0);
+                for(;;)
+                {
+                    if( ae_fp_eq(df->trees.ptr.p_double[nodeoffs],(double)(-1)) )
+                    {
+                        prediction = df->trees.ptr.p_double[nodeoffs+1];
+                        break;
+                    }
+                    j = ae_round(df->trees.ptr.p_double[nodeoffs], _state);
+                    if( permimpbuf->startnodes.ptr.p_int[j]<0 )
+                    {
+                        permimpbuf->startnodes.ptr.p_int[j] = nodeoffs;
+                    }
+                    if( permimpbuf->xraw.ptr.p_double[j]<df->trees.ptr.p_double[nodeoffs+1] )
+                    {
+                        nodeoffs = nodeoffs+dforest_innernodewidth;
+                    }
+                    else
+                    {
+                        nodeoffs = treeroot+ae_round(df->trees.ptr.p_double[nodeoffs+2], _state);
+                    }
+                }
+                
+                /*
+                 * Save loss for unperturbed point
+                 */
+                varidx = nvars+1;
+                if( nclasses>1 )
+                {
+                    j = ae_round(prediction, _state);
+                    permimpbuf->yv.ptr.p_double[varidx*nclasses+j] = permimpbuf->yv.ptr.p_double[varidx*nclasses+j]+1;
+                }
+                else
+                {
+                    permimpbuf->yv.ptr.p_double[varidx] = permimpbuf->yv.ptr.p_double[varidx]+prediction;
+                }
+                
+                /*
+                 * Save loss for all variables being perturbed (XDist).
+                 * This loss is used as a reference loss when we compute R-squared.
+                 */
+                varidx = nvars;
+                for(j=0; j<=nclasses-1; j++)
+                {
+                    permimpbuf->y.ptr.p_double[j] = (double)(0);
+                }
+                dforest_dfprocessinternaluncompressed(df, treeroot, treeroot+1, &permimpbuf->xdist, &permimpbuf->y, _state);
+                for(j=0; j<=nclasses-1; j++)
+                {
+                    permimpbuf->yv.ptr.p_double[varidx*nclasses+j] = permimpbuf->yv.ptr.p_double[varidx*nclasses+j]+permimpbuf->y.ptr.p_double[j];
+                }
+                
+                /*
+                 * Compute losses for variable #VarIdx being perturbed. Quite an often decision
+                 * process does not actually depend on the variable #VarIdx (path from the tree
+                 * root does not include splits on this variable). In such cases we perform
+                 * quick exit from the loop with precomputed value.
+                 */
+                for(j=0; j<=nvars-1; j++)
+                {
+                    permimpbuf->xcur.ptr.p_double[j] = permimpbuf->xraw.ptr.p_double[j];
+                }
+                for(varidx=0; varidx<=nvars-1; varidx++)
+                {
+                    if( permimpbuf->startnodes.ptr.p_int[varidx]>=0 )
+                    {
+                        
+                        /*
+                         * Path from tree root to the final leaf involves split on variable #VarIdx.
+                         * Restart computation from the position first split on #VarIdx.
+                         */
+                        ae_assert(df->forestformat==dforest_dfuncompressedv0, "EstimateVariableImportance: integrity check failed (ff)", _state);
+                        permimpbuf->xcur.ptr.p_double[varidx] = permimpbuf->xdist.ptr.p_double[varidx];
+                        nodeoffs = permimpbuf->startnodes.ptr.p_int[varidx];
+                        for(;;)
+                        {
+                            if( ae_fp_eq(df->trees.ptr.p_double[nodeoffs],(double)(-1)) )
+                            {
+                                if( nclasses>1 )
+                                {
+                                    j = ae_round(df->trees.ptr.p_double[nodeoffs+1], _state);
+                                    permimpbuf->yv.ptr.p_double[varidx*nclasses+j] = permimpbuf->yv.ptr.p_double[varidx*nclasses+j]+1;
+                                }
+                                else
+                                {
+                                    permimpbuf->yv.ptr.p_double[varidx] = permimpbuf->yv.ptr.p_double[varidx]+df->trees.ptr.p_double[nodeoffs+1];
+                                }
+                                break;
+                            }
+                            j = ae_round(df->trees.ptr.p_double[nodeoffs], _state);
+                            if( permimpbuf->xcur.ptr.p_double[j]<df->trees.ptr.p_double[nodeoffs+1] )
+                            {
+                                nodeoffs = nodeoffs+dforest_innernodewidth;
+                            }
+                            else
+                            {
+                                nodeoffs = treeroot+ae_round(df->trees.ptr.p_double[nodeoffs+2], _state);
+                            }
+                        }
+                        permimpbuf->xcur.ptr.p_double[varidx] = permimpbuf->xraw.ptr.p_double[varidx];
+                    }
+                    else
+                    {
+                        
+                        /*
+                         * Path from tree root to the final leaf does NOT involve split on variable #VarIdx.
+                         * Permutation does not change tree output, reuse already computed value.
+                         */
+                        if( nclasses>1 )
+                        {
+                            j = ae_round(prediction, _state);
+                            permimpbuf->yv.ptr.p_double[varidx*nclasses+j] = permimpbuf->yv.ptr.p_double[varidx*nclasses+j]+1;
+                        }
+                        else
+                        {
+                            permimpbuf->yv.ptr.p_double[varidx] = permimpbuf->yv.ptr.p_double[varidx]+prediction;
+                        }
+                    }
+                }
+                
+                /*
+                 * update OOB counter
+                 */
+                inc(&oobcounts, _state);
+            }
+            treeroot = treeroot+ae_round(df->trees.ptr.p_double[treeroot], _state);
+        }
+        
+        /*
+         * Now YV[] stores NPerm versions of the forest output for various permutations of variable values.
+         * Update losses.
+         */
+        for(j=0; j<=nperm-1; j++)
+        {
+            for(k=0; k<=nclasses-1; k++)
+            {
+                permimpbuf->yv.ptr.p_double[j*nclasses+k] = permimpbuf->yv.ptr.p_double[j*nclasses+k]/coalesce((double)(oobcounts), (double)(1), _state);
+            }
+            v = (double)(0);
+            for(k=0; k<=nclasses-1; k++)
+            {
+                v = v+ae_sqr(permimpbuf->yv.ptr.p_double[j*nclasses+k]-permimpbuf->targety.ptr.p_double[k], _state);
+            }
+            permimpbuf->losses.ptr.p_double[j] = permimpbuf->losses.ptr.p_double[j]+v;
+        }
+        
+        /*
+         * Update progress indicator
+         */
+        threadunsafeincby(&s->rdfprogress, ntrees, _state);
+    }
+    
+    /*
+     * Recycle buffer object with updated Losses[] field
+     */
+    ae_shared_pool_recycle(permpool, &_permimpbuf, _state);
+    ae_frame_leave(_state);
+}
+
+
+/*************************************************************************
+Serial stub for GPL edition.
+*************************************************************************/
+ae_bool _trypexec_dforest_estimatepermutationimportances(decisionforestbuilder* s,
+    decisionforest* df,
+    ae_int_t ntrees,
+    ae_shared_pool* permpool,
+    ae_int_t idx0,
+    ae_int_t idx1,
+    ae_state *_state)
+{
+    return ae_false;
+}
+
+
+/*************************************************************************
+Sets report fields to their default values
+
+  -- ALGLIB --
+     Copyright 21.05.2018 by Bochkanov Sergey
+*************************************************************************/
+static void dforest_cleanreport(decisionforestbuilder* s,
+     dfreport* rep,
+     ae_state *_state)
+{
+    ae_int_t i;
+
+
+    rep->relclserror = (double)(0);
+    rep->avgce = (double)(0);
+    rep->rmserror = (double)(0);
+    rep->avgerror = (double)(0);
+    rep->avgrelerror = (double)(0);
+    rep->oobrelclserror = (double)(0);
+    rep->oobavgce = (double)(0);
+    rep->oobrmserror = (double)(0);
+    rep->oobavgerror = (double)(0);
+    rep->oobavgrelerror = (double)(0);
+    ae_vector_set_length(&rep->topvars, s->nvars, _state);
+    ae_vector_set_length(&rep->varimportances, s->nvars, _state);
+    for(i=0; i<=s->nvars-1; i++)
+    {
+        rep->topvars.ptr.p_int[i] = i;
+        rep->varimportances.ptr.p_double[i] = (double)(0);
+    }
+}
+
+
+/*************************************************************************
+This function returns NRMS2 loss (sum of squared residuals) for a constant-
+output model:
+* model output is a mean over TRN set being passed (for classification
+  problems - NClasses-dimensional vector of class probabilities)
+* model is evaluated over TST set being passed, with L2 loss being returned
+
+Input parameters:
+    NClasses            -   ">1" for classification, "=1" for regression
+    TrnLabelsI          -   training set labels, class indexes (for NClasses>1)
+    TrnLabelsR          -   training set output values (for NClasses=1)
+    TrnIdx0, TrnIdx1    -   a range [Idx0,Idx1) of elements in LabelsI/R is considered
+    TstLabelsI          -   training set labels, class indexes (for NClasses>1)
+    TstLabelsR          -   training set output values (for NClasses=1)
+    TstIdx0, TstIdx1    -   a range [Idx0,Idx1) of elements in LabelsI/R is considered
+    TmpI        -   temporary array, reallocated as needed
+    
+Result:
+    sum of squared residuals;
+    for NClasses>=2 it coincides with Gini impurity times (Idx1-Idx0)
+
+Following fields of WorkBuf are used as temporaries:
+* TmpMeanNRMS2
+
+  -- ALGLIB --
+     Copyright 21.05.2018 by Bochkanov Sergey
+*************************************************************************/
+static double dforest_meannrms2(ae_int_t nclasses,
+     /* Integer */ ae_vector* trnlabelsi,
+     /* Real    */ ae_vector* trnlabelsr,
+     ae_int_t trnidx0,
+     ae_int_t trnidx1,
+     /* Integer */ ae_vector* tstlabelsi,
+     /* Real    */ ae_vector* tstlabelsr,
+     ae_int_t tstidx0,
+     ae_int_t tstidx1,
+     /* Integer */ ae_vector* tmpi,
+     ae_state *_state)
+{
+    ae_int_t i;
+    ae_int_t k;
+    ae_int_t ntrn;
+    ae_int_t ntst;
+    double v;
+    double vv;
+    double invntrn;
+    double pitrn;
+    double nitst;
+    double result;
+
+
+    ae_assert(trnidx0<=trnidx1, "MeanNRMS2: integrity check failed (8754)", _state);
+    ae_assert(tstidx0<=tstidx1, "MeanNRMS2: integrity check failed (8754)", _state);
+    result = (double)(0);
+    ntrn = trnidx1-trnidx0;
+    ntst = tstidx1-tstidx0;
+    if( ntrn==0||ntst==0 )
+    {
+        return result;
+    }
+    invntrn = 1.0/ntrn;
+    if( nclasses>1 )
+    {
+        
+        /*
+         * Classification problem
+         */
+        ivectorsetlengthatleast(tmpi, 2*nclasses, _state);
+        for(i=0; i<=2*nclasses-1; i++)
+        {
+            tmpi->ptr.p_int[i] = 0;
+        }
+        for(i=trnidx0; i<=trnidx1-1; i++)
+        {
+            k = trnlabelsi->ptr.p_int[i];
+            tmpi->ptr.p_int[k] = tmpi->ptr.p_int[k]+1;
+        }
+        for(i=tstidx0; i<=tstidx1-1; i++)
+        {
+            k = tstlabelsi->ptr.p_int[i];
+            tmpi->ptr.p_int[k+nclasses] = tmpi->ptr.p_int[k+nclasses]+1;
+        }
+        for(i=0; i<=nclasses-1; i++)
+        {
+            pitrn = tmpi->ptr.p_int[i]*invntrn;
+            nitst = (double)(tmpi->ptr.p_int[i+nclasses]);
+            result = result+nitst*(1-pitrn)*(1-pitrn);
+            result = result+(ntst-nitst)*pitrn*pitrn;
+        }
+    }
+    else
+    {
+        
+        /*
+         * regression-specific code
+         */
+        v = (double)(0);
+        for(i=trnidx0; i<=trnidx1-1; i++)
+        {
+            v = v+trnlabelsr->ptr.p_double[i];
+        }
+        v = v*invntrn;
+        for(i=tstidx0; i<=tstidx1-1; i++)
+        {
+            vv = tstlabelsr->ptr.p_double[i]-v;
+            result = result+vv*vv;
+        }
+    }
+    return result;
+}
+
+
+/*************************************************************************
+This function is a part of the recurrent tree construction function; it
+selects variable for splitting according to current tree construction
+algorithm.
+
+Note: modifies VarsInPool, may decrease it if some variables become non-informative
+and leave the pool.
+
+  -- ALGLIB --
+     Copyright 21.05.2018 by Bochkanov Sergey
+*************************************************************************/
+static void dforest_choosecurrentsplitdense(decisionforestbuilder* s,
+     dfworkbuf* workbuf,
+     ae_int_t* varsinpool,
+     ae_int_t varstoselect,
+     hqrndstate* rs,
+     ae_int_t idx0,
+     ae_int_t idx1,
+     ae_int_t* varbest,
+     double* splitbest,
+     ae_state *_state)
+{
+    ae_int_t npoints;
+    double errbest;
+    ae_int_t varstried;
+    ae_int_t varcur;
+    ae_bool valuesaresame;
+    ae_int_t offs;
+    double split;
+    ae_int_t i;
+    double v;
+    double v0;
+    double currms;
+    ae_int_t info;
+
+    *varbest = 0;
+    *splitbest = 0;
+
+    ae_assert(s->dstype==0, "sparsity is not supported 4terg!", _state);
+    ae_assert(s->rdfalgo==0, "BuildRandomTreeRec: integrity check failed (1657)", _state);
+    ae_assert(idx0<idx1, "BuildRandomTreeRec: integrity check failed (3445)", _state);
+    npoints = s->npoints;
+    
+    /*
+     * Select split according to dense direct RDF algorithm
+     */
+    *varbest = -1;
+    errbest = ae_maxrealnumber;
+    *splitbest = (double)(0);
+    varstried = 0;
+    while(varstried<=ae_minint(varstoselect, *varsinpool, _state)-1)
+    {
+        
+        /*
+         * select variables from pool
+         */
+        swapelementsi(&workbuf->varpool, varstried, varstried+hqrnduniformi(rs, *varsinpool-varstried, _state), _state);
+        varcur = workbuf->varpool.ptr.p_int[varstried];
+        
+        /*
+         * Load variable values to working array.
+         * If all variable values are same, variable is excluded from pool and we re-run variable selection.
+         */
+        valuesaresame = ae_true;
+        ae_assert(s->dstype==0, "not supported segsv34fs", _state);
+        offs = npoints*varcur;
+        v0 = s->dsdata.ptr.p_double[offs+workbuf->trnset.ptr.p_int[idx0]];
+        for(i=idx0; i<=idx1-1; i++)
+        {
+            v = s->dsdata.ptr.p_double[offs+workbuf->trnset.ptr.p_int[i]];
+            workbuf->curvals.ptr.p_double[i] = v;
+            valuesaresame = valuesaresame&&v==v0;
+        }
+        if( valuesaresame )
+        {
+            
+            /*
+             * Variable does not change across current subset.
+             * Exclude variable from pool, go to the next iteration.
+             * VarsTried is not increased.
+             *
+             * NOTE: it is essential that updated VarsInPool is passed
+             *       down to children but not up to caller - it is
+             *       possible that one level higher this variable is
+             *       not-fixed.
+             */
+            swapelementsi(&workbuf->varpool, varstried, *varsinpool-1, _state);
+            *varsinpool = *varsinpool-1;
+            continue;
+        }
+        
+        /*
+         * Now we are ready to infer the split
+         */
+        dforest_evaluatedensesplit(s, workbuf, rs, varcur, idx0, idx1, &info, &split, &currms, _state);
+        if( info>0&&(*varbest<0||ae_fp_less_eq(currms,errbest)) )
+        {
+            errbest = currms;
+            *varbest = varcur;
+            *splitbest = split;
+            for(i=idx0; i<=idx1-1; i++)
+            {
+                workbuf->bestvals.ptr.p_double[i] = workbuf->curvals.ptr.p_double[i];
+            }
+        }
+        
+        /*
+         * Next iteration
+         */
+        varstried = varstried+1;
+    }
+}
+
+
+/*************************************************************************
+This function performs split on some specific dense variable whose values
+are stored in WorkBuf.CurVals[Idx0,Idx1) and labels are stored in
+WorkBuf.TrnLabelsR/I[Idx0,Idx1).
+
+It returns split value and associated RMS error. It is responsibility of
+the caller to make sure that variable has at least two distinct values,
+i.e. it is possible to make a split.
+
+Precomputed values of following fields of WorkBuf are used:
+* ClassPriors
+
+Following fields of WorkBuf are used as temporaries:
+* ClassTotals0,1,01
+* Tmp0I, Tmp1I, Tmp0R, Tmp1R, Tmp2R, Tmp3R
+
+  -- ALGLIB --
+     Copyright 21.05.2018 by Bochkanov Sergey
+*************************************************************************/
+static void dforest_evaluatedensesplit(decisionforestbuilder* s,
+     dfworkbuf* workbuf,
+     hqrndstate* rs,
+     ae_int_t splitvar,
+     ae_int_t idx0,
+     ae_int_t idx1,
+     ae_int_t* info,
+     double* split,
+     double* rms,
+     ae_state *_state)
+{
+    ae_int_t nclasses;
+    ae_int_t i;
+    ae_int_t j;
+    ae_int_t k0;
+    ae_int_t k1;
+    double v;
+    double v0;
+    double v1;
+    double v2;
+    ae_int_t sl;
+    ae_int_t sr;
+
+    *info = 0;
+    *split = 0;
+    *rms = 0;
+
+    ae_assert(idx0<idx1, "BuildRandomTreeRec: integrity check failed (8754)", _state);
+    nclasses = s->nclasses;
+    if( s->dsbinary.ptr.p_bool[splitvar] )
+    {
+        
+        /*
+         * Try simple binary split, if possible
+         * Split can be inferred from minimum/maximum values, just calculate RMS error
+         */
+        *info = 1;
+        *split = dforest_getsplit(s, s->dsmin.ptr.p_double[splitvar], s->dsmax.ptr.p_double[splitvar], rs, _state);
+        if( nclasses>1 )
+        {
+            
+            /*
+             * Classification problem
+             */
+            for(j=0; j<=nclasses-1; j++)
+            {
+                workbuf->classtotals0.ptr.p_int[j] = 0;
+            }
+            sl = 0;
+            for(i=idx0; i<=idx1-1; i++)
+            {
+                if( workbuf->curvals.ptr.p_double[i]<*split )
+                {
+                    j = workbuf->trnlabelsi.ptr.p_int[i];
+                    workbuf->classtotals0.ptr.p_int[j] = workbuf->classtotals0.ptr.p_int[j]+1;
+                    sl = sl+1;
+                }
+            }
+            sr = idx1-idx0-sl;
+            ae_assert(sl!=0&&sr!=0, "BuildRandomTreeRec: something strange, impossible failure!", _state);
+            v0 = (double)1/(double)sl;
+            v1 = (double)1/(double)sr;
+            *rms = (double)(0);
+            for(j=0; j<=nclasses-1; j++)
+            {
+                k0 = workbuf->classtotals0.ptr.p_int[j];
+                k1 = workbuf->classpriors.ptr.p_int[j]-k0;
+                *rms = *rms+k0*(1-v0*k0)+k1*(1-v1*k1);
+            }
+            *rms = ae_sqrt(*rms/(nclasses*(idx1-idx0+1)), _state);
+        }
+        else
+        {
+            
+            /*
+             * regression-specific code
+             */
+            sl = 0;
+            sr = 0;
+            v1 = (double)(0);
+            v2 = (double)(0);
+            for(j=idx0; j<=idx1-1; j++)
+            {
+                if( workbuf->curvals.ptr.p_double[j]<*split )
+                {
+                    v1 = v1+workbuf->trnlabelsr.ptr.p_double[j];
+                    sl = sl+1;
+                }
+                else
+                {
+                    v2 = v2+workbuf->trnlabelsr.ptr.p_double[j];
+                    sr = sr+1;
+                }
+            }
+            ae_assert(sl!=0&&sr!=0, "BuildRandomTreeRec: something strange, impossible failure!", _state);
+            v1 = v1/sl;
+            v2 = v2/sr;
+            *rms = (double)(0);
+            for(j=0; j<=idx1-idx0-1; j++)
+            {
+                v = workbuf->trnlabelsr.ptr.p_double[idx0+j];
+                if( workbuf->curvals.ptr.p_double[j]<*split )
+                {
+                    v = v-v1;
+                }
+                else
+                {
+                    v = v-v2;
+                }
+                *rms = *rms+v*v;
+            }
+            *rms = ae_sqrt(*rms/(idx1-idx0+1), _state);
+        }
+    }
+    else
+    {
+        
+        /*
+         * General split
+         */
+        *info = 0;
+        if( nclasses>1 )
+        {
+            for(i=0; i<=idx1-idx0-1; i++)
+            {
+                workbuf->tmp0r.ptr.p_double[i] = workbuf->curvals.ptr.p_double[idx0+i];
+                workbuf->tmp0i.ptr.p_int[i] = workbuf->trnlabelsi.ptr.p_int[idx0+i];
+            }
+            dforest_classifiersplit(s, workbuf, &workbuf->tmp0r, &workbuf->tmp0i, idx1-idx0, rs, info, split, rms, &workbuf->tmp1r, &workbuf->tmp1i, _state);
+        }
+        else
+        {
+            for(i=0; i<=idx1-idx0-1; i++)
+            {
+                workbuf->tmp0r.ptr.p_double[i] = workbuf->curvals.ptr.p_double[idx0+i];
+                workbuf->tmp1r.ptr.p_double[i] = workbuf->trnlabelsr.ptr.p_double[idx0+i];
+            }
+            dforest_regressionsplit(s, workbuf, &workbuf->tmp0r, &workbuf->tmp1r, idx1-idx0, info, split, rms, &workbuf->tmp2r, &workbuf->tmp3r, _state);
+        }
+    }
+}
+
+
+/*************************************************************************
+Classifier split
+*************************************************************************/
+static void dforest_classifiersplit(decisionforestbuilder* s,
+     dfworkbuf* workbuf,
+     /* Real    */ ae_vector* x,
+     /* Integer */ ae_vector* c,
+     ae_int_t n,
+     hqrndstate* rs,
+     ae_int_t* info,
+     double* threshold,
+     double* e,
+     /* Real    */ ae_vector* sortrbuf,
+     /* Integer */ ae_vector* sortibuf,
+     ae_state *_state)
+{
+    ae_int_t i;
+    ae_int_t j;
+    ae_int_t k;
+    ae_int_t n0;
+    ae_int_t n0prev;
+    double v;
+    ae_int_t advanceby;
+    double rms;
+    ae_int_t k0;
+    ae_int_t k1;
+    double v0;
+    double v1;
+    ae_int_t nclasses;
+    double vmin;
+    double vmax;
+
+    *info = 0;
+    *threshold = 0;
+    *e = 0;
+
+    ae_assert((s->rdfsplitstrength==0||s->rdfsplitstrength==1)||s->rdfsplitstrength==2, "RDF: unexpected split type at ClassifierSplit()", _state);
+    nclasses = s->nclasses;
+    advanceby = 1;
+    if( n>=20 )
+    {
+        advanceby = ae_maxint(2, ae_round(n*0.05, _state), _state);
+    }
+    *info = -1;
+    *threshold = (double)(0);
+    *e = ae_maxrealnumber;
+    
+    /*
+     * Random split
+     */
+    if( s->rdfsplitstrength==0 )
+    {
+        
+        /*
+         * Evaluate minimum, maximum and randomly selected values
+         */
+        vmin = x->ptr.p_double[0];
+        vmax = x->ptr.p_double[0];
+        for(i=1; i<=n-1; i++)
+        {
+            v = x->ptr.p_double[i];
+            if( v<vmin )
+            {
+                vmin = v;
+            }
+            if( v>vmax )
+            {
+                vmax = v;
+            }
+        }
+        if( ae_fp_eq(vmin,vmax) )
+        {
+            return;
+        }
+        v = x->ptr.p_double[hqrnduniformi(rs, n, _state)];
+        if( ae_fp_eq(v,vmin) )
+        {
+            v = vmax;
+        }
+        
+        /*
+         * Calculate RMS error associated with the split
+         */
+        for(i=0; i<=nclasses-1; i++)
+        {
+            workbuf->classtotals0.ptr.p_int[i] = 0;
+        }
+        n0 = 0;
+        for(i=0; i<=n-1; i++)
+        {
+            if( x->ptr.p_double[i]<v )
+            {
+                k = c->ptr.p_int[i];
+                workbuf->classtotals0.ptr.p_int[k] = workbuf->classtotals0.ptr.p_int[k]+1;
+                n0 = n0+1;
+            }
+        }
+        ae_assert(n0>0&&n0<n, "RDF: critical integrity check failed at ClassifierSplit()", _state);
+        v0 = (double)1/(double)n0;
+        v1 = (double)1/(double)(n-n0);
+        rms = (double)(0);
+        for(j=0; j<=nclasses-1; j++)
+        {
+            k0 = workbuf->classtotals0.ptr.p_int[j];
+            k1 = workbuf->classpriors.ptr.p_int[j]-k0;
+            rms = rms+k0*(1-v0*k0)+k1*(1-v1*k1);
+        }
+        *threshold = v;
+        *info = 1;
+        *e = rms;
+        return;
+    }
+    
+    /*
+     * Stronger splits which require us to sort the data
+     * Quick check for degeneracy
+     */
+    tagsortfasti(x, c, sortrbuf, sortibuf, n, _state);
+    v = 0.5*(x->ptr.p_double[0]+x->ptr.p_double[n-1]);
+    if( !(ae_fp_less(x->ptr.p_double[0],v)&&ae_fp_less(v,x->ptr.p_double[n-1])) )
+    {
+        return;
+    }
+    
+    /*
+     * Split at the middle
+     */
+    if( s->rdfsplitstrength==1 )
+    {
+        
+        /*
+         * Select split position
+         */
+        vmin = x->ptr.p_double[0];
+        vmax = x->ptr.p_double[n-1];
+        v = x->ptr.p_double[n/2];
+        if( ae_fp_eq(v,vmin) )
+        {
+            v = vmin+0.001*(vmax-vmin);
+        }
+        if( ae_fp_eq(v,vmin) )
+        {
+            v = vmax;
+        }
+        
+        /*
+         * Calculate RMS error associated with the split
+         */
+        for(i=0; i<=nclasses-1; i++)
+        {
+            workbuf->classtotals0.ptr.p_int[i] = 0;
+        }
+        n0 = 0;
+        for(i=0; i<=n-1; i++)
+        {
+            if( x->ptr.p_double[i]<v )
+            {
+                k = c->ptr.p_int[i];
+                workbuf->classtotals0.ptr.p_int[k] = workbuf->classtotals0.ptr.p_int[k]+1;
+                n0 = n0+1;
+            }
+        }
+        ae_assert(n0>0&&n0<n, "RDF: critical integrity check failed at ClassifierSplit()", _state);
+        v0 = (double)1/(double)n0;
+        v1 = (double)1/(double)(n-n0);
+        rms = (double)(0);
+        for(j=0; j<=nclasses-1; j++)
+        {
+            k0 = workbuf->classtotals0.ptr.p_int[j];
+            k1 = workbuf->classpriors.ptr.p_int[j]-k0;
+            rms = rms+k0*(1-v0*k0)+k1*(1-v1*k1);
+        }
+        *threshold = v;
+        *info = 1;
+        *e = rms;
+        return;
+    }
+    
+    /*
+     * Strong split
+     */
+    if( s->rdfsplitstrength==2 )
+    {
+        
+        /*
+         * Prepare initial split.
+         * Evaluate current split, prepare next one, repeat.
+         */
+        for(i=0; i<=nclasses-1; i++)
+        {
+            workbuf->classtotals0.ptr.p_int[i] = 0;
+        }
+        n0 = 1;
+        while(n0<n&&x->ptr.p_double[n0]==x->ptr.p_double[n0-1])
+        {
+            n0 = n0+1;
+        }
+        ae_assert(n0<n, "RDF: critical integrity check failed in ClassifierSplit()", _state);
+        for(i=0; i<=n0-1; i++)
+        {
+            k = c->ptr.p_int[i];
+            workbuf->classtotals0.ptr.p_int[k] = workbuf->classtotals0.ptr.p_int[k]+1;
+        }
+        *info = -1;
+        *threshold = x->ptr.p_double[n-1];
+        *e = ae_maxrealnumber;
+        while(n0<n)
+        {
+            
+            /*
+             * RMS error associated with current split
+             */
+            v0 = (double)1/(double)n0;
+            v1 = (double)1/(double)(n-n0);
+            rms = (double)(0);
+            for(j=0; j<=nclasses-1; j++)
+            {
+                k0 = workbuf->classtotals0.ptr.p_int[j];
+                k1 = workbuf->classpriors.ptr.p_int[j]-k0;
+                rms = rms+k0*(1-v0*k0)+k1*(1-v1*k1);
+            }
+            if( *info<0||rms<*e )
+            {
+                *info = 1;
+                *e = rms;
+                *threshold = 0.5*(x->ptr.p_double[n0-1]+x->ptr.p_double[n0]);
+                if( *threshold<=x->ptr.p_double[n0-1] )
+                {
+                    *threshold = x->ptr.p_double[n0];
+                }
+            }
+            
+            /*
+             * Advance
+             */
+            n0prev = n0;
+            while(n0<n&&n0-n0prev<advanceby)
+            {
+                v = x->ptr.p_double[n0];
+                while(n0<n&&x->ptr.p_double[n0]==v)
+                {
+                    k = c->ptr.p_int[n0];
+                    workbuf->classtotals0.ptr.p_int[k] = workbuf->classtotals0.ptr.p_int[k]+1;
+                    n0 = n0+1;
+                }
+            }
+        }
+        if( *info>0 )
+        {
+            *e = ae_sqrt(*e/(nclasses*n), _state);
+        }
+        return;
+    }
+    ae_assert(ae_false, "RDF: ClassifierSplit(), critical error", _state);
+}
+
+
+/*************************************************************************
+Regression model split
+*************************************************************************/
+static void dforest_regressionsplit(decisionforestbuilder* s,
+     dfworkbuf* workbuf,
+     /* Real    */ ae_vector* x,
+     /* Real    */ ae_vector* y,
+     ae_int_t n,
+     ae_int_t* info,
+     double* threshold,
+     double* e,
+     /* Real    */ ae_vector* sortrbuf,
+     /* Real    */ ae_vector* sortrbuf2,
+     ae_state *_state)
+{
+    ae_int_t i;
+    double vmin;
+    double vmax;
+    double bnd01;
+    double bnd12;
+    double bnd23;
+    ae_int_t total0;
+    ae_int_t total1;
+    ae_int_t total2;
+    ae_int_t total3;
+    ae_int_t cnt0;
+    ae_int_t cnt1;
+    ae_int_t cnt2;
+    ae_int_t cnt3;
+    ae_int_t n0;
+    ae_int_t advanceby;
+    double v;
+    double v0;
+    double v1;
+    double rms;
+    ae_int_t n0prev;
+    ae_int_t k0;
+    ae_int_t k1;
+
+    *info = 0;
+    *threshold = 0;
+    *e = 0;
+
+    advanceby = 1;
+    if( n>=20 )
+    {
+        advanceby = ae_maxint(2, ae_round(n*0.05, _state), _state);
+    }
+    
+    /*
+     * Sort data
+     * Quick check for degeneracy
+     */
+    tagsortfastr(x, y, sortrbuf, sortrbuf2, n, _state);
+    v = 0.5*(x->ptr.p_double[0]+x->ptr.p_double[n-1]);
+    if( !(ae_fp_less(x->ptr.p_double[0],v)&&ae_fp_less(v,x->ptr.p_double[n-1])) )
+    {
+        *info = -1;
+        *threshold = x->ptr.p_double[n-1];
+        *e = ae_maxrealnumber;
+        return;
+    }
+    
+    /*
+     * Prepare initial split.
+     * Evaluate current split, prepare next one, repeat.
+     */
+    vmin = y->ptr.p_double[0];
+    vmax = y->ptr.p_double[0];
+    for(i=1; i<=n-1; i++)
+    {
+        v = y->ptr.p_double[i];
+        if( v<vmin )
+        {
+            vmin = v;
+        }
+        if( v>vmax )
+        {
+            vmax = v;
+        }
+    }
+    bnd12 = 0.5*(vmin+vmax);
+    bnd01 = 0.5*(vmin+bnd12);
+    bnd23 = 0.5*(vmax+bnd12);
+    total0 = 0;
+    total1 = 0;
+    total2 = 0;
+    total3 = 0;
+    for(i=0; i<=n-1; i++)
+    {
+        v = y->ptr.p_double[i];
+        if( v<bnd12 )
+        {
+            if( v<bnd01 )
+            {
+                total0 = total0+1;
+            }
+            else
+            {
+                total1 = total1+1;
+            }
+        }
+        else
+        {
+            if( v<bnd23 )
+            {
+                total2 = total2+1;
+            }
+            else
+            {
+                total3 = total3+1;
+            }
+        }
+    }
+    n0 = 1;
+    while(n0<n&&x->ptr.p_double[n0]==x->ptr.p_double[n0-1])
+    {
+        n0 = n0+1;
+    }
+    ae_assert(n0<n, "RDF: critical integrity check failed in ClassifierSplit()", _state);
+    cnt0 = 0;
+    cnt1 = 0;
+    cnt2 = 0;
+    cnt3 = 0;
+    for(i=0; i<=n0-1; i++)
+    {
+        v = y->ptr.p_double[i];
+        if( v<bnd12 )
+        {
+            if( v<bnd01 )
+            {
+                cnt0 = cnt0+1;
+            }
+            else
+            {
+                cnt1 = cnt1+1;
+            }
+        }
+        else
+        {
+            if( v<bnd23 )
+            {
+                cnt2 = cnt2+1;
+            }
+            else
+            {
+                cnt3 = cnt3+1;
+            }
+        }
+    }
+    *info = -1;
+    *threshold = x->ptr.p_double[n-1];
+    *e = ae_maxrealnumber;
+    while(n0<n)
+    {
+        
+        /*
+         * RMS error associated with current split
+         */
+        v0 = (double)1/(double)n0;
+        v1 = (double)1/(double)(n-n0);
+        rms = (double)(0);
+        k0 = cnt0;
+        k1 = total0-cnt0;
+        rms = rms+k0*(1-v0*k0)+k1*(1-v1*k1);
+        k0 = cnt1;
+        k1 = total1-cnt1;
+        rms = rms+k0*(1-v0*k0)+k1*(1-v1*k1);
+        k0 = cnt2;
+        k1 = total2-cnt2;
+        rms = rms+k0*(1-v0*k0)+k1*(1-v1*k1);
+        k0 = cnt3;
+        k1 = total3-cnt3;
+        rms = rms+k0*(1-v0*k0)+k1*(1-v1*k1);
+        if( *info<0||rms<*e )
+        {
+            *info = 1;
+            *e = rms;
+            *threshold = 0.5*(x->ptr.p_double[n0-1]+x->ptr.p_double[n0]);
+            if( *threshold<=x->ptr.p_double[n0-1] )
+            {
+                *threshold = x->ptr.p_double[n0];
+            }
+        }
+        
+        /*
+         * Advance
+         */
+        n0prev = n0;
+        while(n0<n&&n0-n0prev<advanceby)
+        {
+            v0 = x->ptr.p_double[n0];
+            while(n0<n&&x->ptr.p_double[n0]==v0)
+            {
+                v = y->ptr.p_double[n0];
+                if( v<bnd12 )
+                {
+                    if( v<bnd01 )
+                    {
+                        cnt0 = cnt0+1;
+                    }
+                    else
+                    {
+                        cnt1 = cnt1+1;
+                    }
+                }
+                else
+                {
+                    if( v<bnd23 )
+                    {
+                        cnt2 = cnt2+1;
+                    }
+                    else
+                    {
+                        cnt3 = cnt3+1;
+                    }
+                }
+                n0 = n0+1;
+            }
+        }
+    }
+    if( *info>0 )
+    {
+        *e = ae_sqrt(*e/(4*n), _state);
+    }
+}
+
+
+/*************************************************************************
+Returns split: either deterministic split at the middle of [A,B], or randomly
+chosen split.
+
+It is guaranteed that A<Split<=B.
+
+  -- ALGLIB --
+     Copyright 21.05.2018 by Bochkanov Sergey
+*************************************************************************/
+static double dforest_getsplit(decisionforestbuilder* s,
+     double a,
+     double b,
+     hqrndstate* rs,
+     ae_state *_state)
+{
+    double result;
+
+
+    result = 0.5*(a+b);
+    if( ae_fp_less_eq(result,a) )
+    {
+        result = b;
+    }
+    return result;
+}
+
+
+/*************************************************************************
+Outputs leaf to the tree
+
+Following items of TRN and OOB sets are updated in the voting buffer:
+* items [Idx0,Idx1) of WorkBuf.TrnSet
+* items [OOBIdx0, OOBIdx1) of WorkBuf.OOBSet
+
+  -- ALGLIB --
+     Copyright 21.05.2018 by Bochkanov Sergey
+*************************************************************************/
+static void dforest_outputleaf(decisionforestbuilder* s,
+     dfworkbuf* workbuf,
+     /* Real    */ ae_vector* treebuf,
+     dfvotebuf* votebuf,
+     ae_int_t idx0,
+     ae_int_t idx1,
+     ae_int_t oobidx0,
+     ae_int_t oobidx1,
+     ae_int_t* treesize,
+     double leafval,
+     ae_state *_state)
+{
+    ae_int_t leafvali;
+    ae_int_t nclasses;
+    ae_int_t i;
+    ae_int_t j;
+
+
+    nclasses = s->nclasses;
+    if( nclasses==1 )
+    {
+        
+        /*
+         * Store split to the tree
+         */
+        treebuf->ptr.p_double[*treesize] = (double)(-1);
+        treebuf->ptr.p_double[*treesize+1] = leafval;
+        
+        /*
+         * Update training and OOB voting stats
+         */
+        for(i=idx0; i<=idx1-1; i++)
+        {
+            j = workbuf->trnset.ptr.p_int[i];
+            votebuf->trntotals.ptr.p_double[j] = votebuf->trntotals.ptr.p_double[j]+leafval;
+            votebuf->trncounts.ptr.p_int[j] = votebuf->trncounts.ptr.p_int[j]+1;
+        }
+        for(i=oobidx0; i<=oobidx1-1; i++)
+        {
+            j = workbuf->oobset.ptr.p_int[i];
+            votebuf->oobtotals.ptr.p_double[j] = votebuf->oobtotals.ptr.p_double[j]+leafval;
+            votebuf->oobcounts.ptr.p_int[j] = votebuf->oobcounts.ptr.p_int[j]+1;
+        }
+    }
+    else
+    {
+        
+        /*
+         * Store split to the tree
+         */
+        treebuf->ptr.p_double[*treesize] = (double)(-1);
+        treebuf->ptr.p_double[*treesize+1] = leafval;
+        
+        /*
+         * Update training and OOB voting stats
+         */
+        leafvali = ae_round(leafval, _state);
+        for(i=idx0; i<=idx1-1; i++)
+        {
+            j = workbuf->trnset.ptr.p_int[i];
+            votebuf->trntotals.ptr.p_double[j*nclasses+leafvali] = votebuf->trntotals.ptr.p_double[j*nclasses+leafvali]+1;
+            votebuf->trncounts.ptr.p_int[j] = votebuf->trncounts.ptr.p_int[j]+1;
+        }
+        for(i=oobidx0; i<=oobidx1-1; i++)
+        {
+            j = workbuf->oobset.ptr.p_int[i];
+            votebuf->oobtotals.ptr.p_double[j*nclasses+leafvali] = votebuf->oobtotals.ptr.p_double[j*nclasses+leafvali]+1;
+            votebuf->oobcounts.ptr.p_int[j] = votebuf->oobcounts.ptr.p_int[j]+1;
+        }
+    }
+    *treesize = *treesize+dforest_leafnodewidth;
+}
+
+
+/*************************************************************************
+This function performs generic and algorithm-specific preprocessing of the
+dataset
+
+  -- ALGLIB --
+     Copyright 21.05.2018 by Bochkanov Sergey
+*************************************************************************/
+static void dforest_analyzeandpreprocessdataset(decisionforestbuilder* s,
+     ae_state *_state)
+{
+    ae_frame _frame_block;
+    ae_int_t nvars;
+    ae_int_t nclasses;
+    ae_int_t npoints;
+    ae_int_t i;
+    ae_int_t j;
+    ae_bool isbinary;
+    double v;
+    double v0;
+    double v1;
+    hqrndstate rs;
+
+    ae_frame_make(_state, &_frame_block);
+    memset(&rs, 0, sizeof(rs));
+    _hqrndstate_init(&rs, _state, ae_true);
+
+    ae_assert(s->dstype==0, "no sparsity", _state);
+    npoints = s->npoints;
+    nvars = s->nvars;
+    nclasses = s->nclasses;
+    
+    /*
+     * seed local RNG
+     */
+    if( s->rdfglobalseed>0 )
+    {
+        hqrndseed(s->rdfglobalseed, 3532, &rs, _state);
+    }
+    else
+    {
+        hqrndseed(ae_randominteger(30000, _state), 3532, &rs, _state);
+    }
+    
+    /*
+     * Generic processing
+     */
+    ae_assert(npoints>=1, "BuildRandomForest: integrity check failed", _state);
+    rvectorsetlengthatleast(&s->dsmin, nvars, _state);
+    rvectorsetlengthatleast(&s->dsmax, nvars, _state);
+    bvectorsetlengthatleast(&s->dsbinary, nvars, _state);
+    for(i=0; i<=nvars-1; i++)
+    {
+        v0 = s->dsdata.ptr.p_double[i*npoints+0];
+        v1 = s->dsdata.ptr.p_double[i*npoints+0];
+        for(j=1; j<=npoints-1; j++)
+        {
+            v = s->dsdata.ptr.p_double[i*npoints+j];
+            if( v<v0 )
+            {
+                v0 = v;
+            }
+            if( v>v1 )
+            {
+                v1 = v;
+            }
+        }
+        s->dsmin.ptr.p_double[i] = v0;
+        s->dsmax.ptr.p_double[i] = v1;
+        ae_assert(ae_fp_less_eq(v0,v1), "BuildRandomForest: strange integrity check failure", _state);
+        isbinary = ae_true;
+        for(j=0; j<=npoints-1; j++)
+        {
+            v = s->dsdata.ptr.p_double[i*npoints+j];
+            isbinary = isbinary&&(v==v0||v==v1);
+        }
+        s->dsbinary.ptr.p_bool[i] = isbinary;
+    }
+    if( nclasses==1 )
+    {
+        s->dsravg = (double)(0);
+        for(i=0; i<=npoints-1; i++)
+        {
+            s->dsravg = s->dsravg+s->dsrval.ptr.p_double[i];
+        }
+        s->dsravg = s->dsravg/npoints;
+    }
+    else
+    {
+        ivectorsetlengthatleast(&s->dsctotals, nclasses, _state);
+        for(i=0; i<=nclasses-1; i++)
+        {
+            s->dsctotals.ptr.p_int[i] = 0;
+        }
+        for(i=0; i<=npoints-1; i++)
+        {
+            s->dsctotals.ptr.p_int[s->dsival.ptr.p_int[i]] = s->dsctotals.ptr.p_int[s->dsival.ptr.p_int[i]]+1;
+        }
+    }
+    ae_frame_leave(_state);
+}
+
+
+/*************************************************************************
+This function merges together trees generated during training and outputs
+it to the decision forest.
+
+INPUT PARAMETERS:
+    S           -   decision forest builder object
+    NTrees      -   NTrees>=1, number of trees to train
+
+OUTPUT PARAMETERS:
+    DF          -   decision forest
+    Rep         -   report
+
+  -- ALGLIB --
+     Copyright 21.05.2018 by Bochkanov Sergey
+*************************************************************************/
+static void dforest_mergetrees(decisionforestbuilder* s,
+     decisionforest* df,
+     ae_state *_state)
+{
+    ae_frame _frame_block;
+    ae_int_t i;
+    ae_int_t cursize;
+    ae_int_t offs;
+    dftreebuf *tree;
+    ae_smart_ptr _tree;
+    ae_vector treesizes;
+    ae_vector treeoffsets;
+
+    ae_frame_make(_state, &_frame_block);
+    memset(&_tree, 0, sizeof(_tree));
+    memset(&treesizes, 0, sizeof(treesizes));
+    memset(&treeoffsets, 0, sizeof(treeoffsets));
+    ae_smart_ptr_init(&_tree, (void**)&tree, _state, ae_true);
+    ae_vector_init(&treesizes, 0, DT_INT, _state, ae_true);
+    ae_vector_init(&treeoffsets, 0, DT_INT, _state, ae_true);
+
+    df->forestformat = dforest_dfuncompressedv0;
+    df->nvars = s->nvars;
+    df->nclasses = s->nclasses;
+    df->bufsize = 0;
+    df->ntrees = 0;
+    
+    /*
+     * Determine trees count
+     */
+    ae_shared_pool_first_recycled(&s->treepool, &_tree, _state);
+    while(tree!=NULL)
+    {
+        df->ntrees = df->ntrees+1;
+        ae_shared_pool_next_recycled(&s->treepool, &_tree, _state);
+    }
+    ae_assert(df->ntrees>0, "MergeTrees: integrity check failed, zero trees count", _state);
+    
+    /*
+     * Determine individual tree sizes and total buffer size
+     */
+    ae_vector_set_length(&treesizes, df->ntrees, _state);
+    for(i=0; i<=df->ntrees-1; i++)
+    {
+        treesizes.ptr.p_int[i] = -1;
+    }
+    ae_shared_pool_first_recycled(&s->treepool, &_tree, _state);
+    while(tree!=NULL)
+    {
+        ae_assert(tree->treeidx>=0&&tree->treeidx<df->ntrees, "MergeTrees: integrity check failed (wrong TreeIdx)", _state);
+        ae_assert(treesizes.ptr.p_int[tree->treeidx]<0, "MergeTrees: integrity check failed (duplicate TreeIdx)", _state);
+        df->bufsize = df->bufsize+ae_round(tree->treebuf.ptr.p_double[0], _state);
+        treesizes.ptr.p_int[tree->treeidx] = ae_round(tree->treebuf.ptr.p_double[0], _state);
+        ae_shared_pool_next_recycled(&s->treepool, &_tree, _state);
+    }
+    for(i=0; i<=df->ntrees-1; i++)
+    {
+        ae_assert(treesizes.ptr.p_int[i]>0, "MergeTrees: integrity check failed (wrong TreeSize)", _state);
+    }
+    
+    /*
+     * Determine offsets for individual trees in output buffer
+     */
+    ae_vector_set_length(&treeoffsets, df->ntrees, _state);
+    treeoffsets.ptr.p_int[0] = 0;
+    for(i=1; i<=df->ntrees-1; i++)
+    {
+        treeoffsets.ptr.p_int[i] = treeoffsets.ptr.p_int[i-1]+treesizes.ptr.p_int[i-1];
+    }
+    
+    /*
+     * Output trees
+     *
+     * NOTE: since ALGLIB 3.16.0 trees are sorted by tree index prior to
+     *       output (necessary for variable importance estimation), that's
+     *       why we need array of tree offsets
+     */
+    ae_vector_set_length(&df->trees, df->bufsize, _state);
+    ae_shared_pool_first_recycled(&s->treepool, &_tree, _state);
+    while(tree!=NULL)
+    {
+        cursize = ae_round(tree->treebuf.ptr.p_double[0], _state);
+        offs = treeoffsets.ptr.p_int[tree->treeidx];
+        for(i=0; i<=cursize-1; i++)
+        {
+            df->trees.ptr.p_double[offs+i] = tree->treebuf.ptr.p_double[i];
+        }
+        ae_shared_pool_next_recycled(&s->treepool, &_tree, _state);
+    }
+    ae_frame_leave(_state);
+}
+
+
+/*************************************************************************
+This function post-processes voting array and calculates TRN and OOB errors.
+
+INPUT PARAMETERS:
+    S           -   decision forest builder object
+    NTrees      -   number of trees in the forest
+    Buf         -   possibly preallocated vote buffer, its contents is
+                    overwritten by this function
+
+OUTPUT PARAMETERS:
+    Rep         -   report fields corresponding to errors are updated
+
+  -- ALGLIB --
+     Copyright 21.05.2018 by Bochkanov Sergey
+*************************************************************************/
+static void dforest_processvotingresults(decisionforestbuilder* s,
+     ae_int_t ntrees,
+     dfvotebuf* buf,
+     dfreport* rep,
+     ae_state *_state)
+{
+    ae_frame _frame_block;
+    dfvotebuf *vote;
+    ae_smart_ptr _vote;
+    ae_int_t nvars;
+    ae_int_t nclasses;
+    ae_int_t npoints;
+    ae_int_t i;
+    ae_int_t j;
+    ae_int_t k;
+    ae_int_t k1;
+    double v;
+    ae_int_t avgrelcnt;
+    ae_int_t oobavgrelcnt;
+
+    ae_frame_make(_state, &_frame_block);
+    memset(&_vote, 0, sizeof(_vote));
+    ae_smart_ptr_init(&_vote, (void**)&vote, _state, ae_true);
+
+    npoints = s->npoints;
+    nvars = s->nvars;
+    nclasses = s->nclasses;
+    ae_assert(npoints>0, "DFOREST: integrity check failed", _state);
+    ae_assert(nvars>0, "DFOREST: integrity check failed", _state);
+    ae_assert(nclasses>0, "DFOREST: integrity check failed", _state);
+    
+    /*
+     * Prepare vote buffer
+     */
+    rvectorsetlengthatleast(&buf->trntotals, npoints*nclasses, _state);
+    rvectorsetlengthatleast(&buf->oobtotals, npoints*nclasses, _state);
+    for(i=0; i<=npoints*nclasses-1; i++)
+    {
+        buf->trntotals.ptr.p_double[i] = (double)(0);
+        buf->oobtotals.ptr.p_double[i] = (double)(0);
+    }
+    ivectorsetlengthatleast(&buf->trncounts, npoints, _state);
+    ivectorsetlengthatleast(&buf->oobcounts, npoints, _state);
+    for(i=0; i<=npoints-1; i++)
+    {
+        buf->trncounts.ptr.p_int[i] = 0;
+        buf->oobcounts.ptr.p_int[i] = 0;
+    }
+    
+    /*
+     * Merge voting arrays
+     */
+    ae_shared_pool_first_recycled(&s->votepool, &_vote, _state);
+    while(vote!=NULL)
+    {
+        for(i=0; i<=npoints*nclasses-1; i++)
+        {
+            buf->trntotals.ptr.p_double[i] = buf->trntotals.ptr.p_double[i]+vote->trntotals.ptr.p_double[i]+vote->oobtotals.ptr.p_double[i];
+            buf->oobtotals.ptr.p_double[i] = buf->oobtotals.ptr.p_double[i]+vote->oobtotals.ptr.p_double[i];
+        }
+        for(i=0; i<=npoints-1; i++)
+        {
+            buf->trncounts.ptr.p_int[i] = buf->trncounts.ptr.p_int[i]+vote->trncounts.ptr.p_int[i]+vote->oobcounts.ptr.p_int[i];
+            buf->oobcounts.ptr.p_int[i] = buf->oobcounts.ptr.p_int[i]+vote->oobcounts.ptr.p_int[i];
+        }
+        ae_shared_pool_next_recycled(&s->votepool, &_vote, _state);
+    }
+    for(i=0; i<=npoints-1; i++)
+    {
+        v = 1/coalesce((double)(buf->trncounts.ptr.p_int[i]), (double)(1), _state);
+        for(j=0; j<=nclasses-1; j++)
+        {
+            buf->trntotals.ptr.p_double[i*nclasses+j] = buf->trntotals.ptr.p_double[i*nclasses+j]*v;
+        }
+        v = 1/coalesce((double)(buf->oobcounts.ptr.p_int[i]), (double)(1), _state);
+        for(j=0; j<=nclasses-1; j++)
+        {
+            buf->oobtotals.ptr.p_double[i*nclasses+j] = buf->oobtotals.ptr.p_double[i*nclasses+j]*v;
+        }
+    }
+    
+    /*
+     * Use aggregated voting data to output error metrics
+     */
+    avgrelcnt = 0;
+    oobavgrelcnt = 0;
+    rep->rmserror = (double)(0);
+    rep->avgerror = (double)(0);
+    rep->avgrelerror = (double)(0);
+    rep->relclserror = (double)(0);
+    rep->avgce = (double)(0);
+    rep->oobrmserror = (double)(0);
+    rep->oobavgerror = (double)(0);
+    rep->oobavgrelerror = (double)(0);
+    rep->oobrelclserror = (double)(0);
+    rep->oobavgce = (double)(0);
+    for(i=0; i<=npoints-1; i++)
+    {
+        if( nclasses>1 )
+        {
+            
+            /*
+             * classification-specific code
+             */
+            k = s->dsival.ptr.p_int[i];
+            for(j=0; j<=nclasses-1; j++)
+            {
+                v = buf->trntotals.ptr.p_double[i*nclasses+j];
+                if( j==k )
+                {
+                    rep->avgce = rep->avgce-ae_log(coalesce(v, ae_minrealnumber, _state), _state);
+                    rep->rmserror = rep->rmserror+ae_sqr(v-1, _state);
+                    rep->avgerror = rep->avgerror+ae_fabs(v-1, _state);
+                    rep->avgrelerror = rep->avgrelerror+ae_fabs(v-1, _state);
+                    inc(&avgrelcnt, _state);
+                }
+                else
+                {
+                    rep->rmserror = rep->rmserror+ae_sqr(v, _state);
+                    rep->avgerror = rep->avgerror+ae_fabs(v, _state);
+                }
+                v = buf->oobtotals.ptr.p_double[i*nclasses+j];
+                if( j==k )
+                {
+                    rep->oobavgce = rep->oobavgce-ae_log(coalesce(v, ae_minrealnumber, _state), _state);
+                    rep->oobrmserror = rep->oobrmserror+ae_sqr(v-1, _state);
+                    rep->oobavgerror = rep->oobavgerror+ae_fabs(v-1, _state);
+                    rep->oobavgrelerror = rep->oobavgrelerror+ae_fabs(v-1, _state);
+                    inc(&oobavgrelcnt, _state);
+                }
+                else
+                {
+                    rep->oobrmserror = rep->oobrmserror+ae_sqr(v, _state);
+                    rep->oobavgerror = rep->oobavgerror+ae_fabs(v, _state);
+                }
+            }
+            
+            /*
+             * Classification errors are handled separately
+             */
+            k1 = 0;
+            for(j=1; j<=nclasses-1; j++)
+            {
+                if( buf->trntotals.ptr.p_double[i*nclasses+j]>buf->trntotals.ptr.p_double[i*nclasses+k1] )
+                {
+                    k1 = j;
+                }
+            }
+            if( k1!=k )
+            {
+                rep->relclserror = rep->relclserror+1;
+            }
+            k1 = 0;
+            for(j=1; j<=nclasses-1; j++)
+            {
+                if( buf->oobtotals.ptr.p_double[i*nclasses+j]>buf->oobtotals.ptr.p_double[i*nclasses+k1] )
+                {
+                    k1 = j;
+                }
+            }
+            if( k1!=k )
+            {
+                rep->oobrelclserror = rep->oobrelclserror+1;
+            }
+        }
+        else
+        {
+            
+            /*
+             * regression-specific code
+             */
+            v = buf->trntotals.ptr.p_double[i]-s->dsrval.ptr.p_double[i];
+            rep->rmserror = rep->rmserror+ae_sqr(v, _state);
+            rep->avgerror = rep->avgerror+ae_fabs(v, _state);
+            if( ae_fp_neq(s->dsrval.ptr.p_double[i],(double)(0)) )
+            {
+                rep->avgrelerror = rep->avgrelerror+ae_fabs(v/s->dsrval.ptr.p_double[i], _state);
+                avgrelcnt = avgrelcnt+1;
+            }
+            v = buf->oobtotals.ptr.p_double[i]-s->dsrval.ptr.p_double[i];
+            rep->oobrmserror = rep->oobrmserror+ae_sqr(v, _state);
+            rep->oobavgerror = rep->oobavgerror+ae_fabs(v, _state);
+            if( ae_fp_neq(s->dsrval.ptr.p_double[i],(double)(0)) )
+            {
+                rep->oobavgrelerror = rep->oobavgrelerror+ae_fabs(v/s->dsrval.ptr.p_double[i], _state);
+                oobavgrelcnt = oobavgrelcnt+1;
+            }
+        }
+    }
+    rep->relclserror = rep->relclserror/npoints;
+    rep->rmserror = ae_sqrt(rep->rmserror/(npoints*nclasses), _state);
+    rep->avgerror = rep->avgerror/(npoints*nclasses);
+    rep->avgrelerror = rep->avgrelerror/coalesce((double)(avgrelcnt), (double)(1), _state);
+    rep->oobrelclserror = rep->oobrelclserror/npoints;
+    rep->oobrmserror = ae_sqrt(rep->oobrmserror/(npoints*nclasses), _state);
+    rep->oobavgerror = rep->oobavgerror/(npoints*nclasses);
+    rep->oobavgrelerror = rep->oobavgrelerror/coalesce((double)(oobavgrelcnt), (double)(1), _state);
+    ae_frame_leave(_state);
+}
+
+
+/*************************************************************************
+This function performs binary compression of decision forest, using either
+8-bit mantissa (a bit more compact representation) or 16-bit mantissa  for
+splits and regression outputs.
+
+Forest is compressed in-place.
+
+Return value is a compression factor.
+
+  -- ALGLIB --
+     Copyright 22.07.2019 by Bochkanov Sergey
+*************************************************************************/
+static double dforest_binarycompression(decisionforest* df,
+     ae_bool usemantissa8,
+     ae_state *_state)
+{
+    ae_frame _frame_block;
+    ae_int_t size8;
+    ae_int_t size8i;
+    ae_int_t offssrc;
+    ae_int_t offsdst;
+    ae_int_t i;
+    ae_vector dummyi;
+    ae_int_t maxrawtreesize;
+    ae_vector compressedsizes;
+    double result;
+
+    ae_frame_make(_state, &_frame_block);
+    memset(&dummyi, 0, sizeof(dummyi));
+    memset(&compressedsizes, 0, sizeof(compressedsizes));
+    ae_vector_init(&dummyi, 0, DT_INT, _state, ae_true);
+    ae_vector_init(&compressedsizes, 0, DT_INT, _state, ae_true);
+
+    
+    /*
+     * Quick exit if already compressed
+     */
+    if( df->forestformat==dforest_dfcompressedv0 )
+    {
+        result = (double)(1);
+        ae_frame_leave(_state);
+        return result;
+    }
+    
+    /*
+     * Check that source format is supported
+     */
+    ae_assert(df->forestformat==dforest_dfuncompressedv0, "BinaryCompression: unexpected forest format", _state);
+    
+    /*
+     * Compute sizes of uncompressed and compressed trees.
+     */
+    size8 = 0;
+    offssrc = 0;
+    maxrawtreesize = 0;
+    for(i=0; i<=df->ntrees-1; i++)
+    {
+        size8i = dforest_computecompressedsizerec(df, usemantissa8, offssrc, offssrc+1, &dummyi, ae_false, _state);
+        size8 = size8+dforest_computecompresseduintsize(size8i, _state)+size8i;
+        maxrawtreesize = ae_maxint(maxrawtreesize, ae_round(df->trees.ptr.p_double[offssrc], _state), _state);
+        offssrc = offssrc+ae_round(df->trees.ptr.p_double[offssrc], _state);
+    }
+    result = (double)(8*df->trees.cnt)/(double)(size8+1);
+    
+    /*
+     * Allocate memory and perform compression
+     */
+    ae_vector_set_length(&(df->trees8), size8, _state);
+    ae_vector_set_length(&compressedsizes, maxrawtreesize, _state);
+    offssrc = 0;
+    offsdst = 0;
+    for(i=0; i<=df->ntrees-1; i++)
+    {
+        
+        /*
+         * Call compressed size evaluator one more time, now saving subtree sizes into temporary array
+         */
+        size8i = dforest_computecompressedsizerec(df, usemantissa8, offssrc, offssrc+1, &compressedsizes, ae_true, _state);
+        
+        /*
+         * Output tree header (length in bytes)
+         */
+        dforest_streamuint(&df->trees8, &offsdst, size8i, _state);
+        
+        /*
+         * Compress recursively
+         */
+        dforest_compressrec(df, usemantissa8, offssrc, offssrc+1, &compressedsizes, &df->trees8, &offsdst, _state);
+        
+        /*
+         * Next tree
+         */
+        offssrc = offssrc+ae_round(df->trees.ptr.p_double[offssrc], _state);
+    }
+    ae_assert(offsdst==size8, "BinaryCompression: integrity check failed (stream length)", _state);
+    
+    /*
+     * Finalize forest conversion, clear previously allocated memory
+     */
+    df->forestformat = dforest_dfcompressedv0;
+    df->usemantissa8 = usemantissa8;
+    ae_vector_set_length(&df->trees, 0, _state);
+    ae_frame_leave(_state);
+    return result;
+}
+
+
+/*************************************************************************
+This function returns exact number of bytes required to  store  compressed
+version of the tree starting at location TreeBase.
+
+PARAMETERS:
+    DF              -   decision forest
+    UseMantissa8    -   whether 8-bit or 16-bit mantissas are used to store
+                        floating point numbers
+    TreeRoot        -   root of the specific tree being stored (offset in DF.Trees)
+    TreePos         -   position within tree (first location in the tree
+                        is TreeRoot+1)
+    CompressedSizes -   not referenced if SaveCompressedSizes is False;
+                        otherwise, values computed by this function for
+                        specific values of TreePos are stored to
+                        CompressedSizes[TreePos-TreeRoot] (other elements
+                        of the array are not referenced).
+                        This array must be preallocated by caller.
+
+  -- ALGLIB --
+     Copyright 22.07.2019 by Bochkanov Sergey
+*************************************************************************/
+static ae_int_t dforest_computecompressedsizerec(decisionforest* df,
+     ae_bool usemantissa8,
+     ae_int_t treeroot,
+     ae_int_t treepos,
+     /* Integer */ ae_vector* compressedsizes,
+     ae_bool savecompressedsizes,
+     ae_state *_state)
+{
+    ae_int_t jmponbranch;
+    ae_int_t child0size;
+    ae_int_t child1size;
+    ae_int_t fpwidth;
+    ae_int_t result;
+
+
+    if( usemantissa8 )
+    {
+        fpwidth = 2;
+    }
+    else
+    {
+        fpwidth = 3;
+    }
+    
+    /*
+     * Leaf or split?
+     */
+    if( ae_fp_eq(df->trees.ptr.p_double[treepos],(double)(-1)) )
+    {
+        
+        /*
+         * Leaf
+         */
+        result = dforest_computecompresseduintsize(2*df->nvars, _state);
+        if( df->nclasses==1 )
+        {
+            result = result+fpwidth;
+        }
+        else
+        {
+            result = result+dforest_computecompresseduintsize(ae_round(df->trees.ptr.p_double[treepos+1], _state), _state);
+        }
+    }
+    else
+    {
+        
+        /*
+         * Split
+         */
+        jmponbranch = ae_round(df->trees.ptr.p_double[treepos+2], _state);
+        child0size = dforest_computecompressedsizerec(df, usemantissa8, treeroot, treepos+dforest_innernodewidth, compressedsizes, savecompressedsizes, _state);
+        child1size = dforest_computecompressedsizerec(df, usemantissa8, treeroot, treeroot+jmponbranch, compressedsizes, savecompressedsizes, _state);
+        if( child0size<=child1size )
+        {
+            
+            /*
+             * Child #0 comes first because it is shorter
+             */
+            result = dforest_computecompresseduintsize(ae_round(df->trees.ptr.p_double[treepos], _state), _state);
+            result = result+fpwidth;
+            result = result+dforest_computecompresseduintsize(child0size, _state);
+        }
+        else
+        {
+            
+            /*
+             * Child #1 comes first because it is shorter
+             */
+            result = dforest_computecompresseduintsize(ae_round(df->trees.ptr.p_double[treepos], _state)+df->nvars, _state);
+            result = result+fpwidth;
+            result = result+dforest_computecompresseduintsize(child1size, _state);
+        }
+        result = result+child0size+child1size;
+    }
+    
+    /*
+     * Do we have to save compressed sizes?
+     */
+    if( savecompressedsizes )
+    {
+        ae_assert(treepos-treeroot<compressedsizes->cnt, "ComputeCompressedSizeRec: integrity check failed", _state);
+        compressedsizes->ptr.p_int[treepos-treeroot] = result;
+    }
+    return result;
+}
+
+
+/*************************************************************************
+This function returns exact number of bytes required to  store  compressed
+version of the tree starting at location TreeBase.
+
+PARAMETERS:
+    DF              -   decision forest
+    UseMantissa8    -   whether 8-bit or 16-bit mantissas are used to store
+                        floating point numbers
+    TreeRoot        -   root of the specific tree being stored (offset in DF.Trees)
+    TreePos         -   position within tree (first location in the tree
+                        is TreeRoot+1)
+    CompressedSizes -   not referenced if SaveCompressedSizes is False;
+                        otherwise, values computed by this function for
+                        specific values of TreePos are stored to
+                        CompressedSizes[TreePos-TreeRoot] (other elements
+                        of the array are not referenced).
+                        This array must be preallocated by caller.
+
+  -- ALGLIB --
+     Copyright 22.07.2019 by Bochkanov Sergey
+*************************************************************************/
+static void dforest_compressrec(decisionforest* df,
+     ae_bool usemantissa8,
+     ae_int_t treeroot,
+     ae_int_t treepos,
+     /* Integer */ ae_vector* compressedsizes,
+     ae_vector* buf,
+     ae_int_t* dstoffs,
+     ae_state *_state)
+{
+    ae_int_t jmponbranch;
+    ae_int_t child0size;
+    ae_int_t child1size;
+    ae_int_t varidx;
+    double leafval;
+    double splitval;
+    ae_int_t dstoffsold;
+
+
+    dstoffsold = *dstoffs;
+    
+    /*
+     * Leaf or split?
+     */
+    varidx = ae_round(df->trees.ptr.p_double[treepos], _state);
+    if( varidx==-1 )
+    {
+        
+        /*
+         * Leaf node:
+         * * stream special value which denotes leaf (2*NVars)
+         * * then, stream scalar value (floating point) or class number (unsigned integer)
+         */
+        leafval = df->trees.ptr.p_double[treepos+1];
+        dforest_streamuint(buf, dstoffs, 2*df->nvars, _state);
+        if( df->nclasses==1 )
+        {
+            dforest_streamfloat(buf, usemantissa8, dstoffs, leafval, _state);
+        }
+        else
+        {
+            dforest_streamuint(buf, dstoffs, ae_round(leafval, _state), _state);
+        }
+    }
+    else
+    {
+        
+        /*
+         * Split node:
+         * * fetch compressed sizes of child nodes, decide which child goes first
+         */
+        jmponbranch = ae_round(df->trees.ptr.p_double[treepos+2], _state);
+        splitval = df->trees.ptr.p_double[treepos+1];
+        child0size = compressedsizes->ptr.p_int[treepos+dforest_innernodewidth-treeroot];
+        child1size = compressedsizes->ptr.p_int[treeroot+jmponbranch-treeroot];
+        if( child0size<=child1size )
+        {
+            
+            /*
+             * Child #0 comes first because it is shorter:
+             * * stream variable index used for splitting;
+             *   value in [0,NVars) range indicates that split is
+             *   "if VAR<VAL then BRANCH0 else BRANCH1"
+             * * stream value used for splitting
+             * * stream children #0 and #1
+             */
+            dforest_streamuint(buf, dstoffs, varidx, _state);
+            dforest_streamfloat(buf, usemantissa8, dstoffs, splitval, _state);
+            dforest_streamuint(buf, dstoffs, child0size, _state);
+            dforest_compressrec(df, usemantissa8, treeroot, treepos+dforest_innernodewidth, compressedsizes, buf, dstoffs, _state);
+            dforest_compressrec(df, usemantissa8, treeroot, treeroot+jmponbranch, compressedsizes, buf, dstoffs, _state);
+        }
+        else
+        {
+            
+            /*
+             * Child #1 comes first because it is shorter:
+             * * stream variable index used for splitting + NVars;
+             *   value in [NVars,2*NVars) range indicates that split is
+             *   "if VAR>=VAL then BRANCH0 else BRANCH1"
+             * * stream value used for splitting
+             * * stream children #0 and #1
+             */
+            dforest_streamuint(buf, dstoffs, varidx+df->nvars, _state);
+            dforest_streamfloat(buf, usemantissa8, dstoffs, splitval, _state);
+            dforest_streamuint(buf, dstoffs, child1size, _state);
+            dforest_compressrec(df, usemantissa8, treeroot, treeroot+jmponbranch, compressedsizes, buf, dstoffs, _state);
+            dforest_compressrec(df, usemantissa8, treeroot, treepos+dforest_innernodewidth, compressedsizes, buf, dstoffs, _state);
+        }
+    }
+    
+    /*
+     * Integrity check at the end
+     */
+    ae_assert(*dstoffs-dstoffsold==compressedsizes->ptr.p_int[treepos-treeroot], "CompressRec: integrity check failed (compressed size at leaf)", _state);
+}
+
+
+/*************************************************************************
+This function returns exact number of bytes required to  store  compressed
+unsigned integer number (negative  arguments  result  in  assertion  being
+generated).
+
+  -- ALGLIB --
+     Copyright 22.07.2019 by Bochkanov Sergey
+*************************************************************************/
+static ae_int_t dforest_computecompresseduintsize(ae_int_t v,
+     ae_state *_state)
+{
+    ae_int_t result;
+
+
+    ae_assert(v>=0, "Assertion failed", _state);
+    result = 1;
+    while(v>=128)
+    {
+        v = v/128;
+        result = result+1;
+    }
+    return result;
+}
+
+
+/*************************************************************************
+This function stores compressed unsigned integer number (negative arguments
+result in assertion being generated) to byte array at  location  Offs  and
+increments Offs by number of bytes being stored.
+
+  -- ALGLIB --
+     Copyright 22.07.2019 by Bochkanov Sergey
+*************************************************************************/
+static void dforest_streamuint(ae_vector* buf,
+     ae_int_t* offs,
+     ae_int_t v,
+     ae_state *_state)
+{
+    ae_int_t v0;
+
+
+    ae_assert(v>=0, "Assertion failed", _state);
+    for(;;)
+    {
+        
+        /*
+         * Save 7 least significant bits of V, use 8th bit as a flag which
+         * tells us whether subsequent 7-bit packages will be sent.
+         */
+        v0 = v%128;
+        if( v>=128 )
+        {
+            v0 = v0+128;
+        }
+        buf->ptr.p_ubyte[*(offs)] = (unsigned char)(v0);
+        *offs = *offs+1;
+        v = v/128;
+        if( v==0 )
+        {
+            break;
+        }
+    }
+}
+
+
+/*************************************************************************
+This function reads compressed unsigned integer number from byte array
+starting at location Offs and increments Offs by number of bytes being
+read.
+
+  -- ALGLIB --
+     Copyright 22.07.2019 by Bochkanov Sergey
+*************************************************************************/
+static ae_int_t dforest_unstreamuint(ae_vector* buf,
+     ae_int_t* offs,
+     ae_state *_state)
+{
+    ae_int_t v0;
+    ae_int_t p;
+    ae_int_t result;
+
+
+    result = 0;
+    p = 1;
+    for(;;)
+    {
+        
+        /*
+         * Rad 7 bits of V, use 8th bit as a flag which tells us whether
+         * subsequent 7-bit packages will be received.
+         */
+        v0 = buf->ptr.p_ubyte[*(offs)];
+        *offs = *offs+1;
+        result = result+v0%128*p;
+        if( v0<128 )
+        {
+            break;
+        }
+        p = p*128;
+    }
+    return result;
+}
+
+
+/*************************************************************************
+This function stores compressed floating point number  to  byte  array  at
+location  Offs and increments Offs by number of bytes being stored.
+
+Either 8-bit mantissa or 16-bit mantissa is used. The exponent  is  always
+7 bits of exponent + sign. Values which do not fit into exponent range are
+truncated to fit.
+
+  -- ALGLIB --
+     Copyright 22.07.2019 by Bochkanov Sergey
+*************************************************************************/
+static void dforest_streamfloat(ae_vector* buf,
+     ae_bool usemantissa8,
+     ae_int_t* offs,
+     double v,
+     ae_state *_state)
+{
+    ae_int_t signbit;
+    ae_int_t e;
+    ae_int_t m;
+    double twopow30;
+    double twopowm30;
+    double twopow10;
+    double twopowm10;
+
+
+    ae_assert(ae_isfinite(v, _state), "StreamFloat: V is not finite number", _state);
+    
+    /*
+     * Special case: zero
+     */
+    if( v==0.0 )
+    {
+        if( usemantissa8 )
+        {
+            buf->ptr.p_ubyte[*offs+0] = (unsigned char)(0);
+            buf->ptr.p_ubyte[*offs+1] = (unsigned char)(0);
+            *offs = *offs+2;
+        }
+        else
+        {
+            buf->ptr.p_ubyte[*offs+0] = (unsigned char)(0);
+            buf->ptr.p_ubyte[*offs+1] = (unsigned char)(0);
+            buf->ptr.p_ubyte[*offs+2] = (unsigned char)(0);
+            *offs = *offs+3;
+        }
+        return;
+    }
+    
+    /*
+     * Handle sign
+     */
+    signbit = 0;
+    if( v<0.0 )
+    {
+        v = -v;
+        signbit = 128;
+    }
+    
+    /*
+     * Compute exponent
+     */
+    twopow30 = (double)(1073741824);
+    twopow10 = (double)(1024);
+    twopowm30 = 1.0/twopow30;
+    twopowm10 = 1.0/twopow10;
+    e = 0;
+    while(v>=twopow30)
+    {
+        v = v*twopowm30;
+        e = e+30;
+    }
+    while(v>=twopow10)
+    {
+        v = v*twopowm10;
+        e = e+10;
+    }
+    while(v>=1.0)
+    {
+        v = v*0.5;
+        e = e+1;
+    }
+    while(v<twopowm30)
+    {
+        v = v*twopow30;
+        e = e-30;
+    }
+    while(v<twopowm10)
+    {
+        v = v*twopow10;
+        e = e-10;
+    }
+    while(v<0.5)
+    {
+        v = v*2;
+        e = e-1;
+    }
+    ae_assert(v>=0.5&&v<1.0, "StreamFloat: integrity check failed", _state);
+    
+    /*
+     * Handle exponent underflow/overflow
+     */
+    if( e<-63 )
+    {
+        signbit = 0;
+        e = 0;
+        v = (double)(0);
+    }
+    if( e>63 )
+    {
+        e = 63;
+        v = 1.0;
+    }
+    
+    /*
+     * Save to stream
+     */
+    if( usemantissa8 )
+    {
+        m = ae_round(v*256, _state);
+        if( m==256 )
+        {
+            m = m/2;
+            e = ae_minint(e+1, 63, _state);
+        }
+        buf->ptr.p_ubyte[*offs+0] = (unsigned char)(e+64+signbit);
+        buf->ptr.p_ubyte[*offs+1] = (unsigned char)(m);
+        *offs = *offs+2;
+    }
+    else
+    {
+        m = ae_round(v*65536, _state);
+        if( m==65536 )
+        {
+            m = m/2;
+            e = ae_minint(e+1, 63, _state);
+        }
+        buf->ptr.p_ubyte[*offs+0] = (unsigned char)(e+64+signbit);
+        buf->ptr.p_ubyte[*offs+1] = (unsigned char)(m%256);
+        buf->ptr.p_ubyte[*offs+2] = (unsigned char)(m/256);
+        *offs = *offs+3;
+    }
+}
+
+
+/*************************************************************************
+This function reads compressed floating point number from the byte array
+starting from location Offs and increments Offs by number of bytes being
+read.
+
+Either 8-bit mantissa or 16-bit mantissa is used. The exponent  is  always
+7 bits of exponent + sign. Values which do not fit into exponent range are
+truncated to fit.
+
+  -- ALGLIB --
+     Copyright 22.07.2019 by Bochkanov Sergey
+*************************************************************************/
+static double dforest_unstreamfloat(ae_vector* buf,
+     ae_bool usemantissa8,
+     ae_int_t* offs,
+     ae_state *_state)
+{
+    ae_int_t e;
+    double v;
+    double inv256;
+    double result;
+
+
+    
+    /*
+     * Read from stream
+     */
+    inv256 = 1.0/256.0;
+    if( usemantissa8 )
+    {
+        e = buf->ptr.p_ubyte[*offs+0];
+        v = buf->ptr.p_ubyte[*offs+1]*inv256;
+        *offs = *offs+2;
+    }
+    else
+    {
+        e = buf->ptr.p_ubyte[*offs+0];
+        v = (buf->ptr.p_ubyte[*offs+1]*inv256+buf->ptr.p_ubyte[*offs+2])*inv256;
+        *offs = *offs+3;
+    }
+    
+    /*
+     * Decode
+     */
+    if( e>128 )
+    {
+        v = -v;
+        e = e-128;
+    }
+    e = e-64;
+    result = dforest_xfastpow((double)(2), e, _state)*v;
+    return result;
 }
 
 
@@ -43184,7 +49522,9 @@ static ae_int_t dforest_dfclserror(decisionforest* df,
     ae_int_t result;
 
     ae_frame_make(_state, &_frame_block);
-    memset(&x, 0, sizeof(x));    memset(&y, 0, sizeof(y));    ae_vector_init(&x, 0, DT_REAL, _state, ae_true);
+    memset(&x, 0, sizeof(x));
+    memset(&y, 0, sizeof(y));
+    ae_vector_init(&x, 0, DT_REAL, _state, ae_true);
     ae_vector_init(&y, 0, DT_REAL, _state, ae_true);
 
     if( df->nclasses<=1 )
@@ -43220,779 +49560,563 @@ static ae_int_t dforest_dfclserror(decisionforest* df,
 
 
 /*************************************************************************
-Internal subroutine for processing one decision tree starting at Offs
+Internal subroutine for processing one decision tree stored in uncompressed
+format starting at SubtreeRoot (this index points to the header of the tree,
+not its first node). First node being processed is located at NodeOffs.
 *************************************************************************/
-static void dforest_dfprocessinternal(decisionforest* df,
-     ae_int_t offs,
+static void dforest_dfprocessinternaluncompressed(decisionforest* df,
+     ae_int_t subtreeroot,
+     ae_int_t nodeoffs,
      /* Real    */ ae_vector* x,
      /* Real    */ ae_vector* y,
      ae_state *_state)
 {
-    ae_int_t k;
     ae_int_t idx;
 
 
-    
-    /*
-     * Set pointer to the root
-     */
-    k = offs+1;
+    ae_assert(df->forestformat==dforest_dfuncompressedv0, "DFProcessInternal: unexpected forest format", _state);
     
     /*
      * Navigate through the tree
      */
     for(;;)
     {
-        if( ae_fp_eq(df->trees.ptr.p_double[k],(double)(-1)) )
+        if( ae_fp_eq(df->trees.ptr.p_double[nodeoffs],(double)(-1)) )
         {
             if( df->nclasses==1 )
             {
-                y->ptr.p_double[0] = y->ptr.p_double[0]+df->trees.ptr.p_double[k+1];
+                y->ptr.p_double[0] = y->ptr.p_double[0]+df->trees.ptr.p_double[nodeoffs+1];
             }
             else
             {
-                idx = ae_round(df->trees.ptr.p_double[k+1], _state);
+                idx = ae_round(df->trees.ptr.p_double[nodeoffs+1], _state);
                 y->ptr.p_double[idx] = y->ptr.p_double[idx]+1;
             }
             break;
         }
-        if( ae_fp_less(x->ptr.p_double[ae_round(df->trees.ptr.p_double[k], _state)],df->trees.ptr.p_double[k+1]) )
+        if( x->ptr.p_double[ae_round(df->trees.ptr.p_double[nodeoffs], _state)]<df->trees.ptr.p_double[nodeoffs+1] )
         {
-            k = k+dforest_innernodewidth;
+            nodeoffs = nodeoffs+dforest_innernodewidth;
         }
         else
         {
-            k = offs+ae_round(df->trees.ptr.p_double[k+2], _state);
+            nodeoffs = subtreeroot+ae_round(df->trees.ptr.p_double[nodeoffs+2], _state);
         }
     }
 }
 
 
 /*************************************************************************
-Builds one decision tree. Just a wrapper for the DFBuildTreeRec.
+Internal subroutine for processing one decision tree stored in compressed
+format starting at Offs (this index points to the first node of the tree,
+right past the header field).
 *************************************************************************/
-static void dforest_dfbuildtree(/* Real    */ ae_matrix* xy,
-     ae_int_t npoints,
-     ae_int_t nvars,
-     ae_int_t nclasses,
-     ae_int_t nfeatures,
-     ae_int_t nvarsinpool,
-     ae_int_t flags,
-     dfinternalbuffers* bufs,
-     hqrndstate* rs,
-     ae_state *_state)
-{
-    ae_int_t numprocessed;
-    ae_int_t i;
-
-
-    ae_assert(npoints>0, "Assertion failed", _state);
-    
-    /*
-     * Prepare IdxBuf. It stores indices of the training set elements.
-     * When training set is being split, contents of IdxBuf is
-     * correspondingly reordered so we can know which elements belong
-     * to which branch of decision tree.
-     */
-    for(i=0; i<=npoints-1; i++)
-    {
-        bufs->idxbuf.ptr.p_int[i] = i;
-    }
-    
-    /*
-     * Recursive procedure
-     */
-    numprocessed = 1;
-    dforest_dfbuildtreerec(xy, npoints, nvars, nclasses, nfeatures, nvarsinpool, flags, &numprocessed, 0, npoints-1, bufs, rs, _state);
-    bufs->treebuf.ptr.p_double[0] = (double)(numprocessed);
-}
-
-
-/*************************************************************************
-Builds one decision tree (internal recursive subroutine)
-
-Parameters:
-    TreeBuf     -   large enough array, at least TreeSize
-    IdxBuf      -   at least NPoints elements
-    TmpBufR     -   at least NPoints
-    TmpBufR2    -   at least NPoints
-    TmpBufI     -   at least NPoints
-    TmpBufI2    -   at least NPoints+1
-*************************************************************************/
-static void dforest_dfbuildtreerec(/* Real    */ ae_matrix* xy,
-     ae_int_t npoints,
-     ae_int_t nvars,
-     ae_int_t nclasses,
-     ae_int_t nfeatures,
-     ae_int_t nvarsinpool,
-     ae_int_t flags,
-     ae_int_t* numprocessed,
-     ae_int_t idx1,
-     ae_int_t idx2,
-     dfinternalbuffers* bufs,
-     hqrndstate* rs,
-     ae_state *_state)
-{
-    ae_int_t i;
-    ae_int_t j;
-    ae_int_t k;
-    ae_bool bflag;
-    ae_int_t i1;
-    ae_int_t i2;
-    ae_int_t info;
-    double sl;
-    double sr;
-    double w;
-    ae_int_t idxbest;
-    double ebest;
-    double tbest;
-    ae_int_t varcur;
-    double s;
-    double v;
-    double v1;
-    double v2;
-    double threshold;
-    ae_int_t oldnp;
-    double currms;
-    ae_bool useevs;
-
-
-    
-    /*
-     * these initializers are not really necessary,
-     * but without them compiler complains about uninitialized locals
-     */
-    tbest = (double)(0);
-    
-    /*
-     * Prepare
-     */
-    ae_assert(npoints>0, "Assertion failed", _state);
-    ae_assert(idx2>=idx1, "Assertion failed", _state);
-    useevs = flags/dforest_dfuseevs%2!=0;
-    
-    /*
-     * Leaf node
-     */
-    if( idx2==idx1 )
-    {
-        bufs->treebuf.ptr.p_double[*numprocessed] = (double)(-1);
-        bufs->treebuf.ptr.p_double[*numprocessed+1] = xy->ptr.pp_double[bufs->idxbuf.ptr.p_int[idx1]][nvars];
-        *numprocessed = *numprocessed+dforest_leafnodewidth;
-        return;
-    }
-    
-    /*
-     * Non-leaf node.
-     * Select random variable, prepare split:
-     * 1. prepare default solution - no splitting, class at random
-     * 2. investigate possible splits, compare with default/best
-     */
-    idxbest = -1;
-    if( nclasses>1 )
-    {
-        
-        /*
-         * default solution for classification
-         */
-        for(i=0; i<=nclasses-1; i++)
-        {
-            bufs->classibuf.ptr.p_int[i] = 0;
-        }
-        s = (double)(idx2-idx1+1);
-        for(i=idx1; i<=idx2; i++)
-        {
-            j = ae_round(xy->ptr.pp_double[bufs->idxbuf.ptr.p_int[i]][nvars], _state);
-            bufs->classibuf.ptr.p_int[j] = bufs->classibuf.ptr.p_int[j]+1;
-        }
-        ebest = (double)(0);
-        for(i=0; i<=nclasses-1; i++)
-        {
-            ebest = ebest+bufs->classibuf.ptr.p_int[i]*ae_sqr(1-bufs->classibuf.ptr.p_int[i]/s, _state)+(s-bufs->classibuf.ptr.p_int[i])*ae_sqr(bufs->classibuf.ptr.p_int[i]/s, _state);
-        }
-        ebest = ae_sqrt(ebest/(nclasses*(idx2-idx1+1)), _state);
-    }
-    else
-    {
-        
-        /*
-         * default solution for regression
-         */
-        v = (double)(0);
-        for(i=idx1; i<=idx2; i++)
-        {
-            v = v+xy->ptr.pp_double[bufs->idxbuf.ptr.p_int[i]][nvars];
-        }
-        v = v/(idx2-idx1+1);
-        ebest = (double)(0);
-        for(i=idx1; i<=idx2; i++)
-        {
-            ebest = ebest+ae_sqr(xy->ptr.pp_double[bufs->idxbuf.ptr.p_int[i]][nvars]-v, _state);
-        }
-        ebest = ae_sqrt(ebest/(idx2-idx1+1), _state);
-    }
-    i = 0;
-    while(i<=ae_minint(nfeatures, nvarsinpool, _state)-1)
-    {
-        
-        /*
-         * select variables from pool
-         */
-        j = i+hqrnduniformi(rs, nvarsinpool-i, _state);
-        k = bufs->varpool.ptr.p_int[i];
-        bufs->varpool.ptr.p_int[i] = bufs->varpool.ptr.p_int[j];
-        bufs->varpool.ptr.p_int[j] = k;
-        varcur = bufs->varpool.ptr.p_int[i];
-        
-        /*
-         * load variable values to working array
-         *
-         * apply EVS preprocessing: if all variable values are same,
-         * variable is excluded from pool.
-         *
-         * This is necessary for binary pre-splits (see later) to work.
-         */
-        for(j=idx1; j<=idx2; j++)
-        {
-            bufs->tmpbufr.ptr.p_double[j-idx1] = xy->ptr.pp_double[bufs->idxbuf.ptr.p_int[j]][varcur];
-        }
-        if( useevs )
-        {
-            bflag = ae_false;
-            v = bufs->tmpbufr.ptr.p_double[0];
-            for(j=0; j<=idx2-idx1; j++)
-            {
-                if( ae_fp_neq(bufs->tmpbufr.ptr.p_double[j],v) )
-                {
-                    bflag = ae_true;
-                    break;
-                }
-            }
-            if( !bflag )
-            {
-                
-                /*
-                 * exclude variable from pool,
-                 * go to the next iteration.
-                 * I is not increased.
-                 */
-                k = bufs->varpool.ptr.p_int[i];
-                bufs->varpool.ptr.p_int[i] = bufs->varpool.ptr.p_int[nvarsinpool-1];
-                bufs->varpool.ptr.p_int[nvarsinpool-1] = k;
-                nvarsinpool = nvarsinpool-1;
-                continue;
-            }
-        }
-        
-        /*
-         * load labels to working array
-         */
-        if( nclasses>1 )
-        {
-            for(j=idx1; j<=idx2; j++)
-            {
-                bufs->tmpbufi.ptr.p_int[j-idx1] = ae_round(xy->ptr.pp_double[bufs->idxbuf.ptr.p_int[j]][nvars], _state);
-            }
-        }
-        else
-        {
-            for(j=idx1; j<=idx2; j++)
-            {
-                bufs->tmpbufr2.ptr.p_double[j-idx1] = xy->ptr.pp_double[bufs->idxbuf.ptr.p_int[j]][nvars];
-            }
-        }
-        
-        /*
-         * calculate split
-         */
-        if( useevs&&bufs->evsbin.ptr.p_bool[varcur] )
-        {
-            
-            /*
-             * Pre-calculated splits for binary variables.
-             * Threshold is already known, just calculate RMS error
-             */
-            threshold = bufs->evssplits.ptr.p_double[varcur];
-            if( nclasses>1 )
-            {
-                
-                /*
-                 * classification-specific code
-                 */
-                for(j=0; j<=2*nclasses-1; j++)
-                {
-                    bufs->classibuf.ptr.p_int[j] = 0;
-                }
-                sl = (double)(0);
-                sr = (double)(0);
-                for(j=0; j<=idx2-idx1; j++)
-                {
-                    k = bufs->tmpbufi.ptr.p_int[j];
-                    if( ae_fp_less(bufs->tmpbufr.ptr.p_double[j],threshold) )
-                    {
-                        bufs->classibuf.ptr.p_int[k] = bufs->classibuf.ptr.p_int[k]+1;
-                        sl = sl+1;
-                    }
-                    else
-                    {
-                        bufs->classibuf.ptr.p_int[k+nclasses] = bufs->classibuf.ptr.p_int[k+nclasses]+1;
-                        sr = sr+1;
-                    }
-                }
-                ae_assert(ae_fp_neq(sl,(double)(0))&&ae_fp_neq(sr,(double)(0)), "DFBuildTreeRec: something strange!", _state);
-                currms = (double)(0);
-                for(j=0; j<=nclasses-1; j++)
-                {
-                    w = (double)(bufs->classibuf.ptr.p_int[j]);
-                    currms = currms+w*ae_sqr(w/sl-1, _state);
-                    currms = currms+(sl-w)*ae_sqr(w/sl, _state);
-                    w = (double)(bufs->classibuf.ptr.p_int[nclasses+j]);
-                    currms = currms+w*ae_sqr(w/sr-1, _state);
-                    currms = currms+(sr-w)*ae_sqr(w/sr, _state);
-                }
-                currms = ae_sqrt(currms/(nclasses*(idx2-idx1+1)), _state);
-            }
-            else
-            {
-                
-                /*
-                 * regression-specific code
-                 */
-                sl = (double)(0);
-                sr = (double)(0);
-                v1 = (double)(0);
-                v2 = (double)(0);
-                for(j=0; j<=idx2-idx1; j++)
-                {
-                    if( ae_fp_less(bufs->tmpbufr.ptr.p_double[j],threshold) )
-                    {
-                        v1 = v1+bufs->tmpbufr2.ptr.p_double[j];
-                        sl = sl+1;
-                    }
-                    else
-                    {
-                        v2 = v2+bufs->tmpbufr2.ptr.p_double[j];
-                        sr = sr+1;
-                    }
-                }
-                ae_assert(ae_fp_neq(sl,(double)(0))&&ae_fp_neq(sr,(double)(0)), "DFBuildTreeRec: something strange!", _state);
-                v1 = v1/sl;
-                v2 = v2/sr;
-                currms = (double)(0);
-                for(j=0; j<=idx2-idx1; j++)
-                {
-                    if( ae_fp_less(bufs->tmpbufr.ptr.p_double[j],threshold) )
-                    {
-                        currms = currms+ae_sqr(v1-bufs->tmpbufr2.ptr.p_double[j], _state);
-                    }
-                    else
-                    {
-                        currms = currms+ae_sqr(v2-bufs->tmpbufr2.ptr.p_double[j], _state);
-                    }
-                }
-                currms = ae_sqrt(currms/(idx2-idx1+1), _state);
-            }
-            info = 1;
-        }
-        else
-        {
-            
-            /*
-             * Generic splits
-             */
-            if( nclasses>1 )
-            {
-                dforest_dfsplitc(&bufs->tmpbufr, &bufs->tmpbufi, &bufs->classibuf, idx2-idx1+1, nclasses, dforest_dfusestrongsplits, &info, &threshold, &currms, &bufs->sortrbuf, &bufs->sortibuf, _state);
-            }
-            else
-            {
-                dforest_dfsplitr(&bufs->tmpbufr, &bufs->tmpbufr2, idx2-idx1+1, dforest_dfusestrongsplits, &info, &threshold, &currms, &bufs->sortrbuf, &bufs->sortrbuf2, _state);
-            }
-        }
-        if( info>0 )
-        {
-            if( ae_fp_less_eq(currms,ebest) )
-            {
-                ebest = currms;
-                idxbest = varcur;
-                tbest = threshold;
-            }
-        }
-        
-        /*
-         * Next iteration
-         */
-        i = i+1;
-    }
-    
-    /*
-     * to split or not to split
-     */
-    if( idxbest<0 )
-    {
-        
-        /*
-         * All values are same, cannot split.
-         */
-        bufs->treebuf.ptr.p_double[*numprocessed] = (double)(-1);
-        if( nclasses>1 )
-        {
-            
-            /*
-             * Select random class label (randomness allows us to
-             * approximate distribution of the classes)
-             */
-            bufs->treebuf.ptr.p_double[*numprocessed+1] = (double)(ae_round(xy->ptr.pp_double[bufs->idxbuf.ptr.p_int[idx1+hqrnduniformi(rs, idx2-idx1+1, _state)]][nvars], _state));
-        }
-        else
-        {
-            
-            /*
-             * Select average (for regression task).
-             */
-            v = (double)(0);
-            for(i=idx1; i<=idx2; i++)
-            {
-                v = v+xy->ptr.pp_double[bufs->idxbuf.ptr.p_int[i]][nvars]/(idx2-idx1+1);
-            }
-            bufs->treebuf.ptr.p_double[*numprocessed+1] = v;
-        }
-        *numprocessed = *numprocessed+dforest_leafnodewidth;
-    }
-    else
-    {
-        
-        /*
-         * we can split
-         */
-        bufs->treebuf.ptr.p_double[*numprocessed] = (double)(idxbest);
-        bufs->treebuf.ptr.p_double[*numprocessed+1] = tbest;
-        i1 = idx1;
-        i2 = idx2;
-        while(i1<=i2)
-        {
-            
-            /*
-             * Reorder indices so that left partition is in [Idx1..I1-1],
-             * and right partition is in [I2+1..Idx2]
-             */
-            if( ae_fp_less(xy->ptr.pp_double[bufs->idxbuf.ptr.p_int[i1]][idxbest],tbest) )
-            {
-                i1 = i1+1;
-                continue;
-            }
-            if( ae_fp_greater_eq(xy->ptr.pp_double[bufs->idxbuf.ptr.p_int[i2]][idxbest],tbest) )
-            {
-                i2 = i2-1;
-                continue;
-            }
-            j = bufs->idxbuf.ptr.p_int[i1];
-            bufs->idxbuf.ptr.p_int[i1] = bufs->idxbuf.ptr.p_int[i2];
-            bufs->idxbuf.ptr.p_int[i2] = j;
-            i1 = i1+1;
-            i2 = i2-1;
-        }
-        oldnp = *numprocessed;
-        *numprocessed = *numprocessed+dforest_innernodewidth;
-        dforest_dfbuildtreerec(xy, npoints, nvars, nclasses, nfeatures, nvarsinpool, flags, numprocessed, idx1, i1-1, bufs, rs, _state);
-        bufs->treebuf.ptr.p_double[oldnp+2] = (double)(*numprocessed);
-        dforest_dfbuildtreerec(xy, npoints, nvars, nclasses, nfeatures, nvarsinpool, flags, numprocessed, i2+1, idx2, bufs, rs, _state);
-    }
-}
-
-
-/*************************************************************************
-Makes split on attribute
-*************************************************************************/
-static void dforest_dfsplitc(/* Real    */ ae_vector* x,
-     /* Integer */ ae_vector* c,
-     /* Integer */ ae_vector* cntbuf,
-     ae_int_t n,
-     ae_int_t nc,
-     ae_int_t flags,
-     ae_int_t* info,
-     double* threshold,
-     double* e,
-     /* Real    */ ae_vector* sortrbuf,
-     /* Integer */ ae_vector* sortibuf,
-     ae_state *_state)
-{
-    ae_int_t i;
-    ae_int_t neq;
-    ae_int_t nless;
-    ae_int_t ngreater;
-    ae_int_t q;
-    ae_int_t qmin;
-    ae_int_t qmax;
-    ae_int_t qcnt;
-    double cursplit;
-    ae_int_t nleft;
-    double v;
-    double cure;
-    double w;
-    double sl;
-    double sr;
-
-    *info = 0;
-    *threshold = 0;
-    *e = 0;
-
-    tagsortfasti(x, c, sortrbuf, sortibuf, n, _state);
-    *e = ae_maxrealnumber;
-    *threshold = 0.5*(x->ptr.p_double[0]+x->ptr.p_double[n-1]);
-    *info = -3;
-    if( flags/dforest_dfusestrongsplits%2==0 )
-    {
-        
-        /*
-         * weak splits, split at half
-         */
-        qcnt = 2;
-        qmin = 1;
-        qmax = 1;
-    }
-    else
-    {
-        
-        /*
-         * strong splits: choose best quartile
-         */
-        qcnt = 4;
-        qmin = 1;
-        qmax = 3;
-    }
-    for(q=qmin; q<=qmax; q++)
-    {
-        cursplit = x->ptr.p_double[n*q/qcnt];
-        neq = 0;
-        nless = 0;
-        ngreater = 0;
-        for(i=0; i<=n-1; i++)
-        {
-            if( ae_fp_less(x->ptr.p_double[i],cursplit) )
-            {
-                nless = nless+1;
-            }
-            if( ae_fp_eq(x->ptr.p_double[i],cursplit) )
-            {
-                neq = neq+1;
-            }
-            if( ae_fp_greater(x->ptr.p_double[i],cursplit) )
-            {
-                ngreater = ngreater+1;
-            }
-        }
-        ae_assert(neq!=0, "DFSplitR: NEq=0, something strange!!!", _state);
-        if( nless!=0||ngreater!=0 )
-        {
-            
-            /*
-             * set threshold between two partitions, with
-             * some tweaking to avoid problems with floating point
-             * arithmetics.
-             *
-             * The problem is that when you calculates C = 0.5*(A+B) there
-             * can be no C which lies strictly between A and B (for example,
-             * there is no floating point number which is
-             * greater than 1 and less than 1+eps). In such situations
-             * we choose right side as theshold (remember that
-             * points which lie on threshold falls to the right side).
-             */
-            if( nless<ngreater )
-            {
-                cursplit = 0.5*(x->ptr.p_double[nless+neq-1]+x->ptr.p_double[nless+neq]);
-                nleft = nless+neq;
-                if( ae_fp_less_eq(cursplit,x->ptr.p_double[nless+neq-1]) )
-                {
-                    cursplit = x->ptr.p_double[nless+neq];
-                }
-            }
-            else
-            {
-                cursplit = 0.5*(x->ptr.p_double[nless-1]+x->ptr.p_double[nless]);
-                nleft = nless;
-                if( ae_fp_less_eq(cursplit,x->ptr.p_double[nless-1]) )
-                {
-                    cursplit = x->ptr.p_double[nless];
-                }
-            }
-            *info = 1;
-            cure = (double)(0);
-            for(i=0; i<=2*nc-1; i++)
-            {
-                cntbuf->ptr.p_int[i] = 0;
-            }
-            for(i=0; i<=nleft-1; i++)
-            {
-                cntbuf->ptr.p_int[c->ptr.p_int[i]] = cntbuf->ptr.p_int[c->ptr.p_int[i]]+1;
-            }
-            for(i=nleft; i<=n-1; i++)
-            {
-                cntbuf->ptr.p_int[nc+c->ptr.p_int[i]] = cntbuf->ptr.p_int[nc+c->ptr.p_int[i]]+1;
-            }
-            sl = (double)(nleft);
-            sr = (double)(n-nleft);
-            v = (double)(0);
-            for(i=0; i<=nc-1; i++)
-            {
-                w = (double)(cntbuf->ptr.p_int[i]);
-                v = v+w*ae_sqr(w/sl-1, _state);
-                v = v+(sl-w)*ae_sqr(w/sl, _state);
-                w = (double)(cntbuf->ptr.p_int[nc+i]);
-                v = v+w*ae_sqr(w/sr-1, _state);
-                v = v+(sr-w)*ae_sqr(w/sr, _state);
-            }
-            cure = ae_sqrt(v/(nc*n), _state);
-            if( ae_fp_less(cure,*e) )
-            {
-                *threshold = cursplit;
-                *e = cure;
-            }
-        }
-    }
-}
-
-
-/*************************************************************************
-Makes split on attribute
-*************************************************************************/
-static void dforest_dfsplitr(/* Real    */ ae_vector* x,
+static void dforest_dfprocessinternalcompressed(decisionforest* df,
+     ae_int_t offs,
+     /* Real    */ ae_vector* x,
      /* Real    */ ae_vector* y,
-     ae_int_t n,
-     ae_int_t flags,
-     ae_int_t* info,
-     double* threshold,
-     double* e,
-     /* Real    */ ae_vector* sortrbuf,
-     /* Real    */ ae_vector* sortrbuf2,
      ae_state *_state)
 {
-    ae_int_t i;
-    ae_int_t neq;
-    ae_int_t nless;
-    ae_int_t ngreater;
-    ae_int_t q;
-    ae_int_t qmin;
-    ae_int_t qmax;
-    ae_int_t qcnt;
-    double cursplit;
-    ae_int_t nleft;
-    double v;
-    double cure;
+    ae_int_t leafindicator;
+    ae_int_t varidx;
+    double splitval;
+    ae_int_t jmplen;
+    double leafval;
+    ae_int_t leafcls;
 
-    *info = 0;
-    *threshold = 0;
-    *e = 0;
 
-    tagsortfastr(x, y, sortrbuf, sortrbuf2, n, _state);
-    *e = ae_maxrealnumber;
-    *threshold = 0.5*(x->ptr.p_double[0]+x->ptr.p_double[n-1]);
-    *info = -3;
-    if( flags/dforest_dfusestrongsplits%2==0 )
+    ae_assert(df->forestformat==dforest_dfcompressedv0, "DFProcessInternal: unexpected forest format", _state);
+    
+    /*
+     * Navigate through the tree
+     */
+    leafindicator = 2*df->nvars;
+    for(;;)
     {
         
         /*
-         * weak splits, split at half
+         * Read variable idx
          */
-        qcnt = 2;
-        qmin = 1;
-        qmax = 1;
-    }
-    else
-    {
+        varidx = dforest_unstreamuint(&df->trees8, &offs, _state);
         
         /*
-         * strong splits: choose best quartile
+         * Is it leaf?
          */
-        qcnt = 4;
-        qmin = 1;
-        qmax = 3;
-    }
-    for(q=qmin; q<=qmax; q++)
-    {
-        cursplit = x->ptr.p_double[n*q/qcnt];
-        neq = 0;
-        nless = 0;
-        ngreater = 0;
-        for(i=0; i<=n-1; i++)
+        if( varidx==leafindicator )
         {
-            if( ae_fp_less(x->ptr.p_double[i],cursplit) )
+            if( df->nclasses==1 )
             {
-                nless = nless+1;
-            }
-            if( ae_fp_eq(x->ptr.p_double[i],cursplit) )
-            {
-                neq = neq+1;
-            }
-            if( ae_fp_greater(x->ptr.p_double[i],cursplit) )
-            {
-                ngreater = ngreater+1;
-            }
-        }
-        ae_assert(neq!=0, "DFSplitR: NEq=0, something strange!!!", _state);
-        if( nless!=0||ngreater!=0 )
-        {
-            
-            /*
-             * set threshold between two partitions, with
-             * some tweaking to avoid problems with floating point
-             * arithmetics.
-             *
-             * The problem is that when you calculates C = 0.5*(A+B) there
-             * can be no C which lies strictly between A and B (for example,
-             * there is no floating point number which is
-             * greater than 1 and less than 1+eps). In such situations
-             * we choose right side as theshold (remember that
-             * points which lie on threshold falls to the right side).
-             */
-            if( nless<ngreater )
-            {
-                cursplit = 0.5*(x->ptr.p_double[nless+neq-1]+x->ptr.p_double[nless+neq]);
-                nleft = nless+neq;
-                if( ae_fp_less_eq(cursplit,x->ptr.p_double[nless+neq-1]) )
-                {
-                    cursplit = x->ptr.p_double[nless+neq];
-                }
+                
+                /*
+                 * Regression forest
+                 */
+                leafval = dforest_unstreamfloat(&df->trees8, df->usemantissa8, &offs, _state);
+                y->ptr.p_double[0] = y->ptr.p_double[0]+leafval;
             }
             else
             {
-                cursplit = 0.5*(x->ptr.p_double[nless-1]+x->ptr.p_double[nless]);
-                nleft = nless;
-                if( ae_fp_less_eq(cursplit,x->ptr.p_double[nless-1]) )
-                {
-                    cursplit = x->ptr.p_double[nless];
-                }
+                
+                /*
+                 * Classification forest
+                 */
+                leafcls = dforest_unstreamuint(&df->trees8, &offs, _state);
+                y->ptr.p_double[leafcls] = y->ptr.p_double[leafcls]+1;
             }
-            *info = 1;
-            cure = (double)(0);
-            v = (double)(0);
-            for(i=0; i<=nleft-1; i++)
+            break;
+        }
+        
+        /*
+         * Process node
+         */
+        splitval = dforest_unstreamfloat(&df->trees8, df->usemantissa8, &offs, _state);
+        jmplen = dforest_unstreamuint(&df->trees8, &offs, _state);
+        if( varidx<df->nvars )
+        {
+            
+            /*
+             * The split rule is "if VAR<VAL then BRANCH0 else BRANCH1"
+             */
+            if( x->ptr.p_double[varidx]>=splitval )
             {
-                v = v+y->ptr.p_double[i];
+                offs = offs+jmplen;
             }
-            v = v/nleft;
-            for(i=0; i<=nleft-1; i++)
+        }
+        else
+        {
+            
+            /*
+             * The split rule is "if VAR>=VAL then BRANCH0 else BRANCH1"
+             */
+            varidx = varidx-df->nvars;
+            if( x->ptr.p_double[varidx]<splitval )
             {
-                cure = cure+ae_sqr(y->ptr.p_double[i]-v, _state);
-            }
-            v = (double)(0);
-            for(i=nleft; i<=n-1; i++)
-            {
-                v = v+y->ptr.p_double[i];
-            }
-            v = v/(n-nleft);
-            for(i=nleft; i<=n-1; i++)
-            {
-                cure = cure+ae_sqr(y->ptr.p_double[i]-v, _state);
-            }
-            cure = ae_sqrt(cure/n, _state);
-            if( ae_fp_less(cure,*e) )
-            {
-                *threshold = cursplit;
-                *e = cure;
+                offs = offs+jmplen;
             }
         }
     }
+}
+
+
+/*************************************************************************
+Fast Pow
+
+  -- ALGLIB --
+     Copyright 24.08.2009 by Bochkanov Sergey
+*************************************************************************/
+static double dforest_xfastpow(double r, ae_int_t n, ae_state *_state)
+{
+    double result;
+
+
+    result = (double)(0);
+    if( n>0 )
+    {
+        if( n%2==0 )
+        {
+            result = dforest_xfastpow(r, n/2, _state);
+            result = result*result;
+        }
+        else
+        {
+            result = r*dforest_xfastpow(r, n-1, _state);
+        }
+        return result;
+    }
+    if( n==0 )
+    {
+        result = (double)(1);
+    }
+    if( n<0 )
+    {
+        result = dforest_xfastpow(1/r, -n, _state);
+    }
+    return result;
+}
+
+
+void _decisionforestbuilder_init(void* _p, ae_state *_state, ae_bool make_automatic)
+{
+    decisionforestbuilder *p = (decisionforestbuilder*)_p;
+    ae_touch_ptr((void*)p);
+    ae_vector_init(&p->dsdata, 0, DT_REAL, _state, make_automatic);
+    ae_vector_init(&p->dsrval, 0, DT_REAL, _state, make_automatic);
+    ae_vector_init(&p->dsival, 0, DT_INT, _state, make_automatic);
+    ae_vector_init(&p->dsmin, 0, DT_REAL, _state, make_automatic);
+    ae_vector_init(&p->dsmax, 0, DT_REAL, _state, make_automatic);
+    ae_vector_init(&p->dsbinary, 0, DT_BOOL, _state, make_automatic);
+    ae_vector_init(&p->dsctotals, 0, DT_INT, _state, make_automatic);
+    ae_shared_pool_init(&p->workpool, _state, make_automatic);
+    ae_shared_pool_init(&p->votepool, _state, make_automatic);
+    ae_shared_pool_init(&p->treepool, _state, make_automatic);
+    ae_shared_pool_init(&p->treefactory, _state, make_automatic);
+    ae_matrix_init(&p->iobmatrix, 0, 0, DT_BOOL, _state, make_automatic);
+    ae_vector_init(&p->varimpshuffle2, 0, DT_INT, _state, make_automatic);
+}
+
+
+void _decisionforestbuilder_init_copy(void* _dst, void* _src, ae_state *_state, ae_bool make_automatic)
+{
+    decisionforestbuilder *dst = (decisionforestbuilder*)_dst;
+    decisionforestbuilder *src = (decisionforestbuilder*)_src;
+    dst->dstype = src->dstype;
+    dst->npoints = src->npoints;
+    dst->nvars = src->nvars;
+    dst->nclasses = src->nclasses;
+    ae_vector_init_copy(&dst->dsdata, &src->dsdata, _state, make_automatic);
+    ae_vector_init_copy(&dst->dsrval, &src->dsrval, _state, make_automatic);
+    ae_vector_init_copy(&dst->dsival, &src->dsival, _state, make_automatic);
+    dst->rdfalgo = src->rdfalgo;
+    dst->rdfratio = src->rdfratio;
+    dst->rdfvars = src->rdfvars;
+    dst->rdfglobalseed = src->rdfglobalseed;
+    dst->rdfsplitstrength = src->rdfsplitstrength;
+    dst->rdfimportance = src->rdfimportance;
+    ae_vector_init_copy(&dst->dsmin, &src->dsmin, _state, make_automatic);
+    ae_vector_init_copy(&dst->dsmax, &src->dsmax, _state, make_automatic);
+    ae_vector_init_copy(&dst->dsbinary, &src->dsbinary, _state, make_automatic);
+    dst->dsravg = src->dsravg;
+    ae_vector_init_copy(&dst->dsctotals, &src->dsctotals, _state, make_automatic);
+    dst->rdfprogress = src->rdfprogress;
+    dst->rdftotal = src->rdftotal;
+    ae_shared_pool_init_copy(&dst->workpool, &src->workpool, _state, make_automatic);
+    ae_shared_pool_init_copy(&dst->votepool, &src->votepool, _state, make_automatic);
+    ae_shared_pool_init_copy(&dst->treepool, &src->treepool, _state, make_automatic);
+    ae_shared_pool_init_copy(&dst->treefactory, &src->treefactory, _state, make_automatic);
+    dst->neediobmatrix = src->neediobmatrix;
+    ae_matrix_init_copy(&dst->iobmatrix, &src->iobmatrix, _state, make_automatic);
+    ae_vector_init_copy(&dst->varimpshuffle2, &src->varimpshuffle2, _state, make_automatic);
+}
+
+
+void _decisionforestbuilder_clear(void* _p)
+{
+    decisionforestbuilder *p = (decisionforestbuilder*)_p;
+    ae_touch_ptr((void*)p);
+    ae_vector_clear(&p->dsdata);
+    ae_vector_clear(&p->dsrval);
+    ae_vector_clear(&p->dsival);
+    ae_vector_clear(&p->dsmin);
+    ae_vector_clear(&p->dsmax);
+    ae_vector_clear(&p->dsbinary);
+    ae_vector_clear(&p->dsctotals);
+    ae_shared_pool_clear(&p->workpool);
+    ae_shared_pool_clear(&p->votepool);
+    ae_shared_pool_clear(&p->treepool);
+    ae_shared_pool_clear(&p->treefactory);
+    ae_matrix_clear(&p->iobmatrix);
+    ae_vector_clear(&p->varimpshuffle2);
+}
+
+
+void _decisionforestbuilder_destroy(void* _p)
+{
+    decisionforestbuilder *p = (decisionforestbuilder*)_p;
+    ae_touch_ptr((void*)p);
+    ae_vector_destroy(&p->dsdata);
+    ae_vector_destroy(&p->dsrval);
+    ae_vector_destroy(&p->dsival);
+    ae_vector_destroy(&p->dsmin);
+    ae_vector_destroy(&p->dsmax);
+    ae_vector_destroy(&p->dsbinary);
+    ae_vector_destroy(&p->dsctotals);
+    ae_shared_pool_destroy(&p->workpool);
+    ae_shared_pool_destroy(&p->votepool);
+    ae_shared_pool_destroy(&p->treepool);
+    ae_shared_pool_destroy(&p->treefactory);
+    ae_matrix_destroy(&p->iobmatrix);
+    ae_vector_destroy(&p->varimpshuffle2);
+}
+
+
+void _dfworkbuf_init(void* _p, ae_state *_state, ae_bool make_automatic)
+{
+    dfworkbuf *p = (dfworkbuf*)_p;
+    ae_touch_ptr((void*)p);
+    ae_vector_init(&p->classpriors, 0, DT_INT, _state, make_automatic);
+    ae_vector_init(&p->varpool, 0, DT_INT, _state, make_automatic);
+    ae_vector_init(&p->trnset, 0, DT_INT, _state, make_automatic);
+    ae_vector_init(&p->trnlabelsr, 0, DT_REAL, _state, make_automatic);
+    ae_vector_init(&p->trnlabelsi, 0, DT_INT, _state, make_automatic);
+    ae_vector_init(&p->oobset, 0, DT_INT, _state, make_automatic);
+    ae_vector_init(&p->ooblabelsr, 0, DT_REAL, _state, make_automatic);
+    ae_vector_init(&p->ooblabelsi, 0, DT_INT, _state, make_automatic);
+    ae_vector_init(&p->treebuf, 0, DT_REAL, _state, make_automatic);
+    ae_vector_init(&p->curvals, 0, DT_REAL, _state, make_automatic);
+    ae_vector_init(&p->bestvals, 0, DT_REAL, _state, make_automatic);
+    ae_vector_init(&p->tmp0i, 0, DT_INT, _state, make_automatic);
+    ae_vector_init(&p->tmp1i, 0, DT_INT, _state, make_automatic);
+    ae_vector_init(&p->tmp0r, 0, DT_REAL, _state, make_automatic);
+    ae_vector_init(&p->tmp1r, 0, DT_REAL, _state, make_automatic);
+    ae_vector_init(&p->tmp2r, 0, DT_REAL, _state, make_automatic);
+    ae_vector_init(&p->tmp3r, 0, DT_REAL, _state, make_automatic);
+    ae_vector_init(&p->tmpnrms2, 0, DT_INT, _state, make_automatic);
+    ae_vector_init(&p->classtotals0, 0, DT_INT, _state, make_automatic);
+    ae_vector_init(&p->classtotals1, 0, DT_INT, _state, make_automatic);
+    ae_vector_init(&p->classtotals01, 0, DT_INT, _state, make_automatic);
+}
+
+
+void _dfworkbuf_init_copy(void* _dst, void* _src, ae_state *_state, ae_bool make_automatic)
+{
+    dfworkbuf *dst = (dfworkbuf*)_dst;
+    dfworkbuf *src = (dfworkbuf*)_src;
+    ae_vector_init_copy(&dst->classpriors, &src->classpriors, _state, make_automatic);
+    ae_vector_init_copy(&dst->varpool, &src->varpool, _state, make_automatic);
+    dst->varpoolsize = src->varpoolsize;
+    ae_vector_init_copy(&dst->trnset, &src->trnset, _state, make_automatic);
+    dst->trnsize = src->trnsize;
+    ae_vector_init_copy(&dst->trnlabelsr, &src->trnlabelsr, _state, make_automatic);
+    ae_vector_init_copy(&dst->trnlabelsi, &src->trnlabelsi, _state, make_automatic);
+    ae_vector_init_copy(&dst->oobset, &src->oobset, _state, make_automatic);
+    dst->oobsize = src->oobsize;
+    ae_vector_init_copy(&dst->ooblabelsr, &src->ooblabelsr, _state, make_automatic);
+    ae_vector_init_copy(&dst->ooblabelsi, &src->ooblabelsi, _state, make_automatic);
+    ae_vector_init_copy(&dst->treebuf, &src->treebuf, _state, make_automatic);
+    ae_vector_init_copy(&dst->curvals, &src->curvals, _state, make_automatic);
+    ae_vector_init_copy(&dst->bestvals, &src->bestvals, _state, make_automatic);
+    ae_vector_init_copy(&dst->tmp0i, &src->tmp0i, _state, make_automatic);
+    ae_vector_init_copy(&dst->tmp1i, &src->tmp1i, _state, make_automatic);
+    ae_vector_init_copy(&dst->tmp0r, &src->tmp0r, _state, make_automatic);
+    ae_vector_init_copy(&dst->tmp1r, &src->tmp1r, _state, make_automatic);
+    ae_vector_init_copy(&dst->tmp2r, &src->tmp2r, _state, make_automatic);
+    ae_vector_init_copy(&dst->tmp3r, &src->tmp3r, _state, make_automatic);
+    ae_vector_init_copy(&dst->tmpnrms2, &src->tmpnrms2, _state, make_automatic);
+    ae_vector_init_copy(&dst->classtotals0, &src->classtotals0, _state, make_automatic);
+    ae_vector_init_copy(&dst->classtotals1, &src->classtotals1, _state, make_automatic);
+    ae_vector_init_copy(&dst->classtotals01, &src->classtotals01, _state, make_automatic);
+}
+
+
+void _dfworkbuf_clear(void* _p)
+{
+    dfworkbuf *p = (dfworkbuf*)_p;
+    ae_touch_ptr((void*)p);
+    ae_vector_clear(&p->classpriors);
+    ae_vector_clear(&p->varpool);
+    ae_vector_clear(&p->trnset);
+    ae_vector_clear(&p->trnlabelsr);
+    ae_vector_clear(&p->trnlabelsi);
+    ae_vector_clear(&p->oobset);
+    ae_vector_clear(&p->ooblabelsr);
+    ae_vector_clear(&p->ooblabelsi);
+    ae_vector_clear(&p->treebuf);
+    ae_vector_clear(&p->curvals);
+    ae_vector_clear(&p->bestvals);
+    ae_vector_clear(&p->tmp0i);
+    ae_vector_clear(&p->tmp1i);
+    ae_vector_clear(&p->tmp0r);
+    ae_vector_clear(&p->tmp1r);
+    ae_vector_clear(&p->tmp2r);
+    ae_vector_clear(&p->tmp3r);
+    ae_vector_clear(&p->tmpnrms2);
+    ae_vector_clear(&p->classtotals0);
+    ae_vector_clear(&p->classtotals1);
+    ae_vector_clear(&p->classtotals01);
+}
+
+
+void _dfworkbuf_destroy(void* _p)
+{
+    dfworkbuf *p = (dfworkbuf*)_p;
+    ae_touch_ptr((void*)p);
+    ae_vector_destroy(&p->classpriors);
+    ae_vector_destroy(&p->varpool);
+    ae_vector_destroy(&p->trnset);
+    ae_vector_destroy(&p->trnlabelsr);
+    ae_vector_destroy(&p->trnlabelsi);
+    ae_vector_destroy(&p->oobset);
+    ae_vector_destroy(&p->ooblabelsr);
+    ae_vector_destroy(&p->ooblabelsi);
+    ae_vector_destroy(&p->treebuf);
+    ae_vector_destroy(&p->curvals);
+    ae_vector_destroy(&p->bestvals);
+    ae_vector_destroy(&p->tmp0i);
+    ae_vector_destroy(&p->tmp1i);
+    ae_vector_destroy(&p->tmp0r);
+    ae_vector_destroy(&p->tmp1r);
+    ae_vector_destroy(&p->tmp2r);
+    ae_vector_destroy(&p->tmp3r);
+    ae_vector_destroy(&p->tmpnrms2);
+    ae_vector_destroy(&p->classtotals0);
+    ae_vector_destroy(&p->classtotals1);
+    ae_vector_destroy(&p->classtotals01);
+}
+
+
+void _dfvotebuf_init(void* _p, ae_state *_state, ae_bool make_automatic)
+{
+    dfvotebuf *p = (dfvotebuf*)_p;
+    ae_touch_ptr((void*)p);
+    ae_vector_init(&p->trntotals, 0, DT_REAL, _state, make_automatic);
+    ae_vector_init(&p->oobtotals, 0, DT_REAL, _state, make_automatic);
+    ae_vector_init(&p->trncounts, 0, DT_INT, _state, make_automatic);
+    ae_vector_init(&p->oobcounts, 0, DT_INT, _state, make_automatic);
+    ae_vector_init(&p->giniimportances, 0, DT_REAL, _state, make_automatic);
+}
+
+
+void _dfvotebuf_init_copy(void* _dst, void* _src, ae_state *_state, ae_bool make_automatic)
+{
+    dfvotebuf *dst = (dfvotebuf*)_dst;
+    dfvotebuf *src = (dfvotebuf*)_src;
+    ae_vector_init_copy(&dst->trntotals, &src->trntotals, _state, make_automatic);
+    ae_vector_init_copy(&dst->oobtotals, &src->oobtotals, _state, make_automatic);
+    ae_vector_init_copy(&dst->trncounts, &src->trncounts, _state, make_automatic);
+    ae_vector_init_copy(&dst->oobcounts, &src->oobcounts, _state, make_automatic);
+    ae_vector_init_copy(&dst->giniimportances, &src->giniimportances, _state, make_automatic);
+}
+
+
+void _dfvotebuf_clear(void* _p)
+{
+    dfvotebuf *p = (dfvotebuf*)_p;
+    ae_touch_ptr((void*)p);
+    ae_vector_clear(&p->trntotals);
+    ae_vector_clear(&p->oobtotals);
+    ae_vector_clear(&p->trncounts);
+    ae_vector_clear(&p->oobcounts);
+    ae_vector_clear(&p->giniimportances);
+}
+
+
+void _dfvotebuf_destroy(void* _p)
+{
+    dfvotebuf *p = (dfvotebuf*)_p;
+    ae_touch_ptr((void*)p);
+    ae_vector_destroy(&p->trntotals);
+    ae_vector_destroy(&p->oobtotals);
+    ae_vector_destroy(&p->trncounts);
+    ae_vector_destroy(&p->oobcounts);
+    ae_vector_destroy(&p->giniimportances);
+}
+
+
+void _dfpermimpbuf_init(void* _p, ae_state *_state, ae_bool make_automatic)
+{
+    dfpermimpbuf *p = (dfpermimpbuf*)_p;
+    ae_touch_ptr((void*)p);
+    ae_vector_init(&p->losses, 0, DT_REAL, _state, make_automatic);
+    ae_vector_init(&p->xraw, 0, DT_REAL, _state, make_automatic);
+    ae_vector_init(&p->xdist, 0, DT_REAL, _state, make_automatic);
+    ae_vector_init(&p->xcur, 0, DT_REAL, _state, make_automatic);
+    ae_vector_init(&p->y, 0, DT_REAL, _state, make_automatic);
+    ae_vector_init(&p->yv, 0, DT_REAL, _state, make_automatic);
+    ae_vector_init(&p->targety, 0, DT_REAL, _state, make_automatic);
+    ae_vector_init(&p->startnodes, 0, DT_INT, _state, make_automatic);
+}
+
+
+void _dfpermimpbuf_init_copy(void* _dst, void* _src, ae_state *_state, ae_bool make_automatic)
+{
+    dfpermimpbuf *dst = (dfpermimpbuf*)_dst;
+    dfpermimpbuf *src = (dfpermimpbuf*)_src;
+    ae_vector_init_copy(&dst->losses, &src->losses, _state, make_automatic);
+    ae_vector_init_copy(&dst->xraw, &src->xraw, _state, make_automatic);
+    ae_vector_init_copy(&dst->xdist, &src->xdist, _state, make_automatic);
+    ae_vector_init_copy(&dst->xcur, &src->xcur, _state, make_automatic);
+    ae_vector_init_copy(&dst->y, &src->y, _state, make_automatic);
+    ae_vector_init_copy(&dst->yv, &src->yv, _state, make_automatic);
+    ae_vector_init_copy(&dst->targety, &src->targety, _state, make_automatic);
+    ae_vector_init_copy(&dst->startnodes, &src->startnodes, _state, make_automatic);
+}
+
+
+void _dfpermimpbuf_clear(void* _p)
+{
+    dfpermimpbuf *p = (dfpermimpbuf*)_p;
+    ae_touch_ptr((void*)p);
+    ae_vector_clear(&p->losses);
+    ae_vector_clear(&p->xraw);
+    ae_vector_clear(&p->xdist);
+    ae_vector_clear(&p->xcur);
+    ae_vector_clear(&p->y);
+    ae_vector_clear(&p->yv);
+    ae_vector_clear(&p->targety);
+    ae_vector_clear(&p->startnodes);
+}
+
+
+void _dfpermimpbuf_destroy(void* _p)
+{
+    dfpermimpbuf *p = (dfpermimpbuf*)_p;
+    ae_touch_ptr((void*)p);
+    ae_vector_destroy(&p->losses);
+    ae_vector_destroy(&p->xraw);
+    ae_vector_destroy(&p->xdist);
+    ae_vector_destroy(&p->xcur);
+    ae_vector_destroy(&p->y);
+    ae_vector_destroy(&p->yv);
+    ae_vector_destroy(&p->targety);
+    ae_vector_destroy(&p->startnodes);
+}
+
+
+void _dftreebuf_init(void* _p, ae_state *_state, ae_bool make_automatic)
+{
+    dftreebuf *p = (dftreebuf*)_p;
+    ae_touch_ptr((void*)p);
+    ae_vector_init(&p->treebuf, 0, DT_REAL, _state, make_automatic);
+}
+
+
+void _dftreebuf_init_copy(void* _dst, void* _src, ae_state *_state, ae_bool make_automatic)
+{
+    dftreebuf *dst = (dftreebuf*)_dst;
+    dftreebuf *src = (dftreebuf*)_src;
+    ae_vector_init_copy(&dst->treebuf, &src->treebuf, _state, make_automatic);
+    dst->treeidx = src->treeidx;
+}
+
+
+void _dftreebuf_clear(void* _p)
+{
+    dftreebuf *p = (dftreebuf*)_p;
+    ae_touch_ptr((void*)p);
+    ae_vector_clear(&p->treebuf);
+}
+
+
+void _dftreebuf_destroy(void* _p)
+{
+    dftreebuf *p = (dftreebuf*)_p;
+    ae_touch_ptr((void*)p);
+    ae_vector_destroy(&p->treebuf);
+}
+
+
+void _decisionforestbuffer_init(void* _p, ae_state *_state, ae_bool make_automatic)
+{
+    decisionforestbuffer *p = (decisionforestbuffer*)_p;
+    ae_touch_ptr((void*)p);
+    ae_vector_init(&p->x, 0, DT_REAL, _state, make_automatic);
+    ae_vector_init(&p->y, 0, DT_REAL, _state, make_automatic);
+}
+
+
+void _decisionforestbuffer_init_copy(void* _dst, void* _src, ae_state *_state, ae_bool make_automatic)
+{
+    decisionforestbuffer *dst = (decisionforestbuffer*)_dst;
+    decisionforestbuffer *src = (decisionforestbuffer*)_src;
+    ae_vector_init_copy(&dst->x, &src->x, _state, make_automatic);
+    ae_vector_init_copy(&dst->y, &src->y, _state, make_automatic);
+}
+
+
+void _decisionforestbuffer_clear(void* _p)
+{
+    decisionforestbuffer *p = (decisionforestbuffer*)_p;
+    ae_touch_ptr((void*)p);
+    ae_vector_clear(&p->x);
+    ae_vector_clear(&p->y);
+}
+
+
+void _decisionforestbuffer_destroy(void* _p)
+{
+    decisionforestbuffer *p = (decisionforestbuffer*)_p;
+    ae_touch_ptr((void*)p);
+    ae_vector_destroy(&p->x);
+    ae_vector_destroy(&p->y);
 }
 
 
@@ -44001,6 +50125,8 @@ void _decisionforest_init(void* _p, ae_state *_state, ae_bool make_automatic)
     decisionforest *p = (decisionforest*)_p;
     ae_touch_ptr((void*)p);
     ae_vector_init(&p->trees, 0, DT_REAL, _state, make_automatic);
+    _decisionforestbuffer_init(&p->buffer, _state, make_automatic);
+    ae_vector_init(&p->trees8, 0, DT_BYTE, _state, make_automatic);
 }
 
 
@@ -44008,11 +50134,15 @@ void _decisionforest_init_copy(void* _dst, void* _src, ae_state *_state, ae_bool
 {
     decisionforest *dst = (decisionforest*)_dst;
     decisionforest *src = (decisionforest*)_src;
+    dst->forestformat = src->forestformat;
+    dst->usemantissa8 = src->usemantissa8;
     dst->nvars = src->nvars;
     dst->nclasses = src->nclasses;
     dst->ntrees = src->ntrees;
     dst->bufsize = src->bufsize;
     ae_vector_init_copy(&dst->trees, &src->trees, _state, make_automatic);
+    _decisionforestbuffer_init_copy(&dst->buffer, &src->buffer, _state, make_automatic);
+    ae_vector_init_copy(&dst->trees8, &src->trees8, _state, make_automatic);
 }
 
 
@@ -44021,6 +50151,8 @@ void _decisionforest_clear(void* _p)
     decisionforest *p = (decisionforest*)_p;
     ae_touch_ptr((void*)p);
     ae_vector_clear(&p->trees);
+    _decisionforestbuffer_clear(&p->buffer);
+    ae_vector_clear(&p->trees8);
 }
 
 
@@ -44029,6 +50161,8 @@ void _decisionforest_destroy(void* _p)
     decisionforest *p = (decisionforest*)_p;
     ae_touch_ptr((void*)p);
     ae_vector_destroy(&p->trees);
+    _decisionforestbuffer_destroy(&p->buffer);
+    ae_vector_destroy(&p->trees8);
 }
 
 
@@ -44036,6 +50170,8 @@ void _dfreport_init(void* _p, ae_state *_state, ae_bool make_automatic)
 {
     dfreport *p = (dfreport*)_p;
     ae_touch_ptr((void*)p);
+    ae_vector_init(&p->topvars, 0, DT_INT, _state, make_automatic);
+    ae_vector_init(&p->varimportances, 0, DT_REAL, _state, make_automatic);
 }
 
 
@@ -44053,6 +50189,8 @@ void _dfreport_init_copy(void* _dst, void* _src, ae_state *_state, ae_bool make_
     dst->oobrmserror = src->oobrmserror;
     dst->oobavgerror = src->oobavgerror;
     dst->oobavgrelerror = src->oobavgrelerror;
+    ae_vector_init_copy(&dst->topvars, &src->topvars, _state, make_automatic);
+    ae_vector_init_copy(&dst->varimportances, &src->varimportances, _state, make_automatic);
 }
 
 
@@ -44060,6 +50198,8 @@ void _dfreport_clear(void* _p)
 {
     dfreport *p = (dfreport*)_p;
     ae_touch_ptr((void*)p);
+    ae_vector_clear(&p->topvars);
+    ae_vector_clear(&p->varimportances);
 }
 
 
@@ -44067,6 +50207,8 @@ void _dfreport_destroy(void* _p)
 {
     dfreport *p = (dfreport*)_p;
     ae_touch_ptr((void*)p);
+    ae_vector_destroy(&p->topvars);
+    ae_vector_destroy(&p->varimportances);
 }
 
 
@@ -44147,6 +50289,1396 @@ void _dfinternalbuffers_destroy(void* _p)
 
 
 #endif
+#if defined(AE_COMPILE_KNN) || !defined(AE_PARTIAL_BUILD)
+
+
+/*************************************************************************
+This function creates buffer  structure  which  can  be  used  to  perform
+parallel KNN requests.
+
+KNN subpackage provides two sets of computing functions - ones  which  use
+internal buffer of KNN model (these  functions are single-threaded because
+they use same buffer, which can not  shared  between  threads),  and  ones
+which use external buffer.
+
+This function is used to initialize external buffer.
+
+INPUT PARAMETERS
+    Model       -   KNN model which is associated with newly created buffer
+
+OUTPUT PARAMETERS
+    Buf         -   external buffer.
+    
+    
+IMPORTANT: buffer object should be used only with model which was used  to
+           initialize buffer. Any attempt to  use  buffer  with  different
+           object is dangerous - you  may   get  integrity  check  failure
+           (exception) because sizes of internal  arrays  do  not  fit  to
+           dimensions of the model structure.
+
+  -- ALGLIB --
+     Copyright 15.02.2019 by Bochkanov Sergey
+*************************************************************************/
+void knncreatebuffer(knnmodel* model, knnbuffer* buf, ae_state *_state)
+{
+
+    _knnbuffer_clear(buf);
+
+    if( !model->isdummy )
+    {
+        kdtreecreaterequestbuffer(&model->tree, &buf->treebuf, _state);
+    }
+    ae_vector_set_length(&buf->x, model->nvars, _state);
+    ae_vector_set_length(&buf->y, model->nout, _state);
+}
+
+
+/*************************************************************************
+This subroutine creates KNNBuilder object which is used to train KNN models.
+
+By default, new builder stores empty dataset and some  reasonable  default
+settings. At the very least, you should specify dataset prior to  building
+KNN model. You can also tweak settings of the model construction algorithm
+(recommended, although default settings should work well).
+
+Following actions are mandatory:
+* calling knnbuildersetdataset() to specify dataset
+* calling knnbuilderbuildknnmodel() to build KNN model using current
+  dataset and default settings
+  
+Additionally, you may call:
+* knnbuildersetnorm() to change norm being used
+
+INPUT PARAMETERS:
+    none
+
+OUTPUT PARAMETERS:
+    S           -   KNN builder
+
+  -- ALGLIB --
+     Copyright 15.02.2019 by Bochkanov Sergey
+*************************************************************************/
+void knnbuildercreate(knnbuilder* s, ae_state *_state)
+{
+
+    _knnbuilder_clear(s);
+
+    
+    /*
+     * Empty dataset
+     */
+    s->dstype = -1;
+    s->npoints = 0;
+    s->nvars = 0;
+    s->iscls = ae_false;
+    s->nout = 1;
+    
+    /*
+     * Default training settings
+     */
+    s->knnnrm = 2;
+}
+
+
+/*************************************************************************
+Specifies regression problem (one or more continuous  output variables are
+predicted). There also exists "classification" version of this function.
+
+This subroutine adds dense dataset to the internal storage of the  builder
+object. Specifying your dataset in the dense format means that  the  dense
+version of the KNN construction algorithm will be invoked.
+
+INPUT PARAMETERS:
+    S           -   KNN builder object
+    XY          -   array[NPoints,NVars+NOut] (note: actual  size  can  be
+                    larger, only leading part is used anyway), dataset:
+                    * first NVars elements of each row store values of the
+                      independent variables
+                    * next NOut elements store  values  of  the  dependent
+                      variables
+    NPoints     -   number of rows in the dataset, NPoints>=1
+    NVars       -   number of independent variables, NVars>=1 
+    NOut        -   number of dependent variables, NOut>=1
+
+OUTPUT PARAMETERS:
+    S           -   KNN builder
+
+  -- ALGLIB --
+     Copyright 15.02.2019 by Bochkanov Sergey
+*************************************************************************/
+void knnbuildersetdatasetreg(knnbuilder* s,
+     /* Real    */ ae_matrix* xy,
+     ae_int_t npoints,
+     ae_int_t nvars,
+     ae_int_t nout,
+     ae_state *_state)
+{
+    ae_int_t i;
+    ae_int_t j;
+
+
+    
+    /*
+     * Check parameters
+     */
+    ae_assert(npoints>=1, "knnbuildersetdatasetreg: npoints<1", _state);
+    ae_assert(nvars>=1, "knnbuildersetdatasetreg: nvars<1", _state);
+    ae_assert(nout>=1, "knnbuildersetdatasetreg: nout<1", _state);
+    ae_assert(xy->rows>=npoints, "knnbuildersetdatasetreg: rows(xy)<npoints", _state);
+    ae_assert(xy->cols>=nvars+nout, "knnbuildersetdatasetreg: cols(xy)<nvars+nout", _state);
+    ae_assert(apservisfinitematrix(xy, npoints, nvars+nout, _state), "knnbuildersetdatasetreg: xy parameter contains INFs or NANs", _state);
+    
+    /*
+     * Set dataset
+     */
+    s->dstype = 0;
+    s->iscls = ae_false;
+    s->npoints = npoints;
+    s->nvars = nvars;
+    s->nout = nout;
+    rmatrixsetlengthatleast(&s->dsdata, npoints, nvars, _state);
+    for(i=0; i<=npoints-1; i++)
+    {
+        for(j=0; j<=nvars-1; j++)
+        {
+            s->dsdata.ptr.pp_double[i][j] = xy->ptr.pp_double[i][j];
+        }
+    }
+    rvectorsetlengthatleast(&s->dsrval, npoints*nout, _state);
+    for(i=0; i<=npoints-1; i++)
+    {
+        for(j=0; j<=nout-1; j++)
+        {
+            s->dsrval.ptr.p_double[i*nout+j] = xy->ptr.pp_double[i][nvars+j];
+        }
+    }
+}
+
+
+/*************************************************************************
+Specifies classification problem (two  or  more  classes  are  predicted).
+There also exists "regression" version of this function.
+
+This subroutine adds dense dataset to the internal storage of the  builder
+object. Specifying your dataset in the dense format means that  the  dense
+version of the KNN construction algorithm will be invoked.
+
+INPUT PARAMETERS:
+    S           -   KNN builder object
+    XY          -   array[NPoints,NVars+1] (note:   actual   size  can  be
+                    larger, only leading part is used anyway), dataset:
+                    * first NVars elements of each row store values of the
+                      independent variables
+                    * next element stores class index, in [0,NClasses)
+    NPoints     -   number of rows in the dataset, NPoints>=1
+    NVars       -   number of independent variables, NVars>=1 
+    NClasses    -   number of classes, NClasses>=2
+
+OUTPUT PARAMETERS:
+    S           -   KNN builder
+
+  -- ALGLIB --
+     Copyright 15.02.2019 by Bochkanov Sergey
+*************************************************************************/
+void knnbuildersetdatasetcls(knnbuilder* s,
+     /* Real    */ ae_matrix* xy,
+     ae_int_t npoints,
+     ae_int_t nvars,
+     ae_int_t nclasses,
+     ae_state *_state)
+{
+    ae_int_t i;
+    ae_int_t j;
+
+
+    
+    /*
+     * Check parameters
+     */
+    ae_assert(npoints>=1, "knnbuildersetdatasetcls: npoints<1", _state);
+    ae_assert(nvars>=1, "knnbuildersetdatasetcls: nvars<1", _state);
+    ae_assert(nclasses>=2, "knnbuildersetdatasetcls: nclasses<2", _state);
+    ae_assert(xy->rows>=npoints, "knnbuildersetdatasetcls: rows(xy)<npoints", _state);
+    ae_assert(xy->cols>=nvars+1, "knnbuildersetdatasetcls: cols(xy)<nvars+1", _state);
+    ae_assert(apservisfinitematrix(xy, npoints, nvars+1, _state), "knnbuildersetdatasetcls: xy parameter contains INFs or NANs", _state);
+    for(i=0; i<=npoints-1; i++)
+    {
+        j = ae_round(xy->ptr.pp_double[i][nvars], _state);
+        ae_assert(j>=0&&j<nclasses, "knnbuildersetdatasetcls: last column of xy contains invalid class number", _state);
+    }
+    
+    /*
+     * Set dataset
+     */
+    s->iscls = ae_true;
+    s->dstype = 0;
+    s->npoints = npoints;
+    s->nvars = nvars;
+    s->nout = nclasses;
+    rmatrixsetlengthatleast(&s->dsdata, npoints, nvars, _state);
+    for(i=0; i<=npoints-1; i++)
+    {
+        for(j=0; j<=nvars-1; j++)
+        {
+            s->dsdata.ptr.pp_double[i][j] = xy->ptr.pp_double[i][j];
+        }
+    }
+    ivectorsetlengthatleast(&s->dsival, npoints, _state);
+    for(i=0; i<=npoints-1; i++)
+    {
+        s->dsival.ptr.p_int[i] = ae_round(xy->ptr.pp_double[i][nvars], _state);
+    }
+}
+
+
+/*************************************************************************
+This function sets norm type used for neighbor search.
+
+INPUT PARAMETERS:
+    S           -   decision forest builder object
+    NormType    -   norm type:
+                    * 0      inf-norm
+                    * 1      1-norm
+                    * 2      Euclidean norm (default)
+
+OUTPUT PARAMETERS:
+    S           -   decision forest builder
+
+  -- ALGLIB --
+     Copyright 15.02.2019 by Bochkanov Sergey
+*************************************************************************/
+void knnbuildersetnorm(knnbuilder* s, ae_int_t nrmtype, ae_state *_state)
+{
+
+
+    ae_assert((nrmtype==0||nrmtype==1)||nrmtype==2, "knnbuildersetnorm: unexpected norm type", _state);
+    s->knnnrm = nrmtype;
+}
+
+
+/*************************************************************************
+This subroutine builds KNN model  according  to  current  settings,  using
+dataset internally stored in the builder object.
+
+The model being built performs inference using Eps-approximate  K  nearest
+neighbors search algorithm, with:
+* K=1,  Eps=0 corresponding to the "nearest neighbor algorithm"
+* K>1,  Eps=0 corresponding to the "K nearest neighbors algorithm"
+* K>=1, Eps>0 corresponding to "approximate nearest neighbors algorithm"
+
+An approximate KNN is a good option for high-dimensional  datasets  (exact
+KNN works slowly when dimensions count grows).
+
+An ALGLIB implementation of kd-trees is used to perform k-nn searches.
+
+  ! COMMERCIAL EDITION OF ALGLIB:
+  ! 
+  ! Commercial Edition of ALGLIB includes following important improvements
+  ! of this function:
+  ! * high-performance native backend with same C# interface (C# version)
+  ! * multithreading support (C++ and C# versions)
+  ! 
+  ! We recommend you to read 'Working with commercial version' section  of
+  ! ALGLIB Reference Manual in order to find out how to  use  performance-
+  ! related features provided by commercial edition of ALGLIB.
+
+INPUT PARAMETERS:
+    S       -   KNN builder object
+    K       -   number of neighbors to search for, K>=1
+    Eps     -   approximation factor:
+                * Eps=0 means that exact kNN search is performed
+                * Eps>0 means that (1+Eps)-approximate search is performed
+
+OUTPUT PARAMETERS:
+    Model       -   KNN model
+    Rep         -   report
+
+  -- ALGLIB --
+     Copyright 15.02.2019 by Bochkanov Sergey
+*************************************************************************/
+void knnbuilderbuildknnmodel(knnbuilder* s,
+     ae_int_t k,
+     double eps,
+     knnmodel* model,
+     knnreport* rep,
+     ae_state *_state)
+{
+    ae_frame _frame_block;
+    ae_int_t i;
+    ae_int_t j;
+    ae_int_t nvars;
+    ae_int_t nout;
+    ae_int_t npoints;
+    ae_bool iscls;
+    ae_matrix xy;
+    ae_vector tags;
+
+    ae_frame_make(_state, &_frame_block);
+    memset(&xy, 0, sizeof(xy));
+    memset(&tags, 0, sizeof(tags));
+    _knnmodel_clear(model);
+    _knnreport_clear(rep);
+    ae_matrix_init(&xy, 0, 0, DT_REAL, _state, ae_true);
+    ae_vector_init(&tags, 0, DT_INT, _state, ae_true);
+
+    npoints = s->npoints;
+    nvars = s->nvars;
+    nout = s->nout;
+    iscls = s->iscls;
+    
+    /*
+     * Check settings
+     */
+    ae_assert(k>=1, "knnbuilderbuildknnmodel: k<1", _state);
+    ae_assert(ae_isfinite(eps, _state)&&ae_fp_greater_eq(eps,(double)(0)), "knnbuilderbuildknnmodel: eps<0", _state);
+    
+    /*
+     * Prepare output
+     */
+    knn_clearreport(rep, _state);
+    model->nvars = nvars;
+    model->nout = nout;
+    model->iscls = iscls;
+    model->k = k;
+    model->eps = eps;
+    model->isdummy = ae_false;
+    
+    /*
+     * Quick exit for empty dataset
+     */
+    if( s->dstype==-1 )
+    {
+        model->isdummy = ae_true;
+        ae_frame_leave(_state);
+        return;
+    }
+    
+    /*
+     * Build kd-tree
+     */
+    if( iscls )
+    {
+        ae_matrix_set_length(&xy, npoints, nvars+1, _state);
+        ae_vector_set_length(&tags, npoints, _state);
+        for(i=0; i<=npoints-1; i++)
+        {
+            for(j=0; j<=nvars-1; j++)
+            {
+                xy.ptr.pp_double[i][j] = s->dsdata.ptr.pp_double[i][j];
+            }
+            xy.ptr.pp_double[i][nvars] = (double)(s->dsival.ptr.p_int[i]);
+            tags.ptr.p_int[i] = s->dsival.ptr.p_int[i];
+        }
+        kdtreebuildtagged(&xy, &tags, npoints, nvars, 0, s->knnnrm, &model->tree, _state);
+    }
+    else
+    {
+        ae_matrix_set_length(&xy, npoints, nvars+nout, _state);
+        for(i=0; i<=npoints-1; i++)
+        {
+            for(j=0; j<=nvars-1; j++)
+            {
+                xy.ptr.pp_double[i][j] = s->dsdata.ptr.pp_double[i][j];
+            }
+            for(j=0; j<=nout-1; j++)
+            {
+                xy.ptr.pp_double[i][nvars+j] = s->dsrval.ptr.p_double[i*nout+j];
+            }
+        }
+        kdtreebuild(&xy, npoints, nvars, nout, s->knnnrm, &model->tree, _state);
+    }
+    
+    /*
+     * Build buffer
+     */
+    knncreatebuffer(model, &model->buffer, _state);
+    
+    /*
+     * Report
+     */
+    knnallerrors(model, &xy, npoints, rep, _state);
+    ae_frame_leave(_state);
+}
+
+
+/*************************************************************************
+Changing search settings of KNN model.
+
+K and EPS parameters of KNN  (AKNN)  search  are  specified  during  model
+construction. However, plain KNN algorithm with Euclidean distance  allows
+you to change them at any moment.
+
+NOTE: future versions of KNN model may support advanced versions  of  KNN,
+      such as NCA or LMNN. It is possible that such algorithms won't allow
+      you to change search settings on the fly. If you call this  function
+      for an algorithm which does not support on-the-fly changes, it  will
+      throw an exception.
+
+INPUT PARAMETERS:
+    Model   -   KNN model
+    K       -   K>=1, neighbors count
+    EPS     -   accuracy of the EPS-approximate NN search. Set to 0.0,  if
+                you want to perform "classic" KNN search.  Specify  larger
+                values  if  you  need  to  speed-up  high-dimensional  KNN
+                queries.
+
+OUTPUT PARAMETERS:
+    nothing on success, exception on failure
+
+  -- ALGLIB --
+     Copyright 15.02.2019 by Bochkanov Sergey
+*************************************************************************/
+void knnrewritekeps(knnmodel* model,
+     ae_int_t k,
+     double eps,
+     ae_state *_state)
+{
+
+
+    ae_assert(k>=1, "knnrewritekeps: k<1", _state);
+    ae_assert(ae_isfinite(eps, _state)&&ae_fp_greater_eq(eps,(double)(0)), "knnrewritekeps: eps<0", _state);
+    model->k = k;
+    model->eps = eps;
+}
+
+
+/*************************************************************************
+Inference using KNN model.
+
+See also knnprocess0(), knnprocessi() and knnclassify() for options with a
+bit more convenient interface.
+
+IMPORTANT: this function is thread-unsafe and modifies internal structures
+           of the model! You can not use same model  object  for  parallel
+           evaluation from several threads.
+           
+           Use knntsprocess() with independent  thread-local  buffers,  if
+           you need thread-safe evaluation.
+
+INPUT PARAMETERS:
+    Model   -   KNN model
+    X       -   input vector,  array[0..NVars-1].
+    Y       -   possible preallocated buffer. Reused if long enough.
+
+OUTPUT PARAMETERS:
+    Y       -   result. Regression estimate when solving regression  task,
+                vector of posterior probabilities for classification task.
+
+  -- ALGLIB --
+     Copyright 15.02.2019 by Bochkanov Sergey
+*************************************************************************/
+void knnprocess(knnmodel* model,
+     /* Real    */ ae_vector* x,
+     /* Real    */ ae_vector* y,
+     ae_state *_state)
+{
+
+
+    knntsprocess(model, &model->buffer, x, y, _state);
+}
+
+
+/*************************************************************************
+This function returns first component of the  inferred  vector  (i.e.  one
+with index #0).
+
+It is a convenience wrapper for knnprocess() intended for either:
+* 1-dimensional regression problems
+* 2-class classification problems
+
+In the former case this function returns inference result as scalar, which
+is definitely more convenient that wrapping it as vector.  In  the  latter
+case it returns probability of object belonging to class #0.
+
+If you call it for anything different from two cases above, it  will  work
+as defined, i.e. return y[0], although it is of less use in such cases.
+
+IMPORTANT: this function is thread-unsafe and modifies internal structures
+           of the model! You can not use same model  object  for  parallel
+           evaluation from several threads.
+           
+           Use knntsprocess() with independent  thread-local  buffers,  if
+           you need thread-safe evaluation.
+
+INPUT PARAMETERS:
+    Model   -   KNN model
+    X       -   input vector,  array[0..NVars-1].
+
+RESULT:
+    Y[0]
+
+  -- ALGLIB --
+     Copyright 15.02.2019 by Bochkanov Sergey
+*************************************************************************/
+double knnprocess0(knnmodel* model,
+     /* Real    */ ae_vector* x,
+     ae_state *_state)
+{
+    ae_int_t i;
+    ae_int_t nvars;
+    double result;
+
+
+    nvars = model->nvars;
+    for(i=0; i<=nvars-1; i++)
+    {
+        model->buffer.x.ptr.p_double[i] = x->ptr.p_double[i];
+    }
+    knn_processinternal(model, &model->buffer, _state);
+    result = model->buffer.y.ptr.p_double[0];
+    return result;
+}
+
+
+/*************************************************************************
+This function returns most probable class number for an  input  X.  It  is
+same as calling knnprocess(model,x,y), then determining i=argmax(y[i]) and
+returning i.
+
+A class number in [0,NOut) range in returned for classification  problems,
+-1 is returned when this function is called for regression problems.
+
+IMPORTANT: this function is thread-unsafe and modifies internal structures
+           of the model! You can not use same model  object  for  parallel
+           evaluation from several threads.
+           
+           Use knntsprocess() with independent  thread-local  buffers,  if
+           you need thread-safe evaluation.
+
+INPUT PARAMETERS:
+    Model   -   KNN model
+    X       -   input vector,  array[0..NVars-1].
+
+RESULT:
+    class number, -1 for regression tasks
+
+  -- ALGLIB --
+     Copyright 15.02.2019 by Bochkanov Sergey
+*************************************************************************/
+ae_int_t knnclassify(knnmodel* model,
+     /* Real    */ ae_vector* x,
+     ae_state *_state)
+{
+    ae_int_t i;
+    ae_int_t nvars;
+    ae_int_t nout;
+    ae_int_t result;
+
+
+    if( !model->iscls )
+    {
+        result = -1;
+        return result;
+    }
+    nvars = model->nvars;
+    nout = model->nout;
+    for(i=0; i<=nvars-1; i++)
+    {
+        model->buffer.x.ptr.p_double[i] = x->ptr.p_double[i];
+    }
+    knn_processinternal(model, &model->buffer, _state);
+    result = 0;
+    for(i=1; i<=nout-1; i++)
+    {
+        if( model->buffer.y.ptr.p_double[i]>model->buffer.y.ptr.p_double[result] )
+        {
+            result = i;
+        }
+    }
+    return result;
+}
+
+
+/*************************************************************************
+'interactive' variant of knnprocess()  for  languages  like  Python  which
+support constructs like "y = knnprocessi(model,x)" and interactive mode of
+the interpreter.
+
+This function allocates new array on each call,  so  it  is  significantly
+slower than its 'non-interactive' counterpart, but it is  more  convenient
+when you call it from command line.
+
+IMPORTANT: this  function  is  thread-unsafe  and  may   modify   internal
+           structures of the model! You can not use same model  object for
+           parallel evaluation from several threads.
+           
+           Use knntsprocess()  with  independent  thread-local  buffers if
+           you need thread-safe evaluation.
+
+  -- ALGLIB --
+     Copyright 15.02.2019 by Bochkanov Sergey
+*************************************************************************/
+void knnprocessi(knnmodel* model,
+     /* Real    */ ae_vector* x,
+     /* Real    */ ae_vector* y,
+     ae_state *_state)
+{
+
+    ae_vector_clear(y);
+
+    knnprocess(model, x, y, _state);
+}
+
+
+/*************************************************************************
+Thread-safe procesing using external buffer for temporaries.
+
+This function is thread-safe (i.e .  you  can  use  same  KNN  model  from
+multiple threads) as long as you use different buffer objects for different
+threads.
+
+INPUT PARAMETERS:
+    Model   -   KNN model
+    Buf     -   buffer object, must be  allocated  specifically  for  this
+                model with knncreatebuffer().
+    X       -   input vector,  array[NVars]
+
+OUTPUT PARAMETERS:
+    Y       -   result, array[NOut].   Regression  estimate  when  solving
+                regression task,  vector  of  posterior  probabilities for
+                a classification task.
+
+  -- ALGLIB --
+     Copyright 15.02.2019 by Bochkanov Sergey
+*************************************************************************/
+void knntsprocess(knnmodel* model,
+     knnbuffer* buf,
+     /* Real    */ ae_vector* x,
+     /* Real    */ ae_vector* y,
+     ae_state *_state)
+{
+    ae_int_t i;
+    ae_int_t nvars;
+    ae_int_t nout;
+
+
+    nvars = model->nvars;
+    nout = model->nout;
+    for(i=0; i<=nvars-1; i++)
+    {
+        buf->x.ptr.p_double[i] = x->ptr.p_double[i];
+    }
+    knn_processinternal(model, buf, _state);
+    if( y->cnt<nout )
+    {
+        ae_vector_set_length(y, nout, _state);
+    }
+    for(i=0; i<=nout-1; i++)
+    {
+        y->ptr.p_double[i] = buf->y.ptr.p_double[i];
+    }
+}
+
+
+/*************************************************************************
+Relative classification error on the test set
+
+INPUT PARAMETERS:
+    Model   -   KNN model
+    XY      -   test set
+    NPoints -   test set size
+
+RESULT:
+    percent of incorrectly classified cases.
+    Zero if model solves regression task.
+    
+NOTE: if  you  need several different kinds of error metrics, it is better
+      to use knnallerrors() which computes all error metric  with just one
+      pass over dataset. 
+
+  -- ALGLIB --
+     Copyright 15.02.2019 by Bochkanov Sergey
+*************************************************************************/
+double knnrelclserror(knnmodel* model,
+     /* Real    */ ae_matrix* xy,
+     ae_int_t npoints,
+     ae_state *_state)
+{
+    ae_frame _frame_block;
+    knnreport rep;
+    double result;
+
+    ae_frame_make(_state, &_frame_block);
+    memset(&rep, 0, sizeof(rep));
+    _knnreport_init(&rep, _state, ae_true);
+
+    knnallerrors(model, xy, npoints, &rep, _state);
+    result = rep.relclserror;
+    ae_frame_leave(_state);
+    return result;
+}
+
+
+/*************************************************************************
+Average cross-entropy (in bits per element) on the test set
+
+INPUT PARAMETERS:
+    Model   -   KNN model
+    XY      -   test set
+    NPoints -   test set size
+
+RESULT:
+    CrossEntropy/NPoints.
+    Zero if model solves regression task.
+
+NOTE: the cross-entropy metric is too unstable when used to  evaluate  KNN
+      models (such models can report exactly  zero probabilities),  so  we
+      do not recommend using it.
+    
+NOTE: if  you  need several different kinds of error metrics, it is better
+      to use knnallerrors() which computes all error metric  with just one
+      pass over dataset. 
+
+  -- ALGLIB --
+     Copyright 15.02.2019 by Bochkanov Sergey
+*************************************************************************/
+double knnavgce(knnmodel* model,
+     /* Real    */ ae_matrix* xy,
+     ae_int_t npoints,
+     ae_state *_state)
+{
+    ae_frame _frame_block;
+    knnreport rep;
+    double result;
+
+    ae_frame_make(_state, &_frame_block);
+    memset(&rep, 0, sizeof(rep));
+    _knnreport_init(&rep, _state, ae_true);
+
+    knnallerrors(model, xy, npoints, &rep, _state);
+    result = rep.avgce;
+    ae_frame_leave(_state);
+    return result;
+}
+
+
+/*************************************************************************
+RMS error on the test set.
+
+Its meaning for regression task is obvious. As for classification problems,
+RMS error means error when estimating posterior probabilities.
+
+INPUT PARAMETERS:
+    Model   -   KNN model
+    XY      -   test set
+    NPoints -   test set size
+
+RESULT:
+    root mean square error.
+    
+NOTE: if  you  need several different kinds of error metrics, it is better
+      to use knnallerrors() which computes all error metric  with just one
+      pass over dataset.
+
+  -- ALGLIB --
+     Copyright 15.02.2019 by Bochkanov Sergey
+*************************************************************************/
+double knnrmserror(knnmodel* model,
+     /* Real    */ ae_matrix* xy,
+     ae_int_t npoints,
+     ae_state *_state)
+{
+    ae_frame _frame_block;
+    knnreport rep;
+    double result;
+
+    ae_frame_make(_state, &_frame_block);
+    memset(&rep, 0, sizeof(rep));
+    _knnreport_init(&rep, _state, ae_true);
+
+    knnallerrors(model, xy, npoints, &rep, _state);
+    result = rep.rmserror;
+    ae_frame_leave(_state);
+    return result;
+}
+
+
+/*************************************************************************
+Average error on the test set
+
+Its meaning for regression task is obvious. As for classification problems,
+average error means error when estimating posterior probabilities.
+
+INPUT PARAMETERS:
+    Model   -   KNN model
+    XY      -   test set
+    NPoints -   test set size
+
+RESULT:
+    average error
+    
+NOTE: if  you  need several different kinds of error metrics, it is better
+      to use knnallerrors() which computes all error metric  with just one
+      pass over dataset.
+
+  -- ALGLIB --
+     Copyright 15.02.2019 by Bochkanov Sergey
+*************************************************************************/
+double knnavgerror(knnmodel* model,
+     /* Real    */ ae_matrix* xy,
+     ae_int_t npoints,
+     ae_state *_state)
+{
+    ae_frame _frame_block;
+    knnreport rep;
+    double result;
+
+    ae_frame_make(_state, &_frame_block);
+    memset(&rep, 0, sizeof(rep));
+    _knnreport_init(&rep, _state, ae_true);
+
+    knnallerrors(model, xy, npoints, &rep, _state);
+    result = rep.avgerror;
+    ae_frame_leave(_state);
+    return result;
+}
+
+
+/*************************************************************************
+Average relative error on the test set
+
+Its meaning for regression task is obvious. As for classification problems,
+average relative error means error when estimating posterior probabilities.
+
+INPUT PARAMETERS:
+    Model   -   KNN model
+    XY      -   test set
+    NPoints -   test set size
+
+RESULT:
+    average relative error
+    
+NOTE: if  you  need several different kinds of error metrics, it is better
+      to use knnallerrors() which computes all error metric  with just one
+      pass over dataset.
+
+  -- ALGLIB --
+     Copyright 15.02.2019 by Bochkanov Sergey
+*************************************************************************/
+double knnavgrelerror(knnmodel* model,
+     /* Real    */ ae_matrix* xy,
+     ae_int_t npoints,
+     ae_state *_state)
+{
+    ae_frame _frame_block;
+    knnreport rep;
+    double result;
+
+    ae_frame_make(_state, &_frame_block);
+    memset(&rep, 0, sizeof(rep));
+    _knnreport_init(&rep, _state, ae_true);
+
+    knnallerrors(model, xy, npoints, &rep, _state);
+    result = rep.avgrelerror;
+    ae_frame_leave(_state);
+    return result;
+}
+
+
+/*************************************************************************
+Calculates all kinds of errors for the model in one call.
+
+INPUT PARAMETERS:
+    Model   -   KNN model
+    XY      -   test set:
+                * one row per point
+                * first NVars columns store independent variables
+                * depending on problem type:
+                  * next column stores class number in [0,NClasses) -  for
+                    classification problems
+                  * next NOut columns  store  dependent  variables  -  for
+                    regression problems
+    NPoints -   test set size, NPoints>=0
+
+OUTPUT PARAMETERS:
+    Rep     -   following fields are loaded with errors for both regression
+                and classification models:
+                * rep.rmserror - RMS error for the output
+                * rep.avgerror - average error
+                * rep.avgrelerror - average relative error
+                following fields are set only  for classification  models,
+                zero for regression ones:
+                * relclserror   - relative classification error, in [0,1]
+                * avgce - average cross-entropy in bits per dataset entry
+
+NOTE: the cross-entropy metric is too unstable when used to  evaluate  KNN
+      models (such models can report exactly  zero probabilities),  so  we
+      do not recommend using it.
+
+  -- ALGLIB --
+     Copyright 15.02.2019 by Bochkanov Sergey
+*************************************************************************/
+void knnallerrors(knnmodel* model,
+     /* Real    */ ae_matrix* xy,
+     ae_int_t npoints,
+     knnreport* rep,
+     ae_state *_state)
+{
+    ae_frame _frame_block;
+    knnbuffer buf;
+    ae_vector desiredy;
+    ae_vector errbuf;
+    ae_int_t nvars;
+    ae_int_t nout;
+    ae_int_t ny;
+    ae_bool iscls;
+    ae_int_t i;
+    ae_int_t j;
+
+    ae_frame_make(_state, &_frame_block);
+    memset(&buf, 0, sizeof(buf));
+    memset(&desiredy, 0, sizeof(desiredy));
+    memset(&errbuf, 0, sizeof(errbuf));
+    _knnreport_clear(rep);
+    _knnbuffer_init(&buf, _state, ae_true);
+    ae_vector_init(&desiredy, 0, DT_REAL, _state, ae_true);
+    ae_vector_init(&errbuf, 0, DT_REAL, _state, ae_true);
+
+    nvars = model->nvars;
+    nout = model->nout;
+    iscls = model->iscls;
+    if( iscls )
+    {
+        ny = 1;
+    }
+    else
+    {
+        ny = nout;
+    }
+    
+    /*
+     * Check input
+     */
+    ae_assert(npoints>=0, "knnallerrors: npoints<0", _state);
+    ae_assert(xy->rows>=npoints, "knnallerrors: rows(xy)<npoints", _state);
+    ae_assert(xy->cols>=nvars+ny, "knnallerrors: cols(xy)<nvars+nout", _state);
+    ae_assert(apservisfinitematrix(xy, npoints, nvars+ny, _state), "knnallerrors: xy parameter contains INFs or NANs", _state);
+    
+    /*
+     * Clean up report
+     */
+    knn_clearreport(rep, _state);
+    
+    /*
+     * Quick exit if needed
+     */
+    if( model->isdummy||npoints==0 )
+    {
+        ae_frame_leave(_state);
+        return;
+    }
+    
+    /*
+     * Process using local buffer
+     */
+    knncreatebuffer(model, &buf, _state);
+    if( iscls )
+    {
+        dserrallocate(nout, &errbuf, _state);
+    }
+    else
+    {
+        dserrallocate(-nout, &errbuf, _state);
+    }
+    ae_vector_set_length(&desiredy, ny, _state);
+    for(i=0; i<=npoints-1; i++)
+    {
+        for(j=0; j<=nvars-1; j++)
+        {
+            buf.x.ptr.p_double[j] = xy->ptr.pp_double[i][j];
+        }
+        if( iscls )
+        {
+            j = ae_round(xy->ptr.pp_double[i][nvars], _state);
+            ae_assert(j>=0&&j<nout, "knnallerrors: one of the class labels is not in [0,NClasses)", _state);
+            desiredy.ptr.p_double[0] = (double)(j);
+        }
+        else
+        {
+            for(j=0; j<=nout-1; j++)
+            {
+                desiredy.ptr.p_double[j] = xy->ptr.pp_double[i][nvars+j];
+            }
+        }
+        knn_processinternal(model, &buf, _state);
+        dserraccumulate(&errbuf, &buf.y, &desiredy, _state);
+    }
+    dserrfinish(&errbuf, _state);
+    
+    /*
+     * Extract results
+     */
+    if( iscls )
+    {
+        rep->relclserror = errbuf.ptr.p_double[0];
+        rep->avgce = errbuf.ptr.p_double[1];
+    }
+    rep->rmserror = errbuf.ptr.p_double[2];
+    rep->avgerror = errbuf.ptr.p_double[3];
+    rep->avgrelerror = errbuf.ptr.p_double[4];
+    ae_frame_leave(_state);
+}
+
+
+/*************************************************************************
+Serializer: allocation
+
+  -- ALGLIB --
+     Copyright 15.02.2019 by Bochkanov Sergey
+*************************************************************************/
+void knnalloc(ae_serializer* s, knnmodel* model, ae_state *_state)
+{
+
+
+    ae_serializer_alloc_entry(s);
+    ae_serializer_alloc_entry(s);
+    ae_serializer_alloc_entry(s);
+    ae_serializer_alloc_entry(s);
+    ae_serializer_alloc_entry(s);
+    ae_serializer_alloc_entry(s);
+    ae_serializer_alloc_entry(s);
+    ae_serializer_alloc_entry(s);
+    if( !model->isdummy )
+    {
+        kdtreealloc(s, &model->tree, _state);
+    }
+}
+
+
+/*************************************************************************
+Serializer: serialization
+
+  -- ALGLIB --
+     Copyright 15.02.2019 by Bochkanov Sergey
+*************************************************************************/
+void knnserialize(ae_serializer* s, knnmodel* model, ae_state *_state)
+{
+
+
+    ae_serializer_serialize_int(s, getknnserializationcode(_state), _state);
+    ae_serializer_serialize_int(s, knn_knnfirstversion, _state);
+    ae_serializer_serialize_int(s, model->nvars, _state);
+    ae_serializer_serialize_int(s, model->nout, _state);
+    ae_serializer_serialize_int(s, model->k, _state);
+    ae_serializer_serialize_double(s, model->eps, _state);
+    ae_serializer_serialize_bool(s, model->iscls, _state);
+    ae_serializer_serialize_bool(s, model->isdummy, _state);
+    if( !model->isdummy )
+    {
+        kdtreeserialize(s, &model->tree, _state);
+    }
+}
+
+
+/*************************************************************************
+Serializer: unserialization
+
+  -- ALGLIB --
+     Copyright 15.02.2019 by Bochkanov Sergey
+*************************************************************************/
+void knnunserialize(ae_serializer* s, knnmodel* model, ae_state *_state)
+{
+    ae_int_t i0;
+    ae_int_t i1;
+
+    _knnmodel_clear(model);
+
+    
+    /*
+     * check correctness of header
+     */
+    ae_serializer_unserialize_int(s, &i0, _state);
+    ae_assert(i0==getknnserializationcode(_state), "KNNUnserialize: stream header corrupted", _state);
+    ae_serializer_unserialize_int(s, &i1, _state);
+    ae_assert(i1==knn_knnfirstversion, "KNNUnserialize: stream header corrupted", _state);
+    
+    /*
+     * Unserialize data
+     */
+    ae_serializer_unserialize_int(s, &model->nvars, _state);
+    ae_serializer_unserialize_int(s, &model->nout, _state);
+    ae_serializer_unserialize_int(s, &model->k, _state);
+    ae_serializer_unserialize_double(s, &model->eps, _state);
+    ae_serializer_unserialize_bool(s, &model->iscls, _state);
+    ae_serializer_unserialize_bool(s, &model->isdummy, _state);
+    if( !model->isdummy )
+    {
+        kdtreeunserialize(s, &model->tree, _state);
+    }
+    
+    /*
+     * Prepare local buffer
+     */
+    knncreatebuffer(model, &model->buffer, _state);
+}
+
+
+/*************************************************************************
+Sets report fields to their default values
+
+  -- ALGLIB --
+     Copyright 15.02.2019 by Bochkanov Sergey
+*************************************************************************/
+static void knn_clearreport(knnreport* rep, ae_state *_state)
+{
+
+
+    rep->relclserror = (double)(0);
+    rep->avgce = (double)(0);
+    rep->rmserror = (double)(0);
+    rep->avgerror = (double)(0);
+    rep->avgrelerror = (double)(0);
+}
+
+
+/*************************************************************************
+This function processes buf.X and stores result to buf.Y
+
+INPUT PARAMETERS
+    Model       -   KNN model
+    Buf         -   processing buffer.
+    
+    
+IMPORTANT: buffer object should be used only with model which was used  to
+           initialize buffer. Any attempt to  use  buffer  with  different
+           object is dangerous - you  may   get  integrity  check  failure
+           (exception) because sizes of internal  arrays  do  not  fit  to
+           dimensions of the model structure.
+
+  -- ALGLIB --
+     Copyright 15.02.2019 by Bochkanov Sergey
+*************************************************************************/
+static void knn_processinternal(knnmodel* model,
+     knnbuffer* buf,
+     ae_state *_state)
+{
+    ae_int_t nvars;
+    ae_int_t nout;
+    ae_bool iscls;
+    ae_int_t nncnt;
+    ae_int_t i;
+    ae_int_t j;
+    double v;
+
+
+    nvars = model->nvars;
+    nout = model->nout;
+    iscls = model->iscls;
+    
+    /*
+     * Quick exit if needed
+     */
+    if( model->isdummy )
+    {
+        for(i=0; i<=nout-1; i++)
+        {
+            buf->y.ptr.p_double[i] = (double)(0);
+        }
+        return;
+    }
+    
+    /*
+     * Perform request, average results
+     */
+    for(i=0; i<=nout-1; i++)
+    {
+        buf->y.ptr.p_double[i] = (double)(0);
+    }
+    nncnt = kdtreetsqueryaknn(&model->tree, &buf->treebuf, &buf->x, model->k, ae_true, model->eps, _state);
+    v = 1/coalesce((double)(nncnt), (double)(1), _state);
+    if( iscls )
+    {
+        kdtreetsqueryresultstags(&model->tree, &buf->treebuf, &buf->tags, _state);
+        for(i=0; i<=nncnt-1; i++)
+        {
+            j = buf->tags.ptr.p_int[i];
+            buf->y.ptr.p_double[j] = buf->y.ptr.p_double[j]+v;
+        }
+    }
+    else
+    {
+        kdtreetsqueryresultsxy(&model->tree, &buf->treebuf, &buf->xy, _state);
+        for(i=0; i<=nncnt-1; i++)
+        {
+            for(j=0; j<=nout-1; j++)
+            {
+                buf->y.ptr.p_double[j] = buf->y.ptr.p_double[j]+v*buf->xy.ptr.pp_double[i][nvars+j];
+            }
+        }
+    }
+}
+
+
+void _knnbuffer_init(void* _p, ae_state *_state, ae_bool make_automatic)
+{
+    knnbuffer *p = (knnbuffer*)_p;
+    ae_touch_ptr((void*)p);
+    _kdtreerequestbuffer_init(&p->treebuf, _state, make_automatic);
+    ae_vector_init(&p->x, 0, DT_REAL, _state, make_automatic);
+    ae_vector_init(&p->y, 0, DT_REAL, _state, make_automatic);
+    ae_vector_init(&p->tags, 0, DT_INT, _state, make_automatic);
+    ae_matrix_init(&p->xy, 0, 0, DT_REAL, _state, make_automatic);
+}
+
+
+void _knnbuffer_init_copy(void* _dst, void* _src, ae_state *_state, ae_bool make_automatic)
+{
+    knnbuffer *dst = (knnbuffer*)_dst;
+    knnbuffer *src = (knnbuffer*)_src;
+    _kdtreerequestbuffer_init_copy(&dst->treebuf, &src->treebuf, _state, make_automatic);
+    ae_vector_init_copy(&dst->x, &src->x, _state, make_automatic);
+    ae_vector_init_copy(&dst->y, &src->y, _state, make_automatic);
+    ae_vector_init_copy(&dst->tags, &src->tags, _state, make_automatic);
+    ae_matrix_init_copy(&dst->xy, &src->xy, _state, make_automatic);
+}
+
+
+void _knnbuffer_clear(void* _p)
+{
+    knnbuffer *p = (knnbuffer*)_p;
+    ae_touch_ptr((void*)p);
+    _kdtreerequestbuffer_clear(&p->treebuf);
+    ae_vector_clear(&p->x);
+    ae_vector_clear(&p->y);
+    ae_vector_clear(&p->tags);
+    ae_matrix_clear(&p->xy);
+}
+
+
+void _knnbuffer_destroy(void* _p)
+{
+    knnbuffer *p = (knnbuffer*)_p;
+    ae_touch_ptr((void*)p);
+    _kdtreerequestbuffer_destroy(&p->treebuf);
+    ae_vector_destroy(&p->x);
+    ae_vector_destroy(&p->y);
+    ae_vector_destroy(&p->tags);
+    ae_matrix_destroy(&p->xy);
+}
+
+
+void _knnbuilder_init(void* _p, ae_state *_state, ae_bool make_automatic)
+{
+    knnbuilder *p = (knnbuilder*)_p;
+    ae_touch_ptr((void*)p);
+    ae_matrix_init(&p->dsdata, 0, 0, DT_REAL, _state, make_automatic);
+    ae_vector_init(&p->dsrval, 0, DT_REAL, _state, make_automatic);
+    ae_vector_init(&p->dsival, 0, DT_INT, _state, make_automatic);
+}
+
+
+void _knnbuilder_init_copy(void* _dst, void* _src, ae_state *_state, ae_bool make_automatic)
+{
+    knnbuilder *dst = (knnbuilder*)_dst;
+    knnbuilder *src = (knnbuilder*)_src;
+    dst->dstype = src->dstype;
+    dst->npoints = src->npoints;
+    dst->nvars = src->nvars;
+    dst->iscls = src->iscls;
+    dst->nout = src->nout;
+    ae_matrix_init_copy(&dst->dsdata, &src->dsdata, _state, make_automatic);
+    ae_vector_init_copy(&dst->dsrval, &src->dsrval, _state, make_automatic);
+    ae_vector_init_copy(&dst->dsival, &src->dsival, _state, make_automatic);
+    dst->knnnrm = src->knnnrm;
+}
+
+
+void _knnbuilder_clear(void* _p)
+{
+    knnbuilder *p = (knnbuilder*)_p;
+    ae_touch_ptr((void*)p);
+    ae_matrix_clear(&p->dsdata);
+    ae_vector_clear(&p->dsrval);
+    ae_vector_clear(&p->dsival);
+}
+
+
+void _knnbuilder_destroy(void* _p)
+{
+    knnbuilder *p = (knnbuilder*)_p;
+    ae_touch_ptr((void*)p);
+    ae_matrix_destroy(&p->dsdata);
+    ae_vector_destroy(&p->dsrval);
+    ae_vector_destroy(&p->dsival);
+}
+
+
+void _knnmodel_init(void* _p, ae_state *_state, ae_bool make_automatic)
+{
+    knnmodel *p = (knnmodel*)_p;
+    ae_touch_ptr((void*)p);
+    _kdtree_init(&p->tree, _state, make_automatic);
+    _knnbuffer_init(&p->buffer, _state, make_automatic);
+}
+
+
+void _knnmodel_init_copy(void* _dst, void* _src, ae_state *_state, ae_bool make_automatic)
+{
+    knnmodel *dst = (knnmodel*)_dst;
+    knnmodel *src = (knnmodel*)_src;
+    dst->nvars = src->nvars;
+    dst->nout = src->nout;
+    dst->k = src->k;
+    dst->eps = src->eps;
+    dst->iscls = src->iscls;
+    dst->isdummy = src->isdummy;
+    _kdtree_init_copy(&dst->tree, &src->tree, _state, make_automatic);
+    _knnbuffer_init_copy(&dst->buffer, &src->buffer, _state, make_automatic);
+}
+
+
+void _knnmodel_clear(void* _p)
+{
+    knnmodel *p = (knnmodel*)_p;
+    ae_touch_ptr((void*)p);
+    _kdtree_clear(&p->tree);
+    _knnbuffer_clear(&p->buffer);
+}
+
+
+void _knnmodel_destroy(void* _p)
+{
+    knnmodel *p = (knnmodel*)_p;
+    ae_touch_ptr((void*)p);
+    _kdtree_destroy(&p->tree);
+    _knnbuffer_destroy(&p->buffer);
+}
+
+
+void _knnreport_init(void* _p, ae_state *_state, ae_bool make_automatic)
+{
+    knnreport *p = (knnreport*)_p;
+    ae_touch_ptr((void*)p);
+}
+
+
+void _knnreport_init_copy(void* _dst, void* _src, ae_state *_state, ae_bool make_automatic)
+{
+    knnreport *dst = (knnreport*)_dst;
+    knnreport *src = (knnreport*)_src;
+    dst->relclserror = src->relclserror;
+    dst->avgce = src->avgce;
+    dst->rmserror = src->rmserror;
+    dst->avgerror = src->avgerror;
+    dst->avgrelerror = src->avgrelerror;
+}
+
+
+void _knnreport_clear(void* _p)
+{
+    knnreport *p = (knnreport*)_p;
+    ae_touch_ptr((void*)p);
+}
+
+
+void _knnreport_destroy(void* _p)
+{
+    knnreport *p = (knnreport*)_p;
+    ae_touch_ptr((void*)p);
+}
+
+
+#endif
 #if defined(AE_COMPILE_DATACOMP) || !defined(AE_PARTIAL_BUILD)
 
 
@@ -44175,7 +51707,9 @@ void kmeansgenerate(/* Real    */ ae_matrix* xy,
     kmeansbuffers buf;
 
     ae_frame_make(_state, &_frame_block);
-    memset(&dummy, 0, sizeof(dummy));    memset(&buf, 0, sizeof(buf));    *info = 0;
+    memset(&dummy, 0, sizeof(dummy));
+    memset(&buf, 0, sizeof(buf));
+    *info = 0;
     ae_matrix_clear(c);
     ae_vector_clear(xyc);
     ae_matrix_init(&dummy, 0, 0, DT_REAL, _state, ae_true);

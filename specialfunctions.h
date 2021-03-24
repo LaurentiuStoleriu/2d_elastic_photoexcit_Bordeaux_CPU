@@ -1,5 +1,5 @@
 /*************************************************************************
-ALGLIB 3.13.0 (source code generated 2017-12-29)
+ALGLIB 3.17.0 (source code generated 2020-12-27)
 Copyright (c) Sergey Bochkanov (ALGLIB project).
 
 >>> SOURCE LICENSE >>>
@@ -21,6 +21,7 @@ http://www.fsf.org/licensing/licenses
 #define _specialfunctions_pkg_h
 #include "ap.h"
 #include "alglibinternal.h"
+#include "alglibmisc.h"
 
 /////////////////////////////////////////////////////////////////////////
 //
@@ -199,7 +200,7 @@ Cephes Math Library Release 2.8:  June, 2000
 Original copyright 1984, 1987, 1989, 1992, 2000 by Stephen L. Moshier
 Translated to AlgoPascal by Bochkanov Sergey (2005, 2006, 2007).
 *************************************************************************/
-double gammafunction(const double x);
+double gammafunction(const double x, const xparams _xparams = alglib::xdefault);
 
 
 /*************************************************************************
@@ -234,7 +235,7 @@ Cephes Math Library Release 2.8:  June, 2000
 Copyright 1984, 1987, 1989, 1992, 2000 by Stephen L. Moshier
 Translated to AlgoPascal by Bochkanov Sergey (2005, 2006, 2007).
 *************************************************************************/
-double lngamma(const double x, double &sgngam);
+double lngamma(const double x, double &sgngam, const xparams _xparams = alglib::xdefault);
 #endif
 
 #if defined(AE_COMPILE_NORMALDISTR) || !defined(AE_PARTIAL_BUILD)
@@ -264,7 +265,7 @@ arithmetic   domain     # trials      peak         rms
 Cephes Math Library Release 2.8:  June, 2000
 Copyright 1984, 1987, 1988, 1992, 2000 by Stephen L. Moshier
 *************************************************************************/
-double errorfunction(const double x);
+double errorfunction(const double x, const xparams _xparams = alglib::xdefault);
 
 
 /*************************************************************************
@@ -294,11 +295,32 @@ arithmetic   domain     # trials      peak         rms
 Cephes Math Library Release 2.8:  June, 2000
 Copyright 1984, 1987, 1988, 1992, 2000 by Stephen L. Moshier
 *************************************************************************/
-double errorfunctionc(const double x);
+double errorfunctionc(const double x, const xparams _xparams = alglib::xdefault);
 
 
 /*************************************************************************
-Normal distribution function
+Same as normalcdf(), obsolete name.
+*************************************************************************/
+double normaldistribution(const double x, const xparams _xparams = alglib::xdefault);
+
+
+/*************************************************************************
+Normal distribution PDF
+
+Returns Gaussian probability density function:
+
+               1
+   f(x)  = --------- * exp(-x^2/2)
+           sqrt(2pi)
+
+Cephes Math Library Release 2.8:  June, 2000
+Copyright 1984, 1987, 1988, 1992, 2000 by Stephen L. Moshier
+*************************************************************************/
+double normalpdf(const double x, const xparams _xparams = alglib::xdefault);
+
+
+/*************************************************************************
+Normal distribution CDF
 
 Returns the area under the Gaussian probability density
 function, integrated from minus infinity to x:
@@ -327,7 +349,7 @@ arithmetic   domain     # trials      peak         rms
 Cephes Math Library Release 2.8:  June, 2000
 Copyright 1984, 1987, 1988, 1992, 2000 by Stephen L. Moshier
 *************************************************************************/
-double normaldistribution(const double x);
+double normalcdf(const double x, const xparams _xparams = alglib::xdefault);
 
 
 /*************************************************************************
@@ -336,11 +358,17 @@ Inverse of the error function
 Cephes Math Library Release 2.8:  June, 2000
 Copyright 1984, 1987, 1988, 1992, 2000 by Stephen L. Moshier
 *************************************************************************/
-double inverf(const double e);
+double inverf(const double e, const xparams _xparams = alglib::xdefault);
 
 
 /*************************************************************************
-Inverse of Normal distribution function
+Same as invnormalcdf(), deprecated name
+*************************************************************************/
+double invnormaldistribution(const double y0, const xparams _xparams = alglib::xdefault);
+
+
+/*************************************************************************
+Inverse of Normal CDF
 
 Returns the argument, x, for which the area under the
 Gaussian probability density function (integrated from
@@ -364,7 +392,66 @@ arithmetic   domain        # trials      peak         rms
 Cephes Math Library Release 2.8:  June, 2000
 Copyright 1984, 1987, 1988, 1992, 2000 by Stephen L. Moshier
 *************************************************************************/
-double invnormaldistribution(const double y0);
+double invnormalcdf(const double y0, const xparams _xparams = alglib::xdefault);
+
+
+/*************************************************************************
+Bivariate normal PDF
+
+Returns probability density function of the bivariate  Gaussian  with
+correlation parameter equal to Rho:
+
+                         1              (    x^2 - 2*rho*x*y + y^2  )
+    f(x,y,rho) = ----------------- * exp( - ----------------------- )
+                 2pi*sqrt(1-rho^2)      (        2*(1-rho^2)        )
+
+
+with -1<rho<+1 and arbitrary x, y.
+
+This function won't fail as long as Rho is in (-1,+1) range.
+
+  -- ALGLIB --
+     Copyright 15.11.2019 by Bochkanov Sergey
+*************************************************************************/
+double bivariatenormalpdf(const double x, const double y, const double rho, const xparams _xparams = alglib::xdefault);
+
+
+/*************************************************************************
+Bivariate normal CDF
+
+Returns the area under the bivariate Gaussian  PDF  with  correlation
+parameter equal to Rho, integrated from minus infinity to (x,y):
+
+
+                                          x      y
+                                          -      -
+                            1            | |    | |
+    bvn(x,y,rho) = -------------------   |      |   f(u,v,rho)*du*dv
+                    2pi*sqrt(1-rho^2)  | |    | |
+                                        -      -
+                                       -INF   -INF
+
+
+where
+
+                      (    u^2 - 2*rho*u*v + v^2  )
+    f(u,v,rho)   = exp( - ----------------------- )
+                      (        2*(1-rho^2)        )
+
+
+with -1<rho<+1 and arbitrary x, y.
+
+This subroutine uses high-precision approximation scheme proposed  by
+Alan Genz in "Numerical  Computation  of  Rectangular  Bivariate  and
+Trivariate Normal and  t  probabilities",  which  computes  CDF  with
+absolute error roughly equal to 1e-14.
+
+This function won't fail as long as Rho is in (-1,+1) range.
+
+  -- ALGLIB --
+     Copyright 15.11.2019 by Bochkanov Sergey
+*************************************************************************/
+double bivariatenormalcdf(const double x, const double y, const double rho, const xparams _xparams = alglib::xdefault);
 #endif
 
 #if defined(AE_COMPILE_IGAMMAF) || !defined(AE_PARTIAL_BUILD)
@@ -397,7 +484,7 @@ arithmetic   domain     # trials      peak         rms
 Cephes Math Library Release 2.8:  June, 2000
 Copyright 1985, 1987, 2000 by Stephen L. Moshier
 *************************************************************************/
-double incompletegamma(const double a, const double x);
+double incompletegamma(const double a, const double x, const xparams _xparams = alglib::xdefault);
 
 
 /*************************************************************************
@@ -433,7 +520,7 @@ arithmetic   domain   domain     # trials      peak         rms
 Cephes Math Library Release 2.8:  June, 2000
 Copyright 1985, 1987, 2000 by Stephen L. Moshier
 *************************************************************************/
-double incompletegammac(const double a, const double x);
+double incompletegammac(const double a, const double x, const xparams _xparams = alglib::xdefault);
 
 
 /*************************************************************************
@@ -472,7 +559,7 @@ arithmetic   domain   domain     # trials      peak         rms
 Cephes Math Library Release 2.8:  June, 2000
 Copyright 1984, 1987, 1995, 2000 by Stephen L. Moshier
 *************************************************************************/
-double invincompletegammac(const double a, const double y0);
+double invincompletegammac(const double a, const double y0, const xparams _xparams = alglib::xdefault);
 #endif
 
 #if defined(AE_COMPILE_ELLIPTIC) || !defined(AE_PARTIAL_BUILD)
@@ -506,7 +593,7 @@ arithmetic   domain     # trials      peak         rms
 Cephes Math Library, Release 2.8:  June, 2000
 Copyright 1984, 1987, 2000 by Stephen L. Moshier
 *************************************************************************/
-double ellipticintegralk(const double m);
+double ellipticintegralk(const double m, const xparams _xparams = alglib::xdefault);
 
 
 /*************************************************************************
@@ -545,7 +632,7 @@ arithmetic   domain     # trials      peak         rms
 Cephes Math Library, Release 2.8:  June, 2000
 Copyright 1984, 1987, 2000 by Stephen L. Moshier
 *************************************************************************/
-double ellipticintegralkhighprecision(const double m1);
+double ellipticintegralkhighprecision(const double m1, const xparams _xparams = alglib::xdefault);
 
 
 /*************************************************************************
@@ -582,7 +669,7 @@ arithmetic   domain     # trials      peak         rms
 Cephes Math Library Release 2.8:  June, 2000
 Copyright 1984, 1987, 2000 by Stephen L. Moshier
 *************************************************************************/
-double incompleteellipticintegralk(const double phi, const double m);
+double incompleteellipticintegralk(const double phi, const double m, const xparams _xparams = alglib::xdefault);
 
 
 /*************************************************************************
@@ -612,7 +699,7 @@ arithmetic   domain     # trials      peak         rms
 Cephes Math Library, Release 2.8: June, 2000
 Copyright 1984, 1987, 1989, 2000 by Stephen L. Moshier
 *************************************************************************/
-double ellipticintegrale(const double m);
+double ellipticintegrale(const double m, const xparams _xparams = alglib::xdefault);
 
 
 /*************************************************************************
@@ -645,7 +732,7 @@ arithmetic   domain     # trials      peak         rms
 Cephes Math Library Release 2.8:  June, 2000
 Copyright 1984, 1987, 1993, 2000 by Stephen L. Moshier
 *************************************************************************/
-double incompleteellipticintegrale(const double phi, const double m);
+double incompleteellipticintegrale(const double phi, const double m, const xparams _xparams = alglib::xdefault);
 #endif
 
 #if defined(AE_COMPILE_HERMITE) || !defined(AE_PARTIAL_BUILD)
@@ -659,7 +746,7 @@ Parameters:
 Result:
     the value of the Hermite polynomial Hn at x
 *************************************************************************/
-double hermitecalculate(const ae_int_t n, const double x);
+double hermitecalculate(const ae_int_t n, const double x, const xparams _xparams = alglib::xdefault);
 
 
 /*************************************************************************
@@ -675,7 +762,7 @@ Parameters:
 Result:
     the value of the Hermite polynomial at x
 *************************************************************************/
-double hermitesum(const real_1d_array &c, const ae_int_t n, const double x);
+double hermitesum(const real_1d_array &c, const ae_int_t n, const double x, const xparams _xparams = alglib::xdefault);
 
 
 /*************************************************************************
@@ -687,7 +774,7 @@ Input parameters:
 Output parameters:
     C   -   coefficients
 *************************************************************************/
-void hermitecoefficients(const ae_int_t n, real_1d_array &c);
+void hermitecoefficients(const ae_int_t n, real_1d_array &c, const xparams _xparams = alglib::xdefault);
 #endif
 
 #if defined(AE_COMPILE_DAWSON) || !defined(AE_PARTIAL_BUILD)
@@ -716,7 +803,7 @@ arithmetic   domain     # trials      peak         rms
 Cephes Math Library Release 2.8:  June, 2000
 Copyright 1984, 1987, 1989, 2000 by Stephen L. Moshier
 *************************************************************************/
-double dawsonintegral(const double x);
+double dawsonintegral(const double x, const xparams _xparams = alglib::xdefault);
 #endif
 
 #if defined(AE_COMPILE_TRIGINTEGRALS) || !defined(AE_PARTIAL_BUILD)
@@ -759,7 +846,7 @@ arithmetic   function   # trials      peak         rms
 Cephes Math Library Release 2.1:  January, 1989
 Copyright 1984, 1987, 1989 by Stephen L. Moshier
 *************************************************************************/
-void sinecosineintegrals(const double x, double &si, double &ci);
+void sinecosineintegrals(const double x, double &si, double &ci, const xparams _xparams = alglib::xdefault);
 
 
 /*************************************************************************
@@ -802,7 +889,7 @@ arithmetic   function  # trials      peak         rms
 Cephes Math Library Release 2.8:  June, 2000
 Copyright 1984, 1987, 2000 by Stephen L. Moshier
 *************************************************************************/
-void hyperbolicsinecosineintegrals(const double x, double &shi, double &chi);
+void hyperbolicsinecosineintegrals(const double x, double &shi, double &chi, const xparams _xparams = alglib::xdefault);
 #endif
 
 #if defined(AE_COMPILE_POISSONDISTR) || !defined(AE_PARTIAL_BUILD)
@@ -831,7 +918,7 @@ See incomplete gamma function
 Cephes Math Library Release 2.8:  June, 2000
 Copyright 1984, 1987, 1995, 2000 by Stephen L. Moshier
 *************************************************************************/
-double poissondistribution(const ae_int_t k, const double m);
+double poissondistribution(const ae_int_t k, const double m, const xparams _xparams = alglib::xdefault);
 
 
 /*************************************************************************
@@ -860,7 +947,7 @@ See incomplete gamma function
 Cephes Math Library Release 2.8:  June, 2000
 Copyright 1984, 1987, 1995, 2000 by Stephen L. Moshier
 *************************************************************************/
-double poissoncdistribution(const ae_int_t k, const double m);
+double poissoncdistribution(const ae_int_t k, const double m, const xparams _xparams = alglib::xdefault);
 
 
 /*************************************************************************
@@ -882,7 +969,7 @@ See inverse incomplete gamma function
 Cephes Math Library Release 2.8:  June, 2000
 Copyright 1984, 1987, 1995, 2000 by Stephen L. Moshier
 *************************************************************************/
-double invpoissondistribution(const ae_int_t k, const double y);
+double invpoissondistribution(const ae_int_t k, const double y, const xparams _xparams = alglib::xdefault);
 #endif
 
 #if defined(AE_COMPILE_BESSEL) || !defined(AE_PARTIAL_BUILD)
@@ -916,7 +1003,7 @@ arithmetic   domain     # trials      peak         rms
 Cephes Math Library Release 2.8:  June, 2000
 Copyright 1984, 1987, 1989, 2000 by Stephen L. Moshier
 *************************************************************************/
-double besselj0(const double x);
+double besselj0(const double x, const xparams _xparams = alglib::xdefault);
 
 
 /*************************************************************************
@@ -939,7 +1026,7 @@ arithmetic   domain      # trials      peak         rms
 Cephes Math Library Release 2.8:  June, 2000
 Copyright 1984, 1987, 1989, 2000 by Stephen L. Moshier
 *************************************************************************/
-double besselj1(const double x);
+double besselj1(const double x, const xparams _xparams = alglib::xdefault);
 
 
 /*************************************************************************
@@ -969,7 +1056,7 @@ Not suitable for large n or x. Use jv() (fractional order) instead.
 Cephes Math Library Release 2.8:  June, 2000
 Copyright 1984, 1987, 2000 by Stephen L. Moshier
 *************************************************************************/
-double besseljn(const ae_int_t n, const double x);
+double besseljn(const ae_int_t n, const double x, const xparams _xparams = alglib::xdefault);
 
 
 /*************************************************************************
@@ -1000,7 +1087,7 @@ arithmetic   domain     # trials      peak         rms
 Cephes Math Library Release 2.8:  June, 2000
 Copyright 1984, 1987, 1989, 2000 by Stephen L. Moshier
 *************************************************************************/
-double bessely0(const double x);
+double bessely0(const double x, const xparams _xparams = alglib::xdefault);
 
 
 /*************************************************************************
@@ -1024,7 +1111,7 @@ arithmetic   domain      # trials      peak         rms
 Cephes Math Library Release 2.8:  June, 2000
 Copyright 1984, 1987, 1989, 2000 by Stephen L. Moshier
 *************************************************************************/
-double bessely1(const double x);
+double bessely1(const double x, const xparams _xparams = alglib::xdefault);
 
 
 /*************************************************************************
@@ -1049,7 +1136,7 @@ arithmetic   domain     # trials      peak         rms
 Cephes Math Library Release 2.8:  June, 2000
 Copyright 1984, 1987, 2000 by Stephen L. Moshier
 *************************************************************************/
-double besselyn(const ae_int_t n, const double x);
+double besselyn(const ae_int_t n, const double x, const xparams _xparams = alglib::xdefault);
 
 
 /*************************************************************************
@@ -1073,7 +1160,7 @@ arithmetic   domain     # trials      peak         rms
 Cephes Math Library Release 2.8:  June, 2000
 Copyright 1984, 1987, 2000 by Stephen L. Moshier
 *************************************************************************/
-double besseli0(const double x);
+double besseli0(const double x, const xparams _xparams = alglib::xdefault);
 
 
 /*************************************************************************
@@ -1097,7 +1184,7 @@ arithmetic   domain     # trials      peak         rms
 Cephes Math Library Release 2.8:  June, 2000
 Copyright 1985, 1987, 2000 by Stephen L. Moshier
 *************************************************************************/
-double besseli1(const double x);
+double besseli1(const double x, const xparams _xparams = alglib::xdefault);
 
 
 /*************************************************************************
@@ -1121,7 +1208,7 @@ arithmetic   domain     # trials      peak         rms
 Cephes Math Library Release 2.8:  June, 2000
 Copyright 1984, 1987, 2000 by Stephen L. Moshier
 *************************************************************************/
-double besselk0(const double x);
+double besselk0(const double x, const xparams _xparams = alglib::xdefault);
 
 
 /*************************************************************************
@@ -1143,7 +1230,7 @@ arithmetic   domain     # trials      peak         rms
 Cephes Math Library Release 2.8:  June, 2000
 Copyright 1984, 1987, 2000 by Stephen L. Moshier
 *************************************************************************/
-double besselk1(const double x);
+double besselk1(const double x, const xparams _xparams = alglib::xdefault);
 
 
 /*************************************************************************
@@ -1168,7 +1255,7 @@ between the two expansions used.
 Cephes Math Library Release 2.8:  June, 2000
 Copyright 1984, 1987, 1988, 2000 by Stephen L. Moshier
 *************************************************************************/
-double besselkn(const ae_int_t nn, const double x);
+double besselkn(const ae_int_t nn, const double x, const xparams _xparams = alglib::xdefault);
 #endif
 
 #if defined(AE_COMPILE_IBETAF) || !defined(AE_PARTIAL_BUILD)
@@ -1213,7 +1300,7 @@ were excluded from these statistics.
 Cephes Math Library, Release 2.8:  June, 2000
 Copyright 1984, 1995, 2000 by Stephen L. Moshier
 *************************************************************************/
-double incompletebeta(const double a, const double b, const double x);
+double incompletebeta(const double a, const double b, const double x, const xparams _xparams = alglib::xdefault);
 
 
 /*************************************************************************
@@ -1244,7 +1331,7 @@ With a = .5, b constrained to half-integer or integer values:
 Cephes Math Library Release 2.8:  June, 2000
 Copyright 1984, 1996, 2000 by Stephen L. Moshier
 *************************************************************************/
-double invincompletebeta(const double a, const double b, const double y);
+double invincompletebeta(const double a, const double b, const double y, const xparams _xparams = alglib::xdefault);
 #endif
 
 #if defined(AE_COMPILE_FDISTR) || !defined(AE_PARTIAL_BUILD)
@@ -1280,7 +1367,7 @@ arithmetic  domain  domain     # trials      peak         rms
 Cephes Math Library Release 2.8:  June, 2000
 Copyright 1984, 1987, 1995, 2000 by Stephen L. Moshier
 *************************************************************************/
-double fdistribution(const ae_int_t a, const ae_int_t b, const double x);
+double fdistribution(const ae_int_t a, const ae_int_t b, const double x, const xparams _xparams = alglib::xdefault);
 
 
 /*************************************************************************
@@ -1319,7 +1406,7 @@ arithmetic  domain  domain     # trials      peak         rms
 Cephes Math Library Release 2.8:  June, 2000
 Copyright 1984, 1987, 1995, 2000 by Stephen L. Moshier
 *************************************************************************/
-double fcdistribution(const ae_int_t a, const ae_int_t b, const double x);
+double fcdistribution(const ae_int_t a, const ae_int_t b, const double x, const xparams _xparams = alglib::xdefault);
 
 
 /*************************************************************************
@@ -1357,7 +1444,7 @@ arithmetic  domain     # trials      peak         rms
 Cephes Math Library Release 2.8:  June, 2000
 Copyright 1984, 1987, 1995, 2000 by Stephen L. Moshier
 *************************************************************************/
-double invfdistribution(const ae_int_t a, const ae_int_t b, const double y);
+double invfdistribution(const ae_int_t a, const ae_int_t b, const double y, const xparams _xparams = alglib::xdefault);
 #endif
 
 #if defined(AE_COMPILE_FRESNEL) || !defined(AE_PARTIAL_BUILD)
@@ -1403,7 +1490,7 @@ Arithmetic  function   domain     # trials      peak         rms
 Cephes Math Library Release 2.8:  June, 2000
 Copyright 1984, 1987, 1989, 2000 by Stephen L. Moshier
 *************************************************************************/
-void fresnelintegral(const double x, double &c, double &s);
+void fresnelintegral(const double x, double &c, double &s, const xparams _xparams = alglib::xdefault);
 #endif
 
 #if defined(AE_COMPILE_JACOBIANELLIPTIC) || !defined(AE_PARTIAL_BUILD)
@@ -1447,7 +1534,7 @@ Accuracy deteriorates when u is large.
 Cephes Math Library Release 2.8:  June, 2000
 Copyright 1984, 1987, 2000 by Stephen L. Moshier
 *************************************************************************/
-void jacobianellipticfunctions(const double u, const double m, double &sn, double &cn, double &dn, double &ph);
+void jacobianellipticfunctions(const double u, const double m, double &sn, double &cn, double &dn, double &ph, const xparams _xparams = alglib::xdefault);
 #endif
 
 #if defined(AE_COMPILE_PSIF) || !defined(AE_PARTIAL_BUILD)
@@ -1490,7 +1577,7 @@ arithmetic   domain     # trials      peak         rms
 Cephes Math Library Release 2.8:  June, 2000
 Copyright 1984, 1987, 1992, 2000 by Stephen L. Moshier
 *************************************************************************/
-double psi(const double x);
+double psi(const double x, const xparams _xparams = alglib::xdefault);
 #endif
 
 #if defined(AE_COMPILE_EXPINTEGRALS) || !defined(AE_PARTIAL_BUILD)
@@ -1519,7 +1606,7 @@ arithmetic   domain     # trials      peak         rms
 Cephes Math Library Release 2.8:  May, 1999
 Copyright 1999 by Stephen L. Moshier
 *************************************************************************/
-double exponentialintegralei(const double x);
+double exponentialintegralei(const double x, const xparams _xparams = alglib::xdefault);
 
 
 /*************************************************************************
@@ -1553,7 +1640,7 @@ arithmetic   domain     # trials      peak         rms
 Cephes Math Library Release 2.8:  June, 2000
 Copyright 1985, 2000 by Stephen L. Moshier
 *************************************************************************/
-double exponentialintegralen(const double x, const ae_int_t n);
+double exponentialintegralen(const double x, const ae_int_t n, const xparams _xparams = alglib::xdefault);
 #endif
 
 #if defined(AE_COMPILE_LAGUERRE) || !defined(AE_PARTIAL_BUILD)
@@ -1567,7 +1654,7 @@ Parameters:
 Result:
     the value of the Laguerre polynomial Ln at x
 *************************************************************************/
-double laguerrecalculate(const ae_int_t n, const double x);
+double laguerrecalculate(const ae_int_t n, const double x, const xparams _xparams = alglib::xdefault);
 
 
 /*************************************************************************
@@ -1582,7 +1669,7 @@ Parameters:
 Result:
     the value of the Laguerre polynomial at x
 *************************************************************************/
-double laguerresum(const real_1d_array &c, const ae_int_t n, const double x);
+double laguerresum(const real_1d_array &c, const ae_int_t n, const double x, const xparams _xparams = alglib::xdefault);
 
 
 /*************************************************************************
@@ -1594,7 +1681,7 @@ Input parameters:
 Output parameters:
     C   -   coefficients
 *************************************************************************/
-void laguerrecoefficients(const ae_int_t n, real_1d_array &c);
+void laguerrecoefficients(const ae_int_t n, real_1d_array &c, const xparams _xparams = alglib::xdefault);
 #endif
 
 #if defined(AE_COMPILE_CHISQUAREDISTR) || !defined(AE_PARTIAL_BUILD)
@@ -1631,7 +1718,7 @@ See incomplete gamma function
 Cephes Math Library Release 2.8:  June, 2000
 Copyright 1984, 1987, 2000 by Stephen L. Moshier
 *************************************************************************/
-double chisquaredistribution(const double v, const double x);
+double chisquaredistribution(const double v, const double x, const xparams _xparams = alglib::xdefault);
 
 
 /*************************************************************************
@@ -1665,7 +1752,7 @@ See incomplete gamma function
 Cephes Math Library Release 2.8:  June, 2000
 Copyright 1984, 1987, 2000 by Stephen L. Moshier
 *************************************************************************/
-double chisquarecdistribution(const double v, const double x);
+double chisquarecdistribution(const double v, const double x, const xparams _xparams = alglib::xdefault);
 
 
 /*************************************************************************
@@ -1688,7 +1775,7 @@ See inverse incomplete gamma function
 Cephes Math Library Release 2.8:  June, 2000
 Copyright 1984, 1987, 2000 by Stephen L. Moshier
 *************************************************************************/
-double invchisquaredistribution(const double v, const double y);
+double invchisquaredistribution(const double v, const double y, const xparams _xparams = alglib::xdefault);
 #endif
 
 #if defined(AE_COMPILE_LEGENDRE) || !defined(AE_PARTIAL_BUILD)
@@ -1702,7 +1789,7 @@ Parameters:
 Result:
     the value of the Legendre polynomial Pn at x
 *************************************************************************/
-double legendrecalculate(const ae_int_t n, const double x);
+double legendrecalculate(const ae_int_t n, const double x, const xparams _xparams = alglib::xdefault);
 
 
 /*************************************************************************
@@ -1718,7 +1805,7 @@ Parameters:
 Result:
     the value of the Legendre polynomial at x
 *************************************************************************/
-double legendresum(const real_1d_array &c, const ae_int_t n, const double x);
+double legendresum(const real_1d_array &c, const ae_int_t n, const double x, const xparams _xparams = alglib::xdefault);
 
 
 /*************************************************************************
@@ -1730,7 +1817,7 @@ Input parameters:
 Output parameters:
     C   -   coefficients
 *************************************************************************/
-void legendrecoefficients(const ae_int_t n, real_1d_array &c);
+void legendrecoefficients(const ae_int_t n, real_1d_array &c, const xparams _xparams = alglib::xdefault);
 #endif
 
 #if defined(AE_COMPILE_BETAF) || !defined(AE_PARTIAL_BUILD)
@@ -1756,7 +1843,7 @@ arithmetic   domain     # trials      peak         rms
 Cephes Math Library Release 2.0:  April, 1987
 Copyright 1984, 1987 by Stephen L. Moshier
 *************************************************************************/
-double beta(const double a, const double b);
+double beta(const double a, const double b, const xparams _xparams = alglib::xdefault);
 #endif
 
 #if defined(AE_COMPILE_CHEBYSHEV) || !defined(AE_PARTIAL_BUILD)
@@ -1772,7 +1859,7 @@ Parameters:
 Result:
     the value of the Chebyshev polynomial at x
 *************************************************************************/
-double chebyshevcalculate(const ae_int_t r, const ae_int_t n, const double x);
+double chebyshevcalculate(const ae_int_t r, const ae_int_t n, const double x, const xparams _xparams = alglib::xdefault);
 
 
 /*************************************************************************
@@ -1792,7 +1879,7 @@ Parameters:
 Result:
     the value of the Chebyshev polynomial at x
 *************************************************************************/
-double chebyshevsum(const real_1d_array &c, const ae_int_t r, const ae_int_t n, const double x);
+double chebyshevsum(const real_1d_array &c, const ae_int_t r, const ae_int_t n, const double x, const xparams _xparams = alglib::xdefault);
 
 
 /*************************************************************************
@@ -1804,7 +1891,7 @@ Input parameters:
 Output parameters:
     C   -   coefficients
 *************************************************************************/
-void chebyshevcoefficients(const ae_int_t n, real_1d_array &c);
+void chebyshevcoefficients(const ae_int_t n, real_1d_array &c, const xparams _xparams = alglib::xdefault);
 
 
 /*************************************************************************
@@ -1820,7 +1907,7 @@ Input parameters:
 Output parameters
     B   -   power series coefficients
 *************************************************************************/
-void fromchebyshev(const real_1d_array &a, const ae_int_t n, real_1d_array &b);
+void fromchebyshev(const real_1d_array &a, const ae_int_t n, real_1d_array &b, const xparams _xparams = alglib::xdefault);
 #endif
 
 #if defined(AE_COMPILE_STUDENTTDISTR) || !defined(AE_PARTIAL_BUILD)
@@ -1865,7 +1952,7 @@ arithmetic   domain     # trials      peak         rms
 Cephes Math Library Release 2.8:  June, 2000
 Copyright 1984, 1987, 1995, 2000 by Stephen L. Moshier
 *************************************************************************/
-double studenttdistribution(const ae_int_t k, const double t);
+double studenttdistribution(const ae_int_t k, const double t, const xparams _xparams = alglib::xdefault);
 
 
 /*************************************************************************
@@ -1885,7 +1972,7 @@ arithmetic   domain     # trials      peak         rms
 Cephes Math Library Release 2.8:  June, 2000
 Copyright 1984, 1987, 1995, 2000 by Stephen L. Moshier
 *************************************************************************/
-double invstudenttdistribution(const ae_int_t k, const double p);
+double invstudenttdistribution(const ae_int_t k, const double p, const xparams _xparams = alglib::xdefault);
 #endif
 
 #if defined(AE_COMPILE_BINOMIALDISTR) || !defined(AE_PARTIAL_BUILD)
@@ -1920,7 +2007,7 @@ arithmetic  domain     # trials      peak         rms
 Cephes Math Library Release 2.8:  June, 2000
 Copyright 1984, 1987, 1995, 2000 by Stephen L. Moshier
 *************************************************************************/
-double binomialdistribution(const ae_int_t k, const ae_int_t n, const double p);
+double binomialdistribution(const ae_int_t k, const ae_int_t n, const double p, const xparams _xparams = alglib::xdefault);
 
 
 /*************************************************************************
@@ -1956,7 +2043,7 @@ arithmetic  domain     # trials      peak         rms
 Cephes Math Library Release 2.8:  June, 2000
 Copyright 1984, 1987, 1995, 2000 by Stephen L. Moshier
 *************************************************************************/
-double binomialcdistribution(const ae_int_t k, const ae_int_t n, const double p);
+double binomialcdistribution(const ae_int_t k, const ae_int_t n, const double p, const xparams _xparams = alglib::xdefault);
 
 
 /*************************************************************************
@@ -1987,7 +2074,7 @@ arithmetic  domain     # trials      peak         rms
 Cephes Math Library Release 2.8:  June, 2000
 Copyright 1984, 1987, 1995, 2000 by Stephen L. Moshier
 *************************************************************************/
-double invbinomialdistribution(const ae_int_t k, const ae_int_t n, const double y);
+double invbinomialdistribution(const ae_int_t k, const ae_int_t n, const double y, const xparams _xparams = alglib::xdefault);
 #endif
 
 #if defined(AE_COMPILE_AIRYF) || !defined(AE_PARTIAL_BUILD)
@@ -2023,7 +2110,7 @@ IEEE        -10, 10    Bi'       30000       4.9e-15     7.3e-16
 Cephes Math Library Release 2.8:  June, 2000
 Copyright 1984, 1987, 1989, 2000 by Stephen L. Moshier
 *************************************************************************/
-void airy(const double x, double &ai, double &aip, double &bi, double &bip);
+void airy(const double x, double &ai, double &aip, double &bi, double &bip, const xparams _xparams = alglib::xdefault);
 #endif
 }
 
@@ -2042,8 +2129,19 @@ double lngamma(double x, double* sgngam, ae_state *_state);
 double errorfunction(double x, ae_state *_state);
 double errorfunctionc(double x, ae_state *_state);
 double normaldistribution(double x, ae_state *_state);
+double normalpdf(double x, ae_state *_state);
+double normalcdf(double x, ae_state *_state);
 double inverf(double e, ae_state *_state);
 double invnormaldistribution(double y0, ae_state *_state);
+double invnormalcdf(double y0, ae_state *_state);
+double bivariatenormalpdf(double x,
+     double y,
+     double rho,
+     ae_state *_state);
+double bivariatenormalcdf(double x,
+     double y,
+     double rho,
+     ae_state *_state);
 #endif
 #if defined(AE_COMPILE_IGAMMAF) || !defined(AE_PARTIAL_BUILD)
 double incompletegamma(double a, double x, ae_state *_state);

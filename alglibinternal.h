@@ -1,5 +1,5 @@
 /*************************************************************************
-ALGLIB 3.13.0 (source code generated 2017-12-29)
+ALGLIB 3.17.0 (source code generated 2020-12-27)
 Copyright (c) Sergey Bochkanov (ALGLIB project).
 
 >>> SOURCE LICENSE >>>
@@ -213,10 +213,12 @@ ae_int_t getkdtreeserializationcode(ae_state *_state);
 ae_int_t getmlpserializationcode(ae_state *_state);
 ae_int_t getmlpeserializationcode(ae_state *_state);
 ae_int_t getrbfserializationcode(ae_state *_state);
+ae_int_t getspline2dserializationcode(ae_state *_state);
+ae_int_t getidwserializationcode(ae_state *_state);
+ae_int_t getknnserializationcode(ae_state *_state);
 #endif
 #if defined(AE_COMPILE_APSERV) || !defined(AE_PARTIAL_BUILD)
-ae_bool seterrorflag(ae_bool* flag, ae_bool cond, ae_state *_state);
-ae_bool seterrorflagdiff(ae_bool* flag,
+void seterrorflagdiff(ae_bool* flag,
      double val,
      double refval,
      double tol,
@@ -259,6 +261,9 @@ ae_bool aredistinct(/* Real    */ ae_vector* x,
      ae_int_t n,
      ae_state *_state);
 ae_bool aresameboolean(ae_bool v1, ae_bool v2, ae_state *_state);
+void setlengthzero(/* Real    */ ae_vector* x,
+     ae_int_t n,
+     ae_state *_state);
 void bvectorsetlengthatleast(/* Boolean */ ae_vector* x,
      ae_int_t n,
      ae_state *_state);
@@ -272,8 +277,23 @@ void rmatrixsetlengthatleast(/* Real    */ ae_matrix* x,
      ae_int_t m,
      ae_int_t n,
      ae_state *_state);
+void bmatrixsetlengthatleast(/* Boolean */ ae_matrix* x,
+     ae_int_t m,
+     ae_int_t n,
+     ae_state *_state);
+void bvectorgrowto(/* Boolean */ ae_vector* x,
+     ae_int_t n,
+     ae_state *_state);
 void ivectorgrowto(/* Integer */ ae_vector* x,
      ae_int_t n,
+     ae_state *_state);
+void rmatrixgrowrowsto(/* Real    */ ae_matrix* a,
+     ae_int_t n,
+     ae_int_t mincols,
+     ae_state *_state);
+void rmatrixgrowcolsto(/* Real    */ ae_matrix* a,
+     ae_int_t n,
+     ae_int_t minrows,
      ae_state *_state);
 void rvectorgrowto(/* Real    */ ae_vector* x,
      ae_int_t n,
@@ -291,6 +311,9 @@ void rmatrixresize(/* Real    */ ae_matrix* x,
 void imatrixresize(/* Integer */ ae_matrix* x,
      ae_int_t m,
      ae_int_t n,
+     ae_state *_state);
+void ivectorappend(/* Integer */ ae_vector* x,
+     ae_int_t v,
      ae_state *_state);
 ae_bool isfinitevector(/* Real    */ ae_vector* x,
      ae_int_t n,
@@ -336,6 +359,16 @@ void swaprows(/* Real    */ ae_matrix* a,
      ae_int_t i1,
      ae_int_t ncols,
      ae_state *_state);
+void swapcols(/* Real    */ ae_matrix* a,
+     ae_int_t j0,
+     ae_int_t j1,
+     ae_int_t nrows,
+     ae_state *_state);
+void swapentries(/* Real    */ ae_vector* a,
+     ae_int_t i0,
+     ae_int_t i1,
+     ae_int_t entrywidth,
+     ae_state *_state);
 void swapelements(/* Real    */ ae_vector* a,
      ae_int_t i0,
      ae_int_t i1,
@@ -347,9 +380,29 @@ void swapelementsi(/* Integer */ ae_vector* a,
 double maxreal3(double v0, double v1, double v2, ae_state *_state);
 void inc(ae_int_t* v, ae_state *_state);
 void dec(ae_int_t* v, ae_state *_state);
+void threadunsafeinc(ae_int_t* v, ae_state *_state);
+void threadunsafeincby(ae_int_t* v, ae_int_t k, ae_state *_state);
 void countdown(ae_int_t* v, ae_state *_state);
+double possign(double x, ae_state *_state);
 double rmul2(double v0, double v1, ae_state *_state);
+double rmul3(double v0, double v1, double v2, ae_state *_state);
+ae_int_t idivup(ae_int_t a, ae_int_t b, ae_state *_state);
+ae_int_t imin2(ae_int_t i0, ae_int_t i1, ae_state *_state);
+ae_int_t imin3(ae_int_t i0, ae_int_t i1, ae_int_t i2, ae_state *_state);
+ae_int_t imax2(ae_int_t i0, ae_int_t i1, ae_state *_state);
+ae_int_t imax3(ae_int_t i0, ae_int_t i1, ae_int_t i2, ae_state *_state);
+double rmax3(double r0, double r1, double r2, ae_state *_state);
+double rmaxabs3(double r0, double r1, double r2, ae_state *_state);
 double boundval(double x, double b1, double b2, ae_state *_state);
+ae_int_t iboundval(ae_int_t x, ae_int_t b1, ae_int_t b2, ae_state *_state);
+double rboundval(double x, double b1, double b2, ae_state *_state);
+ae_int_t countnz1(/* Real    */ ae_vector* v,
+     ae_int_t n,
+     ae_state *_state);
+ae_int_t countnz2(/* Real    */ ae_matrix* v,
+     ae_int_t m,
+     ae_int_t n,
+     ae_state *_state);
 void alloccomplex(ae_serializer* s, ae_complex v, ae_state *_state);
 void serializecomplex(ae_serializer* s, ae_complex v, ae_state *_state);
 ae_complex unserializecomplex(ae_serializer* s, ae_state *_state);
@@ -388,6 +441,9 @@ void serializerealmatrix(ae_serializer* s,
 void unserializerealmatrix(ae_serializer* s,
      /* Real    */ ae_matrix* v,
      ae_state *_state);
+void copybooleanarray(/* Boolean */ ae_vector* src,
+     /* Boolean */ ae_vector* dst,
+     ae_state *_state);
 void copyintegerarray(/* Integer */ ae_vector* src,
      /* Integer */ ae_vector* dst,
      ae_state *_state);
@@ -400,6 +456,11 @@ void copyrealmatrix(/* Real    */ ae_matrix* src,
 void unsetintegerarray(/* Integer */ ae_vector* a, ae_state *_state);
 void unsetrealarray(/* Real    */ ae_vector* a, ae_state *_state);
 void unsetrealmatrix(/* Real    */ ae_matrix* a, ae_state *_state);
+void tiledsplit(ae_int_t tasksize,
+     ae_int_t tilesize,
+     ae_int_t* task0,
+     ae_int_t* task1,
+     ae_state *_state);
 ae_int_t recsearch(/* Integer */ ae_vector* a,
      ae_int_t nrec,
      ae_int_t nheader,
@@ -411,13 +472,50 @@ void splitlengtheven(ae_int_t tasksize,
      ae_int_t* task0,
      ae_int_t* task1,
      ae_state *_state);
+ae_int_t chunkscount(ae_int_t tasksize,
+     ae_int_t chunksize,
+     ae_state *_state);
+double sparselevel2density(ae_state *_state);
+ae_int_t matrixtilesizea(ae_state *_state);
+ae_int_t matrixtilesizeb(ae_state *_state);
+double smpactivationlevel(ae_state *_state);
+double spawnlevel(ae_state *_state);
 void splitlength(ae_int_t tasksize,
      ae_int_t chunksize,
      ae_int_t* task0,
      ae_int_t* task1,
      ae_state *_state);
-ae_int_t chunkscount(ae_int_t tasksize,
-     ae_int_t chunksize,
+void tracevectorautoprec(/* Real    */ ae_vector* a,
+     ae_int_t i0,
+     ae_int_t i1,
+     ae_state *_state);
+void tracevectorunscaledunshiftedautoprec(/* Real    */ ae_vector* x,
+     ae_int_t n,
+     /* Real    */ ae_vector* scl,
+     ae_bool applyscl,
+     /* Real    */ ae_vector* sft,
+     ae_bool applysft,
+     ae_state *_state);
+void tracerownrm1autoprec(/* Real    */ ae_matrix* a,
+     ae_int_t i0,
+     ae_int_t i1,
+     ae_int_t j0,
+     ae_int_t j1,
+     ae_state *_state);
+void tracevectore6(/* Real    */ ae_vector* a,
+     ae_int_t i0,
+     ae_int_t i1,
+     ae_state *_state);
+void tracevectore615(/* Real    */ ae_vector* a,
+     ae_int_t i0,
+     ae_int_t i1,
+     ae_bool usee15,
+     ae_state *_state);
+void tracerownrm1e6(/* Real    */ ae_matrix* a,
+     ae_int_t i0,
+     ae_int_t i1,
+     ae_int_t j0,
+     ae_int_t j1,
      ae_state *_state);
 void _apbuffers_init(void* _p, ae_state *_state, ae_bool make_automatic);
 void _apbuffers_init_copy(void* _dst, void* _src, ae_state *_state, ae_bool make_automatic);
@@ -489,6 +587,14 @@ void tagsortmiddleir(/* Integer */ ae_vector* a,
      ae_int_t offset,
      ae_int_t n,
      ae_state *_state);
+void tagsortmiddlei(/* Integer */ ae_vector* a,
+     ae_int_t offset,
+     ae_int_t n,
+     ae_state *_state);
+void sortmiddlei(/* Integer */ ae_vector* a,
+     ae_int_t offset,
+     ae_int_t n,
+     ae_state *_state);
 void tagheappushi(/* Real    */ ae_vector* a,
      /* Integer */ ae_vector* b,
      ae_int_t* n,
@@ -515,6 +621,211 @@ ae_int_t upperbound(/* Real    */ ae_vector* a,
      ae_state *_state);
 #endif
 #if defined(AE_COMPILE_ABLASF) || !defined(AE_PARTIAL_BUILD)
+double rdotv(ae_int_t n,
+     /* Real    */ ae_vector* x,
+     /* Real    */ ae_vector* y,
+     ae_state *_state);
+double rdotvr(ae_int_t n,
+     /* Real    */ ae_vector* x,
+     /* Real    */ ae_matrix* a,
+     ae_int_t i,
+     ae_state *_state);
+double rdotrr(ae_int_t n,
+     /* Real    */ ae_matrix* a,
+     ae_int_t ia,
+     /* Real    */ ae_matrix* b,
+     ae_int_t ib,
+     ae_state *_state);
+double rdotv2(ae_int_t n, /* Real    */ ae_vector* x, ae_state *_state);
+void raddv(ae_int_t n,
+     double alpha,
+     /* Real    */ ae_vector* y,
+     /* Real    */ ae_vector* x,
+     ae_state *_state);
+void raddvx(ae_int_t n,
+     double alpha,
+     /* Real    */ ae_vector* y,
+     ae_int_t offsy,
+     /* Real    */ ae_vector* x,
+     ae_int_t offsx,
+     ae_state *_state);
+void raddvc(ae_int_t n,
+     double alpha,
+     /* Real    */ ae_vector* y,
+     /* Real    */ ae_matrix* x,
+     ae_int_t colidx,
+     ae_state *_state);
+void raddvr(ae_int_t n,
+     double alpha,
+     /* Real    */ ae_vector* y,
+     /* Real    */ ae_matrix* x,
+     ae_int_t rowidx,
+     ae_state *_state);
+void rmergemulvr(ae_int_t n,
+     /* Real    */ ae_vector* y,
+     /* Real    */ ae_matrix* x,
+     ae_int_t rowidx,
+     ae_state *_state);
+void rmergemaxrv(ae_int_t n,
+     /* Real    */ ae_matrix* x,
+     ae_int_t rowidx,
+     /* Real    */ ae_vector* y,
+     ae_state *_state);
+void raddrv(ae_int_t n,
+     double alpha,
+     /* Real    */ ae_matrix* y,
+     ae_int_t ridx,
+     /* Real    */ ae_vector* x,
+     ae_state *_state);
+void rmulv(ae_int_t n,
+     double v,
+     /* Real    */ ae_vector* x,
+     ae_state *_state);
+void rmulr(ae_int_t n,
+     double v,
+     /* Real    */ ae_matrix* x,
+     ae_int_t rowidx,
+     ae_state *_state);
+void rmulvx(ae_int_t n,
+     double v,
+     /* Real    */ ae_vector* x,
+     ae_int_t offsx,
+     ae_state *_state);
+double rmaxabsv(ae_int_t n, /* Real    */ ae_vector* x, ae_state *_state);
+void rsetv(ae_int_t n,
+     double v,
+     /* Real    */ ae_vector* x,
+     ae_state *_state);
+void rsetvx(ae_int_t n,
+     double v,
+     /* Real    */ ae_vector* x,
+     ae_int_t offsx,
+     ae_state *_state);
+void isetv(ae_int_t n,
+     ae_int_t v,
+     /* Integer */ ae_vector* x,
+     ae_state *_state);
+void bsetv(ae_int_t n,
+     ae_bool v,
+     /* Boolean */ ae_vector* x,
+     ae_state *_state);
+void rsetm(ae_int_t m,
+     ae_int_t n,
+     double v,
+     /* Real    */ ae_matrix* a,
+     ae_state *_state);
+void rsetallocv(ae_int_t n,
+     double v,
+     /* Real    */ ae_vector* x,
+     ae_state *_state);
+void rsetallocm(ae_int_t m,
+     ae_int_t n,
+     double v,
+     /* Real    */ ae_matrix* a,
+     ae_state *_state);
+void rallocv(ae_int_t n, /* Real    */ ae_vector* x, ae_state *_state);
+void ballocv(ae_int_t n, /* Boolean */ ae_vector* x, ae_state *_state);
+void rallocm(ae_int_t m,
+     ae_int_t n,
+     /* Real    */ ae_matrix* a,
+     ae_state *_state);
+void isetallocv(ae_int_t n,
+     ae_int_t v,
+     /* Integer */ ae_vector* x,
+     ae_state *_state);
+void bsetallocv(ae_int_t n,
+     ae_bool v,
+     /* Boolean */ ae_vector* x,
+     ae_state *_state);
+void rsetr(ae_int_t n,
+     double v,
+     /* Real    */ ae_matrix* a,
+     ae_int_t i,
+     ae_state *_state);
+void rsetc(ae_int_t n,
+     double v,
+     /* Real    */ ae_matrix* a,
+     ae_int_t j,
+     ae_state *_state);
+void rcopyv(ae_int_t n,
+     /* Real    */ ae_vector* x,
+     /* Real    */ ae_vector* y,
+     ae_state *_state);
+void bcopyv(ae_int_t n,
+     /* Boolean */ ae_vector* x,
+     /* Boolean */ ae_vector* y,
+     ae_state *_state);
+void rcopyvx(ae_int_t n,
+     /* Real    */ ae_vector* x,
+     ae_int_t offsx,
+     /* Real    */ ae_vector* y,
+     ae_int_t offsy,
+     ae_state *_state);
+void rcopyallocv(ae_int_t n,
+     /* Real    */ ae_vector* x,
+     /* Real    */ ae_vector* y,
+     ae_state *_state);
+void rcopyallocm(ae_int_t m,
+     ae_int_t n,
+     /* Real    */ ae_matrix* x,
+     /* Real    */ ae_matrix* y,
+     ae_state *_state);
+void icopyallocv(ae_int_t n,
+     /* Integer */ ae_vector* x,
+     /* Integer */ ae_vector* y,
+     ae_state *_state);
+void bcopyallocv(ae_int_t n,
+     /* Boolean */ ae_vector* x,
+     /* Boolean */ ae_vector* y,
+     ae_state *_state);
+void icopyv(ae_int_t n,
+     /* Integer */ ae_vector* x,
+     /* Integer */ ae_vector* y,
+     ae_state *_state);
+void icopyvx(ae_int_t n,
+     /* Integer */ ae_vector* x,
+     ae_int_t offsx,
+     /* Integer */ ae_vector* y,
+     ae_int_t offsy,
+     ae_state *_state);
+void igrowv(ae_int_t newn, /* Integer */ ae_vector* x, ae_state *_state);
+void rcopymulv(ae_int_t n,
+     double v,
+     /* Real    */ ae_vector* x,
+     /* Real    */ ae_vector* y,
+     ae_state *_state);
+void rcopymulvr(ae_int_t n,
+     double v,
+     /* Real    */ ae_vector* x,
+     /* Real    */ ae_matrix* y,
+     ae_int_t ridx,
+     ae_state *_state);
+void rcopyvr(ae_int_t n,
+     /* Real    */ ae_vector* x,
+     /* Real    */ ae_matrix* a,
+     ae_int_t i,
+     ae_state *_state);
+void rcopyrv(ae_int_t n,
+     /* Real    */ ae_matrix* a,
+     ae_int_t i,
+     /* Real    */ ae_vector* x,
+     ae_state *_state);
+void rcopyrr(ae_int_t n,
+     /* Real    */ ae_matrix* a,
+     ae_int_t i,
+     /* Real    */ ae_matrix* b,
+     ae_int_t k,
+     ae_state *_state);
+void rcopyvc(ae_int_t n,
+     /* Real    */ ae_vector* x,
+     /* Real    */ ae_matrix* a,
+     ae_int_t j,
+     ae_state *_state);
+void rcopycv(ae_int_t n,
+     /* Real    */ ae_matrix* a,
+     ae_int_t j,
+     /* Real    */ ae_vector* x,
+     ae_state *_state);
 ae_bool rmatrixgerf(ae_int_t m,
      ae_int_t n,
      /* Real    */ ae_matrix* a,
@@ -1049,6 +1360,19 @@ ae_bool smatrixtdevdmkl(/* Real    */ ae_vector* d,
      ae_int_t zneeded,
      /* Real    */ ae_matrix* z,
      ae_bool* evdresult,
+     ae_state *_state);
+ae_bool sparsegemvcrsmkl(ae_int_t opa,
+     ae_int_t arows,
+     ae_int_t acols,
+     double alpha,
+     /* Real    */ ae_vector* vals,
+     /* Integer */ ae_vector* cidx,
+     /* Integer */ ae_vector* ridx,
+     /* Real    */ ae_vector* x,
+     ae_int_t ix,
+     double beta,
+     /* Real    */ ae_vector* y,
+     ae_int_t iy,
      ae_state *_state);
 #endif
 #if defined(AE_COMPILE_CREFLECTIONS) || !defined(AE_PARTIAL_BUILD)

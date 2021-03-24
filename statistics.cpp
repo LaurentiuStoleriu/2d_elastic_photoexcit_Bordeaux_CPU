@@ -1,5 +1,5 @@
 /*************************************************************************
-ALGLIB 3.13.0 (source code generated 2017-12-29)
+ALGLIB 3.17.0 (source code generated 2020-12-27)
 Copyright (c) Sergey Bochkanov (ALGLIB project).
 
 >>> SOURCE LICENSE >>>
@@ -17,6 +17,10 @@ A copy of the GNU General Public License is available at
 http://www.fsf.org/licensing/licenses
 >>> END OF LICENSE >>>
 *************************************************************************/
+#ifdef _MSC_VER
+#define _CRT_SECURE_NO_WARNINGS
+#endif
+
 #include "statistics.h"
 
 // disable some irrelevant warnings
@@ -89,7 +93,7 @@ NOTE: variance is calculated by dividing sum of squares by N-1, not N.
   -- ALGLIB --
      Copyright 06.09.2006 by Bochkanov Sergey
 *************************************************************************/
-void samplemoments(const real_1d_array &x, const ae_int_t n, double &mean, double &variance, double &skewness, double &kurtosis)
+void samplemoments(const real_1d_array &x, const ae_int_t n, double &mean, double &variance, double &skewness, double &kurtosis, const xparams _xparams)
 {
     jmp_buf _break_jump;
     alglib_impl::ae_state _alglib_env_state;
@@ -104,6 +108,8 @@ void samplemoments(const real_1d_array &x, const ae_int_t n, double &mean, doubl
 #endif
     }
     ae_state_set_break_jump(&_alglib_env_state, &_break_jump);
+    if( _xparams.flags!=0x0 )
+        ae_state_set_flags(&_alglib_env_state, _xparams.flags);
     alglib_impl::samplemoments(const_cast<alglib_impl::ae_vector*>(x.c_ptr()), n, &mean, &variance, &skewness, &kurtosis, &_alglib_env_state);
     alglib_impl::ae_state_clear(&_alglib_env_state);
     return;
@@ -130,7 +136,7 @@ NOTE: variance is calculated by dividing sum of squares by N-1, not N.
      Copyright 06.09.2006 by Bochkanov Sergey
 *************************************************************************/
 #if !defined(AE_NO_EXCEPTIONS)
-void samplemoments(const real_1d_array &x, double &mean, double &variance, double &skewness, double &kurtosis)
+void samplemoments(const real_1d_array &x, double &mean, double &variance, double &skewness, double &kurtosis, const xparams _xparams)
 {
     jmp_buf _break_jump;
     alglib_impl::ae_state _alglib_env_state;    
@@ -141,6 +147,8 @@ void samplemoments(const real_1d_array &x, double &mean, double &variance, doubl
     if( setjmp(_break_jump) )
         _ALGLIB_CPP_EXCEPTION(_alglib_env_state.error_msg);
     ae_state_set_break_jump(&_alglib_env_state, &_break_jump);
+    if( _xparams.flags!=0x0 )
+        ae_state_set_flags(&_alglib_env_state, _xparams.flags);
     alglib_impl::samplemoments(const_cast<alglib_impl::ae_vector*>(x.c_ptr()), n, &mean, &variance, &skewness, &kurtosis, &_alglib_env_state);
 
     alglib_impl::ae_state_clear(&_alglib_env_state);
@@ -166,7 +174,7 @@ and stored at 'Mean' variable.
   -- ALGLIB --
      Copyright 06.09.2006 by Bochkanov Sergey
 *************************************************************************/
-double samplemean(const real_1d_array &x, const ae_int_t n)
+double samplemean(const real_1d_array &x, const ae_int_t n, const xparams _xparams)
 {
     jmp_buf _break_jump;
     alglib_impl::ae_state _alglib_env_state;
@@ -181,6 +189,8 @@ double samplemean(const real_1d_array &x, const ae_int_t n)
 #endif
     }
     ae_state_set_break_jump(&_alglib_env_state, &_break_jump);
+    if( _xparams.flags!=0x0 )
+        ae_state_set_flags(&_alglib_env_state, _xparams.flags);
     double result = alglib_impl::samplemean(const_cast<alglib_impl::ae_vector*>(x.c_ptr()), n, &_alglib_env_state);
     alglib_impl::ae_state_clear(&_alglib_env_state);
     return *(reinterpret_cast<double*>(&result));
@@ -205,7 +215,7 @@ and stored at 'Mean' variable.
      Copyright 06.09.2006 by Bochkanov Sergey
 *************************************************************************/
 #if !defined(AE_NO_EXCEPTIONS)
-double samplemean(const real_1d_array &x)
+double samplemean(const real_1d_array &x, const xparams _xparams)
 {
     jmp_buf _break_jump;
     alglib_impl::ae_state _alglib_env_state;    
@@ -216,6 +226,8 @@ double samplemean(const real_1d_array &x)
     if( setjmp(_break_jump) )
         _ALGLIB_CPP_EXCEPTION(_alglib_env_state.error_msg);
     ae_state_set_break_jump(&_alglib_env_state, &_break_jump);
+    if( _xparams.flags!=0x0 )
+        ae_state_set_flags(&_alglib_env_state, _xparams.flags);
     double result = alglib_impl::samplemean(const_cast<alglib_impl::ae_vector*>(x.c_ptr()), n, &_alglib_env_state);
 
     alglib_impl::ae_state_clear(&_alglib_env_state);
@@ -241,7 +253,7 @@ and stored at 'Variance' variable.
   -- ALGLIB --
      Copyright 06.09.2006 by Bochkanov Sergey
 *************************************************************************/
-double samplevariance(const real_1d_array &x, const ae_int_t n)
+double samplevariance(const real_1d_array &x, const ae_int_t n, const xparams _xparams)
 {
     jmp_buf _break_jump;
     alglib_impl::ae_state _alglib_env_state;
@@ -256,6 +268,8 @@ double samplevariance(const real_1d_array &x, const ae_int_t n)
 #endif
     }
     ae_state_set_break_jump(&_alglib_env_state, &_break_jump);
+    if( _xparams.flags!=0x0 )
+        ae_state_set_flags(&_alglib_env_state, _xparams.flags);
     double result = alglib_impl::samplevariance(const_cast<alglib_impl::ae_vector*>(x.c_ptr()), n, &_alglib_env_state);
     alglib_impl::ae_state_clear(&_alglib_env_state);
     return *(reinterpret_cast<double*>(&result));
@@ -280,7 +294,7 @@ and stored at 'Variance' variable.
      Copyright 06.09.2006 by Bochkanov Sergey
 *************************************************************************/
 #if !defined(AE_NO_EXCEPTIONS)
-double samplevariance(const real_1d_array &x)
+double samplevariance(const real_1d_array &x, const xparams _xparams)
 {
     jmp_buf _break_jump;
     alglib_impl::ae_state _alglib_env_state;    
@@ -291,6 +305,8 @@ double samplevariance(const real_1d_array &x)
     if( setjmp(_break_jump) )
         _ALGLIB_CPP_EXCEPTION(_alglib_env_state.error_msg);
     ae_state_set_break_jump(&_alglib_env_state, &_break_jump);
+    if( _xparams.flags!=0x0 )
+        ae_state_set_flags(&_alglib_env_state, _xparams.flags);
     double result = alglib_impl::samplevariance(const_cast<alglib_impl::ae_vector*>(x.c_ptr()), n, &_alglib_env_state);
 
     alglib_impl::ae_state_clear(&_alglib_env_state);
@@ -316,7 +332,7 @@ and stored at 'Skewness' variable.
   -- ALGLIB --
      Copyright 06.09.2006 by Bochkanov Sergey
 *************************************************************************/
-double sampleskewness(const real_1d_array &x, const ae_int_t n)
+double sampleskewness(const real_1d_array &x, const ae_int_t n, const xparams _xparams)
 {
     jmp_buf _break_jump;
     alglib_impl::ae_state _alglib_env_state;
@@ -331,6 +347,8 @@ double sampleskewness(const real_1d_array &x, const ae_int_t n)
 #endif
     }
     ae_state_set_break_jump(&_alglib_env_state, &_break_jump);
+    if( _xparams.flags!=0x0 )
+        ae_state_set_flags(&_alglib_env_state, _xparams.flags);
     double result = alglib_impl::sampleskewness(const_cast<alglib_impl::ae_vector*>(x.c_ptr()), n, &_alglib_env_state);
     alglib_impl::ae_state_clear(&_alglib_env_state);
     return *(reinterpret_cast<double*>(&result));
@@ -355,7 +373,7 @@ and stored at 'Skewness' variable.
      Copyright 06.09.2006 by Bochkanov Sergey
 *************************************************************************/
 #if !defined(AE_NO_EXCEPTIONS)
-double sampleskewness(const real_1d_array &x)
+double sampleskewness(const real_1d_array &x, const xparams _xparams)
 {
     jmp_buf _break_jump;
     alglib_impl::ae_state _alglib_env_state;    
@@ -366,6 +384,8 @@ double sampleskewness(const real_1d_array &x)
     if( setjmp(_break_jump) )
         _ALGLIB_CPP_EXCEPTION(_alglib_env_state.error_msg);
     ae_state_set_break_jump(&_alglib_env_state, &_break_jump);
+    if( _xparams.flags!=0x0 )
+        ae_state_set_flags(&_alglib_env_state, _xparams.flags);
     double result = alglib_impl::sampleskewness(const_cast<alglib_impl::ae_vector*>(x.c_ptr()), n, &_alglib_env_state);
 
     alglib_impl::ae_state_clear(&_alglib_env_state);
@@ -391,7 +411,7 @@ and stored at 'Kurtosis' variable.
   -- ALGLIB --
      Copyright 06.09.2006 by Bochkanov Sergey
 *************************************************************************/
-double samplekurtosis(const real_1d_array &x, const ae_int_t n)
+double samplekurtosis(const real_1d_array &x, const ae_int_t n, const xparams _xparams)
 {
     jmp_buf _break_jump;
     alglib_impl::ae_state _alglib_env_state;
@@ -406,6 +426,8 @@ double samplekurtosis(const real_1d_array &x, const ae_int_t n)
 #endif
     }
     ae_state_set_break_jump(&_alglib_env_state, &_break_jump);
+    if( _xparams.flags!=0x0 )
+        ae_state_set_flags(&_alglib_env_state, _xparams.flags);
     double result = alglib_impl::samplekurtosis(const_cast<alglib_impl::ae_vector*>(x.c_ptr()), n, &_alglib_env_state);
     alglib_impl::ae_state_clear(&_alglib_env_state);
     return *(reinterpret_cast<double*>(&result));
@@ -430,7 +452,7 @@ and stored at 'Kurtosis' variable.
      Copyright 06.09.2006 by Bochkanov Sergey
 *************************************************************************/
 #if !defined(AE_NO_EXCEPTIONS)
-double samplekurtosis(const real_1d_array &x)
+double samplekurtosis(const real_1d_array &x, const xparams _xparams)
 {
     jmp_buf _break_jump;
     alglib_impl::ae_state _alglib_env_state;    
@@ -441,6 +463,8 @@ double samplekurtosis(const real_1d_array &x)
     if( setjmp(_break_jump) )
         _ALGLIB_CPP_EXCEPTION(_alglib_env_state.error_msg);
     ae_state_set_break_jump(&_alglib_env_state, &_break_jump);
+    if( _xparams.flags!=0x0 )
+        ae_state_set_flags(&_alglib_env_state, _xparams.flags);
     double result = alglib_impl::samplekurtosis(const_cast<alglib_impl::ae_vector*>(x.c_ptr()), n, &_alglib_env_state);
 
     alglib_impl::ae_state_clear(&_alglib_env_state);
@@ -463,7 +487,7 @@ Output parameters:
   -- ALGLIB --
      Copyright 06.09.2006 by Bochkanov Sergey
 *************************************************************************/
-void sampleadev(const real_1d_array &x, const ae_int_t n, double &adev)
+void sampleadev(const real_1d_array &x, const ae_int_t n, double &adev, const xparams _xparams)
 {
     jmp_buf _break_jump;
     alglib_impl::ae_state _alglib_env_state;
@@ -478,6 +502,8 @@ void sampleadev(const real_1d_array &x, const ae_int_t n, double &adev)
 #endif
     }
     ae_state_set_break_jump(&_alglib_env_state, &_break_jump);
+    if( _xparams.flags!=0x0 )
+        ae_state_set_flags(&_alglib_env_state, _xparams.flags);
     alglib_impl::sampleadev(const_cast<alglib_impl::ae_vector*>(x.c_ptr()), n, &adev, &_alglib_env_state);
     alglib_impl::ae_state_clear(&_alglib_env_state);
     return;
@@ -499,7 +525,7 @@ Output parameters:
      Copyright 06.09.2006 by Bochkanov Sergey
 *************************************************************************/
 #if !defined(AE_NO_EXCEPTIONS)
-void sampleadev(const real_1d_array &x, double &adev)
+void sampleadev(const real_1d_array &x, double &adev, const xparams _xparams)
 {
     jmp_buf _break_jump;
     alglib_impl::ae_state _alglib_env_state;    
@@ -510,6 +536,8 @@ void sampleadev(const real_1d_array &x, double &adev)
     if( setjmp(_break_jump) )
         _ALGLIB_CPP_EXCEPTION(_alglib_env_state.error_msg);
     ae_state_set_break_jump(&_alglib_env_state, &_break_jump);
+    if( _xparams.flags!=0x0 )
+        ae_state_set_flags(&_alglib_env_state, _xparams.flags);
     alglib_impl::sampleadev(const_cast<alglib_impl::ae_vector*>(x.c_ptr()), n, &adev, &_alglib_env_state);
 
     alglib_impl::ae_state_clear(&_alglib_env_state);
@@ -532,7 +560,7 @@ Output parameters:
   -- ALGLIB --
      Copyright 06.09.2006 by Bochkanov Sergey
 *************************************************************************/
-void samplemedian(const real_1d_array &x, const ae_int_t n, double &median)
+void samplemedian(const real_1d_array &x, const ae_int_t n, double &median, const xparams _xparams)
 {
     jmp_buf _break_jump;
     alglib_impl::ae_state _alglib_env_state;
@@ -547,6 +575,8 @@ void samplemedian(const real_1d_array &x, const ae_int_t n, double &median)
 #endif
     }
     ae_state_set_break_jump(&_alglib_env_state, &_break_jump);
+    if( _xparams.flags!=0x0 )
+        ae_state_set_flags(&_alglib_env_state, _xparams.flags);
     alglib_impl::samplemedian(const_cast<alglib_impl::ae_vector*>(x.c_ptr()), n, &median, &_alglib_env_state);
     alglib_impl::ae_state_clear(&_alglib_env_state);
     return;
@@ -568,7 +598,7 @@ Output parameters:
      Copyright 06.09.2006 by Bochkanov Sergey
 *************************************************************************/
 #if !defined(AE_NO_EXCEPTIONS)
-void samplemedian(const real_1d_array &x, double &median)
+void samplemedian(const real_1d_array &x, double &median, const xparams _xparams)
 {
     jmp_buf _break_jump;
     alglib_impl::ae_state _alglib_env_state;    
@@ -579,6 +609,8 @@ void samplemedian(const real_1d_array &x, double &median)
     if( setjmp(_break_jump) )
         _ALGLIB_CPP_EXCEPTION(_alglib_env_state.error_msg);
     ae_state_set_break_jump(&_alglib_env_state, &_break_jump);
+    if( _xparams.flags!=0x0 )
+        ae_state_set_flags(&_alglib_env_state, _xparams.flags);
     alglib_impl::samplemedian(const_cast<alglib_impl::ae_vector*>(x.c_ptr()), n, &median, &_alglib_env_state);
 
     alglib_impl::ae_state_clear(&_alglib_env_state);
@@ -602,7 +634,7 @@ Output parameters:
   -- ALGLIB --
      Copyright 01.03.2008 by Bochkanov Sergey
 *************************************************************************/
-void samplepercentile(const real_1d_array &x, const ae_int_t n, const double p, double &v)
+void samplepercentile(const real_1d_array &x, const ae_int_t n, const double p, double &v, const xparams _xparams)
 {
     jmp_buf _break_jump;
     alglib_impl::ae_state _alglib_env_state;
@@ -617,6 +649,8 @@ void samplepercentile(const real_1d_array &x, const ae_int_t n, const double p, 
 #endif
     }
     ae_state_set_break_jump(&_alglib_env_state, &_break_jump);
+    if( _xparams.flags!=0x0 )
+        ae_state_set_flags(&_alglib_env_state, _xparams.flags);
     alglib_impl::samplepercentile(const_cast<alglib_impl::ae_vector*>(x.c_ptr()), n, p, &v, &_alglib_env_state);
     alglib_impl::ae_state_clear(&_alglib_env_state);
     return;
@@ -639,7 +673,7 @@ Output parameters:
      Copyright 01.03.2008 by Bochkanov Sergey
 *************************************************************************/
 #if !defined(AE_NO_EXCEPTIONS)
-void samplepercentile(const real_1d_array &x, const double p, double &v)
+void samplepercentile(const real_1d_array &x, const double p, double &v, const xparams _xparams)
 {
     jmp_buf _break_jump;
     alglib_impl::ae_state _alglib_env_state;    
@@ -650,6 +684,8 @@ void samplepercentile(const real_1d_array &x, const double p, double &v)
     if( setjmp(_break_jump) )
         _ALGLIB_CPP_EXCEPTION(_alglib_env_state.error_msg);
     ae_state_set_break_jump(&_alglib_env_state, &_break_jump);
+    if( _xparams.flags!=0x0 )
+        ae_state_set_flags(&_alglib_env_state, _xparams.flags);
     alglib_impl::samplepercentile(const_cast<alglib_impl::ae_vector*>(x.c_ptr()), n, p, &v, &_alglib_env_state);
 
     alglib_impl::ae_state_clear(&_alglib_env_state);
@@ -673,7 +709,7 @@ Result:
   -- ALGLIB --
      Copyright 28.10.2010 by Bochkanov Sergey
 *************************************************************************/
-double cov2(const real_1d_array &x, const real_1d_array &y, const ae_int_t n)
+double cov2(const real_1d_array &x, const real_1d_array &y, const ae_int_t n, const xparams _xparams)
 {
     jmp_buf _break_jump;
     alglib_impl::ae_state _alglib_env_state;
@@ -688,6 +724,8 @@ double cov2(const real_1d_array &x, const real_1d_array &y, const ae_int_t n)
 #endif
     }
     ae_state_set_break_jump(&_alglib_env_state, &_break_jump);
+    if( _xparams.flags!=0x0 )
+        ae_state_set_flags(&_alglib_env_state, _xparams.flags);
     double result = alglib_impl::cov2(const_cast<alglib_impl::ae_vector*>(x.c_ptr()), const_cast<alglib_impl::ae_vector*>(y.c_ptr()), n, &_alglib_env_state);
     alglib_impl::ae_state_clear(&_alglib_env_state);
     return *(reinterpret_cast<double*>(&result));
@@ -710,7 +748,7 @@ Result:
      Copyright 28.10.2010 by Bochkanov Sergey
 *************************************************************************/
 #if !defined(AE_NO_EXCEPTIONS)
-double cov2(const real_1d_array &x, const real_1d_array &y)
+double cov2(const real_1d_array &x, const real_1d_array &y, const xparams _xparams)
 {
     jmp_buf _break_jump;
     alglib_impl::ae_state _alglib_env_state;    
@@ -722,6 +760,8 @@ double cov2(const real_1d_array &x, const real_1d_array &y)
     if( setjmp(_break_jump) )
         _ALGLIB_CPP_EXCEPTION(_alglib_env_state.error_msg);
     ae_state_set_break_jump(&_alglib_env_state, &_break_jump);
+    if( _xparams.flags!=0x0 )
+        ae_state_set_flags(&_alglib_env_state, _xparams.flags);
     double result = alglib_impl::cov2(const_cast<alglib_impl::ae_vector*>(x.c_ptr()), const_cast<alglib_impl::ae_vector*>(y.c_ptr()), n, &_alglib_env_state);
 
     alglib_impl::ae_state_clear(&_alglib_env_state);
@@ -746,7 +786,7 @@ Result:
   -- ALGLIB --
      Copyright 28.10.2010 by Bochkanov Sergey
 *************************************************************************/
-double pearsoncorr2(const real_1d_array &x, const real_1d_array &y, const ae_int_t n)
+double pearsoncorr2(const real_1d_array &x, const real_1d_array &y, const ae_int_t n, const xparams _xparams)
 {
     jmp_buf _break_jump;
     alglib_impl::ae_state _alglib_env_state;
@@ -761,6 +801,8 @@ double pearsoncorr2(const real_1d_array &x, const real_1d_array &y, const ae_int
 #endif
     }
     ae_state_set_break_jump(&_alglib_env_state, &_break_jump);
+    if( _xparams.flags!=0x0 )
+        ae_state_set_flags(&_alglib_env_state, _xparams.flags);
     double result = alglib_impl::pearsoncorr2(const_cast<alglib_impl::ae_vector*>(x.c_ptr()), const_cast<alglib_impl::ae_vector*>(y.c_ptr()), n, &_alglib_env_state);
     alglib_impl::ae_state_clear(&_alglib_env_state);
     return *(reinterpret_cast<double*>(&result));
@@ -784,7 +826,7 @@ Result:
      Copyright 28.10.2010 by Bochkanov Sergey
 *************************************************************************/
 #if !defined(AE_NO_EXCEPTIONS)
-double pearsoncorr2(const real_1d_array &x, const real_1d_array &y)
+double pearsoncorr2(const real_1d_array &x, const real_1d_array &y, const xparams _xparams)
 {
     jmp_buf _break_jump;
     alglib_impl::ae_state _alglib_env_state;    
@@ -796,6 +838,8 @@ double pearsoncorr2(const real_1d_array &x, const real_1d_array &y)
     if( setjmp(_break_jump) )
         _ALGLIB_CPP_EXCEPTION(_alglib_env_state.error_msg);
     ae_state_set_break_jump(&_alglib_env_state, &_break_jump);
+    if( _xparams.flags!=0x0 )
+        ae_state_set_flags(&_alglib_env_state, _xparams.flags);
     double result = alglib_impl::pearsoncorr2(const_cast<alglib_impl::ae_vector*>(x.c_ptr()), const_cast<alglib_impl::ae_vector*>(y.c_ptr()), n, &_alglib_env_state);
 
     alglib_impl::ae_state_clear(&_alglib_env_state);
@@ -820,7 +864,7 @@ Result:
   -- ALGLIB --
      Copyright 09.04.2007 by Bochkanov Sergey
 *************************************************************************/
-double spearmancorr2(const real_1d_array &x, const real_1d_array &y, const ae_int_t n)
+double spearmancorr2(const real_1d_array &x, const real_1d_array &y, const ae_int_t n, const xparams _xparams)
 {
     jmp_buf _break_jump;
     alglib_impl::ae_state _alglib_env_state;
@@ -835,6 +879,8 @@ double spearmancorr2(const real_1d_array &x, const real_1d_array &y, const ae_in
 #endif
     }
     ae_state_set_break_jump(&_alglib_env_state, &_break_jump);
+    if( _xparams.flags!=0x0 )
+        ae_state_set_flags(&_alglib_env_state, _xparams.flags);
     double result = alglib_impl::spearmancorr2(const_cast<alglib_impl::ae_vector*>(x.c_ptr()), const_cast<alglib_impl::ae_vector*>(y.c_ptr()), n, &_alglib_env_state);
     alglib_impl::ae_state_clear(&_alglib_env_state);
     return *(reinterpret_cast<double*>(&result));
@@ -858,7 +904,7 @@ Result:
      Copyright 09.04.2007 by Bochkanov Sergey
 *************************************************************************/
 #if !defined(AE_NO_EXCEPTIONS)
-double spearmancorr2(const real_1d_array &x, const real_1d_array &y)
+double spearmancorr2(const real_1d_array &x, const real_1d_array &y, const xparams _xparams)
 {
     jmp_buf _break_jump;
     alglib_impl::ae_state _alglib_env_state;    
@@ -870,6 +916,8 @@ double spearmancorr2(const real_1d_array &x, const real_1d_array &y)
     if( setjmp(_break_jump) )
         _ALGLIB_CPP_EXCEPTION(_alglib_env_state.error_msg);
     ae_state_set_break_jump(&_alglib_env_state, &_break_jump);
+    if( _xparams.flags!=0x0 )
+        ae_state_set_flags(&_alglib_env_state, _xparams.flags);
     double result = alglib_impl::spearmancorr2(const_cast<alglib_impl::ae_vector*>(x.c_ptr()), const_cast<alglib_impl::ae_vector*>(y.c_ptr()), n, &_alglib_env_state);
 
     alglib_impl::ae_state_clear(&_alglib_env_state);
@@ -880,24 +928,18 @@ double spearmancorr2(const real_1d_array &x, const real_1d_array &y)
 /*************************************************************************
 Covariance matrix
 
-SMP EDITION OF ALGLIB:
-
-  ! This function can utilize multicore capabilities of  your system.  In
-  ! order to do this you have to call version with "smp_" prefix,   which
-  ! indicates that multicore code will be used.
+  ! COMMERCIAL EDITION OF ALGLIB:
   !
-  ! This note is given for users of SMP edition; if you use GPL  edition,
-  ! or commercial edition of ALGLIB without SMP support, you  still  will
-  ! be able to call smp-version of this function,  but  all  computations
-  ! will be done serially.
+  ! Commercial Edition of ALGLIB includes following important improvements
+  ! of this function:
+  ! * high-performance native backend with same C# interface (C# version)
+  ! * multithreading support (C++ and C# versions)
+  ! * hardware vendor (Intel) implementations of linear algebra primitives
+  !   (C++ and C# versions, x86/x64 platform)
   !
-  ! We recommend you to carefully read ALGLIB Reference  Manual,  section
-  ! called 'SMP support', before using parallel version of this function.
-  !
-  ! You should remember that starting/stopping worker thread always  have
-  ! non-zero cost. Although  multicore  version  is  pretty  efficient on
-  ! large problems, we do not recommend you to use it on small problems -
-  ! with covariance matrices smaller than 128*128.
+  ! We recommend you to read 'Working with commercial version' section  of
+  ! ALGLIB Reference Manual in order to find out how to  use  performance-
+  ! related features provided by commercial edition of ALGLIB.
 
 INPUT PARAMETERS:
     X   -   array[N,M], sample matrix:
@@ -916,7 +958,7 @@ OUTPUT PARAMETERS:
   -- ALGLIB --
      Copyright 28.10.2010 by Bochkanov Sergey
 *************************************************************************/
-void covm(const real_2d_array &x, const ae_int_t n, const ae_int_t m, real_2d_array &c)
+void covm(const real_2d_array &x, const ae_int_t n, const ae_int_t m, real_2d_array &c, const xparams _xparams)
 {
     jmp_buf _break_jump;
     alglib_impl::ae_state _alglib_env_state;
@@ -931,28 +973,9 @@ void covm(const real_2d_array &x, const ae_int_t n, const ae_int_t m, real_2d_ar
 #endif
     }
     ae_state_set_break_jump(&_alglib_env_state, &_break_jump);
+    if( _xparams.flags!=0x0 )
+        ae_state_set_flags(&_alglib_env_state, _xparams.flags);
     alglib_impl::covm(const_cast<alglib_impl::ae_matrix*>(x.c_ptr()), n, m, const_cast<alglib_impl::ae_matrix*>(c.c_ptr()), &_alglib_env_state);
-    alglib_impl::ae_state_clear(&_alglib_env_state);
-    return;
-}
-
-
-void smp_covm(const real_2d_array &x, const ae_int_t n, const ae_int_t m, real_2d_array &c)
-{
-    jmp_buf _break_jump;
-    alglib_impl::ae_state _alglib_env_state;
-    alglib_impl::ae_state_init(&_alglib_env_state);
-    if( setjmp(_break_jump) )
-    {
-#if !defined(AE_NO_EXCEPTIONS)
-        _ALGLIB_CPP_EXCEPTION(_alglib_env_state.error_msg);
-#else
-        _ALGLIB_SET_ERROR_FLAG(_alglib_env_state.error_msg);
-        return;
-#endif
-    }
-    ae_state_set_break_jump(&_alglib_env_state, &_break_jump);
-    alglib_impl::_pexec_covm(const_cast<alglib_impl::ae_matrix*>(x.c_ptr()), n, m, const_cast<alglib_impl::ae_matrix*>(c.c_ptr()), &_alglib_env_state);
     alglib_impl::ae_state_clear(&_alglib_env_state);
     return;
 }
@@ -960,24 +983,18 @@ void smp_covm(const real_2d_array &x, const ae_int_t n, const ae_int_t m, real_2
 /*************************************************************************
 Covariance matrix
 
-SMP EDITION OF ALGLIB:
-
-  ! This function can utilize multicore capabilities of  your system.  In
-  ! order to do this you have to call version with "smp_" prefix,   which
-  ! indicates that multicore code will be used.
+  ! COMMERCIAL EDITION OF ALGLIB:
   !
-  ! This note is given for users of SMP edition; if you use GPL  edition,
-  ! or commercial edition of ALGLIB without SMP support, you  still  will
-  ! be able to call smp-version of this function,  but  all  computations
-  ! will be done serially.
+  ! Commercial Edition of ALGLIB includes following important improvements
+  ! of this function:
+  ! * high-performance native backend with same C# interface (C# version)
+  ! * multithreading support (C++ and C# versions)
+  ! * hardware vendor (Intel) implementations of linear algebra primitives
+  !   (C++ and C# versions, x86/x64 platform)
   !
-  ! We recommend you to carefully read ALGLIB Reference  Manual,  section
-  ! called 'SMP support', before using parallel version of this function.
-  !
-  ! You should remember that starting/stopping worker thread always  have
-  ! non-zero cost. Although  multicore  version  is  pretty  efficient on
-  ! large problems, we do not recommend you to use it on small problems -
-  ! with covariance matrices smaller than 128*128.
+  ! We recommend you to read 'Working with commercial version' section  of
+  ! ALGLIB Reference Manual in order to find out how to  use  performance-
+  ! related features provided by commercial edition of ALGLIB.
 
 INPUT PARAMETERS:
     X   -   array[N,M], sample matrix:
@@ -997,7 +1014,7 @@ OUTPUT PARAMETERS:
      Copyright 28.10.2010 by Bochkanov Sergey
 *************************************************************************/
 #if !defined(AE_NO_EXCEPTIONS)
-void covm(const real_2d_array &x, real_2d_array &c)
+void covm(const real_2d_array &x, real_2d_array &c, const xparams _xparams)
 {
     jmp_buf _break_jump;
     alglib_impl::ae_state _alglib_env_state;    
@@ -1010,6 +1027,8 @@ void covm(const real_2d_array &x, real_2d_array &c)
     if( setjmp(_break_jump) )
         _ALGLIB_CPP_EXCEPTION(_alglib_env_state.error_msg);
     ae_state_set_break_jump(&_alglib_env_state, &_break_jump);
+    if( _xparams.flags!=0x0 )
+        ae_state_set_flags(&_alglib_env_state, _xparams.flags);
     alglib_impl::covm(const_cast<alglib_impl::ae_matrix*>(x.c_ptr()), n, m, const_cast<alglib_impl::ae_matrix*>(c.c_ptr()), &_alglib_env_state);
 
     alglib_impl::ae_state_clear(&_alglib_env_state);
@@ -1017,49 +1036,21 @@ void covm(const real_2d_array &x, real_2d_array &c)
 }
 #endif
 
-
-#if !defined(AE_NO_EXCEPTIONS)
-void smp_covm(const real_2d_array &x, real_2d_array &c)
-{
-    jmp_buf _break_jump;
-    alglib_impl::ae_state _alglib_env_state;    
-    ae_int_t n;
-    ae_int_t m;
-
-    n = x.rows();
-    m = x.cols();
-    alglib_impl::ae_state_init(&_alglib_env_state);
-    if( setjmp(_break_jump) )
-        _ALGLIB_CPP_EXCEPTION(_alglib_env_state.error_msg);
-    ae_state_set_break_jump(&_alglib_env_state, &_break_jump);
-    alglib_impl::_pexec_covm(const_cast<alglib_impl::ae_matrix*>(x.c_ptr()), n, m, const_cast<alglib_impl::ae_matrix*>(c.c_ptr()), &_alglib_env_state);
-
-    alglib_impl::ae_state_clear(&_alglib_env_state);
-    return;
-}
-#endif
-
 /*************************************************************************
 Pearson product-moment correlation matrix
 
-SMP EDITION OF ALGLIB:
-
-  ! This function can utilize multicore capabilities of  your system.  In
-  ! order to do this you have to call version with "smp_" prefix,   which
-  ! indicates that multicore code will be used.
+  ! COMMERCIAL EDITION OF ALGLIB:
   !
-  ! This note is given for users of SMP edition; if you use GPL  edition,
-  ! or commercial edition of ALGLIB without SMP support, you  still  will
-  ! be able to call smp-version of this function,  but  all  computations
-  ! will be done serially.
+  ! Commercial Edition of ALGLIB includes following important improvements
+  ! of this function:
+  ! * high-performance native backend with same C# interface (C# version)
+  ! * multithreading support (C++ and C# versions)
+  ! * hardware vendor (Intel) implementations of linear algebra primitives
+  !   (C++ and C# versions, x86/x64 platform)
   !
-  ! We recommend you to carefully read ALGLIB Reference  Manual,  section
-  ! called 'SMP support', before using parallel version of this function.
-  !
-  ! You should remember that starting/stopping worker thread always  have
-  ! non-zero cost. Although  multicore  version  is  pretty  efficient on
-  ! large problems, we do not recommend you to use it on small problems -
-  ! with correlation matrices smaller than 128*128.
+  ! We recommend you to read 'Working with commercial version' section  of
+  ! ALGLIB Reference Manual in order to find out how to  use  performance-
+  ! related features provided by commercial edition of ALGLIB.
 
 INPUT PARAMETERS:
     X   -   array[N,M], sample matrix:
@@ -1078,7 +1069,7 @@ OUTPUT PARAMETERS:
   -- ALGLIB --
      Copyright 28.10.2010 by Bochkanov Sergey
 *************************************************************************/
-void pearsoncorrm(const real_2d_array &x, const ae_int_t n, const ae_int_t m, real_2d_array &c)
+void pearsoncorrm(const real_2d_array &x, const ae_int_t n, const ae_int_t m, real_2d_array &c, const xparams _xparams)
 {
     jmp_buf _break_jump;
     alglib_impl::ae_state _alglib_env_state;
@@ -1093,28 +1084,9 @@ void pearsoncorrm(const real_2d_array &x, const ae_int_t n, const ae_int_t m, re
 #endif
     }
     ae_state_set_break_jump(&_alglib_env_state, &_break_jump);
+    if( _xparams.flags!=0x0 )
+        ae_state_set_flags(&_alglib_env_state, _xparams.flags);
     alglib_impl::pearsoncorrm(const_cast<alglib_impl::ae_matrix*>(x.c_ptr()), n, m, const_cast<alglib_impl::ae_matrix*>(c.c_ptr()), &_alglib_env_state);
-    alglib_impl::ae_state_clear(&_alglib_env_state);
-    return;
-}
-
-
-void smp_pearsoncorrm(const real_2d_array &x, const ae_int_t n, const ae_int_t m, real_2d_array &c)
-{
-    jmp_buf _break_jump;
-    alglib_impl::ae_state _alglib_env_state;
-    alglib_impl::ae_state_init(&_alglib_env_state);
-    if( setjmp(_break_jump) )
-    {
-#if !defined(AE_NO_EXCEPTIONS)
-        _ALGLIB_CPP_EXCEPTION(_alglib_env_state.error_msg);
-#else
-        _ALGLIB_SET_ERROR_FLAG(_alglib_env_state.error_msg);
-        return;
-#endif
-    }
-    ae_state_set_break_jump(&_alglib_env_state, &_break_jump);
-    alglib_impl::_pexec_pearsoncorrm(const_cast<alglib_impl::ae_matrix*>(x.c_ptr()), n, m, const_cast<alglib_impl::ae_matrix*>(c.c_ptr()), &_alglib_env_state);
     alglib_impl::ae_state_clear(&_alglib_env_state);
     return;
 }
@@ -1122,24 +1094,18 @@ void smp_pearsoncorrm(const real_2d_array &x, const ae_int_t n, const ae_int_t m
 /*************************************************************************
 Pearson product-moment correlation matrix
 
-SMP EDITION OF ALGLIB:
-
-  ! This function can utilize multicore capabilities of  your system.  In
-  ! order to do this you have to call version with "smp_" prefix,   which
-  ! indicates that multicore code will be used.
+  ! COMMERCIAL EDITION OF ALGLIB:
   !
-  ! This note is given for users of SMP edition; if you use GPL  edition,
-  ! or commercial edition of ALGLIB without SMP support, you  still  will
-  ! be able to call smp-version of this function,  but  all  computations
-  ! will be done serially.
+  ! Commercial Edition of ALGLIB includes following important improvements
+  ! of this function:
+  ! * high-performance native backend with same C# interface (C# version)
+  ! * multithreading support (C++ and C# versions)
+  ! * hardware vendor (Intel) implementations of linear algebra primitives
+  !   (C++ and C# versions, x86/x64 platform)
   !
-  ! We recommend you to carefully read ALGLIB Reference  Manual,  section
-  ! called 'SMP support', before using parallel version of this function.
-  !
-  ! You should remember that starting/stopping worker thread always  have
-  ! non-zero cost. Although  multicore  version  is  pretty  efficient on
-  ! large problems, we do not recommend you to use it on small problems -
-  ! with correlation matrices smaller than 128*128.
+  ! We recommend you to read 'Working with commercial version' section  of
+  ! ALGLIB Reference Manual in order to find out how to  use  performance-
+  ! related features provided by commercial edition of ALGLIB.
 
 INPUT PARAMETERS:
     X   -   array[N,M], sample matrix:
@@ -1159,7 +1125,7 @@ OUTPUT PARAMETERS:
      Copyright 28.10.2010 by Bochkanov Sergey
 *************************************************************************/
 #if !defined(AE_NO_EXCEPTIONS)
-void pearsoncorrm(const real_2d_array &x, real_2d_array &c)
+void pearsoncorrm(const real_2d_array &x, real_2d_array &c, const xparams _xparams)
 {
     jmp_buf _break_jump;
     alglib_impl::ae_state _alglib_env_state;    
@@ -1172,29 +1138,9 @@ void pearsoncorrm(const real_2d_array &x, real_2d_array &c)
     if( setjmp(_break_jump) )
         _ALGLIB_CPP_EXCEPTION(_alglib_env_state.error_msg);
     ae_state_set_break_jump(&_alglib_env_state, &_break_jump);
+    if( _xparams.flags!=0x0 )
+        ae_state_set_flags(&_alglib_env_state, _xparams.flags);
     alglib_impl::pearsoncorrm(const_cast<alglib_impl::ae_matrix*>(x.c_ptr()), n, m, const_cast<alglib_impl::ae_matrix*>(c.c_ptr()), &_alglib_env_state);
-
-    alglib_impl::ae_state_clear(&_alglib_env_state);
-    return;
-}
-#endif
-
-
-#if !defined(AE_NO_EXCEPTIONS)
-void smp_pearsoncorrm(const real_2d_array &x, real_2d_array &c)
-{
-    jmp_buf _break_jump;
-    alglib_impl::ae_state _alglib_env_state;    
-    ae_int_t n;
-    ae_int_t m;
-
-    n = x.rows();
-    m = x.cols();
-    alglib_impl::ae_state_init(&_alglib_env_state);
-    if( setjmp(_break_jump) )
-        _ALGLIB_CPP_EXCEPTION(_alglib_env_state.error_msg);
-    ae_state_set_break_jump(&_alglib_env_state, &_break_jump);
-    alglib_impl::_pexec_pearsoncorrm(const_cast<alglib_impl::ae_matrix*>(x.c_ptr()), n, m, const_cast<alglib_impl::ae_matrix*>(c.c_ptr()), &_alglib_env_state);
 
     alglib_impl::ae_state_clear(&_alglib_env_state);
     return;
@@ -1204,24 +1150,18 @@ void smp_pearsoncorrm(const real_2d_array &x, real_2d_array &c)
 /*************************************************************************
 Spearman's rank correlation matrix
 
-SMP EDITION OF ALGLIB:
-
-  ! This function can utilize multicore capabilities of  your system.  In
-  ! order to do this you have to call version with "smp_" prefix,   which
-  ! indicates that multicore code will be used.
+  ! COMMERCIAL EDITION OF ALGLIB:
   !
-  ! This note is given for users of SMP edition; if you use GPL  edition,
-  ! or commercial edition of ALGLIB without SMP support, you  still  will
-  ! be able to call smp-version of this function,  but  all  computations
-  ! will be done serially.
+  ! Commercial Edition of ALGLIB includes following important improvements
+  ! of this function:
+  ! * high-performance native backend with same C# interface (C# version)
+  ! * multithreading support (C++ and C# versions)
+  ! * hardware vendor (Intel) implementations of linear algebra primitives
+  !   (C++ and C# versions, x86/x64 platform)
   !
-  ! We recommend you to carefully read ALGLIB Reference  Manual,  section
-  ! called 'SMP support', before using parallel version of this function.
-  !
-  ! You should remember that starting/stopping worker thread always  have
-  ! non-zero cost. Although  multicore  version  is  pretty  efficient on
-  ! large problems, we do not recommend you to use it on small problems -
-  ! with correlation matrices smaller than 128*128.
+  ! We recommend you to read 'Working with commercial version' section  of
+  ! ALGLIB Reference Manual in order to find out how to  use  performance-
+  ! related features provided by commercial edition of ALGLIB.
 
 INPUT PARAMETERS:
     X   -   array[N,M], sample matrix:
@@ -1240,7 +1180,7 @@ OUTPUT PARAMETERS:
   -- ALGLIB --
      Copyright 28.10.2010 by Bochkanov Sergey
 *************************************************************************/
-void spearmancorrm(const real_2d_array &x, const ae_int_t n, const ae_int_t m, real_2d_array &c)
+void spearmancorrm(const real_2d_array &x, const ae_int_t n, const ae_int_t m, real_2d_array &c, const xparams _xparams)
 {
     jmp_buf _break_jump;
     alglib_impl::ae_state _alglib_env_state;
@@ -1255,28 +1195,9 @@ void spearmancorrm(const real_2d_array &x, const ae_int_t n, const ae_int_t m, r
 #endif
     }
     ae_state_set_break_jump(&_alglib_env_state, &_break_jump);
+    if( _xparams.flags!=0x0 )
+        ae_state_set_flags(&_alglib_env_state, _xparams.flags);
     alglib_impl::spearmancorrm(const_cast<alglib_impl::ae_matrix*>(x.c_ptr()), n, m, const_cast<alglib_impl::ae_matrix*>(c.c_ptr()), &_alglib_env_state);
-    alglib_impl::ae_state_clear(&_alglib_env_state);
-    return;
-}
-
-
-void smp_spearmancorrm(const real_2d_array &x, const ae_int_t n, const ae_int_t m, real_2d_array &c)
-{
-    jmp_buf _break_jump;
-    alglib_impl::ae_state _alglib_env_state;
-    alglib_impl::ae_state_init(&_alglib_env_state);
-    if( setjmp(_break_jump) )
-    {
-#if !defined(AE_NO_EXCEPTIONS)
-        _ALGLIB_CPP_EXCEPTION(_alglib_env_state.error_msg);
-#else
-        _ALGLIB_SET_ERROR_FLAG(_alglib_env_state.error_msg);
-        return;
-#endif
-    }
-    ae_state_set_break_jump(&_alglib_env_state, &_break_jump);
-    alglib_impl::_pexec_spearmancorrm(const_cast<alglib_impl::ae_matrix*>(x.c_ptr()), n, m, const_cast<alglib_impl::ae_matrix*>(c.c_ptr()), &_alglib_env_state);
     alglib_impl::ae_state_clear(&_alglib_env_state);
     return;
 }
@@ -1284,24 +1205,18 @@ void smp_spearmancorrm(const real_2d_array &x, const ae_int_t n, const ae_int_t 
 /*************************************************************************
 Spearman's rank correlation matrix
 
-SMP EDITION OF ALGLIB:
-
-  ! This function can utilize multicore capabilities of  your system.  In
-  ! order to do this you have to call version with "smp_" prefix,   which
-  ! indicates that multicore code will be used.
+  ! COMMERCIAL EDITION OF ALGLIB:
   !
-  ! This note is given for users of SMP edition; if you use GPL  edition,
-  ! or commercial edition of ALGLIB without SMP support, you  still  will
-  ! be able to call smp-version of this function,  but  all  computations
-  ! will be done serially.
+  ! Commercial Edition of ALGLIB includes following important improvements
+  ! of this function:
+  ! * high-performance native backend with same C# interface (C# version)
+  ! * multithreading support (C++ and C# versions)
+  ! * hardware vendor (Intel) implementations of linear algebra primitives
+  !   (C++ and C# versions, x86/x64 platform)
   !
-  ! We recommend you to carefully read ALGLIB Reference  Manual,  section
-  ! called 'SMP support', before using parallel version of this function.
-  !
-  ! You should remember that starting/stopping worker thread always  have
-  ! non-zero cost. Although  multicore  version  is  pretty  efficient on
-  ! large problems, we do not recommend you to use it on small problems -
-  ! with correlation matrices smaller than 128*128.
+  ! We recommend you to read 'Working with commercial version' section  of
+  ! ALGLIB Reference Manual in order to find out how to  use  performance-
+  ! related features provided by commercial edition of ALGLIB.
 
 INPUT PARAMETERS:
     X   -   array[N,M], sample matrix:
@@ -1321,7 +1236,7 @@ OUTPUT PARAMETERS:
      Copyright 28.10.2010 by Bochkanov Sergey
 *************************************************************************/
 #if !defined(AE_NO_EXCEPTIONS)
-void spearmancorrm(const real_2d_array &x, real_2d_array &c)
+void spearmancorrm(const real_2d_array &x, real_2d_array &c, const xparams _xparams)
 {
     jmp_buf _break_jump;
     alglib_impl::ae_state _alglib_env_state;    
@@ -1334,29 +1249,9 @@ void spearmancorrm(const real_2d_array &x, real_2d_array &c)
     if( setjmp(_break_jump) )
         _ALGLIB_CPP_EXCEPTION(_alglib_env_state.error_msg);
     ae_state_set_break_jump(&_alglib_env_state, &_break_jump);
+    if( _xparams.flags!=0x0 )
+        ae_state_set_flags(&_alglib_env_state, _xparams.flags);
     alglib_impl::spearmancorrm(const_cast<alglib_impl::ae_matrix*>(x.c_ptr()), n, m, const_cast<alglib_impl::ae_matrix*>(c.c_ptr()), &_alglib_env_state);
-
-    alglib_impl::ae_state_clear(&_alglib_env_state);
-    return;
-}
-#endif
-
-
-#if !defined(AE_NO_EXCEPTIONS)
-void smp_spearmancorrm(const real_2d_array &x, real_2d_array &c)
-{
-    jmp_buf _break_jump;
-    alglib_impl::ae_state _alglib_env_state;    
-    ae_int_t n;
-    ae_int_t m;
-
-    n = x.rows();
-    m = x.cols();
-    alglib_impl::ae_state_init(&_alglib_env_state);
-    if( setjmp(_break_jump) )
-        _ALGLIB_CPP_EXCEPTION(_alglib_env_state.error_msg);
-    ae_state_set_break_jump(&_alglib_env_state, &_break_jump);
-    alglib_impl::_pexec_spearmancorrm(const_cast<alglib_impl::ae_matrix*>(x.c_ptr()), n, m, const_cast<alglib_impl::ae_matrix*>(c.c_ptr()), &_alglib_env_state);
 
     alglib_impl::ae_state_clear(&_alglib_env_state);
     return;
@@ -1366,24 +1261,18 @@ void smp_spearmancorrm(const real_2d_array &x, real_2d_array &c)
 /*************************************************************************
 Cross-covariance matrix
 
-SMP EDITION OF ALGLIB:
-
-  ! This function can utilize multicore capabilities of  your system.  In
-  ! order to do this you have to call version with "smp_" prefix,   which
-  ! indicates that multicore code will be used.
+  ! COMMERCIAL EDITION OF ALGLIB:
   !
-  ! This note is given for users of SMP edition; if you use GPL  edition,
-  ! or commercial edition of ALGLIB without SMP support, you  still  will
-  ! be able to call smp-version of this function,  but  all  computations
-  ! will be done serially.
+  ! Commercial Edition of ALGLIB includes following important improvements
+  ! of this function:
+  ! * high-performance native backend with same C# interface (C# version)
+  ! * multithreading support (C++ and C# versions)
+  ! * hardware vendor (Intel) implementations of linear algebra primitives
+  !   (C++ and C# versions, x86/x64 platform)
   !
-  ! We recommend you to carefully read ALGLIB Reference  Manual,  section
-  ! called 'SMP support', before using parallel version of this function.
-  !
-  ! You should remember that starting/stopping worker thread always  have
-  ! non-zero cost. Although  multicore  version  is  pretty  efficient on
-  ! large problems, we do not recommend you to use it on small problems -
-  ! with covariance matrices smaller than 128*128.
+  ! We recommend you to read 'Working with commercial version' section  of
+  ! ALGLIB Reference Manual in order to find out how to  use  performance-
+  ! related features provided by commercial edition of ALGLIB.
 
 INPUT PARAMETERS:
     X   -   array[N,M1], sample matrix:
@@ -1408,7 +1297,7 @@ OUTPUT PARAMETERS:
   -- ALGLIB --
      Copyright 28.10.2010 by Bochkanov Sergey
 *************************************************************************/
-void covm2(const real_2d_array &x, const real_2d_array &y, const ae_int_t n, const ae_int_t m1, const ae_int_t m2, real_2d_array &c)
+void covm2(const real_2d_array &x, const real_2d_array &y, const ae_int_t n, const ae_int_t m1, const ae_int_t m2, real_2d_array &c, const xparams _xparams)
 {
     jmp_buf _break_jump;
     alglib_impl::ae_state _alglib_env_state;
@@ -1423,28 +1312,9 @@ void covm2(const real_2d_array &x, const real_2d_array &y, const ae_int_t n, con
 #endif
     }
     ae_state_set_break_jump(&_alglib_env_state, &_break_jump);
+    if( _xparams.flags!=0x0 )
+        ae_state_set_flags(&_alglib_env_state, _xparams.flags);
     alglib_impl::covm2(const_cast<alglib_impl::ae_matrix*>(x.c_ptr()), const_cast<alglib_impl::ae_matrix*>(y.c_ptr()), n, m1, m2, const_cast<alglib_impl::ae_matrix*>(c.c_ptr()), &_alglib_env_state);
-    alglib_impl::ae_state_clear(&_alglib_env_state);
-    return;
-}
-
-
-void smp_covm2(const real_2d_array &x, const real_2d_array &y, const ae_int_t n, const ae_int_t m1, const ae_int_t m2, real_2d_array &c)
-{
-    jmp_buf _break_jump;
-    alglib_impl::ae_state _alglib_env_state;
-    alglib_impl::ae_state_init(&_alglib_env_state);
-    if( setjmp(_break_jump) )
-    {
-#if !defined(AE_NO_EXCEPTIONS)
-        _ALGLIB_CPP_EXCEPTION(_alglib_env_state.error_msg);
-#else
-        _ALGLIB_SET_ERROR_FLAG(_alglib_env_state.error_msg);
-        return;
-#endif
-    }
-    ae_state_set_break_jump(&_alglib_env_state, &_break_jump);
-    alglib_impl::_pexec_covm2(const_cast<alglib_impl::ae_matrix*>(x.c_ptr()), const_cast<alglib_impl::ae_matrix*>(y.c_ptr()), n, m1, m2, const_cast<alglib_impl::ae_matrix*>(c.c_ptr()), &_alglib_env_state);
     alglib_impl::ae_state_clear(&_alglib_env_state);
     return;
 }
@@ -1452,24 +1322,18 @@ void smp_covm2(const real_2d_array &x, const real_2d_array &y, const ae_int_t n,
 /*************************************************************************
 Cross-covariance matrix
 
-SMP EDITION OF ALGLIB:
-
-  ! This function can utilize multicore capabilities of  your system.  In
-  ! order to do this you have to call version with "smp_" prefix,   which
-  ! indicates that multicore code will be used.
+  ! COMMERCIAL EDITION OF ALGLIB:
   !
-  ! This note is given for users of SMP edition; if you use GPL  edition,
-  ! or commercial edition of ALGLIB without SMP support, you  still  will
-  ! be able to call smp-version of this function,  but  all  computations
-  ! will be done serially.
+  ! Commercial Edition of ALGLIB includes following important improvements
+  ! of this function:
+  ! * high-performance native backend with same C# interface (C# version)
+  ! * multithreading support (C++ and C# versions)
+  ! * hardware vendor (Intel) implementations of linear algebra primitives
+  !   (C++ and C# versions, x86/x64 platform)
   !
-  ! We recommend you to carefully read ALGLIB Reference  Manual,  section
-  ! called 'SMP support', before using parallel version of this function.
-  !
-  ! You should remember that starting/stopping worker thread always  have
-  ! non-zero cost. Although  multicore  version  is  pretty  efficient on
-  ! large problems, we do not recommend you to use it on small problems -
-  ! with covariance matrices smaller than 128*128.
+  ! We recommend you to read 'Working with commercial version' section  of
+  ! ALGLIB Reference Manual in order to find out how to  use  performance-
+  ! related features provided by commercial edition of ALGLIB.
 
 INPUT PARAMETERS:
     X   -   array[N,M1], sample matrix:
@@ -1495,7 +1359,7 @@ OUTPUT PARAMETERS:
      Copyright 28.10.2010 by Bochkanov Sergey
 *************************************************************************/
 #if !defined(AE_NO_EXCEPTIONS)
-void covm2(const real_2d_array &x, const real_2d_array &y, real_2d_array &c)
+void covm2(const real_2d_array &x, const real_2d_array &y, real_2d_array &c, const xparams _xparams)
 {
     jmp_buf _break_jump;
     alglib_impl::ae_state _alglib_env_state;    
@@ -1511,6 +1375,8 @@ void covm2(const real_2d_array &x, const real_2d_array &y, real_2d_array &c)
     if( setjmp(_break_jump) )
         _ALGLIB_CPP_EXCEPTION(_alglib_env_state.error_msg);
     ae_state_set_break_jump(&_alglib_env_state, &_break_jump);
+    if( _xparams.flags!=0x0 )
+        ae_state_set_flags(&_alglib_env_state, _xparams.flags);
     alglib_impl::covm2(const_cast<alglib_impl::ae_matrix*>(x.c_ptr()), const_cast<alglib_impl::ae_matrix*>(y.c_ptr()), n, m1, m2, const_cast<alglib_impl::ae_matrix*>(c.c_ptr()), &_alglib_env_state);
 
     alglib_impl::ae_state_clear(&_alglib_env_state);
@@ -1518,52 +1384,21 @@ void covm2(const real_2d_array &x, const real_2d_array &y, real_2d_array &c)
 }
 #endif
 
-
-#if !defined(AE_NO_EXCEPTIONS)
-void smp_covm2(const real_2d_array &x, const real_2d_array &y, real_2d_array &c)
-{
-    jmp_buf _break_jump;
-    alglib_impl::ae_state _alglib_env_state;    
-    ae_int_t n;
-    ae_int_t m1;
-    ae_int_t m2;
-    if( (x.rows()!=y.rows()))
-        _ALGLIB_CPP_EXCEPTION("Error while calling 'covm2': looks like one of arguments has wrong size");
-    n = x.rows();
-    m1 = x.cols();
-    m2 = y.cols();
-    alglib_impl::ae_state_init(&_alglib_env_state);
-    if( setjmp(_break_jump) )
-        _ALGLIB_CPP_EXCEPTION(_alglib_env_state.error_msg);
-    ae_state_set_break_jump(&_alglib_env_state, &_break_jump);
-    alglib_impl::_pexec_covm2(const_cast<alglib_impl::ae_matrix*>(x.c_ptr()), const_cast<alglib_impl::ae_matrix*>(y.c_ptr()), n, m1, m2, const_cast<alglib_impl::ae_matrix*>(c.c_ptr()), &_alglib_env_state);
-
-    alglib_impl::ae_state_clear(&_alglib_env_state);
-    return;
-}
-#endif
-
 /*************************************************************************
 Pearson product-moment cross-correlation matrix
 
-SMP EDITION OF ALGLIB:
-
-  ! This function can utilize multicore capabilities of  your system.  In
-  ! order to do this you have to call version with "smp_" prefix,   which
-  ! indicates that multicore code will be used.
+  ! COMMERCIAL EDITION OF ALGLIB:
   !
-  ! This note is given for users of SMP edition; if you use GPL  edition,
-  ! or commercial edition of ALGLIB without SMP support, you  still  will
-  ! be able to call smp-version of this function,  but  all  computations
-  ! will be done serially.
+  ! Commercial Edition of ALGLIB includes following important improvements
+  ! of this function:
+  ! * high-performance native backend with same C# interface (C# version)
+  ! * multithreading support (C++ and C# versions)
+  ! * hardware vendor (Intel) implementations of linear algebra primitives
+  !   (C++ and C# versions, x86/x64 platform)
   !
-  ! We recommend you to carefully read ALGLIB Reference  Manual,  section
-  ! called 'SMP support', before using parallel version of this function.
-  !
-  ! You should remember that starting/stopping worker thread always  have
-  ! non-zero cost. Although  multicore  version  is  pretty  efficient on
-  ! large problems, we do not recommend you to use it on small problems -
-  ! with correlation matrices smaller than 128*128.
+  ! We recommend you to read 'Working with commercial version' section  of
+  ! ALGLIB Reference Manual in order to find out how to  use  performance-
+  ! related features provided by commercial edition of ALGLIB.
 
 INPUT PARAMETERS:
     X   -   array[N,M1], sample matrix:
@@ -1588,7 +1423,7 @@ OUTPUT PARAMETERS:
   -- ALGLIB --
      Copyright 28.10.2010 by Bochkanov Sergey
 *************************************************************************/
-void pearsoncorrm2(const real_2d_array &x, const real_2d_array &y, const ae_int_t n, const ae_int_t m1, const ae_int_t m2, real_2d_array &c)
+void pearsoncorrm2(const real_2d_array &x, const real_2d_array &y, const ae_int_t n, const ae_int_t m1, const ae_int_t m2, real_2d_array &c, const xparams _xparams)
 {
     jmp_buf _break_jump;
     alglib_impl::ae_state _alglib_env_state;
@@ -1603,53 +1438,28 @@ void pearsoncorrm2(const real_2d_array &x, const real_2d_array &y, const ae_int_
 #endif
     }
     ae_state_set_break_jump(&_alglib_env_state, &_break_jump);
+    if( _xparams.flags!=0x0 )
+        ae_state_set_flags(&_alglib_env_state, _xparams.flags);
     alglib_impl::pearsoncorrm2(const_cast<alglib_impl::ae_matrix*>(x.c_ptr()), const_cast<alglib_impl::ae_matrix*>(y.c_ptr()), n, m1, m2, const_cast<alglib_impl::ae_matrix*>(c.c_ptr()), &_alglib_env_state);
     alglib_impl::ae_state_clear(&_alglib_env_state);
     return;
 }
 
-
-void smp_pearsoncorrm2(const real_2d_array &x, const real_2d_array &y, const ae_int_t n, const ae_int_t m1, const ae_int_t m2, real_2d_array &c)
-{
-    jmp_buf _break_jump;
-    alglib_impl::ae_state _alglib_env_state;
-    alglib_impl::ae_state_init(&_alglib_env_state);
-    if( setjmp(_break_jump) )
-    {
-#if !defined(AE_NO_EXCEPTIONS)
-        _ALGLIB_CPP_EXCEPTION(_alglib_env_state.error_msg);
-#else
-        _ALGLIB_SET_ERROR_FLAG(_alglib_env_state.error_msg);
-        return;
-#endif
-    }
-    ae_state_set_break_jump(&_alglib_env_state, &_break_jump);
-    alglib_impl::_pexec_pearsoncorrm2(const_cast<alglib_impl::ae_matrix*>(x.c_ptr()), const_cast<alglib_impl::ae_matrix*>(y.c_ptr()), n, m1, m2, const_cast<alglib_impl::ae_matrix*>(c.c_ptr()), &_alglib_env_state);
-    alglib_impl::ae_state_clear(&_alglib_env_state);
-    return;
-}
-
 /*************************************************************************
 Pearson product-moment cross-correlation matrix
 
-SMP EDITION OF ALGLIB:
-
-  ! This function can utilize multicore capabilities of  your system.  In
-  ! order to do this you have to call version with "smp_" prefix,   which
-  ! indicates that multicore code will be used.
+  ! COMMERCIAL EDITION OF ALGLIB:
   !
-  ! This note is given for users of SMP edition; if you use GPL  edition,
-  ! or commercial edition of ALGLIB without SMP support, you  still  will
-  ! be able to call smp-version of this function,  but  all  computations
-  ! will be done serially.
+  ! Commercial Edition of ALGLIB includes following important improvements
+  ! of this function:
+  ! * high-performance native backend with same C# interface (C# version)
+  ! * multithreading support (C++ and C# versions)
+  ! * hardware vendor (Intel) implementations of linear algebra primitives
+  !   (C++ and C# versions, x86/x64 platform)
   !
-  ! We recommend you to carefully read ALGLIB Reference  Manual,  section
-  ! called 'SMP support', before using parallel version of this function.
-  !
-  ! You should remember that starting/stopping worker thread always  have
-  ! non-zero cost. Although  multicore  version  is  pretty  efficient on
-  ! large problems, we do not recommend you to use it on small problems -
-  ! with correlation matrices smaller than 128*128.
+  ! We recommend you to read 'Working with commercial version' section  of
+  ! ALGLIB Reference Manual in order to find out how to  use  performance-
+  ! related features provided by commercial edition of ALGLIB.
 
 INPUT PARAMETERS:
     X   -   array[N,M1], sample matrix:
@@ -1675,7 +1485,7 @@ OUTPUT PARAMETERS:
      Copyright 28.10.2010 by Bochkanov Sergey
 *************************************************************************/
 #if !defined(AE_NO_EXCEPTIONS)
-void pearsoncorrm2(const real_2d_array &x, const real_2d_array &y, real_2d_array &c)
+void pearsoncorrm2(const real_2d_array &x, const real_2d_array &y, real_2d_array &c, const xparams _xparams)
 {
     jmp_buf _break_jump;
     alglib_impl::ae_state _alglib_env_state;    
@@ -1691,6 +1501,8 @@ void pearsoncorrm2(const real_2d_array &x, const real_2d_array &y, real_2d_array
     if( setjmp(_break_jump) )
         _ALGLIB_CPP_EXCEPTION(_alglib_env_state.error_msg);
     ae_state_set_break_jump(&_alglib_env_state, &_break_jump);
+    if( _xparams.flags!=0x0 )
+        ae_state_set_flags(&_alglib_env_state, _xparams.flags);
     alglib_impl::pearsoncorrm2(const_cast<alglib_impl::ae_matrix*>(x.c_ptr()), const_cast<alglib_impl::ae_matrix*>(y.c_ptr()), n, m1, m2, const_cast<alglib_impl::ae_matrix*>(c.c_ptr()), &_alglib_env_state);
 
     alglib_impl::ae_state_clear(&_alglib_env_state);
@@ -1698,52 +1510,21 @@ void pearsoncorrm2(const real_2d_array &x, const real_2d_array &y, real_2d_array
 }
 #endif
 
-
-#if !defined(AE_NO_EXCEPTIONS)
-void smp_pearsoncorrm2(const real_2d_array &x, const real_2d_array &y, real_2d_array &c)
-{
-    jmp_buf _break_jump;
-    alglib_impl::ae_state _alglib_env_state;    
-    ae_int_t n;
-    ae_int_t m1;
-    ae_int_t m2;
-    if( (x.rows()!=y.rows()))
-        _ALGLIB_CPP_EXCEPTION("Error while calling 'pearsoncorrm2': looks like one of arguments has wrong size");
-    n = x.rows();
-    m1 = x.cols();
-    m2 = y.cols();
-    alglib_impl::ae_state_init(&_alglib_env_state);
-    if( setjmp(_break_jump) )
-        _ALGLIB_CPP_EXCEPTION(_alglib_env_state.error_msg);
-    ae_state_set_break_jump(&_alglib_env_state, &_break_jump);
-    alglib_impl::_pexec_pearsoncorrm2(const_cast<alglib_impl::ae_matrix*>(x.c_ptr()), const_cast<alglib_impl::ae_matrix*>(y.c_ptr()), n, m1, m2, const_cast<alglib_impl::ae_matrix*>(c.c_ptr()), &_alglib_env_state);
-
-    alglib_impl::ae_state_clear(&_alglib_env_state);
-    return;
-}
-#endif
-
 /*************************************************************************
 Spearman's rank cross-correlation matrix
 
-SMP EDITION OF ALGLIB:
-
-  ! This function can utilize multicore capabilities of  your system.  In
-  ! order to do this you have to call version with "smp_" prefix,   which
-  ! indicates that multicore code will be used.
+  ! COMMERCIAL EDITION OF ALGLIB:
   !
-  ! This note is given for users of SMP edition; if you use GPL  edition,
-  ! or commercial edition of ALGLIB without SMP support, you  still  will
-  ! be able to call smp-version of this function,  but  all  computations
-  ! will be done serially.
+  ! Commercial Edition of ALGLIB includes following important improvements
+  ! of this function:
+  ! * high-performance native backend with same C# interface (C# version)
+  ! * multithreading support (C++ and C# versions)
+  ! * hardware vendor (Intel) implementations of linear algebra primitives
+  !   (C++ and C# versions, x86/x64 platform)
   !
-  ! We recommend you to carefully read ALGLIB Reference  Manual,  section
-  ! called 'SMP support', before using parallel version of this function.
-  !
-  ! You should remember that starting/stopping worker thread always  have
-  ! non-zero cost. Although  multicore  version  is  pretty  efficient on
-  ! large problems, we do not recommend you to use it on small problems -
-  ! with correlation matrices smaller than 128*128.
+  ! We recommend you to read 'Working with commercial version' section  of
+  ! ALGLIB Reference Manual in order to find out how to  use  performance-
+  ! related features provided by commercial edition of ALGLIB.
 
 INPUT PARAMETERS:
     X   -   array[N,M1], sample matrix:
@@ -1768,7 +1549,7 @@ OUTPUT PARAMETERS:
   -- ALGLIB --
      Copyright 28.10.2010 by Bochkanov Sergey
 *************************************************************************/
-void spearmancorrm2(const real_2d_array &x, const real_2d_array &y, const ae_int_t n, const ae_int_t m1, const ae_int_t m2, real_2d_array &c)
+void spearmancorrm2(const real_2d_array &x, const real_2d_array &y, const ae_int_t n, const ae_int_t m1, const ae_int_t m2, real_2d_array &c, const xparams _xparams)
 {
     jmp_buf _break_jump;
     alglib_impl::ae_state _alglib_env_state;
@@ -1783,28 +1564,9 @@ void spearmancorrm2(const real_2d_array &x, const real_2d_array &y, const ae_int
 #endif
     }
     ae_state_set_break_jump(&_alglib_env_state, &_break_jump);
+    if( _xparams.flags!=0x0 )
+        ae_state_set_flags(&_alglib_env_state, _xparams.flags);
     alglib_impl::spearmancorrm2(const_cast<alglib_impl::ae_matrix*>(x.c_ptr()), const_cast<alglib_impl::ae_matrix*>(y.c_ptr()), n, m1, m2, const_cast<alglib_impl::ae_matrix*>(c.c_ptr()), &_alglib_env_state);
-    alglib_impl::ae_state_clear(&_alglib_env_state);
-    return;
-}
-
-
-void smp_spearmancorrm2(const real_2d_array &x, const real_2d_array &y, const ae_int_t n, const ae_int_t m1, const ae_int_t m2, real_2d_array &c)
-{
-    jmp_buf _break_jump;
-    alglib_impl::ae_state _alglib_env_state;
-    alglib_impl::ae_state_init(&_alglib_env_state);
-    if( setjmp(_break_jump) )
-    {
-#if !defined(AE_NO_EXCEPTIONS)
-        _ALGLIB_CPP_EXCEPTION(_alglib_env_state.error_msg);
-#else
-        _ALGLIB_SET_ERROR_FLAG(_alglib_env_state.error_msg);
-        return;
-#endif
-    }
-    ae_state_set_break_jump(&_alglib_env_state, &_break_jump);
-    alglib_impl::_pexec_spearmancorrm2(const_cast<alglib_impl::ae_matrix*>(x.c_ptr()), const_cast<alglib_impl::ae_matrix*>(y.c_ptr()), n, m1, m2, const_cast<alglib_impl::ae_matrix*>(c.c_ptr()), &_alglib_env_state);
     alglib_impl::ae_state_clear(&_alglib_env_state);
     return;
 }
@@ -1812,24 +1574,18 @@ void smp_spearmancorrm2(const real_2d_array &x, const real_2d_array &y, const ae
 /*************************************************************************
 Spearman's rank cross-correlation matrix
 
-SMP EDITION OF ALGLIB:
-
-  ! This function can utilize multicore capabilities of  your system.  In
-  ! order to do this you have to call version with "smp_" prefix,   which
-  ! indicates that multicore code will be used.
+  ! COMMERCIAL EDITION OF ALGLIB:
   !
-  ! This note is given for users of SMP edition; if you use GPL  edition,
-  ! or commercial edition of ALGLIB without SMP support, you  still  will
-  ! be able to call smp-version of this function,  but  all  computations
-  ! will be done serially.
+  ! Commercial Edition of ALGLIB includes following important improvements
+  ! of this function:
+  ! * high-performance native backend with same C# interface (C# version)
+  ! * multithreading support (C++ and C# versions)
+  ! * hardware vendor (Intel) implementations of linear algebra primitives
+  !   (C++ and C# versions, x86/x64 platform)
   !
-  ! We recommend you to carefully read ALGLIB Reference  Manual,  section
-  ! called 'SMP support', before using parallel version of this function.
-  !
-  ! You should remember that starting/stopping worker thread always  have
-  ! non-zero cost. Although  multicore  version  is  pretty  efficient on
-  ! large problems, we do not recommend you to use it on small problems -
-  ! with correlation matrices smaller than 128*128.
+  ! We recommend you to read 'Working with commercial version' section  of
+  ! ALGLIB Reference Manual in order to find out how to  use  performance-
+  ! related features provided by commercial edition of ALGLIB.
 
 INPUT PARAMETERS:
     X   -   array[N,M1], sample matrix:
@@ -1855,7 +1611,7 @@ OUTPUT PARAMETERS:
      Copyright 28.10.2010 by Bochkanov Sergey
 *************************************************************************/
 #if !defined(AE_NO_EXCEPTIONS)
-void spearmancorrm2(const real_2d_array &x, const real_2d_array &y, real_2d_array &c)
+void spearmancorrm2(const real_2d_array &x, const real_2d_array &y, real_2d_array &c, const xparams _xparams)
 {
     jmp_buf _break_jump;
     alglib_impl::ae_state _alglib_env_state;    
@@ -1871,6 +1627,8 @@ void spearmancorrm2(const real_2d_array &x, const real_2d_array &y, real_2d_arra
     if( setjmp(_break_jump) )
         _ALGLIB_CPP_EXCEPTION(_alglib_env_state.error_msg);
     ae_state_set_break_jump(&_alglib_env_state, &_break_jump);
+    if( _xparams.flags!=0x0 )
+        ae_state_set_flags(&_alglib_env_state, _xparams.flags);
     alglib_impl::spearmancorrm2(const_cast<alglib_impl::ae_matrix*>(x.c_ptr()), const_cast<alglib_impl::ae_matrix*>(y.c_ptr()), n, m1, m2, const_cast<alglib_impl::ae_matrix*>(c.c_ptr()), &_alglib_env_state);
 
     alglib_impl::ae_state_clear(&_alglib_env_state);
@@ -1878,31 +1636,6 @@ void spearmancorrm2(const real_2d_array &x, const real_2d_array &y, real_2d_arra
 }
 #endif
 
-
-#if !defined(AE_NO_EXCEPTIONS)
-void smp_spearmancorrm2(const real_2d_array &x, const real_2d_array &y, real_2d_array &c)
-{
-    jmp_buf _break_jump;
-    alglib_impl::ae_state _alglib_env_state;    
-    ae_int_t n;
-    ae_int_t m1;
-    ae_int_t m2;
-    if( (x.rows()!=y.rows()))
-        _ALGLIB_CPP_EXCEPTION("Error while calling 'spearmancorrm2': looks like one of arguments has wrong size");
-    n = x.rows();
-    m1 = x.cols();
-    m2 = y.cols();
-    alglib_impl::ae_state_init(&_alglib_env_state);
-    if( setjmp(_break_jump) )
-        _ALGLIB_CPP_EXCEPTION(_alglib_env_state.error_msg);
-    ae_state_set_break_jump(&_alglib_env_state, &_break_jump);
-    alglib_impl::_pexec_spearmancorrm2(const_cast<alglib_impl::ae_matrix*>(x.c_ptr()), const_cast<alglib_impl::ae_matrix*>(y.c_ptr()), n, m1, m2, const_cast<alglib_impl::ae_matrix*>(c.c_ptr()), &_alglib_env_state);
-
-    alglib_impl::ae_state_clear(&_alglib_env_state);
-    return;
-}
-#endif
-
 /*************************************************************************
 This function replaces data in XY by their ranks:
 * XY is processed row-by-row
@@ -1911,24 +1644,16 @@ This function replaces data in XY by their ranks:
 * ranking starts from 0, ends at NFeatures-1
 * sum of within-row values is equal to (NFeatures-1)*NFeatures/2
 
-SMP EDITION OF ALGLIB:
-
-  ! This function can utilize multicore capabilities of  your system.  In
-  ! order to do this you have to call version with "smp_" prefix,   which
-  ! indicates that multicore code will be used.
+  ! COMMERCIAL EDITION OF ALGLIB:
   !
-  ! This note is given for users of SMP edition; if you use GPL  edition,
-  ! or commercial edition of ALGLIB without SMP support, you  still  will
-  ! be able to call smp-version of this function,  but  all  computations
-  ! will be done serially.
+  ! Commercial Edition of ALGLIB includes following important improvements
+  ! of this function:
+  ! * high-performance native backend with same C# interface (C# version)
+  ! * multithreading support (C++ and C# versions)
   !
-  ! We recommend you to carefully read ALGLIB Reference  Manual,  section
-  ! called 'SMP support', before using parallel version of this function.
-  !
-  ! You should remember that starting/stopping worker thread always  have
-  ! non-zero cost. Although  multicore  version  is  pretty  efficient on
-  ! large problems, we do not recommend you to use it on small problems -
-  ! ones where expected operations count is less than 100.000
+  ! We recommend you to read 'Working with commercial version' section  of
+  ! ALGLIB Reference Manual in order to find out how to  use  performance-
+  ! related features provided by commercial edition of ALGLIB.
 
 INPUT PARAMETERS:
     XY      -   array[NPoints,NFeatures], dataset
@@ -1942,7 +1667,7 @@ OUTPUT PARAMETERS:
   -- ALGLIB --
      Copyright 18.04.2013 by Bochkanov Sergey
 *************************************************************************/
-void rankdata(const real_2d_array &xy, const ae_int_t npoints, const ae_int_t nfeatures)
+void rankdata(const real_2d_array &xy, const ae_int_t npoints, const ae_int_t nfeatures, const xparams _xparams)
 {
     jmp_buf _break_jump;
     alglib_impl::ae_state _alglib_env_state;
@@ -1957,28 +1682,9 @@ void rankdata(const real_2d_array &xy, const ae_int_t npoints, const ae_int_t nf
 #endif
     }
     ae_state_set_break_jump(&_alglib_env_state, &_break_jump);
+    if( _xparams.flags!=0x0 )
+        ae_state_set_flags(&_alglib_env_state, _xparams.flags);
     alglib_impl::rankdata(const_cast<alglib_impl::ae_matrix*>(xy.c_ptr()), npoints, nfeatures, &_alglib_env_state);
-    alglib_impl::ae_state_clear(&_alglib_env_state);
-    return;
-}
-
-
-void smp_rankdata(const real_2d_array &xy, const ae_int_t npoints, const ae_int_t nfeatures)
-{
-    jmp_buf _break_jump;
-    alglib_impl::ae_state _alglib_env_state;
-    alglib_impl::ae_state_init(&_alglib_env_state);
-    if( setjmp(_break_jump) )
-    {
-#if !defined(AE_NO_EXCEPTIONS)
-        _ALGLIB_CPP_EXCEPTION(_alglib_env_state.error_msg);
-#else
-        _ALGLIB_SET_ERROR_FLAG(_alglib_env_state.error_msg);
-        return;
-#endif
-    }
-    ae_state_set_break_jump(&_alglib_env_state, &_break_jump);
-    alglib_impl::_pexec_rankdata(const_cast<alglib_impl::ae_matrix*>(xy.c_ptr()), npoints, nfeatures, &_alglib_env_state);
     alglib_impl::ae_state_clear(&_alglib_env_state);
     return;
 }
@@ -1991,24 +1697,16 @@ This function replaces data in XY by their ranks:
 * ranking starts from 0, ends at NFeatures-1
 * sum of within-row values is equal to (NFeatures-1)*NFeatures/2
 
-SMP EDITION OF ALGLIB:
-
-  ! This function can utilize multicore capabilities of  your system.  In
-  ! order to do this you have to call version with "smp_" prefix,   which
-  ! indicates that multicore code will be used.
+  ! COMMERCIAL EDITION OF ALGLIB:
   !
-  ! This note is given for users of SMP edition; if you use GPL  edition,
-  ! or commercial edition of ALGLIB without SMP support, you  still  will
-  ! be able to call smp-version of this function,  but  all  computations
-  ! will be done serially.
+  ! Commercial Edition of ALGLIB includes following important improvements
+  ! of this function:
+  ! * high-performance native backend with same C# interface (C# version)
+  ! * multithreading support (C++ and C# versions)
   !
-  ! We recommend you to carefully read ALGLIB Reference  Manual,  section
-  ! called 'SMP support', before using parallel version of this function.
-  !
-  ! You should remember that starting/stopping worker thread always  have
-  ! non-zero cost. Although  multicore  version  is  pretty  efficient on
-  ! large problems, we do not recommend you to use it on small problems -
-  ! ones where expected operations count is less than 100.000
+  ! We recommend you to read 'Working with commercial version' section  of
+  ! ALGLIB Reference Manual in order to find out how to  use  performance-
+  ! related features provided by commercial edition of ALGLIB.
 
 INPUT PARAMETERS:
     XY      -   array[NPoints,NFeatures], dataset
@@ -2023,7 +1721,7 @@ OUTPUT PARAMETERS:
      Copyright 18.04.2013 by Bochkanov Sergey
 *************************************************************************/
 #if !defined(AE_NO_EXCEPTIONS)
-void rankdata(real_2d_array &xy)
+void rankdata(real_2d_array &xy, const xparams _xparams)
 {
     jmp_buf _break_jump;
     alglib_impl::ae_state _alglib_env_state;    
@@ -2036,29 +1734,9 @@ void rankdata(real_2d_array &xy)
     if( setjmp(_break_jump) )
         _ALGLIB_CPP_EXCEPTION(_alglib_env_state.error_msg);
     ae_state_set_break_jump(&_alglib_env_state, &_break_jump);
+    if( _xparams.flags!=0x0 )
+        ae_state_set_flags(&_alglib_env_state, _xparams.flags);
     alglib_impl::rankdata(const_cast<alglib_impl::ae_matrix*>(xy.c_ptr()), npoints, nfeatures, &_alglib_env_state);
-
-    alglib_impl::ae_state_clear(&_alglib_env_state);
-    return;
-}
-#endif
-
-
-#if !defined(AE_NO_EXCEPTIONS)
-void smp_rankdata(real_2d_array &xy)
-{
-    jmp_buf _break_jump;
-    alglib_impl::ae_state _alglib_env_state;    
-    ae_int_t npoints;
-    ae_int_t nfeatures;
-
-    npoints = xy.rows();
-    nfeatures = xy.cols();
-    alglib_impl::ae_state_init(&_alglib_env_state);
-    if( setjmp(_break_jump) )
-        _ALGLIB_CPP_EXCEPTION(_alglib_env_state.error_msg);
-    ae_state_set_break_jump(&_alglib_env_state, &_break_jump);
-    alglib_impl::_pexec_rankdata(const_cast<alglib_impl::ae_matrix*>(xy.c_ptr()), npoints, nfeatures, &_alglib_env_state);
 
     alglib_impl::ae_state_clear(&_alglib_env_state);
     return;
@@ -2075,24 +1753,16 @@ This function replaces data in XY by their CENTERED ranks:
 * centering is performed by subtracting mean from each row, i.e it changes
   mean value, but does NOT change higher moments
 
-SMP EDITION OF ALGLIB:
-
-  ! This function can utilize multicore capabilities of  your system.  In
-  ! order to do this you have to call version with "smp_" prefix,   which
-  ! indicates that multicore code will be used.
+  ! COMMERCIAL EDITION OF ALGLIB:
   !
-  ! This note is given for users of SMP edition; if you use GPL  edition,
-  ! or commercial edition of ALGLIB without SMP support, you  still  will
-  ! be able to call smp-version of this function,  but  all  computations
-  ! will be done serially.
+  ! Commercial Edition of ALGLIB includes following important improvements
+  ! of this function:
+  ! * high-performance native backend with same C# interface (C# version)
+  ! * multithreading support (C++ and C# versions)
   !
-  ! We recommend you to carefully read ALGLIB Reference  Manual,  section
-  ! called 'SMP support', before using parallel version of this function.
-  !
-  ! You should remember that starting/stopping worker thread always  have
-  ! non-zero cost. Although  multicore  version  is  pretty  efficient on
-  ! large problems, we do not recommend you to use it on small problems -
-  ! ones where expected operations count is less than 100.000
+  ! We recommend you to read 'Working with commercial version' section  of
+  ! ALGLIB Reference Manual in order to find out how to  use  performance-
+  ! related features provided by commercial edition of ALGLIB.
 
 INPUT PARAMETERS:
     XY      -   array[NPoints,NFeatures], dataset
@@ -2106,7 +1776,7 @@ OUTPUT PARAMETERS:
   -- ALGLIB --
      Copyright 18.04.2013 by Bochkanov Sergey
 *************************************************************************/
-void rankdatacentered(const real_2d_array &xy, const ae_int_t npoints, const ae_int_t nfeatures)
+void rankdatacentered(const real_2d_array &xy, const ae_int_t npoints, const ae_int_t nfeatures, const xparams _xparams)
 {
     jmp_buf _break_jump;
     alglib_impl::ae_state _alglib_env_state;
@@ -2121,28 +1791,9 @@ void rankdatacentered(const real_2d_array &xy, const ae_int_t npoints, const ae_
 #endif
     }
     ae_state_set_break_jump(&_alglib_env_state, &_break_jump);
+    if( _xparams.flags!=0x0 )
+        ae_state_set_flags(&_alglib_env_state, _xparams.flags);
     alglib_impl::rankdatacentered(const_cast<alglib_impl::ae_matrix*>(xy.c_ptr()), npoints, nfeatures, &_alglib_env_state);
-    alglib_impl::ae_state_clear(&_alglib_env_state);
-    return;
-}
-
-
-void smp_rankdatacentered(const real_2d_array &xy, const ae_int_t npoints, const ae_int_t nfeatures)
-{
-    jmp_buf _break_jump;
-    alglib_impl::ae_state _alglib_env_state;
-    alglib_impl::ae_state_init(&_alglib_env_state);
-    if( setjmp(_break_jump) )
-    {
-#if !defined(AE_NO_EXCEPTIONS)
-        _ALGLIB_CPP_EXCEPTION(_alglib_env_state.error_msg);
-#else
-        _ALGLIB_SET_ERROR_FLAG(_alglib_env_state.error_msg);
-        return;
-#endif
-    }
-    ae_state_set_break_jump(&_alglib_env_state, &_break_jump);
-    alglib_impl::_pexec_rankdatacentered(const_cast<alglib_impl::ae_matrix*>(xy.c_ptr()), npoints, nfeatures, &_alglib_env_state);
     alglib_impl::ae_state_clear(&_alglib_env_state);
     return;
 }
@@ -2157,24 +1808,16 @@ This function replaces data in XY by their CENTERED ranks:
 * centering is performed by subtracting mean from each row, i.e it changes
   mean value, but does NOT change higher moments
 
-SMP EDITION OF ALGLIB:
-
-  ! This function can utilize multicore capabilities of  your system.  In
-  ! order to do this you have to call version with "smp_" prefix,   which
-  ! indicates that multicore code will be used.
+  ! COMMERCIAL EDITION OF ALGLIB:
   !
-  ! This note is given for users of SMP edition; if you use GPL  edition,
-  ! or commercial edition of ALGLIB without SMP support, you  still  will
-  ! be able to call smp-version of this function,  but  all  computations
-  ! will be done serially.
+  ! Commercial Edition of ALGLIB includes following important improvements
+  ! of this function:
+  ! * high-performance native backend with same C# interface (C# version)
+  ! * multithreading support (C++ and C# versions)
   !
-  ! We recommend you to carefully read ALGLIB Reference  Manual,  section
-  ! called 'SMP support', before using parallel version of this function.
-  !
-  ! You should remember that starting/stopping worker thread always  have
-  ! non-zero cost. Although  multicore  version  is  pretty  efficient on
-  ! large problems, we do not recommend you to use it on small problems -
-  ! ones where expected operations count is less than 100.000
+  ! We recommend you to read 'Working with commercial version' section  of
+  ! ALGLIB Reference Manual in order to find out how to  use  performance-
+  ! related features provided by commercial edition of ALGLIB.
 
 INPUT PARAMETERS:
     XY      -   array[NPoints,NFeatures], dataset
@@ -2189,7 +1832,7 @@ OUTPUT PARAMETERS:
      Copyright 18.04.2013 by Bochkanov Sergey
 *************************************************************************/
 #if !defined(AE_NO_EXCEPTIONS)
-void rankdatacentered(real_2d_array &xy)
+void rankdatacentered(real_2d_array &xy, const xparams _xparams)
 {
     jmp_buf _break_jump;
     alglib_impl::ae_state _alglib_env_state;    
@@ -2202,29 +1845,9 @@ void rankdatacentered(real_2d_array &xy)
     if( setjmp(_break_jump) )
         _ALGLIB_CPP_EXCEPTION(_alglib_env_state.error_msg);
     ae_state_set_break_jump(&_alglib_env_state, &_break_jump);
+    if( _xparams.flags!=0x0 )
+        ae_state_set_flags(&_alglib_env_state, _xparams.flags);
     alglib_impl::rankdatacentered(const_cast<alglib_impl::ae_matrix*>(xy.c_ptr()), npoints, nfeatures, &_alglib_env_state);
-
-    alglib_impl::ae_state_clear(&_alglib_env_state);
-    return;
-}
-#endif
-
-
-#if !defined(AE_NO_EXCEPTIONS)
-void smp_rankdatacentered(real_2d_array &xy)
-{
-    jmp_buf _break_jump;
-    alglib_impl::ae_state _alglib_env_state;    
-    ae_int_t npoints;
-    ae_int_t nfeatures;
-
-    npoints = xy.rows();
-    nfeatures = xy.cols();
-    alglib_impl::ae_state_init(&_alglib_env_state);
-    if( setjmp(_break_jump) )
-        _ALGLIB_CPP_EXCEPTION(_alglib_env_state.error_msg);
-    ae_state_set_break_jump(&_alglib_env_state, &_break_jump);
-    alglib_impl::_pexec_rankdatacentered(const_cast<alglib_impl::ae_matrix*>(xy.c_ptr()), npoints, nfeatures, &_alglib_env_state);
 
     alglib_impl::ae_state_clear(&_alglib_env_state);
     return;
@@ -2237,7 +1860,7 @@ Obsolete function, we recommend to use PearsonCorr2().
   -- ALGLIB --
      Copyright 09.04.2007 by Bochkanov Sergey
 *************************************************************************/
-double pearsoncorrelation(const real_1d_array &x, const real_1d_array &y, const ae_int_t n)
+double pearsoncorrelation(const real_1d_array &x, const real_1d_array &y, const ae_int_t n, const xparams _xparams)
 {
     jmp_buf _break_jump;
     alglib_impl::ae_state _alglib_env_state;
@@ -2252,6 +1875,8 @@ double pearsoncorrelation(const real_1d_array &x, const real_1d_array &y, const 
 #endif
     }
     ae_state_set_break_jump(&_alglib_env_state, &_break_jump);
+    if( _xparams.flags!=0x0 )
+        ae_state_set_flags(&_alglib_env_state, _xparams.flags);
     double result = alglib_impl::pearsoncorrelation(const_cast<alglib_impl::ae_vector*>(x.c_ptr()), const_cast<alglib_impl::ae_vector*>(y.c_ptr()), n, &_alglib_env_state);
     alglib_impl::ae_state_clear(&_alglib_env_state);
     return *(reinterpret_cast<double*>(&result));
@@ -2263,7 +1888,7 @@ Obsolete function, we recommend to use SpearmanCorr2().
     -- ALGLIB --
     Copyright 09.04.2007 by Bochkanov Sergey
 *************************************************************************/
-double spearmanrankcorrelation(const real_1d_array &x, const real_1d_array &y, const ae_int_t n)
+double spearmanrankcorrelation(const real_1d_array &x, const real_1d_array &y, const ae_int_t n, const xparams _xparams)
 {
     jmp_buf _break_jump;
     alglib_impl::ae_state _alglib_env_state;
@@ -2278,6 +1903,8 @@ double spearmanrankcorrelation(const real_1d_array &x, const real_1d_array &y, c
 #endif
     }
     ae_state_set_break_jump(&_alglib_env_state, &_break_jump);
+    if( _xparams.flags!=0x0 )
+        ae_state_set_flags(&_alglib_env_state, _xparams.flags);
     double result = alglib_impl::spearmanrankcorrelation(const_cast<alglib_impl::ae_vector*>(x.c_ptr()), const_cast<alglib_impl::ae_vector*>(y.c_ptr()), n, &_alglib_env_state);
     alglib_impl::ae_state_clear(&_alglib_env_state);
     return *(reinterpret_cast<double*>(&result));
@@ -2334,7 +1961,7 @@ the significance level outlies this interval, the test returns 0.0001.
   -- ALGLIB --
      Copyright 08.09.2006 by Bochkanov Sergey
 *************************************************************************/
-void wilcoxonsignedranktest(const real_1d_array &x, const ae_int_t n, const double e, double &bothtails, double &lefttail, double &righttail)
+void wilcoxonsignedranktest(const real_1d_array &x, const ae_int_t n, const double e, double &bothtails, double &lefttail, double &righttail, const xparams _xparams)
 {
     jmp_buf _break_jump;
     alglib_impl::ae_state _alglib_env_state;
@@ -2349,6 +1976,8 @@ void wilcoxonsignedranktest(const real_1d_array &x, const ae_int_t n, const doub
 #endif
     }
     ae_state_set_break_jump(&_alglib_env_state, &_break_jump);
+    if( _xparams.flags!=0x0 )
+        ae_state_set_flags(&_alglib_env_state, _xparams.flags);
     alglib_impl::wilcoxonsignedranktest(const_cast<alglib_impl::ae_vector*>(x.c_ptr()), n, e, &bothtails, &lefttail, &righttail, &_alglib_env_state);
     alglib_impl::ae_state_clear(&_alglib_env_state);
     return;
@@ -2396,7 +2025,7 @@ approximation is used, so significance levels have about 15 exact digits.
   -- ALGLIB --
      Copyright 08.09.2006 by Bochkanov Sergey
 *************************************************************************/
-void onesamplesigntest(const real_1d_array &x, const ae_int_t n, const double median, double &bothtails, double &lefttail, double &righttail)
+void onesamplesigntest(const real_1d_array &x, const ae_int_t n, const double median, double &bothtails, double &lefttail, double &righttail, const xparams _xparams)
 {
     jmp_buf _break_jump;
     alglib_impl::ae_state _alglib_env_state;
@@ -2411,6 +2040,8 @@ void onesamplesigntest(const real_1d_array &x, const ae_int_t n, const double me
 #endif
     }
     ae_state_set_break_jump(&_alglib_env_state, &_break_jump);
+    if( _xparams.flags!=0x0 )
+        ae_state_set_flags(&_alglib_env_state, _xparams.flags);
     alglib_impl::onesamplesigntest(const_cast<alglib_impl::ae_vector*>(x.c_ptr()), n, median, &bothtails, &lefttail, &righttail, &_alglib_env_state);
     alglib_impl::ae_state_clear(&_alglib_env_state);
     return;
@@ -2454,7 +2085,7 @@ Output parameters:
   -- ALGLIB --
      Copyright 09.04.2007 by Bochkanov Sergey
 *************************************************************************/
-void pearsoncorrelationsignificance(const double r, const ae_int_t n, double &bothtails, double &lefttail, double &righttail)
+void pearsoncorrelationsignificance(const double r, const ae_int_t n, double &bothtails, double &lefttail, double &righttail, const xparams _xparams)
 {
     jmp_buf _break_jump;
     alglib_impl::ae_state _alglib_env_state;
@@ -2469,6 +2100,8 @@ void pearsoncorrelationsignificance(const double r, const ae_int_t n, double &bo
 #endif
     }
     ae_state_set_break_jump(&_alglib_env_state, &_break_jump);
+    if( _xparams.flags!=0x0 )
+        ae_state_set_flags(&_alglib_env_state, _xparams.flags);
     alglib_impl::pearsoncorrelationsignificance(r, n, &bothtails, &lefttail, &righttail, &_alglib_env_state);
     alglib_impl::ae_state_clear(&_alglib_env_state);
     return;
@@ -2512,7 +2145,7 @@ Output parameters:
   -- ALGLIB --
      Copyright 09.04.2007 by Bochkanov Sergey
 *************************************************************************/
-void spearmanrankcorrelationsignificance(const double r, const ae_int_t n, double &bothtails, double &lefttail, double &righttail)
+void spearmanrankcorrelationsignificance(const double r, const ae_int_t n, double &bothtails, double &lefttail, double &righttail, const xparams _xparams)
 {
     jmp_buf _break_jump;
     alglib_impl::ae_state _alglib_env_state;
@@ -2527,6 +2160,8 @@ void spearmanrankcorrelationsignificance(const double r, const ae_int_t n, doubl
 #endif
     }
     ae_state_set_break_jump(&_alglib_env_state, &_break_jump);
+    if( _xparams.flags!=0x0 )
+        ae_state_set_flags(&_alglib_env_state, _xparams.flags);
     alglib_impl::spearmanrankcorrelationsignificance(r, n, &bothtails, &lefttail, &righttail, &_alglib_env_state);
     alglib_impl::ae_state_clear(&_alglib_env_state);
     return;
@@ -2576,7 +2211,7 @@ NOTE: this function correctly handles degenerate cases:
   -- ALGLIB --
      Copyright 08.09.2006 by Bochkanov Sergey
 *************************************************************************/
-void studentttest1(const real_1d_array &x, const ae_int_t n, const double mean, double &bothtails, double &lefttail, double &righttail)
+void studentttest1(const real_1d_array &x, const ae_int_t n, const double mean, double &bothtails, double &lefttail, double &righttail, const xparams _xparams)
 {
     jmp_buf _break_jump;
     alglib_impl::ae_state _alglib_env_state;
@@ -2591,6 +2226,8 @@ void studentttest1(const real_1d_array &x, const ae_int_t n, const double mean, 
 #endif
     }
     ae_state_set_break_jump(&_alglib_env_state, &_break_jump);
+    if( _xparams.flags!=0x0 )
+        ae_state_set_flags(&_alglib_env_state, _xparams.flags);
     alglib_impl::studentttest1(const_cast<alglib_impl::ae_vector*>(x.c_ptr()), n, mean, &bothtails, &lefttail, &righttail, &_alglib_env_state);
     alglib_impl::ae_state_clear(&_alglib_env_state);
     return;
@@ -2637,7 +2274,7 @@ NOTE: this function correctly handles degenerate cases:
   -- ALGLIB --
      Copyright 18.09.2006 by Bochkanov Sergey
 *************************************************************************/
-void studentttest2(const real_1d_array &x, const ae_int_t n, const real_1d_array &y, const ae_int_t m, double &bothtails, double &lefttail, double &righttail)
+void studentttest2(const real_1d_array &x, const ae_int_t n, const real_1d_array &y, const ae_int_t m, double &bothtails, double &lefttail, double &righttail, const xparams _xparams)
 {
     jmp_buf _break_jump;
     alglib_impl::ae_state _alglib_env_state;
@@ -2652,6 +2289,8 @@ void studentttest2(const real_1d_array &x, const ae_int_t n, const real_1d_array
 #endif
     }
     ae_state_set_break_jump(&_alglib_env_state, &_break_jump);
+    if( _xparams.flags!=0x0 )
+        ae_state_set_flags(&_alglib_env_state, _xparams.flags);
     alglib_impl::studentttest2(const_cast<alglib_impl::ae_vector*>(x.c_ptr()), n, const_cast<alglib_impl::ae_vector*>(y.c_ptr()), m, &bothtails, &lefttail, &righttail, &_alglib_env_state);
     alglib_impl::ae_state_clear(&_alglib_env_state);
     return;
@@ -2700,7 +2339,7 @@ NOTE: this function correctly handles degenerate cases:
   -- ALGLIB --
      Copyright 18.09.2006 by Bochkanov Sergey
 *************************************************************************/
-void unequalvariancettest(const real_1d_array &x, const ae_int_t n, const real_1d_array &y, const ae_int_t m, double &bothtails, double &lefttail, double &righttail)
+void unequalvariancettest(const real_1d_array &x, const ae_int_t n, const real_1d_array &y, const ae_int_t m, double &bothtails, double &lefttail, double &righttail, const xparams _xparams)
 {
     jmp_buf _break_jump;
     alglib_impl::ae_state _alglib_env_state;
@@ -2715,6 +2354,8 @@ void unequalvariancettest(const real_1d_array &x, const ae_int_t n, const real_1
 #endif
     }
     ae_state_set_break_jump(&_alglib_env_state, &_break_jump);
+    if( _xparams.flags!=0x0 )
+        ae_state_set_flags(&_alglib_env_state, _xparams.flags);
     alglib_impl::unequalvariancettest(const_cast<alglib_impl::ae_vector*>(x.c_ptr()), n, const_cast<alglib_impl::ae_vector*>(y.c_ptr()), m, &bothtails, &lefttail, &righttail, &_alglib_env_state);
     alglib_impl::ae_state_clear(&_alglib_env_state);
     return;
@@ -2790,7 +2431,7 @@ NOTE: P-value approximation was  optimized  for  0.0001<=p<=0.2500.  Thus,
   -- ALGLIB --
      Copyright 09.04.2007 by Bochkanov Sergey
 *************************************************************************/
-void mannwhitneyutest(const real_1d_array &x, const ae_int_t n, const real_1d_array &y, const ae_int_t m, double &bothtails, double &lefttail, double &righttail)
+void mannwhitneyutest(const real_1d_array &x, const ae_int_t n, const real_1d_array &y, const ae_int_t m, double &bothtails, double &lefttail, double &righttail, const xparams _xparams)
 {
     jmp_buf _break_jump;
     alglib_impl::ae_state _alglib_env_state;
@@ -2805,6 +2446,8 @@ void mannwhitneyutest(const real_1d_array &x, const ae_int_t n, const real_1d_ar
 #endif
     }
     ae_state_set_break_jump(&_alglib_env_state, &_break_jump);
+    if( _xparams.flags!=0x0 )
+        ae_state_set_flags(&_alglib_env_state, _xparams.flags);
     alglib_impl::mannwhitneyutest(const_cast<alglib_impl::ae_vector*>(x.c_ptr()), n, const_cast<alglib_impl::ae_vector*>(y.c_ptr()), m, &bothtails, &lefttail, &righttail, &_alglib_env_state);
     alglib_impl::ae_state_clear(&_alglib_env_state);
     return;
@@ -2842,7 +2485,7 @@ from table values.
   -- ALGLIB --
      Copyright 09.04.2007 by Bochkanov Sergey
 *************************************************************************/
-void jarqueberatest(const real_1d_array &x, const ae_int_t n, double &p)
+void jarqueberatest(const real_1d_array &x, const ae_int_t n, double &p, const xparams _xparams)
 {
     jmp_buf _break_jump;
     alglib_impl::ae_state _alglib_env_state;
@@ -2857,6 +2500,8 @@ void jarqueberatest(const real_1d_array &x, const ae_int_t n, double &p)
 #endif
     }
     ae_state_set_break_jump(&_alglib_env_state, &_break_jump);
+    if( _xparams.flags!=0x0 )
+        ae_state_set_flags(&_alglib_env_state, _xparams.flags);
     alglib_impl::jarqueberatest(const_cast<alglib_impl::ae_vector*>(x.c_ptr()), n, &p, &_alglib_env_state);
     alglib_impl::ae_state_clear(&_alglib_env_state);
     return;
@@ -2900,7 +2545,7 @@ Output parameters:
   -- ALGLIB --
      Copyright 19.09.2006 by Bochkanov Sergey
 *************************************************************************/
-void ftest(const real_1d_array &x, const ae_int_t n, const real_1d_array &y, const ae_int_t m, double &bothtails, double &lefttail, double &righttail)
+void ftest(const real_1d_array &x, const ae_int_t n, const real_1d_array &y, const ae_int_t m, double &bothtails, double &lefttail, double &righttail, const xparams _xparams)
 {
     jmp_buf _break_jump;
     alglib_impl::ae_state _alglib_env_state;
@@ -2915,6 +2560,8 @@ void ftest(const real_1d_array &x, const ae_int_t n, const real_1d_array &y, con
 #endif
     }
     ae_state_set_break_jump(&_alglib_env_state, &_break_jump);
+    if( _xparams.flags!=0x0 )
+        ae_state_set_flags(&_alglib_env_state, _xparams.flags);
     alglib_impl::ftest(const_cast<alglib_impl::ae_vector*>(x.c_ptr()), n, const_cast<alglib_impl::ae_vector*>(y.c_ptr()), m, &bothtails, &lefttail, &righttail, &_alglib_env_state);
     alglib_impl::ae_state_clear(&_alglib_env_state);
     return;
@@ -2954,7 +2601,7 @@ Output parameters:
   -- ALGLIB --
      Copyright 19.09.2006 by Bochkanov Sergey
 *************************************************************************/
-void onesamplevariancetest(const real_1d_array &x, const ae_int_t n, const double variance, double &bothtails, double &lefttail, double &righttail)
+void onesamplevariancetest(const real_1d_array &x, const ae_int_t n, const double variance, double &bothtails, double &lefttail, double &righttail, const xparams _xparams)
 {
     jmp_buf _break_jump;
     alglib_impl::ae_state _alglib_env_state;
@@ -2969,6 +2616,8 @@ void onesamplevariancetest(const real_1d_array &x, const ae_int_t n, const doubl
 #endif
     }
     ae_state_set_break_jump(&_alglib_env_state, &_break_jump);
+    if( _xparams.flags!=0x0 )
+        ae_state_set_flags(&_alglib_env_state, _xparams.flags);
     alglib_impl::onesamplevariancetest(const_cast<alglib_impl::ae_vector*>(x.c_ptr()), n, variance, &bothtails, &lefttail, &righttail, &_alglib_env_state);
     alglib_impl::ae_state_clear(&_alglib_env_state);
     return;
@@ -2992,6 +2641,13 @@ static void basestat_rankdatarec(/* Real    */ ae_matrix* xy,
      ae_shared_pool* pool,
      ae_int_t basecasecost,
      ae_state *_state);
+ae_bool _trypexec_basestat_rankdatarec(/* Real    */ ae_matrix* xy,
+    ae_int_t i0,
+    ae_int_t i1,
+    ae_int_t nfeatures,
+    ae_bool iscentered,
+    ae_shared_pool* pool,
+    ae_int_t basecasecost, ae_state *_state);
 static void basestat_rankdatabasecase(/* Real    */ ae_matrix* xy,
      ae_int_t i0,
      ae_int_t i1,
@@ -3000,6 +2656,13 @@ static void basestat_rankdatabasecase(/* Real    */ ae_matrix* xy,
      apbuffers* buf0,
      apbuffers* buf1,
      ae_state *_state);
+ae_bool _trypexec_basestat_rankdatabasecase(/* Real    */ ae_matrix* xy,
+    ae_int_t i0,
+    ae_int_t i1,
+    ae_int_t nfeatures,
+    ae_bool iscentered,
+    apbuffers* buf0,
+    apbuffers* buf1, ae_state *_state);
 
 
 #endif
@@ -3761,7 +3424,8 @@ void samplepercentile(/* Real    */ ae_vector* x,
 
     ae_frame_make(_state, &_frame_block);
     memset(&_x, 0, sizeof(_x));
-    memset(&rbuf, 0, sizeof(rbuf));    ae_vector_init_copy(&_x, x, _state, ae_true);
+    memset(&rbuf, 0, sizeof(rbuf));
+    ae_vector_init_copy(&_x, x, _state, ae_true);
     x = &_x;
     *v = 0;
     ae_vector_init(&rbuf, 0, DT_REAL, _state, ae_true);
@@ -4031,7 +3695,8 @@ double spearmancorr2(/* Real    */ ae_vector* x,
     ae_frame_make(_state, &_frame_block);
     memset(&_x, 0, sizeof(_x));
     memset(&_y, 0, sizeof(_y));
-    memset(&buf, 0, sizeof(buf));    ae_vector_init_copy(&_x, x, _state, ae_true);
+    memset(&buf, 0, sizeof(buf));
+    ae_vector_init_copy(&_x, x, _state, ae_true);
     x = &_x;
     ae_vector_init_copy(&_y, y, _state, ae_true);
     y = &_y;
@@ -4063,24 +3728,18 @@ double spearmancorr2(/* Real    */ ae_vector* x,
 /*************************************************************************
 Covariance matrix
 
-SMP EDITION OF ALGLIB:
-
-  ! This function can utilize multicore capabilities of  your system.  In
-  ! order to do this you have to call version with "smp_" prefix,   which
-  ! indicates that multicore code will be used.
+  ! COMMERCIAL EDITION OF ALGLIB:
   ! 
-  ! This note is given for users of SMP edition; if you use GPL  edition,
-  ! or commercial edition of ALGLIB without SMP support, you  still  will
-  ! be able to call smp-version of this function,  but  all  computations
-  ! will be done serially.
-  !
-  ! We recommend you to carefully read ALGLIB Reference  Manual,  section
-  ! called 'SMP support', before using parallel version of this function.
-  !
-  ! You should remember that starting/stopping worker thread always  have
-  ! non-zero cost. Although  multicore  version  is  pretty  efficient on
-  ! large problems, we do not recommend you to use it on small problems -
-  ! with covariance matrices smaller than 128*128.
+  ! Commercial Edition of ALGLIB includes following important improvements
+  ! of this function:
+  ! * high-performance native backend with same C# interface (C# version)
+  ! * multithreading support (C++ and C# versions)
+  ! * hardware vendor (Intel) implementations of linear algebra primitives
+  !   (C++ and C# versions, x86/x64 platform)
+  ! 
+  ! We recommend you to read 'Working with commercial version' section  of
+  ! ALGLIB Reference Manual in order to find out how to  use  performance-
+  ! related features provided by commercial edition of ALGLIB.
 
 INPUT PARAMETERS:
     X   -   array[N,M], sample matrix:
@@ -4116,7 +3775,10 @@ void covm(/* Real    */ ae_matrix* x,
 
     ae_frame_make(_state, &_frame_block);
     memset(&_x, 0, sizeof(_x));
-    memset(&t, 0, sizeof(t));    memset(&x0, 0, sizeof(x0));    memset(&same, 0, sizeof(same));    ae_matrix_init_copy(&_x, x, _state, ae_true);
+    memset(&t, 0, sizeof(t));
+    memset(&x0, 0, sizeof(x0));
+    memset(&same, 0, sizeof(same));
+    ae_matrix_init_copy(&_x, x, _state, ae_true);
     x = &_x;
     ae_matrix_clear(c);
     ae_vector_init(&t, 0, DT_REAL, _state, ae_true);
@@ -4195,38 +3857,20 @@ void covm(/* Real    */ ae_matrix* x,
 
 
 /*************************************************************************
-Single-threaded stub. HPC ALGLIB replaces it by multithreaded code.
-*************************************************************************/
-void _pexec_covm(/* Real    */ ae_matrix* x,
-    ae_int_t n,
-    ae_int_t m,
-    /* Real    */ ae_matrix* c, ae_state *_state)
-{
-    covm(x,n,m,c, _state);
-}
-
-
-/*************************************************************************
 Pearson product-moment correlation matrix
 
-SMP EDITION OF ALGLIB:
-
-  ! This function can utilize multicore capabilities of  your system.  In
-  ! order to do this you have to call version with "smp_" prefix,   which
-  ! indicates that multicore code will be used.
+  ! COMMERCIAL EDITION OF ALGLIB:
   ! 
-  ! This note is given for users of SMP edition; if you use GPL  edition,
-  ! or commercial edition of ALGLIB without SMP support, you  still  will
-  ! be able to call smp-version of this function,  but  all  computations
-  ! will be done serially.
-  !
-  ! We recommend you to carefully read ALGLIB Reference  Manual,  section
-  ! called 'SMP support', before using parallel version of this function.
-  !
-  ! You should remember that starting/stopping worker thread always  have
-  ! non-zero cost. Although  multicore  version  is  pretty  efficient on
-  ! large problems, we do not recommend you to use it on small problems -
-  ! with correlation matrices smaller than 128*128.
+  ! Commercial Edition of ALGLIB includes following important improvements
+  ! of this function:
+  ! * high-performance native backend with same C# interface (C# version)
+  ! * multithreading support (C++ and C# versions)
+  ! * hardware vendor (Intel) implementations of linear algebra primitives
+  !   (C++ and C# versions, x86/x64 platform)
+  ! 
+  ! We recommend you to read 'Working with commercial version' section  of
+  ! ALGLIB Reference Manual in order to find out how to  use  performance-
+  ! related features provided by commercial edition of ALGLIB.
 
 INPUT PARAMETERS:
     X   -   array[N,M], sample matrix:
@@ -4258,7 +3902,8 @@ void pearsoncorrm(/* Real    */ ae_matrix* x,
     double v;
 
     ae_frame_make(_state, &_frame_block);
-    memset(&t, 0, sizeof(t));    ae_matrix_clear(c);
+    memset(&t, 0, sizeof(t));
+    ae_matrix_clear(c);
     ae_vector_init(&t, 0, DT_REAL, _state, ae_true);
 
     ae_assert(n>=0, "PearsonCorrM: N<0", _state);
@@ -4292,38 +3937,20 @@ void pearsoncorrm(/* Real    */ ae_matrix* x,
 
 
 /*************************************************************************
-Single-threaded stub. HPC ALGLIB replaces it by multithreaded code.
-*************************************************************************/
-void _pexec_pearsoncorrm(/* Real    */ ae_matrix* x,
-    ae_int_t n,
-    ae_int_t m,
-    /* Real    */ ae_matrix* c, ae_state *_state)
-{
-    pearsoncorrm(x,n,m,c, _state);
-}
-
-
-/*************************************************************************
 Spearman's rank correlation matrix
 
-SMP EDITION OF ALGLIB:
-
-  ! This function can utilize multicore capabilities of  your system.  In
-  ! order to do this you have to call version with "smp_" prefix,   which
-  ! indicates that multicore code will be used.
+  ! COMMERCIAL EDITION OF ALGLIB:
   ! 
-  ! This note is given for users of SMP edition; if you use GPL  edition,
-  ! or commercial edition of ALGLIB without SMP support, you  still  will
-  ! be able to call smp-version of this function,  but  all  computations
-  ! will be done serially.
-  !
-  ! We recommend you to carefully read ALGLIB Reference  Manual,  section
-  ! called 'SMP support', before using parallel version of this function.
-  !
-  ! You should remember that starting/stopping worker thread always  have
-  ! non-zero cost. Although  multicore  version  is  pretty  efficient on
-  ! large problems, we do not recommend you to use it on small problems -
-  ! with correlation matrices smaller than 128*128.
+  ! Commercial Edition of ALGLIB includes following important improvements
+  ! of this function:
+  ! * high-performance native backend with same C# interface (C# version)
+  ! * multithreading support (C++ and C# versions)
+  ! * hardware vendor (Intel) implementations of linear algebra primitives
+  !   (C++ and C# versions, x86/x64 platform)
+  ! 
+  ! We recommend you to read 'Working with commercial version' section  of
+  ! ALGLIB Reference Manual in order to find out how to  use  performance-
+  ! related features provided by commercial edition of ALGLIB.
 
 INPUT PARAMETERS:
     X   -   array[N,M], sample matrix:
@@ -4360,7 +3987,10 @@ void spearmancorrm(/* Real    */ ae_matrix* x,
     ae_bool b;
 
     ae_frame_make(_state, &_frame_block);
-    memset(&buf, 0, sizeof(buf));    memset(&xc, 0, sizeof(xc));    memset(&t, 0, sizeof(t));    ae_matrix_clear(c);
+    memset(&buf, 0, sizeof(buf));
+    memset(&xc, 0, sizeof(xc));
+    memset(&t, 0, sizeof(t));
+    ae_matrix_clear(c);
     _apbuffers_init(&buf, _state, ae_true);
     ae_matrix_init(&xc, 0, 0, DT_REAL, _state, ae_true);
     ae_vector_init(&t, 0, DT_REAL, _state, ae_true);
@@ -4490,38 +4120,20 @@ void spearmancorrm(/* Real    */ ae_matrix* x,
 
 
 /*************************************************************************
-Single-threaded stub. HPC ALGLIB replaces it by multithreaded code.
-*************************************************************************/
-void _pexec_spearmancorrm(/* Real    */ ae_matrix* x,
-    ae_int_t n,
-    ae_int_t m,
-    /* Real    */ ae_matrix* c, ae_state *_state)
-{
-    spearmancorrm(x,n,m,c, _state);
-}
-
-
-/*************************************************************************
 Cross-covariance matrix
 
-SMP EDITION OF ALGLIB:
-
-  ! This function can utilize multicore capabilities of  your system.  In
-  ! order to do this you have to call version with "smp_" prefix,   which
-  ! indicates that multicore code will be used.
+  ! COMMERCIAL EDITION OF ALGLIB:
   ! 
-  ! This note is given for users of SMP edition; if you use GPL  edition,
-  ! or commercial edition of ALGLIB without SMP support, you  still  will
-  ! be able to call smp-version of this function,  but  all  computations
-  ! will be done serially.
-  !
-  ! We recommend you to carefully read ALGLIB Reference  Manual,  section
-  ! called 'SMP support', before using parallel version of this function.
-  !
-  ! You should remember that starting/stopping worker thread always  have
-  ! non-zero cost. Although  multicore  version  is  pretty  efficient on
-  ! large problems, we do not recommend you to use it on small problems -
-  ! with covariance matrices smaller than 128*128.
+  ! Commercial Edition of ALGLIB includes following important improvements
+  ! of this function:
+  ! * high-performance native backend with same C# interface (C# version)
+  ! * multithreading support (C++ and C# versions)
+  ! * hardware vendor (Intel) implementations of linear algebra primitives
+  !   (C++ and C# versions, x86/x64 platform)
+  ! 
+  ! We recommend you to read 'Working with commercial version' section  of
+  ! ALGLIB Reference Manual in order to find out how to  use  performance-
+  ! related features provided by commercial edition of ALGLIB.
 
 INPUT PARAMETERS:
     X   -   array[N,M1], sample matrix:
@@ -4569,7 +4181,12 @@ void covm2(/* Real    */ ae_matrix* x,
     ae_frame_make(_state, &_frame_block);
     memset(&_x, 0, sizeof(_x));
     memset(&_y, 0, sizeof(_y));
-    memset(&t, 0, sizeof(t));    memset(&x0, 0, sizeof(x0));    memset(&y0, 0, sizeof(y0));    memset(&samex, 0, sizeof(samex));    memset(&samey, 0, sizeof(samey));    ae_matrix_init_copy(&_x, x, _state, ae_true);
+    memset(&t, 0, sizeof(t));
+    memset(&x0, 0, sizeof(x0));
+    memset(&y0, 0, sizeof(y0));
+    memset(&samex, 0, sizeof(samex));
+    memset(&samey, 0, sizeof(samey));
+    ae_matrix_init_copy(&_x, x, _state, ae_true);
     x = &_x;
     ae_matrix_init_copy(&_y, y, _state, ae_true);
     y = &_y;
@@ -4690,40 +4307,20 @@ void covm2(/* Real    */ ae_matrix* x,
 
 
 /*************************************************************************
-Single-threaded stub. HPC ALGLIB replaces it by multithreaded code.
-*************************************************************************/
-void _pexec_covm2(/* Real    */ ae_matrix* x,
-    /* Real    */ ae_matrix* y,
-    ae_int_t n,
-    ae_int_t m1,
-    ae_int_t m2,
-    /* Real    */ ae_matrix* c, ae_state *_state)
-{
-    covm2(x,y,n,m1,m2,c, _state);
-}
-
-
-/*************************************************************************
 Pearson product-moment cross-correlation matrix
 
-SMP EDITION OF ALGLIB:
-
-  ! This function can utilize multicore capabilities of  your system.  In
-  ! order to do this you have to call version with "smp_" prefix,   which
-  ! indicates that multicore code will be used.
+  ! COMMERCIAL EDITION OF ALGLIB:
   ! 
-  ! This note is given for users of SMP edition; if you use GPL  edition,
-  ! or commercial edition of ALGLIB without SMP support, you  still  will
-  ! be able to call smp-version of this function,  but  all  computations
-  ! will be done serially.
-  !
-  ! We recommend you to carefully read ALGLIB Reference  Manual,  section
-  ! called 'SMP support', before using parallel version of this function.
-  !
-  ! You should remember that starting/stopping worker thread always  have
-  ! non-zero cost. Although  multicore  version  is  pretty  efficient on
-  ! large problems, we do not recommend you to use it on small problems -
-  ! with correlation matrices smaller than 128*128.
+  ! Commercial Edition of ALGLIB includes following important improvements
+  ! of this function:
+  ! * high-performance native backend with same C# interface (C# version)
+  ! * multithreading support (C++ and C# versions)
+  ! * hardware vendor (Intel) implementations of linear algebra primitives
+  !   (C++ and C# versions, x86/x64 platform)
+  ! 
+  ! We recommend you to read 'Working with commercial version' section  of
+  ! ALGLIB Reference Manual in order to find out how to  use  performance-
+  ! related features provided by commercial edition of ALGLIB.
 
 INPUT PARAMETERS:
     X   -   array[N,M1], sample matrix:
@@ -4773,7 +4370,14 @@ void pearsoncorrm2(/* Real    */ ae_matrix* x,
     ae_frame_make(_state, &_frame_block);
     memset(&_x, 0, sizeof(_x));
     memset(&_y, 0, sizeof(_y));
-    memset(&t, 0, sizeof(t));    memset(&x0, 0, sizeof(x0));    memset(&y0, 0, sizeof(y0));    memset(&sx, 0, sizeof(sx));    memset(&sy, 0, sizeof(sy));    memset(&samex, 0, sizeof(samex));    memset(&samey, 0, sizeof(samey));    ae_matrix_init_copy(&_x, x, _state, ae_true);
+    memset(&t, 0, sizeof(t));
+    memset(&x0, 0, sizeof(x0));
+    memset(&y0, 0, sizeof(y0));
+    memset(&sx, 0, sizeof(sx));
+    memset(&sy, 0, sizeof(sy));
+    memset(&samex, 0, sizeof(samex));
+    memset(&samey, 0, sizeof(samey));
+    ae_matrix_init_copy(&_x, x, _state, ae_true);
     x = &_x;
     ae_matrix_init_copy(&_y, y, _state, ae_true);
     y = &_y;
@@ -4945,40 +4549,20 @@ void pearsoncorrm2(/* Real    */ ae_matrix* x,
 
 
 /*************************************************************************
-Single-threaded stub. HPC ALGLIB replaces it by multithreaded code.
-*************************************************************************/
-void _pexec_pearsoncorrm2(/* Real    */ ae_matrix* x,
-    /* Real    */ ae_matrix* y,
-    ae_int_t n,
-    ae_int_t m1,
-    ae_int_t m2,
-    /* Real    */ ae_matrix* c, ae_state *_state)
-{
-    pearsoncorrm2(x,y,n,m1,m2,c, _state);
-}
-
-
-/*************************************************************************
 Spearman's rank cross-correlation matrix
 
-SMP EDITION OF ALGLIB:
-
-  ! This function can utilize multicore capabilities of  your system.  In
-  ! order to do this you have to call version with "smp_" prefix,   which
-  ! indicates that multicore code will be used.
+  ! COMMERCIAL EDITION OF ALGLIB:
   ! 
-  ! This note is given for users of SMP edition; if you use GPL  edition,
-  ! or commercial edition of ALGLIB without SMP support, you  still  will
-  ! be able to call smp-version of this function,  but  all  computations
-  ! will be done serially.
-  !
-  ! We recommend you to carefully read ALGLIB Reference  Manual,  section
-  ! called 'SMP support', before using parallel version of this function.
-  !
-  ! You should remember that starting/stopping worker thread always  have
-  ! non-zero cost. Although  multicore  version  is  pretty  efficient on
-  ! large problems, we do not recommend you to use it on small problems -
-  ! with correlation matrices smaller than 128*128.
+  ! Commercial Edition of ALGLIB includes following important improvements
+  ! of this function:
+  ! * high-performance native backend with same C# interface (C# version)
+  ! * multithreading support (C++ and C# versions)
+  ! * hardware vendor (Intel) implementations of linear algebra primitives
+  !   (C++ and C# versions, x86/x64 platform)
+  ! 
+  ! We recommend you to read 'Working with commercial version' section  of
+  ! ALGLIB Reference Manual in order to find out how to  use  performance-
+  ! related features provided by commercial edition of ALGLIB.
 
 INPUT PARAMETERS:
     X   -   array[N,M1], sample matrix:
@@ -5028,7 +4612,13 @@ void spearmancorrm2(/* Real    */ ae_matrix* x,
     apbuffers buf;
 
     ae_frame_make(_state, &_frame_block);
-    memset(&t, 0, sizeof(t));    memset(&sx, 0, sizeof(sx));    memset(&sy, 0, sizeof(sy));    memset(&xc, 0, sizeof(xc));    memset(&yc, 0, sizeof(yc));    memset(&buf, 0, sizeof(buf));    ae_matrix_clear(c);
+    memset(&t, 0, sizeof(t));
+    memset(&sx, 0, sizeof(sx));
+    memset(&sy, 0, sizeof(sy));
+    memset(&xc, 0, sizeof(xc));
+    memset(&yc, 0, sizeof(yc));
+    memset(&buf, 0, sizeof(buf));
+    ae_matrix_clear(c);
     ae_vector_init(&t, 0, DT_REAL, _state, ae_true);
     ae_vector_init(&sx, 0, DT_REAL, _state, ae_true);
     ae_vector_init(&sy, 0, DT_REAL, _state, ae_true);
@@ -5199,20 +4789,6 @@ void spearmancorrm2(/* Real    */ ae_matrix* x,
 
 
 /*************************************************************************
-Single-threaded stub. HPC ALGLIB replaces it by multithreaded code.
-*************************************************************************/
-void _pexec_spearmancorrm2(/* Real    */ ae_matrix* x,
-    /* Real    */ ae_matrix* y,
-    ae_int_t n,
-    ae_int_t m1,
-    ae_int_t m2,
-    /* Real    */ ae_matrix* c, ae_state *_state)
-{
-    spearmancorrm2(x,y,n,m1,m2,c, _state);
-}
-
-
-/*************************************************************************
 This function replaces data in XY by their ranks:
 * XY is processed row-by-row
 * rows are processed separately
@@ -5220,24 +4796,16 @@ This function replaces data in XY by their ranks:
 * ranking starts from 0, ends at NFeatures-1
 * sum of within-row values is equal to (NFeatures-1)*NFeatures/2
 
-SMP EDITION OF ALGLIB:
-
-  ! This function can utilize multicore capabilities of  your system.  In
-  ! order to do this you have to call version with "smp_" prefix,   which
-  ! indicates that multicore code will be used.
+  ! COMMERCIAL EDITION OF ALGLIB:
   ! 
-  ! This note is given for users of SMP edition; if you use GPL  edition,
-  ! or commercial edition of ALGLIB without SMP support, you  still  will
-  ! be able to call smp-version of this function,  but  all  computations
-  ! will be done serially.
-  !
-  ! We recommend you to carefully read ALGLIB Reference  Manual,  section
-  ! called 'SMP support', before using parallel version of this function.
-  !
-  ! You should remember that starting/stopping worker thread always  have
-  ! non-zero cost. Although  multicore  version  is  pretty  efficient on
-  ! large problems, we do not recommend you to use it on small problems -
-  ! ones where expected operations count is less than 100.000
+  ! Commercial Edition of ALGLIB includes following important improvements
+  ! of this function:
+  ! * high-performance native backend with same C# interface (C# version)
+  ! * multithreading support (C++ and C# versions)
+  ! 
+  ! We recommend you to read 'Working with commercial version' section  of
+  ! ALGLIB Reference Manual in order to find out how to  use  performance-
+  ! related features provided by commercial edition of ALGLIB.
 
 INPUT PARAMETERS:
     XY      -   array[NPoints,NFeatures], dataset
@@ -5263,7 +4831,10 @@ void rankdata(/* Real    */ ae_matrix* xy,
     ae_shared_pool pool;
 
     ae_frame_make(_state, &_frame_block);
-    memset(&buf0, 0, sizeof(buf0));    memset(&buf1, 0, sizeof(buf1));    memset(&pool, 0, sizeof(pool));    _apbuffers_init(&buf0, _state, ae_true);
+    memset(&buf0, 0, sizeof(buf0));
+    memset(&buf1, 0, sizeof(buf1));
+    memset(&pool, 0, sizeof(pool));
+    _apbuffers_init(&buf0, _state, ae_true);
     _apbuffers_init(&buf1, _state, ae_true);
     ae_shared_pool_init(&pool, _state, ae_true);
 
@@ -5280,13 +4851,11 @@ void rankdata(/* Real    */ ae_matrix* xy,
      * Problem cost is assumed to be NPoints*NFeatures*log2(NFeatures),
      * which is proportional, but NOT equal to number of FLOPs required
      * to solve problem.
+     *
+     * Try to use serial code for basecase problems, no SMP functionality, no shared pools.
      */
     basecasecost = 10000;
-    
-    /*
-     * Try to use serial code, no SMP functionality, no shared pools.
-     */
-    if( ae_fp_less(inttoreal(npoints, _state)*inttoreal(nfeatures, _state)*logbase2((double)(nfeatures), _state),(double)(basecasecost)) )
+    if( ae_fp_less(rmul3((double)(npoints), (double)(nfeatures), logbase2((double)(nfeatures), _state), _state),(double)(basecasecost)) )
     {
         basestat_rankdatabasecase(xy, 0, npoints, nfeatures, ae_false, &buf0, &buf1, _state);
         ae_frame_leave(_state);
@@ -5303,13 +4872,14 @@ void rankdata(/* Real    */ ae_matrix* xy,
 
 
 /*************************************************************************
-Single-threaded stub. HPC ALGLIB replaces it by multithreaded code.
+Serial stub for GPL edition.
 *************************************************************************/
-void _pexec_rankdata(/* Real    */ ae_matrix* xy,
+ae_bool _trypexec_rankdata(/* Real    */ ae_matrix* xy,
     ae_int_t npoints,
-    ae_int_t nfeatures, ae_state *_state)
+    ae_int_t nfeatures,
+    ae_state *_state)
 {
-    rankdata(xy,npoints,nfeatures, _state);
+    return ae_false;
 }
 
 
@@ -5323,24 +4893,16 @@ This function replaces data in XY by their CENTERED ranks:
 * centering is performed by subtracting mean from each row, i.e it changes
   mean value, but does NOT change higher moments
 
-SMP EDITION OF ALGLIB:
-
-  ! This function can utilize multicore capabilities of  your system.  In
-  ! order to do this you have to call version with "smp_" prefix,   which
-  ! indicates that multicore code will be used.
+  ! COMMERCIAL EDITION OF ALGLIB:
   ! 
-  ! This note is given for users of SMP edition; if you use GPL  edition,
-  ! or commercial edition of ALGLIB without SMP support, you  still  will
-  ! be able to call smp-version of this function,  but  all  computations
-  ! will be done serially.
-  !
-  ! We recommend you to carefully read ALGLIB Reference  Manual,  section
-  ! called 'SMP support', before using parallel version of this function.
-  !
-  ! You should remember that starting/stopping worker thread always  have
-  ! non-zero cost. Although  multicore  version  is  pretty  efficient on
-  ! large problems, we do not recommend you to use it on small problems -
-  ! ones where expected operations count is less than 100.000
+  ! Commercial Edition of ALGLIB includes following important improvements
+  ! of this function:
+  ! * high-performance native backend with same C# interface (C# version)
+  ! * multithreading support (C++ and C# versions)
+  ! 
+  ! We recommend you to read 'Working with commercial version' section  of
+  ! ALGLIB Reference Manual in order to find out how to  use  performance-
+  ! related features provided by commercial edition of ALGLIB.
 
 INPUT PARAMETERS:
     XY      -   array[NPoints,NFeatures], dataset
@@ -5366,7 +4928,10 @@ void rankdatacentered(/* Real    */ ae_matrix* xy,
     ae_shared_pool pool;
 
     ae_frame_make(_state, &_frame_block);
-    memset(&buf0, 0, sizeof(buf0));    memset(&buf1, 0, sizeof(buf1));    memset(&pool, 0, sizeof(pool));    _apbuffers_init(&buf0, _state, ae_true);
+    memset(&buf0, 0, sizeof(buf0));
+    memset(&buf1, 0, sizeof(buf1));
+    memset(&pool, 0, sizeof(pool));
+    _apbuffers_init(&buf0, _state, ae_true);
     _apbuffers_init(&buf1, _state, ae_true);
     ae_shared_pool_init(&pool, _state, ae_true);
 
@@ -5383,13 +4948,11 @@ void rankdatacentered(/* Real    */ ae_matrix* xy,
      * Problem cost is assumed to be NPoints*NFeatures*log2(NFeatures),
      * which is proportional, but NOT equal to number of FLOPs required
      * to solve problem.
-     */
-    basecasecost = 10000;
-    
-    /*
+     *
      * Try to use serial code, no SMP functionality, no shared pools.
      */
-    if( ae_fp_less(inttoreal(npoints, _state)*inttoreal(nfeatures, _state)*logbase2((double)(nfeatures), _state),(double)(basecasecost)) )
+    basecasecost = 10000;
+    if( ae_fp_less(rmul3((double)(npoints), (double)(nfeatures), logbase2((double)(nfeatures), _state), _state),(double)(basecasecost)) )
     {
         basestat_rankdatabasecase(xy, 0, npoints, nfeatures, ae_true, &buf0, &buf1, _state);
         ae_frame_leave(_state);
@@ -5406,13 +4969,14 @@ void rankdatacentered(/* Real    */ ae_matrix* xy,
 
 
 /*************************************************************************
-Single-threaded stub. HPC ALGLIB replaces it by multithreaded code.
+Serial stub for GPL edition.
 *************************************************************************/
-void _pexec_rankdatacentered(/* Real    */ ae_matrix* xy,
+ae_bool _trypexec_rankdatacentered(/* Real    */ ae_matrix* xy,
     ae_int_t npoints,
-    ae_int_t nfeatures, ae_state *_state)
+    ae_int_t nfeatures,
+    ae_state *_state)
 {
-    rankdatacentered(xy,npoints,nfeatures, _state);
+    return ae_false;
 }
 
 
@@ -5497,16 +5061,30 @@ static void basestat_rankdatarec(/* Real    */ ae_matrix* xy,
     ae_int_t im;
 
     ae_frame_make(_state, &_frame_block);
-    memset(&_buf0, 0, sizeof(_buf0));    memset(&_buf1, 0, sizeof(_buf1));    ae_smart_ptr_init(&_buf0, (void**)&buf0, _state, ae_true);
+    memset(&_buf0, 0, sizeof(_buf0));
+    memset(&_buf1, 0, sizeof(_buf1));
+    ae_smart_ptr_init(&_buf0, (void**)&buf0, _state, ae_true);
     ae_smart_ptr_init(&_buf1, (void**)&buf1, _state, ae_true);
 
     ae_assert(i1>=i0, "RankDataRec: internal error", _state);
     
     /*
+     * Try to activate parallelism
+     */
+    if( i1-i0>=4&&ae_fp_greater_eq(rmul3((double)(i1-i0), (double)(nfeatures), logbase2((double)(nfeatures), _state), _state),smpactivationlevel(_state)) )
+    {
+        if( _trypexec_basestat_rankdatarec(xy,i0,i1,nfeatures,iscentered,pool,basecasecost, _state) )
+        {
+            ae_frame_leave(_state);
+            return;
+        }
+    }
+    
+    /*
      * Recursively split problem, if it is too large
      */
-    problemcost = inttoreal(i1-i0, _state)*inttoreal(nfeatures, _state)*logbase2((double)(nfeatures), _state);
-    if( i1-i0>=2&&ae_fp_greater(problemcost,(double)(basecasecost)) )
+    problemcost = rmul3((double)(i1-i0), (double)(nfeatures), logbase2((double)(nfeatures), _state), _state);
+    if( i1-i0>=2&&ae_fp_greater(problemcost,spawnlevel(_state)) )
     {
         im = (i1+i0)/2;
         basestat_rankdatarec(xy, i0, im, nfeatures, iscentered, pool, basecasecost, _state);
@@ -5524,6 +5102,22 @@ static void basestat_rankdatarec(/* Real    */ ae_matrix* xy,
     ae_shared_pool_recycle(pool, &_buf0, _state);
     ae_shared_pool_recycle(pool, &_buf1, _state);
     ae_frame_leave(_state);
+}
+
+
+/*************************************************************************
+Serial stub for GPL edition.
+*************************************************************************/
+ae_bool _trypexec_basestat_rankdatarec(/* Real    */ ae_matrix* xy,
+    ae_int_t i0,
+    ae_int_t i1,
+    ae_int_t nfeatures,
+    ae_bool iscentered,
+    ae_shared_pool* pool,
+    ae_int_t basecasecost,
+    ae_state *_state)
+{
+    return ae_false;
 }
 
 
@@ -5576,6 +5170,22 @@ static void basestat_rankdatabasecase(/* Real    */ ae_matrix* xy,
         rankx(&buf1->ra0, nfeatures, iscentered, buf0, _state);
         ae_v_move(&xy->ptr.pp_double[i][0], 1, &buf1->ra0.ptr.p_double[0], 1, ae_v_len(0,nfeatures-1));
     }
+}
+
+
+/*************************************************************************
+Serial stub for GPL edition.
+*************************************************************************/
+ae_bool _trypexec_basestat_rankdatabasecase(/* Real    */ ae_matrix* xy,
+    ae_int_t i0,
+    ae_int_t i1,
+    ae_int_t nfeatures,
+    ae_bool iscentered,
+    apbuffers* buf0,
+    apbuffers* buf1,
+    ae_state *_state)
+{
+    return ae_false;
 }
 
 
@@ -5660,7 +5270,9 @@ void wilcoxonsignedranktest(/* Real    */ ae_vector* x,
 
     ae_frame_make(_state, &_frame_block);
     memset(&_x, 0, sizeof(_x));
-    memset(&r, 0, sizeof(r));    memset(&c, 0, sizeof(c));    ae_vector_init_copy(&_x, x, _state, ae_true);
+    memset(&r, 0, sizeof(r));
+    memset(&c, 0, sizeof(c));
+    ae_vector_init_copy(&_x, x, _state, ae_true);
     x = &_x;
     *bothtails = 0;
     *lefttail = 0;
@@ -13329,7 +12941,10 @@ void mannwhitneyutest(/* Real    */ ae_vector* x,
     ae_vector tiesize;
 
     ae_frame_make(_state, &_frame_block);
-    memset(&r, 0, sizeof(r));    memset(&c, 0, sizeof(c));    memset(&tiesize, 0, sizeof(tiesize));    *bothtails = 0;
+    memset(&r, 0, sizeof(r));
+    memset(&c, 0, sizeof(c));
+    memset(&tiesize, 0, sizeof(tiesize));
+    *bothtails = 0;
     *lefttail = 0;
     *righttail = 0;
     ae_vector_init(&r, 0, DT_REAL, _state, ae_true);
@@ -17892,7 +17507,10 @@ static double jarquebera_jarqueberaapprox(ae_int_t n,
     double result;
 
     ae_frame_make(_state, &_frame_block);
-    memset(&vx, 0, sizeof(vx));    memset(&vy, 0, sizeof(vy));    memset(&ctbl, 0, sizeof(ctbl));    ae_vector_init(&vx, 0, DT_REAL, _state, ae_true);
+    memset(&vx, 0, sizeof(vx));
+    memset(&vy, 0, sizeof(vy));
+    memset(&ctbl, 0, sizeof(ctbl));
+    ae_vector_init(&vx, 0, DT_REAL, _state, ae_true);
     ae_vector_init(&vy, 0, DT_REAL, _state, ae_true);
     ae_matrix_init(&ctbl, 0, 0, DT_REAL, _state, ae_true);
 

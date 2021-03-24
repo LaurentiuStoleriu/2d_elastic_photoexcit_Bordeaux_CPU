@@ -1,5 +1,5 @@
 /*************************************************************************
-ALGLIB 3.13.0 (source code generated 2017-12-29)
+ALGLIB 3.17.0 (source code generated 2020-12-27)
 Copyright (c) Sergey Bochkanov (ALGLIB project).
 
 >>> SOURCE LICENSE >>>
@@ -112,8 +112,8 @@ NOTE: variance is calculated by dividing sum of squares by N-1, not N.
   -- ALGLIB --
      Copyright 06.09.2006 by Bochkanov Sergey
 *************************************************************************/
-void samplemoments(const real_1d_array &x, const ae_int_t n, double &mean, double &variance, double &skewness, double &kurtosis);
-void samplemoments(const real_1d_array &x, double &mean, double &variance, double &skewness, double &kurtosis);
+void samplemoments(const real_1d_array &x, const ae_int_t n, double &mean, double &variance, double &skewness, double &kurtosis, const xparams _xparams = alglib::xdefault);
+void samplemoments(const real_1d_array &x, double &mean, double &variance, double &skewness, double &kurtosis, const xparams _xparams = alglib::xdefault);
 
 
 /*************************************************************************
@@ -134,8 +134,8 @@ and stored at 'Mean' variable.
   -- ALGLIB --
      Copyright 06.09.2006 by Bochkanov Sergey
 *************************************************************************/
-double samplemean(const real_1d_array &x, const ae_int_t n);
-double samplemean(const real_1d_array &x);
+double samplemean(const real_1d_array &x, const ae_int_t n, const xparams _xparams = alglib::xdefault);
+double samplemean(const real_1d_array &x, const xparams _xparams = alglib::xdefault);
 
 
 /*************************************************************************
@@ -156,8 +156,8 @@ and stored at 'Variance' variable.
   -- ALGLIB --
      Copyright 06.09.2006 by Bochkanov Sergey
 *************************************************************************/
-double samplevariance(const real_1d_array &x, const ae_int_t n);
-double samplevariance(const real_1d_array &x);
+double samplevariance(const real_1d_array &x, const ae_int_t n, const xparams _xparams = alglib::xdefault);
+double samplevariance(const real_1d_array &x, const xparams _xparams = alglib::xdefault);
 
 
 /*************************************************************************
@@ -178,8 +178,8 @@ and stored at 'Skewness' variable.
   -- ALGLIB --
      Copyright 06.09.2006 by Bochkanov Sergey
 *************************************************************************/
-double sampleskewness(const real_1d_array &x, const ae_int_t n);
-double sampleskewness(const real_1d_array &x);
+double sampleskewness(const real_1d_array &x, const ae_int_t n, const xparams _xparams = alglib::xdefault);
+double sampleskewness(const real_1d_array &x, const xparams _xparams = alglib::xdefault);
 
 
 /*************************************************************************
@@ -200,8 +200,8 @@ and stored at 'Kurtosis' variable.
   -- ALGLIB --
      Copyright 06.09.2006 by Bochkanov Sergey
 *************************************************************************/
-double samplekurtosis(const real_1d_array &x, const ae_int_t n);
-double samplekurtosis(const real_1d_array &x);
+double samplekurtosis(const real_1d_array &x, const ae_int_t n, const xparams _xparams = alglib::xdefault);
+double samplekurtosis(const real_1d_array &x, const xparams _xparams = alglib::xdefault);
 
 
 /*************************************************************************
@@ -219,8 +219,8 @@ Output parameters:
   -- ALGLIB --
      Copyright 06.09.2006 by Bochkanov Sergey
 *************************************************************************/
-void sampleadev(const real_1d_array &x, const ae_int_t n, double &adev);
-void sampleadev(const real_1d_array &x, double &adev);
+void sampleadev(const real_1d_array &x, const ae_int_t n, double &adev, const xparams _xparams = alglib::xdefault);
+void sampleadev(const real_1d_array &x, double &adev, const xparams _xparams = alglib::xdefault);
 
 
 /*************************************************************************
@@ -238,8 +238,8 @@ Output parameters:
   -- ALGLIB --
      Copyright 06.09.2006 by Bochkanov Sergey
 *************************************************************************/
-void samplemedian(const real_1d_array &x, const ae_int_t n, double &median);
-void samplemedian(const real_1d_array &x, double &median);
+void samplemedian(const real_1d_array &x, const ae_int_t n, double &median, const xparams _xparams = alglib::xdefault);
+void samplemedian(const real_1d_array &x, double &median, const xparams _xparams = alglib::xdefault);
 
 
 /*************************************************************************
@@ -258,8 +258,8 @@ Output parameters:
   -- ALGLIB --
      Copyright 01.03.2008 by Bochkanov Sergey
 *************************************************************************/
-void samplepercentile(const real_1d_array &x, const ae_int_t n, const double p, double &v);
-void samplepercentile(const real_1d_array &x, const double p, double &v);
+void samplepercentile(const real_1d_array &x, const ae_int_t n, const double p, double &v, const xparams _xparams = alglib::xdefault);
+void samplepercentile(const real_1d_array &x, const double p, double &v, const xparams _xparams = alglib::xdefault);
 
 
 /*************************************************************************
@@ -278,8 +278,8 @@ Result:
   -- ALGLIB --
      Copyright 28.10.2010 by Bochkanov Sergey
 *************************************************************************/
-double cov2(const real_1d_array &x, const real_1d_array &y, const ae_int_t n);
-double cov2(const real_1d_array &x, const real_1d_array &y);
+double cov2(const real_1d_array &x, const real_1d_array &y, const ae_int_t n, const xparams _xparams = alglib::xdefault);
+double cov2(const real_1d_array &x, const real_1d_array &y, const xparams _xparams = alglib::xdefault);
 
 
 /*************************************************************************
@@ -299,8 +299,8 @@ Result:
   -- ALGLIB --
      Copyright 28.10.2010 by Bochkanov Sergey
 *************************************************************************/
-double pearsoncorr2(const real_1d_array &x, const real_1d_array &y, const ae_int_t n);
-double pearsoncorr2(const real_1d_array &x, const real_1d_array &y);
+double pearsoncorr2(const real_1d_array &x, const real_1d_array &y, const ae_int_t n, const xparams _xparams = alglib::xdefault);
+double pearsoncorr2(const real_1d_array &x, const real_1d_array &y, const xparams _xparams = alglib::xdefault);
 
 
 /*************************************************************************
@@ -320,31 +320,25 @@ Result:
   -- ALGLIB --
      Copyright 09.04.2007 by Bochkanov Sergey
 *************************************************************************/
-double spearmancorr2(const real_1d_array &x, const real_1d_array &y, const ae_int_t n);
-double spearmancorr2(const real_1d_array &x, const real_1d_array &y);
+double spearmancorr2(const real_1d_array &x, const real_1d_array &y, const ae_int_t n, const xparams _xparams = alglib::xdefault);
+double spearmancorr2(const real_1d_array &x, const real_1d_array &y, const xparams _xparams = alglib::xdefault);
 
 
 /*************************************************************************
 Covariance matrix
 
-SMP EDITION OF ALGLIB:
-
-  ! This function can utilize multicore capabilities of  your system.  In
-  ! order to do this you have to call version with "smp_" prefix,   which
-  ! indicates that multicore code will be used.
+  ! COMMERCIAL EDITION OF ALGLIB:
   !
-  ! This note is given for users of SMP edition; if you use GPL  edition,
-  ! or commercial edition of ALGLIB without SMP support, you  still  will
-  ! be able to call smp-version of this function,  but  all  computations
-  ! will be done serially.
+  ! Commercial Edition of ALGLIB includes following important improvements
+  ! of this function:
+  ! * high-performance native backend with same C# interface (C# version)
+  ! * multithreading support (C++ and C# versions)
+  ! * hardware vendor (Intel) implementations of linear algebra primitives
+  !   (C++ and C# versions, x86/x64 platform)
   !
-  ! We recommend you to carefully read ALGLIB Reference  Manual,  section
-  ! called 'SMP support', before using parallel version of this function.
-  !
-  ! You should remember that starting/stopping worker thread always  have
-  ! non-zero cost. Although  multicore  version  is  pretty  efficient on
-  ! large problems, we do not recommend you to use it on small problems -
-  ! with covariance matrices smaller than 128*128.
+  ! We recommend you to read 'Working with commercial version' section  of
+  ! ALGLIB Reference Manual in order to find out how to  use  performance-
+  ! related features provided by commercial edition of ALGLIB.
 
 INPUT PARAMETERS:
     X   -   array[N,M], sample matrix:
@@ -363,33 +357,25 @@ OUTPUT PARAMETERS:
   -- ALGLIB --
      Copyright 28.10.2010 by Bochkanov Sergey
 *************************************************************************/
-void covm(const real_2d_array &x, const ae_int_t n, const ae_int_t m, real_2d_array &c);
-void smp_covm(const real_2d_array &x, const ae_int_t n, const ae_int_t m, real_2d_array &c);
-void covm(const real_2d_array &x, real_2d_array &c);
-void smp_covm(const real_2d_array &x, real_2d_array &c);
+void covm(const real_2d_array &x, const ae_int_t n, const ae_int_t m, real_2d_array &c, const xparams _xparams = alglib::xdefault);
+void covm(const real_2d_array &x, real_2d_array &c, const xparams _xparams = alglib::xdefault);
 
 
 /*************************************************************************
 Pearson product-moment correlation matrix
 
-SMP EDITION OF ALGLIB:
-
-  ! This function can utilize multicore capabilities of  your system.  In
-  ! order to do this you have to call version with "smp_" prefix,   which
-  ! indicates that multicore code will be used.
+  ! COMMERCIAL EDITION OF ALGLIB:
   !
-  ! This note is given for users of SMP edition; if you use GPL  edition,
-  ! or commercial edition of ALGLIB without SMP support, you  still  will
-  ! be able to call smp-version of this function,  but  all  computations
-  ! will be done serially.
+  ! Commercial Edition of ALGLIB includes following important improvements
+  ! of this function:
+  ! * high-performance native backend with same C# interface (C# version)
+  ! * multithreading support (C++ and C# versions)
+  ! * hardware vendor (Intel) implementations of linear algebra primitives
+  !   (C++ and C# versions, x86/x64 platform)
   !
-  ! We recommend you to carefully read ALGLIB Reference  Manual,  section
-  ! called 'SMP support', before using parallel version of this function.
-  !
-  ! You should remember that starting/stopping worker thread always  have
-  ! non-zero cost. Although  multicore  version  is  pretty  efficient on
-  ! large problems, we do not recommend you to use it on small problems -
-  ! with correlation matrices smaller than 128*128.
+  ! We recommend you to read 'Working with commercial version' section  of
+  ! ALGLIB Reference Manual in order to find out how to  use  performance-
+  ! related features provided by commercial edition of ALGLIB.
 
 INPUT PARAMETERS:
     X   -   array[N,M], sample matrix:
@@ -408,33 +394,25 @@ OUTPUT PARAMETERS:
   -- ALGLIB --
      Copyright 28.10.2010 by Bochkanov Sergey
 *************************************************************************/
-void pearsoncorrm(const real_2d_array &x, const ae_int_t n, const ae_int_t m, real_2d_array &c);
-void smp_pearsoncorrm(const real_2d_array &x, const ae_int_t n, const ae_int_t m, real_2d_array &c);
-void pearsoncorrm(const real_2d_array &x, real_2d_array &c);
-void smp_pearsoncorrm(const real_2d_array &x, real_2d_array &c);
+void pearsoncorrm(const real_2d_array &x, const ae_int_t n, const ae_int_t m, real_2d_array &c, const xparams _xparams = alglib::xdefault);
+void pearsoncorrm(const real_2d_array &x, real_2d_array &c, const xparams _xparams = alglib::xdefault);
 
 
 /*************************************************************************
 Spearman's rank correlation matrix
 
-SMP EDITION OF ALGLIB:
-
-  ! This function can utilize multicore capabilities of  your system.  In
-  ! order to do this you have to call version with "smp_" prefix,   which
-  ! indicates that multicore code will be used.
+  ! COMMERCIAL EDITION OF ALGLIB:
   !
-  ! This note is given for users of SMP edition; if you use GPL  edition,
-  ! or commercial edition of ALGLIB without SMP support, you  still  will
-  ! be able to call smp-version of this function,  but  all  computations
-  ! will be done serially.
+  ! Commercial Edition of ALGLIB includes following important improvements
+  ! of this function:
+  ! * high-performance native backend with same C# interface (C# version)
+  ! * multithreading support (C++ and C# versions)
+  ! * hardware vendor (Intel) implementations of linear algebra primitives
+  !   (C++ and C# versions, x86/x64 platform)
   !
-  ! We recommend you to carefully read ALGLIB Reference  Manual,  section
-  ! called 'SMP support', before using parallel version of this function.
-  !
-  ! You should remember that starting/stopping worker thread always  have
-  ! non-zero cost. Although  multicore  version  is  pretty  efficient on
-  ! large problems, we do not recommend you to use it on small problems -
-  ! with correlation matrices smaller than 128*128.
+  ! We recommend you to read 'Working with commercial version' section  of
+  ! ALGLIB Reference Manual in order to find out how to  use  performance-
+  ! related features provided by commercial edition of ALGLIB.
 
 INPUT PARAMETERS:
     X   -   array[N,M], sample matrix:
@@ -453,33 +431,25 @@ OUTPUT PARAMETERS:
   -- ALGLIB --
      Copyright 28.10.2010 by Bochkanov Sergey
 *************************************************************************/
-void spearmancorrm(const real_2d_array &x, const ae_int_t n, const ae_int_t m, real_2d_array &c);
-void smp_spearmancorrm(const real_2d_array &x, const ae_int_t n, const ae_int_t m, real_2d_array &c);
-void spearmancorrm(const real_2d_array &x, real_2d_array &c);
-void smp_spearmancorrm(const real_2d_array &x, real_2d_array &c);
+void spearmancorrm(const real_2d_array &x, const ae_int_t n, const ae_int_t m, real_2d_array &c, const xparams _xparams = alglib::xdefault);
+void spearmancorrm(const real_2d_array &x, real_2d_array &c, const xparams _xparams = alglib::xdefault);
 
 
 /*************************************************************************
 Cross-covariance matrix
 
-SMP EDITION OF ALGLIB:
-
-  ! This function can utilize multicore capabilities of  your system.  In
-  ! order to do this you have to call version with "smp_" prefix,   which
-  ! indicates that multicore code will be used.
+  ! COMMERCIAL EDITION OF ALGLIB:
   !
-  ! This note is given for users of SMP edition; if you use GPL  edition,
-  ! or commercial edition of ALGLIB without SMP support, you  still  will
-  ! be able to call smp-version of this function,  but  all  computations
-  ! will be done serially.
+  ! Commercial Edition of ALGLIB includes following important improvements
+  ! of this function:
+  ! * high-performance native backend with same C# interface (C# version)
+  ! * multithreading support (C++ and C# versions)
+  ! * hardware vendor (Intel) implementations of linear algebra primitives
+  !   (C++ and C# versions, x86/x64 platform)
   !
-  ! We recommend you to carefully read ALGLIB Reference  Manual,  section
-  ! called 'SMP support', before using parallel version of this function.
-  !
-  ! You should remember that starting/stopping worker thread always  have
-  ! non-zero cost. Although  multicore  version  is  pretty  efficient on
-  ! large problems, we do not recommend you to use it on small problems -
-  ! with covariance matrices smaller than 128*128.
+  ! We recommend you to read 'Working with commercial version' section  of
+  ! ALGLIB Reference Manual in order to find out how to  use  performance-
+  ! related features provided by commercial edition of ALGLIB.
 
 INPUT PARAMETERS:
     X   -   array[N,M1], sample matrix:
@@ -504,33 +474,25 @@ OUTPUT PARAMETERS:
   -- ALGLIB --
      Copyright 28.10.2010 by Bochkanov Sergey
 *************************************************************************/
-void covm2(const real_2d_array &x, const real_2d_array &y, const ae_int_t n, const ae_int_t m1, const ae_int_t m2, real_2d_array &c);
-void smp_covm2(const real_2d_array &x, const real_2d_array &y, const ae_int_t n, const ae_int_t m1, const ae_int_t m2, real_2d_array &c);
-void covm2(const real_2d_array &x, const real_2d_array &y, real_2d_array &c);
-void smp_covm2(const real_2d_array &x, const real_2d_array &y, real_2d_array &c);
+void covm2(const real_2d_array &x, const real_2d_array &y, const ae_int_t n, const ae_int_t m1, const ae_int_t m2, real_2d_array &c, const xparams _xparams = alglib::xdefault);
+void covm2(const real_2d_array &x, const real_2d_array &y, real_2d_array &c, const xparams _xparams = alglib::xdefault);
 
 
 /*************************************************************************
 Pearson product-moment cross-correlation matrix
 
-SMP EDITION OF ALGLIB:
-
-  ! This function can utilize multicore capabilities of  your system.  In
-  ! order to do this you have to call version with "smp_" prefix,   which
-  ! indicates that multicore code will be used.
+  ! COMMERCIAL EDITION OF ALGLIB:
   !
-  ! This note is given for users of SMP edition; if you use GPL  edition,
-  ! or commercial edition of ALGLIB without SMP support, you  still  will
-  ! be able to call smp-version of this function,  but  all  computations
-  ! will be done serially.
+  ! Commercial Edition of ALGLIB includes following important improvements
+  ! of this function:
+  ! * high-performance native backend with same C# interface (C# version)
+  ! * multithreading support (C++ and C# versions)
+  ! * hardware vendor (Intel) implementations of linear algebra primitives
+  !   (C++ and C# versions, x86/x64 platform)
   !
-  ! We recommend you to carefully read ALGLIB Reference  Manual,  section
-  ! called 'SMP support', before using parallel version of this function.
-  !
-  ! You should remember that starting/stopping worker thread always  have
-  ! non-zero cost. Although  multicore  version  is  pretty  efficient on
-  ! large problems, we do not recommend you to use it on small problems -
-  ! with correlation matrices smaller than 128*128.
+  ! We recommend you to read 'Working with commercial version' section  of
+  ! ALGLIB Reference Manual in order to find out how to  use  performance-
+  ! related features provided by commercial edition of ALGLIB.
 
 INPUT PARAMETERS:
     X   -   array[N,M1], sample matrix:
@@ -555,33 +517,25 @@ OUTPUT PARAMETERS:
   -- ALGLIB --
      Copyright 28.10.2010 by Bochkanov Sergey
 *************************************************************************/
-void pearsoncorrm2(const real_2d_array &x, const real_2d_array &y, const ae_int_t n, const ae_int_t m1, const ae_int_t m2, real_2d_array &c);
-void smp_pearsoncorrm2(const real_2d_array &x, const real_2d_array &y, const ae_int_t n, const ae_int_t m1, const ae_int_t m2, real_2d_array &c);
-void pearsoncorrm2(const real_2d_array &x, const real_2d_array &y, real_2d_array &c);
-void smp_pearsoncorrm2(const real_2d_array &x, const real_2d_array &y, real_2d_array &c);
+void pearsoncorrm2(const real_2d_array &x, const real_2d_array &y, const ae_int_t n, const ae_int_t m1, const ae_int_t m2, real_2d_array &c, const xparams _xparams = alglib::xdefault);
+void pearsoncorrm2(const real_2d_array &x, const real_2d_array &y, real_2d_array &c, const xparams _xparams = alglib::xdefault);
 
 
 /*************************************************************************
 Spearman's rank cross-correlation matrix
 
-SMP EDITION OF ALGLIB:
-
-  ! This function can utilize multicore capabilities of  your system.  In
-  ! order to do this you have to call version with "smp_" prefix,   which
-  ! indicates that multicore code will be used.
+  ! COMMERCIAL EDITION OF ALGLIB:
   !
-  ! This note is given for users of SMP edition; if you use GPL  edition,
-  ! or commercial edition of ALGLIB without SMP support, you  still  will
-  ! be able to call smp-version of this function,  but  all  computations
-  ! will be done serially.
+  ! Commercial Edition of ALGLIB includes following important improvements
+  ! of this function:
+  ! * high-performance native backend with same C# interface (C# version)
+  ! * multithreading support (C++ and C# versions)
+  ! * hardware vendor (Intel) implementations of linear algebra primitives
+  !   (C++ and C# versions, x86/x64 platform)
   !
-  ! We recommend you to carefully read ALGLIB Reference  Manual,  section
-  ! called 'SMP support', before using parallel version of this function.
-  !
-  ! You should remember that starting/stopping worker thread always  have
-  ! non-zero cost. Although  multicore  version  is  pretty  efficient on
-  ! large problems, we do not recommend you to use it on small problems -
-  ! with correlation matrices smaller than 128*128.
+  ! We recommend you to read 'Working with commercial version' section  of
+  ! ALGLIB Reference Manual in order to find out how to  use  performance-
+  ! related features provided by commercial edition of ALGLIB.
 
 INPUT PARAMETERS:
     X   -   array[N,M1], sample matrix:
@@ -606,10 +560,8 @@ OUTPUT PARAMETERS:
   -- ALGLIB --
      Copyright 28.10.2010 by Bochkanov Sergey
 *************************************************************************/
-void spearmancorrm2(const real_2d_array &x, const real_2d_array &y, const ae_int_t n, const ae_int_t m1, const ae_int_t m2, real_2d_array &c);
-void smp_spearmancorrm2(const real_2d_array &x, const real_2d_array &y, const ae_int_t n, const ae_int_t m1, const ae_int_t m2, real_2d_array &c);
-void spearmancorrm2(const real_2d_array &x, const real_2d_array &y, real_2d_array &c);
-void smp_spearmancorrm2(const real_2d_array &x, const real_2d_array &y, real_2d_array &c);
+void spearmancorrm2(const real_2d_array &x, const real_2d_array &y, const ae_int_t n, const ae_int_t m1, const ae_int_t m2, real_2d_array &c, const xparams _xparams = alglib::xdefault);
+void spearmancorrm2(const real_2d_array &x, const real_2d_array &y, real_2d_array &c, const xparams _xparams = alglib::xdefault);
 
 
 /*************************************************************************
@@ -620,24 +572,16 @@ This function replaces data in XY by their ranks:
 * ranking starts from 0, ends at NFeatures-1
 * sum of within-row values is equal to (NFeatures-1)*NFeatures/2
 
-SMP EDITION OF ALGLIB:
-
-  ! This function can utilize multicore capabilities of  your system.  In
-  ! order to do this you have to call version with "smp_" prefix,   which
-  ! indicates that multicore code will be used.
+  ! COMMERCIAL EDITION OF ALGLIB:
   !
-  ! This note is given for users of SMP edition; if you use GPL  edition,
-  ! or commercial edition of ALGLIB without SMP support, you  still  will
-  ! be able to call smp-version of this function,  but  all  computations
-  ! will be done serially.
+  ! Commercial Edition of ALGLIB includes following important improvements
+  ! of this function:
+  ! * high-performance native backend with same C# interface (C# version)
+  ! * multithreading support (C++ and C# versions)
   !
-  ! We recommend you to carefully read ALGLIB Reference  Manual,  section
-  ! called 'SMP support', before using parallel version of this function.
-  !
-  ! You should remember that starting/stopping worker thread always  have
-  ! non-zero cost. Although  multicore  version  is  pretty  efficient on
-  ! large problems, we do not recommend you to use it on small problems -
-  ! ones where expected operations count is less than 100.000
+  ! We recommend you to read 'Working with commercial version' section  of
+  ! ALGLIB Reference Manual in order to find out how to  use  performance-
+  ! related features provided by commercial edition of ALGLIB.
 
 INPUT PARAMETERS:
     XY      -   array[NPoints,NFeatures], dataset
@@ -651,10 +595,8 @@ OUTPUT PARAMETERS:
   -- ALGLIB --
      Copyright 18.04.2013 by Bochkanov Sergey
 *************************************************************************/
-void rankdata(const real_2d_array &xy, const ae_int_t npoints, const ae_int_t nfeatures);
-void smp_rankdata(const real_2d_array &xy, const ae_int_t npoints, const ae_int_t nfeatures);
-void rankdata(real_2d_array &xy);
-void smp_rankdata(real_2d_array &xy);
+void rankdata(const real_2d_array &xy, const ae_int_t npoints, const ae_int_t nfeatures, const xparams _xparams = alglib::xdefault);
+void rankdata(real_2d_array &xy, const xparams _xparams = alglib::xdefault);
 
 
 /*************************************************************************
@@ -667,24 +609,16 @@ This function replaces data in XY by their CENTERED ranks:
 * centering is performed by subtracting mean from each row, i.e it changes
   mean value, but does NOT change higher moments
 
-SMP EDITION OF ALGLIB:
-
-  ! This function can utilize multicore capabilities of  your system.  In
-  ! order to do this you have to call version with "smp_" prefix,   which
-  ! indicates that multicore code will be used.
+  ! COMMERCIAL EDITION OF ALGLIB:
   !
-  ! This note is given for users of SMP edition; if you use GPL  edition,
-  ! or commercial edition of ALGLIB without SMP support, you  still  will
-  ! be able to call smp-version of this function,  but  all  computations
-  ! will be done serially.
+  ! Commercial Edition of ALGLIB includes following important improvements
+  ! of this function:
+  ! * high-performance native backend with same C# interface (C# version)
+  ! * multithreading support (C++ and C# versions)
   !
-  ! We recommend you to carefully read ALGLIB Reference  Manual,  section
-  ! called 'SMP support', before using parallel version of this function.
-  !
-  ! You should remember that starting/stopping worker thread always  have
-  ! non-zero cost. Although  multicore  version  is  pretty  efficient on
-  ! large problems, we do not recommend you to use it on small problems -
-  ! ones where expected operations count is less than 100.000
+  ! We recommend you to read 'Working with commercial version' section  of
+  ! ALGLIB Reference Manual in order to find out how to  use  performance-
+  ! related features provided by commercial edition of ALGLIB.
 
 INPUT PARAMETERS:
     XY      -   array[NPoints,NFeatures], dataset
@@ -698,10 +632,8 @@ OUTPUT PARAMETERS:
   -- ALGLIB --
      Copyright 18.04.2013 by Bochkanov Sergey
 *************************************************************************/
-void rankdatacentered(const real_2d_array &xy, const ae_int_t npoints, const ae_int_t nfeatures);
-void smp_rankdatacentered(const real_2d_array &xy, const ae_int_t npoints, const ae_int_t nfeatures);
-void rankdatacentered(real_2d_array &xy);
-void smp_rankdatacentered(real_2d_array &xy);
+void rankdatacentered(const real_2d_array &xy, const ae_int_t npoints, const ae_int_t nfeatures, const xparams _xparams = alglib::xdefault);
+void rankdatacentered(real_2d_array &xy, const xparams _xparams = alglib::xdefault);
 
 
 /*************************************************************************
@@ -710,7 +642,7 @@ Obsolete function, we recommend to use PearsonCorr2().
   -- ALGLIB --
      Copyright 09.04.2007 by Bochkanov Sergey
 *************************************************************************/
-double pearsoncorrelation(const real_1d_array &x, const real_1d_array &y, const ae_int_t n);
+double pearsoncorrelation(const real_1d_array &x, const real_1d_array &y, const ae_int_t n, const xparams _xparams = alglib::xdefault);
 
 
 /*************************************************************************
@@ -719,7 +651,7 @@ Obsolete function, we recommend to use SpearmanCorr2().
     -- ALGLIB --
     Copyright 09.04.2007 by Bochkanov Sergey
 *************************************************************************/
-double spearmanrankcorrelation(const real_1d_array &x, const real_1d_array &y, const ae_int_t n);
+double spearmanrankcorrelation(const real_1d_array &x, const real_1d_array &y, const ae_int_t n, const xparams _xparams = alglib::xdefault);
 #endif
 
 #if defined(AE_COMPILE_WSR) || !defined(AE_PARTIAL_BUILD)
@@ -772,7 +704,7 @@ the significance level outlies this interval, the test returns 0.0001.
   -- ALGLIB --
      Copyright 08.09.2006 by Bochkanov Sergey
 *************************************************************************/
-void wilcoxonsignedranktest(const real_1d_array &x, const ae_int_t n, const double e, double &bothtails, double &lefttail, double &righttail);
+void wilcoxonsignedranktest(const real_1d_array &x, const ae_int_t n, const double e, double &bothtails, double &lefttail, double &righttail, const xparams _xparams = alglib::xdefault);
 #endif
 
 #if defined(AE_COMPILE_STEST) || !defined(AE_PARTIAL_BUILD)
@@ -816,7 +748,7 @@ approximation is used, so significance levels have about 15 exact digits.
   -- ALGLIB --
      Copyright 08.09.2006 by Bochkanov Sergey
 *************************************************************************/
-void onesamplesigntest(const real_1d_array &x, const ae_int_t n, const double median, double &bothtails, double &lefttail, double &righttail);
+void onesamplesigntest(const real_1d_array &x, const ae_int_t n, const double median, double &bothtails, double &lefttail, double &righttail, const xparams _xparams = alglib::xdefault);
 #endif
 
 #if defined(AE_COMPILE_CORRELATIONTESTS) || !defined(AE_PARTIAL_BUILD)
@@ -856,7 +788,7 @@ Output parameters:
   -- ALGLIB --
      Copyright 09.04.2007 by Bochkanov Sergey
 *************************************************************************/
-void pearsoncorrelationsignificance(const double r, const ae_int_t n, double &bothtails, double &lefttail, double &righttail);
+void pearsoncorrelationsignificance(const double r, const ae_int_t n, double &bothtails, double &lefttail, double &righttail, const xparams _xparams = alglib::xdefault);
 
 
 /*************************************************************************
@@ -897,7 +829,7 @@ Output parameters:
   -- ALGLIB --
      Copyright 09.04.2007 by Bochkanov Sergey
 *************************************************************************/
-void spearmanrankcorrelationsignificance(const double r, const ae_int_t n, double &bothtails, double &lefttail, double &righttail);
+void spearmanrankcorrelationsignificance(const double r, const ae_int_t n, double &bothtails, double &lefttail, double &righttail, const xparams _xparams = alglib::xdefault);
 #endif
 
 #if defined(AE_COMPILE_STUDENTTTESTS) || !defined(AE_PARTIAL_BUILD)
@@ -943,7 +875,7 @@ NOTE: this function correctly handles degenerate cases:
   -- ALGLIB --
      Copyright 08.09.2006 by Bochkanov Sergey
 *************************************************************************/
-void studentttest1(const real_1d_array &x, const ae_int_t n, const double mean, double &bothtails, double &lefttail, double &righttail);
+void studentttest1(const real_1d_array &x, const ae_int_t n, const double mean, double &bothtails, double &lefttail, double &righttail, const xparams _xparams = alglib::xdefault);
 
 
 /*************************************************************************
@@ -987,7 +919,7 @@ NOTE: this function correctly handles degenerate cases:
   -- ALGLIB --
      Copyright 18.09.2006 by Bochkanov Sergey
 *************************************************************************/
-void studentttest2(const real_1d_array &x, const ae_int_t n, const real_1d_array &y, const ae_int_t m, double &bothtails, double &lefttail, double &righttail);
+void studentttest2(const real_1d_array &x, const ae_int_t n, const real_1d_array &y, const ae_int_t m, double &bothtails, double &lefttail, double &righttail, const xparams _xparams = alglib::xdefault);
 
 
 /*************************************************************************
@@ -1033,7 +965,7 @@ NOTE: this function correctly handles degenerate cases:
   -- ALGLIB --
      Copyright 18.09.2006 by Bochkanov Sergey
 *************************************************************************/
-void unequalvariancettest(const real_1d_array &x, const ae_int_t n, const real_1d_array &y, const ae_int_t m, double &bothtails, double &lefttail, double &righttail);
+void unequalvariancettest(const real_1d_array &x, const ae_int_t n, const real_1d_array &y, const ae_int_t m, double &bothtails, double &lefttail, double &righttail, const xparams _xparams = alglib::xdefault);
 #endif
 
 #if defined(AE_COMPILE_MANNWHITNEYU) || !defined(AE_PARTIAL_BUILD)
@@ -1105,7 +1037,7 @@ NOTE: P-value approximation was  optimized  for  0.0001<=p<=0.2500.  Thus,
   -- ALGLIB --
      Copyright 09.04.2007 by Bochkanov Sergey
 *************************************************************************/
-void mannwhitneyutest(const real_1d_array &x, const ae_int_t n, const real_1d_array &y, const ae_int_t m, double &bothtails, double &lefttail, double &righttail);
+void mannwhitneyutest(const real_1d_array &x, const ae_int_t n, const real_1d_array &y, const ae_int_t m, double &bothtails, double &lefttail, double &righttail, const xparams _xparams = alglib::xdefault);
 #endif
 
 #if defined(AE_COMPILE_JARQUEBERA) || !defined(AE_PARTIAL_BUILD)
@@ -1139,7 +1071,7 @@ from table values.
   -- ALGLIB --
      Copyright 09.04.2007 by Bochkanov Sergey
 *************************************************************************/
-void jarqueberatest(const real_1d_array &x, const ae_int_t n, double &p);
+void jarqueberatest(const real_1d_array &x, const ae_int_t n, double &p, const xparams _xparams = alglib::xdefault);
 #endif
 
 #if defined(AE_COMPILE_VARIANCETESTS) || !defined(AE_PARTIAL_BUILD)
@@ -1179,7 +1111,7 @@ Output parameters:
   -- ALGLIB --
      Copyright 19.09.2006 by Bochkanov Sergey
 *************************************************************************/
-void ftest(const real_1d_array &x, const ae_int_t n, const real_1d_array &y, const ae_int_t m, double &bothtails, double &lefttail, double &righttail);
+void ftest(const real_1d_array &x, const ae_int_t n, const real_1d_array &y, const ae_int_t m, double &bothtails, double &lefttail, double &righttail, const xparams _xparams = alglib::xdefault);
 
 
 /*************************************************************************
@@ -1216,7 +1148,7 @@ Output parameters:
   -- ALGLIB --
      Copyright 19.09.2006 by Bochkanov Sergey
 *************************************************************************/
-void onesamplevariancetest(const real_1d_array &x, const ae_int_t n, const double variance, double &bothtails, double &lefttail, double &righttail);
+void onesamplevariancetest(const real_1d_array &x, const ae_int_t n, const double variance, double &bothtails, double &lefttail, double &righttail, const xparams _xparams = alglib::xdefault);
 #endif
 }
 
@@ -1277,28 +1209,16 @@ void covm(/* Real    */ ae_matrix* x,
      ae_int_t m,
      /* Real    */ ae_matrix* c,
      ae_state *_state);
-void _pexec_covm(/* Real    */ ae_matrix* x,
-    ae_int_t n,
-    ae_int_t m,
-    /* Real    */ ae_matrix* c, ae_state *_state);
 void pearsoncorrm(/* Real    */ ae_matrix* x,
      ae_int_t n,
      ae_int_t m,
      /* Real    */ ae_matrix* c,
      ae_state *_state);
-void _pexec_pearsoncorrm(/* Real    */ ae_matrix* x,
-    ae_int_t n,
-    ae_int_t m,
-    /* Real    */ ae_matrix* c, ae_state *_state);
 void spearmancorrm(/* Real    */ ae_matrix* x,
      ae_int_t n,
      ae_int_t m,
      /* Real    */ ae_matrix* c,
      ae_state *_state);
-void _pexec_spearmancorrm(/* Real    */ ae_matrix* x,
-    ae_int_t n,
-    ae_int_t m,
-    /* Real    */ ae_matrix* c, ae_state *_state);
 void covm2(/* Real    */ ae_matrix* x,
      /* Real    */ ae_matrix* y,
      ae_int_t n,
@@ -1306,12 +1226,6 @@ void covm2(/* Real    */ ae_matrix* x,
      ae_int_t m2,
      /* Real    */ ae_matrix* c,
      ae_state *_state);
-void _pexec_covm2(/* Real    */ ae_matrix* x,
-    /* Real    */ ae_matrix* y,
-    ae_int_t n,
-    ae_int_t m1,
-    ae_int_t m2,
-    /* Real    */ ae_matrix* c, ae_state *_state);
 void pearsoncorrm2(/* Real    */ ae_matrix* x,
      /* Real    */ ae_matrix* y,
      ae_int_t n,
@@ -1319,12 +1233,6 @@ void pearsoncorrm2(/* Real    */ ae_matrix* x,
      ae_int_t m2,
      /* Real    */ ae_matrix* c,
      ae_state *_state);
-void _pexec_pearsoncorrm2(/* Real    */ ae_matrix* x,
-    /* Real    */ ae_matrix* y,
-    ae_int_t n,
-    ae_int_t m1,
-    ae_int_t m2,
-    /* Real    */ ae_matrix* c, ae_state *_state);
 void spearmancorrm2(/* Real    */ ae_matrix* x,
      /* Real    */ ae_matrix* y,
      ae_int_t n,
@@ -1332,24 +1240,18 @@ void spearmancorrm2(/* Real    */ ae_matrix* x,
      ae_int_t m2,
      /* Real    */ ae_matrix* c,
      ae_state *_state);
-void _pexec_spearmancorrm2(/* Real    */ ae_matrix* x,
-    /* Real    */ ae_matrix* y,
-    ae_int_t n,
-    ae_int_t m1,
-    ae_int_t m2,
-    /* Real    */ ae_matrix* c, ae_state *_state);
 void rankdata(/* Real    */ ae_matrix* xy,
      ae_int_t npoints,
      ae_int_t nfeatures,
      ae_state *_state);
-void _pexec_rankdata(/* Real    */ ae_matrix* xy,
+ae_bool _trypexec_rankdata(/* Real    */ ae_matrix* xy,
     ae_int_t npoints,
     ae_int_t nfeatures, ae_state *_state);
 void rankdatacentered(/* Real    */ ae_matrix* xy,
      ae_int_t npoints,
      ae_int_t nfeatures,
      ae_state *_state);
-void _pexec_rankdatacentered(/* Real    */ ae_matrix* xy,
+ae_bool _trypexec_rankdatacentered(/* Real    */ ae_matrix* xy,
     ae_int_t npoints,
     ae_int_t nfeatures, ae_state *_state);
 double pearsoncorrelation(/* Real    */ ae_vector* x,

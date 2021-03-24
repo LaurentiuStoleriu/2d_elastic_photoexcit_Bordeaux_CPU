@@ -1,5 +1,5 @@
 /*************************************************************************
-ALGLIB 3.13.0 (source code generated 2017-12-29)
+ALGLIB 3.17.0 (source code generated 2020-12-27)
 Copyright (c) Sergey Bochkanov (ALGLIB project).
 
 >>> SOURCE LICENSE >>>
@@ -95,7 +95,7 @@ namespace alglib
 Buffer object which is used to perform nearest neighbor  requests  in  the
 multithreaded mode (multiple threads working with same KD-tree object).
 
-This object should be created with KDTreeCreateBuffer().
+This object should be created with KDTreeCreateRequestBuffer().
 *************************************************************************/
 class _kdtreerequestbuffer_owner
 {
@@ -297,8 +297,8 @@ NOTES
   -- ALGLIB --
      Copyright 28.02.2010 by Bochkanov Sergey
 *************************************************************************/
-void kdtreebuild(const real_2d_array &xy, const ae_int_t n, const ae_int_t nx, const ae_int_t ny, const ae_int_t normtype, kdtree &kdt);
-void kdtreebuild(const real_2d_array &xy, const ae_int_t nx, const ae_int_t ny, const ae_int_t normtype, kdtree &kdt);
+void kdtreebuild(const real_2d_array &xy, const ae_int_t n, const ae_int_t nx, const ae_int_t ny, const ae_int_t normtype, kdtree &kdt, const xparams _xparams = alglib::xdefault);
+void kdtreebuild(const real_2d_array &xy, const ae_int_t nx, const ae_int_t ny, const ae_int_t normtype, kdtree &kdt, const xparams _xparams = alglib::xdefault);
 
 
 /*************************************************************************
@@ -338,8 +338,8 @@ NOTES
   -- ALGLIB --
      Copyright 28.02.2010 by Bochkanov Sergey
 *************************************************************************/
-void kdtreebuildtagged(const real_2d_array &xy, const integer_1d_array &tags, const ae_int_t n, const ae_int_t nx, const ae_int_t ny, const ae_int_t normtype, kdtree &kdt);
-void kdtreebuildtagged(const real_2d_array &xy, const integer_1d_array &tags, const ae_int_t nx, const ae_int_t ny, const ae_int_t normtype, kdtree &kdt);
+void kdtreebuildtagged(const real_2d_array &xy, const integer_1d_array &tags, const ae_int_t n, const ae_int_t nx, const ae_int_t ny, const ae_int_t normtype, kdtree &kdt, const xparams _xparams = alglib::xdefault);
+void kdtreebuildtagged(const real_2d_array &xy, const integer_1d_array &tags, const ae_int_t nx, const ae_int_t ny, const ae_int_t normtype, kdtree &kdt, const xparams _xparams = alglib::xdefault);
 
 
 /*************************************************************************
@@ -361,7 +361,7 @@ OUTPUT PARAMETERS
 
 
 IMPORTANT: KD-tree buffer should be used only with  KD-tree  object  which
-           was used to initialize buffer. Any attempt to use biffer   with
+           was used to initialize buffer. Any attempt to use buffer   with
            different object is dangerous - you  may  get  integrity  check
            failure (exception) because sizes of internal arrays do not fit
            to dimensions of KD-tree structure.
@@ -369,7 +369,7 @@ IMPORTANT: KD-tree buffer should be used only with  KD-tree  object  which
   -- ALGLIB --
      Copyright 18.03.2016 by Bochkanov Sergey
 *************************************************************************/
-void kdtreecreaterequestbuffer(const kdtree &kdt, kdtreerequestbuffer &buf);
+void kdtreecreaterequestbuffer(const kdtree &kdt, kdtreerequestbuffer &buf, const xparams _xparams = alglib::xdefault);
 
 
 /*************************************************************************
@@ -406,8 +406,8 @@ these results:
   -- ALGLIB --
      Copyright 28.02.2010 by Bochkanov Sergey
 *************************************************************************/
-ae_int_t kdtreequeryknn(const kdtree &kdt, const real_1d_array &x, const ae_int_t k, const bool selfmatch);
-ae_int_t kdtreequeryknn(const kdtree &kdt, const real_1d_array &x, const ae_int_t k);
+ae_int_t kdtreequeryknn(const kdtree &kdt, const real_1d_array &x, const ae_int_t k, const bool selfmatch, const xparams _xparams = alglib::xdefault);
+ae_int_t kdtreequeryknn(const kdtree &kdt, const real_1d_array &x, const ae_int_t k, const xparams _xparams = alglib::xdefault);
 
 
 /*************************************************************************
@@ -451,18 +451,23 @@ IMPORTANT: kd-tree buffer should be used only with  KD-tree  object  which
   -- ALGLIB --
      Copyright 18.03.2016 by Bochkanov Sergey
 *************************************************************************/
-ae_int_t kdtreetsqueryknn(const kdtree &kdt, const kdtreerequestbuffer &buf, const real_1d_array &x, const ae_int_t k, const bool selfmatch);
-ae_int_t kdtreetsqueryknn(const kdtree &kdt, const kdtreerequestbuffer &buf, const real_1d_array &x, const ae_int_t k);
+ae_int_t kdtreetsqueryknn(const kdtree &kdt, const kdtreerequestbuffer &buf, const real_1d_array &x, const ae_int_t k, const bool selfmatch, const xparams _xparams = alglib::xdefault);
+ae_int_t kdtreetsqueryknn(const kdtree &kdt, const kdtreerequestbuffer &buf, const real_1d_array &x, const ae_int_t k, const xparams _xparams = alglib::xdefault);
 
 
 /*************************************************************************
-R-NN query: all points within R-sphere centered at X
+R-NN query: all points within R-sphere centered at X, ordered by  distance
+between point and X (by ascending).
+
+NOTE: it is also possible to perform undordered queries performed by means
+      of kdtreequeryrnnu() and kdtreetsqueryrnnu() functions. Such queries
+      are faster because we do not have to use heap structure for sorting.
 
 IMPORTANT: this function can not be used in multithreaded code because  it
            uses internal temporary buffer of kd-tree object, which can not
            be shared between multiple threads.  If  you  want  to  perform
            parallel requests, use function  which  uses  external  request
-           buffer: KDTreeTsQueryRNN() ("Ts" stands for "thread-safe").
+           buffer: kdtreetsqueryrnn() ("Ts" stands for "thread-safe").
 
 INPUT PARAMETERS
     KDT         -   KD-tree
@@ -489,17 +494,63 @@ actual results:
   -- ALGLIB --
      Copyright 28.02.2010 by Bochkanov Sergey
 *************************************************************************/
-ae_int_t kdtreequeryrnn(const kdtree &kdt, const real_1d_array &x, const double r, const bool selfmatch);
-ae_int_t kdtreequeryrnn(const kdtree &kdt, const real_1d_array &x, const double r);
+ae_int_t kdtreequeryrnn(const kdtree &kdt, const real_1d_array &x, const double r, const bool selfmatch, const xparams _xparams = alglib::xdefault);
+ae_int_t kdtreequeryrnn(const kdtree &kdt, const real_1d_array &x, const double r, const xparams _xparams = alglib::xdefault);
+
+
+/*************************************************************************
+R-NN query: all points within R-sphere  centered  at  X,  no  ordering  by
+distance as undicated by "U" suffix (faster that ordered query, for  large
+queries - significantly faster).
+
+IMPORTANT: this function can not be used in multithreaded code because  it
+           uses internal temporary buffer of kd-tree object, which can not
+           be shared between multiple threads.  If  you  want  to  perform
+           parallel requests, use function  which  uses  external  request
+           buffer: kdtreetsqueryrnn() ("Ts" stands for "thread-safe").
+
+INPUT PARAMETERS
+    KDT         -   KD-tree
+    X           -   point, array[0..NX-1].
+    R           -   radius of sphere (in corresponding norm), R>0
+    SelfMatch   -   whether self-matches are allowed:
+                    * if True, nearest neighbor may be the point itself
+                      (if it exists in original dataset)
+                    * if False, then only points with non-zero distance
+                      are returned
+                    * if not given, considered True
+
+RESULT
+    number of neighbors found, >=0
+
+This  subroutine  performs  query  and  stores  its result in the internal
+structures of the KD-tree. You can use  following  subroutines  to  obtain
+actual results:
+* KDTreeQueryResultsX() to get X-values
+* KDTreeQueryResultsXY() to get X- and Y-values
+* KDTreeQueryResultsTags() to get tag values
+* KDTreeQueryResultsDistances() to get distances
+
+As indicated by "U" suffix, this function returns unordered results.
+
+  -- ALGLIB --
+     Copyright 01.11.2018 by Bochkanov Sergey
+*************************************************************************/
+ae_int_t kdtreequeryrnnu(const kdtree &kdt, const real_1d_array &x, const double r, const bool selfmatch, const xparams _xparams = alglib::xdefault);
+ae_int_t kdtreequeryrnnu(const kdtree &kdt, const real_1d_array &x, const double r, const xparams _xparams = alglib::xdefault);
 
 
 /*************************************************************************
 R-NN query: all points within  R-sphere  centered  at  X,  using  external
-thread-local buffer.
+thread-local buffer, sorted by distance between point and X (by ascending)
 
 You can call this function from multiple threads for same kd-tree instance,
 assuming that different instances of buffer object are passed to different
 threads.
+
+NOTE: it is also possible to perform undordered queries performed by means
+      of kdtreequeryrnnu() and kdtreetsqueryrnnu() functions. Such queries
+      are faster because we do not have to use heap structure for sorting.
 
 INPUT PARAMETERS
     KDT         -   KD-tree
@@ -535,8 +586,57 @@ IMPORTANT: kd-tree buffer should be used only with  KD-tree  object  which
   -- ALGLIB --
      Copyright 18.03.2016 by Bochkanov Sergey
 *************************************************************************/
-ae_int_t kdtreetsqueryrnn(const kdtree &kdt, const kdtreerequestbuffer &buf, const real_1d_array &x, const double r, const bool selfmatch);
-ae_int_t kdtreetsqueryrnn(const kdtree &kdt, const kdtreerequestbuffer &buf, const real_1d_array &x, const double r);
+ae_int_t kdtreetsqueryrnn(const kdtree &kdt, const kdtreerequestbuffer &buf, const real_1d_array &x, const double r, const bool selfmatch, const xparams _xparams = alglib::xdefault);
+ae_int_t kdtreetsqueryrnn(const kdtree &kdt, const kdtreerequestbuffer &buf, const real_1d_array &x, const double r, const xparams _xparams = alglib::xdefault);
+
+
+/*************************************************************************
+R-NN query: all points within  R-sphere  centered  at  X,  using  external
+thread-local buffer, no ordering by distance as undicated  by  "U"  suffix
+(faster that ordered query, for large queries - significantly faster).
+
+You can call this function from multiple threads for same kd-tree instance,
+assuming that different instances of buffer object are passed to different
+threads.
+
+INPUT PARAMETERS
+    KDT         -   KD-tree
+    Buf         -   request buffer  object  created  for  this  particular
+                    instance of kd-tree structure with kdtreecreaterequestbuffer()
+                    function.
+    X           -   point, array[0..NX-1].
+    R           -   radius of sphere (in corresponding norm), R>0
+    SelfMatch   -   whether self-matches are allowed:
+                    * if True, nearest neighbor may be the point itself
+                      (if it exists in original dataset)
+                    * if False, then only points with non-zero distance
+                      are returned
+                    * if not given, considered True
+
+RESULT
+    number of neighbors found, >=0
+
+This  subroutine  performs  query  and  stores  its result in the internal
+structures  of  the  buffer object. You can use following  subroutines  to
+obtain these results (pay attention to "buf" in their names):
+* KDTreeTsQueryResultsX() to get X-values
+* KDTreeTsQueryResultsXY() to get X- and Y-values
+* KDTreeTsQueryResultsTags() to get tag values
+* KDTreeTsQueryResultsDistances() to get distances
+
+As indicated by "U" suffix, this function returns unordered results.
+
+IMPORTANT: kd-tree buffer should be used only with  KD-tree  object  which
+           was used to initialize buffer. Any attempt to use biffer   with
+           different object is dangerous - you  may  get  integrity  check
+           failure (exception) because sizes of internal arrays do not fit
+           to dimensions of KD-tree structure.
+
+  -- ALGLIB --
+     Copyright 18.03.2016 by Bochkanov Sergey
+*************************************************************************/
+ae_int_t kdtreetsqueryrnnu(const kdtree &kdt, const kdtreerequestbuffer &buf, const real_1d_array &x, const double r, const bool selfmatch, const xparams _xparams = alglib::xdefault);
+ae_int_t kdtreetsqueryrnnu(const kdtree &kdt, const kdtreerequestbuffer &buf, const real_1d_array &x, const double r, const xparams _xparams = alglib::xdefault);
 
 
 /*************************************************************************
@@ -580,8 +680,8 @@ these results:
   -- ALGLIB --
      Copyright 28.02.2010 by Bochkanov Sergey
 *************************************************************************/
-ae_int_t kdtreequeryaknn(const kdtree &kdt, const real_1d_array &x, const ae_int_t k, const bool selfmatch, const double eps);
-ae_int_t kdtreequeryaknn(const kdtree &kdt, const real_1d_array &x, const ae_int_t k, const double eps);
+ae_int_t kdtreequeryaknn(const kdtree &kdt, const real_1d_array &x, const ae_int_t k, const bool selfmatch, const double eps, const xparams _xparams = alglib::xdefault);
+ae_int_t kdtreequeryaknn(const kdtree &kdt, const real_1d_array &x, const ae_int_t k, const double eps, const xparams _xparams = alglib::xdefault);
 
 
 /*************************************************************************
@@ -632,8 +732,8 @@ IMPORTANT: kd-tree buffer should be used only with  KD-tree  object  which
   -- ALGLIB --
      Copyright 18.03.2016 by Bochkanov Sergey
 *************************************************************************/
-ae_int_t kdtreetsqueryaknn(const kdtree &kdt, const kdtreerequestbuffer &buf, const real_1d_array &x, const ae_int_t k, const bool selfmatch, const double eps);
-ae_int_t kdtreetsqueryaknn(const kdtree &kdt, const kdtreerequestbuffer &buf, const real_1d_array &x, const ae_int_t k, const double eps);
+ae_int_t kdtreetsqueryaknn(const kdtree &kdt, const kdtreerequestbuffer &buf, const real_1d_array &x, const ae_int_t k, const bool selfmatch, const double eps, const xparams _xparams = alglib::xdefault);
+ae_int_t kdtreetsqueryaknn(const kdtree &kdt, const kdtreerequestbuffer &buf, const real_1d_array &x, const ae_int_t k, const double eps, const xparams _xparams = alglib::xdefault);
 
 
 /*************************************************************************
@@ -670,7 +770,7 @@ NOTE: this particular query returns unordered results, because there is no
   -- ALGLIB --
      Copyright 14.05.2016 by Bochkanov Sergey
 *************************************************************************/
-ae_int_t kdtreequerybox(const kdtree &kdt, const real_1d_array &boxmin, const real_1d_array &boxmax);
+ae_int_t kdtreequerybox(const kdtree &kdt, const real_1d_array &boxmin, const real_1d_array &boxmax, const xparams _xparams = alglib::xdefault);
 
 
 /*************************************************************************
@@ -713,7 +813,7 @@ IMPORTANT: kd-tree buffer should be used only with  KD-tree  object  which
   -- ALGLIB --
      Copyright 14.05.2016 by Bochkanov Sergey
 *************************************************************************/
-ae_int_t kdtreetsquerybox(const kdtree &kdt, const kdtreerequestbuffer &buf, const real_1d_array &boxmin, const real_1d_array &boxmax);
+ae_int_t kdtreetsquerybox(const kdtree &kdt, const kdtreerequestbuffer &buf, const real_1d_array &boxmin, const real_1d_array &boxmax, const xparams _xparams = alglib::xdefault);
 
 
 /*************************************************************************
@@ -750,7 +850,7 @@ SEE ALSO
   -- ALGLIB --
      Copyright 28.02.2010 by Bochkanov Sergey
 *************************************************************************/
-void kdtreequeryresultsx(const kdtree &kdt, real_2d_array &x);
+void kdtreequeryresultsx(const kdtree &kdt, real_2d_array &x, const xparams _xparams = alglib::xdefault);
 
 
 /*************************************************************************
@@ -788,7 +888,7 @@ SEE ALSO
   -- ALGLIB --
      Copyright 28.02.2010 by Bochkanov Sergey
 *************************************************************************/
-void kdtreequeryresultsxy(const kdtree &kdt, real_2d_array &xy);
+void kdtreequeryresultsxy(const kdtree &kdt, real_2d_array &xy, const xparams _xparams = alglib::xdefault);
 
 
 /*************************************************************************
@@ -826,7 +926,7 @@ SEE ALSO
   -- ALGLIB --
      Copyright 28.02.2010 by Bochkanov Sergey
 *************************************************************************/
-void kdtreequeryresultstags(const kdtree &kdt, integer_1d_array &tags);
+void kdtreequeryresultstags(const kdtree &kdt, integer_1d_array &tags, const xparams _xparams = alglib::xdefault);
 
 
 /*************************************************************************
@@ -863,7 +963,7 @@ SEE ALSO
   -- ALGLIB --
      Copyright 28.02.2010 by Bochkanov Sergey
 *************************************************************************/
-void kdtreequeryresultsdistances(const kdtree &kdt, real_1d_array &r);
+void kdtreequeryresultsdistances(const kdtree &kdt, real_1d_array &r, const xparams _xparams = alglib::xdefault);
 
 
 /*************************************************************************
@@ -897,7 +997,7 @@ SEE ALSO
   -- ALGLIB --
      Copyright 28.02.2010 by Bochkanov Sergey
 *************************************************************************/
-void kdtreetsqueryresultsx(const kdtree &kdt, const kdtreerequestbuffer &buf, real_2d_array &x);
+void kdtreetsqueryresultsx(const kdtree &kdt, const kdtreerequestbuffer &buf, real_2d_array &x, const xparams _xparams = alglib::xdefault);
 
 
 /*************************************************************************
@@ -932,7 +1032,7 @@ SEE ALSO
   -- ALGLIB --
      Copyright 28.02.2010 by Bochkanov Sergey
 *************************************************************************/
-void kdtreetsqueryresultsxy(const kdtree &kdt, const kdtreerequestbuffer &buf, real_2d_array &xy);
+void kdtreetsqueryresultsxy(const kdtree &kdt, const kdtreerequestbuffer &buf, real_2d_array &xy, const xparams _xparams = alglib::xdefault);
 
 
 /*************************************************************************
@@ -972,7 +1072,7 @@ SEE ALSO
   -- ALGLIB --
      Copyright 28.02.2010 by Bochkanov Sergey
 *************************************************************************/
-void kdtreetsqueryresultstags(const kdtree &kdt, const kdtreerequestbuffer &buf, integer_1d_array &tags);
+void kdtreetsqueryresultstags(const kdtree &kdt, const kdtreerequestbuffer &buf, integer_1d_array &tags, const xparams _xparams = alglib::xdefault);
 
 
 /*************************************************************************
@@ -1011,7 +1111,7 @@ SEE ALSO
   -- ALGLIB --
      Copyright 28.02.2010 by Bochkanov Sergey
 *************************************************************************/
-void kdtreetsqueryresultsdistances(const kdtree &kdt, const kdtreerequestbuffer &buf, real_1d_array &r);
+void kdtreetsqueryresultsdistances(const kdtree &kdt, const kdtreerequestbuffer &buf, real_1d_array &r, const xparams _xparams = alglib::xdefault);
 
 
 /*************************************************************************
@@ -1026,7 +1126,7 @@ when you call it from command line.
   -- ALGLIB --
      Copyright 28.02.2010 by Bochkanov Sergey
 *************************************************************************/
-void kdtreequeryresultsxi(const kdtree &kdt, real_2d_array &x);
+void kdtreequeryresultsxi(const kdtree &kdt, real_2d_array &x, const xparams _xparams = alglib::xdefault);
 
 
 /*************************************************************************
@@ -1041,7 +1141,7 @@ when you call it from command line.
   -- ALGLIB --
      Copyright 28.02.2010 by Bochkanov Sergey
 *************************************************************************/
-void kdtreequeryresultsxyi(const kdtree &kdt, real_2d_array &xy);
+void kdtreequeryresultsxyi(const kdtree &kdt, real_2d_array &xy, const xparams _xparams = alglib::xdefault);
 
 
 /*************************************************************************
@@ -1056,7 +1156,7 @@ when you call it from command line.
   -- ALGLIB --
      Copyright 28.02.2010 by Bochkanov Sergey
 *************************************************************************/
-void kdtreequeryresultstagsi(const kdtree &kdt, integer_1d_array &tags);
+void kdtreequeryresultstagsi(const kdtree &kdt, integer_1d_array &tags, const xparams _xparams = alglib::xdefault);
 
 
 /*************************************************************************
@@ -1071,7 +1171,7 @@ when you call it from command line.
   -- ALGLIB --
      Copyright 28.02.2010 by Bochkanov Sergey
 *************************************************************************/
-void kdtreequeryresultsdistancesi(const kdtree &kdt, real_1d_array &r);
+void kdtreequeryresultsdistancesi(const kdtree &kdt, real_1d_array &r, const xparams _xparams = alglib::xdefault);
 #endif
 
 #if defined(AE_COMPILE_HQRND) || !defined(AE_PARTIAL_BUILD)
@@ -1082,7 +1182,7 @@ RNG.
   -- ALGLIB --
      Copyright 02.12.2009 by Bochkanov Sergey
 *************************************************************************/
-void hqrndrandomize(hqrndstate &state);
+void hqrndrandomize(hqrndstate &state, const xparams _xparams = alglib::xdefault);
 
 
 /*************************************************************************
@@ -1091,7 +1191,7 @@ HQRNDState initialization with seed values
   -- ALGLIB --
      Copyright 02.12.2009 by Bochkanov Sergey
 *************************************************************************/
-void hqrndseed(const ae_int_t s1, const ae_int_t s2, hqrndstate &state);
+void hqrndseed(const ae_int_t s1, const ae_int_t s2, hqrndstate &state, const xparams _xparams = alglib::xdefault);
 
 
 /*************************************************************************
@@ -1103,7 +1203,7 @@ State structure must be initialized with HQRNDRandomize() or HQRNDSeed().
   -- ALGLIB --
      Copyright 02.12.2009 by Bochkanov Sergey
 *************************************************************************/
-double hqrnduniformr(const hqrndstate &state);
+double hqrnduniformr(const hqrndstate &state, const xparams _xparams = alglib::xdefault);
 
 
 /*************************************************************************
@@ -1118,7 +1218,7 @@ This function generates random integer number in [0, N)
   -- ALGLIB --
      Copyright 02.12.2009 by Bochkanov Sergey
 *************************************************************************/
-ae_int_t hqrnduniformi(const hqrndstate &state, const ae_int_t n);
+ae_int_t hqrnduniformi(const hqrndstate &state, const ae_int_t n, const xparams _xparams = alglib::xdefault);
 
 
 /*************************************************************************
@@ -1132,7 +1232,33 @@ State structure must be initialized with HQRNDRandomize() or HQRNDSeed().
   -- ALGLIB --
      Copyright 02.12.2009 by Bochkanov Sergey
 *************************************************************************/
-double hqrndnormal(const hqrndstate &state);
+double hqrndnormal(const hqrndstate &state, const xparams _xparams = alglib::xdefault);
+
+
+/*************************************************************************
+Random number generator: vector with random entries (normal distribution)
+
+This function generates N random numbers from normal distribution.
+
+State structure must be initialized with HQRNDRandomize() or HQRNDSeed().
+
+  -- ALGLIB --
+     Copyright 02.12.2009 by Bochkanov Sergey
+*************************************************************************/
+void hqrndnormalv(const hqrndstate &state, const ae_int_t n, real_1d_array &x, const xparams _xparams = alglib::xdefault);
+
+
+/*************************************************************************
+Random number generator: matrix with random entries (normal distribution)
+
+This function generates MxN random matrix.
+
+State structure must be initialized with HQRNDRandomize() or HQRNDSeed().
+
+  -- ALGLIB --
+     Copyright 02.12.2009 by Bochkanov Sergey
+*************************************************************************/
+void hqrndnormalm(const hqrndstate &state, const ae_int_t m, const ae_int_t n, real_2d_array &x, const xparams _xparams = alglib::xdefault);
 
 
 /*************************************************************************
@@ -1143,7 +1269,7 @@ State structure must be initialized with HQRNDRandomize() or HQRNDSeed().
   -- ALGLIB --
      Copyright 02.12.2009 by Bochkanov Sergey
 *************************************************************************/
-void hqrndunit2(const hqrndstate &state, double &x, double &y);
+void hqrndunit2(const hqrndstate &state, double &x, double &y, const xparams _xparams = alglib::xdefault);
 
 
 /*************************************************************************
@@ -1157,7 +1283,7 @@ State structure must be initialized with HQRNDRandomize() or HQRNDSeed().
   -- ALGLIB --
      Copyright 02.12.2009 by Bochkanov Sergey
 *************************************************************************/
-void hqrndnormal2(const hqrndstate &state, double &x1, double &x2);
+void hqrndnormal2(const hqrndstate &state, double &x1, double &x2, const xparams _xparams = alglib::xdefault);
 
 
 /*************************************************************************
@@ -1168,7 +1294,7 @@ State structure must be initialized with HQRNDRandomize() or HQRNDSeed().
   -- ALGLIB --
      Copyright 11.08.2007 by Bochkanov Sergey
 *************************************************************************/
-double hqrndexponential(const hqrndstate &state, const double lambdav);
+double hqrndexponential(const hqrndstate &state, const double lambdav, const xparams _xparams = alglib::xdefault);
 
 
 /*************************************************************************
@@ -1187,7 +1313,7 @@ RESULT
   -- ALGLIB --
      Copyright 08.11.2011 by Bochkanov Sergey
 *************************************************************************/
-double hqrnddiscrete(const hqrndstate &state, const real_1d_array &x, const ae_int_t n);
+double hqrnddiscrete(const hqrndstate &state, const real_1d_array &x, const ae_int_t n, const xparams _xparams = alglib::xdefault);
 
 
 /*************************************************************************
@@ -1209,7 +1335,7 @@ RESULT
   -- ALGLIB --
      Copyright 08.11.2011 by Bochkanov Sergey
 *************************************************************************/
-double hqrndcontinuous(const hqrndstate &state, const real_1d_array &x, const ae_int_t n);
+double hqrndcontinuous(const hqrndstate &state, const real_1d_array &x, const ae_int_t n, const xparams _xparams = alglib::xdefault);
 #endif
 
 #if defined(AE_COMPILE_XDEBUG) || !defined(AE_PARTIAL_BUILD)
@@ -1224,7 +1350,7 @@ Creates and returns XDebugRecord1 structure:
   -- ALGLIB --
      Copyright 27.05.2014 by Bochkanov Sergey
 *************************************************************************/
-void xdebuginitrecord1(xdebugrecord1 &rec1);
+void xdebuginitrecord1(xdebugrecord1 &rec1, const xparams _xparams = alglib::xdefault);
 
 
 /*************************************************************************
@@ -1236,7 +1362,7 @@ Counts number of True values in the boolean 1D array.
   -- ALGLIB --
      Copyright 11.10.2013 by Bochkanov Sergey
 *************************************************************************/
-ae_int_t xdebugb1count(const boolean_1d_array &a);
+ae_int_t xdebugb1count(const boolean_1d_array &a, const xparams _xparams = alglib::xdefault);
 
 
 /*************************************************************************
@@ -1249,7 +1375,7 @@ Array is passed using "shared" convention.
   -- ALGLIB --
      Copyright 11.10.2013 by Bochkanov Sergey
 *************************************************************************/
-void xdebugb1not(const boolean_1d_array &a);
+void xdebugb1not(const boolean_1d_array &a, const xparams _xparams = alglib::xdefault);
 
 
 /*************************************************************************
@@ -1262,7 +1388,7 @@ Array is passed using "var" convention.
   -- ALGLIB --
      Copyright 11.10.2013 by Bochkanov Sergey
 *************************************************************************/
-void xdebugb1appendcopy(boolean_1d_array &a);
+void xdebugb1appendcopy(boolean_1d_array &a, const xparams _xparams = alglib::xdefault);
 
 
 /*************************************************************************
@@ -1275,7 +1401,7 @@ Array is passed using "out" convention.
   -- ALGLIB --
      Copyright 11.10.2013 by Bochkanov Sergey
 *************************************************************************/
-void xdebugb1outeven(const ae_int_t n, boolean_1d_array &a);
+void xdebugb1outeven(const ae_int_t n, boolean_1d_array &a, const xparams _xparams = alglib::xdefault);
 
 
 /*************************************************************************
@@ -1287,7 +1413,7 @@ Returns sum of elements in the array.
   -- ALGLIB --
      Copyright 11.10.2013 by Bochkanov Sergey
 *************************************************************************/
-ae_int_t xdebugi1sum(const integer_1d_array &a);
+ae_int_t xdebugi1sum(const integer_1d_array &a, const xparams _xparams = alglib::xdefault);
 
 
 /*************************************************************************
@@ -1300,7 +1426,7 @@ Array is passed using "shared" convention.
   -- ALGLIB --
      Copyright 11.10.2013 by Bochkanov Sergey
 *************************************************************************/
-void xdebugi1neg(const integer_1d_array &a);
+void xdebugi1neg(const integer_1d_array &a, const xparams _xparams = alglib::xdefault);
 
 
 /*************************************************************************
@@ -1313,7 +1439,7 @@ Array is passed using "var" convention.
   -- ALGLIB --
      Copyright 11.10.2013 by Bochkanov Sergey
 *************************************************************************/
-void xdebugi1appendcopy(integer_1d_array &a);
+void xdebugi1appendcopy(integer_1d_array &a, const xparams _xparams = alglib::xdefault);
 
 
 /*************************************************************************
@@ -1328,7 +1454,7 @@ Array is passed using "out" convention.
   -- ALGLIB --
      Copyright 11.10.2013 by Bochkanov Sergey
 *************************************************************************/
-void xdebugi1outeven(const ae_int_t n, integer_1d_array &a);
+void xdebugi1outeven(const ae_int_t n, integer_1d_array &a, const xparams _xparams = alglib::xdefault);
 
 
 /*************************************************************************
@@ -1340,7 +1466,7 @@ Returns sum of elements in the array.
   -- ALGLIB --
      Copyright 11.10.2013 by Bochkanov Sergey
 *************************************************************************/
-double xdebugr1sum(const real_1d_array &a);
+double xdebugr1sum(const real_1d_array &a, const xparams _xparams = alglib::xdefault);
 
 
 /*************************************************************************
@@ -1353,7 +1479,7 @@ Array is passed using "shared" convention.
   -- ALGLIB --
      Copyright 11.10.2013 by Bochkanov Sergey
 *************************************************************************/
-void xdebugr1neg(const real_1d_array &a);
+void xdebugr1neg(const real_1d_array &a, const xparams _xparams = alglib::xdefault);
 
 
 /*************************************************************************
@@ -1366,7 +1492,7 @@ Array is passed using "var" convention.
   -- ALGLIB --
      Copyright 11.10.2013 by Bochkanov Sergey
 *************************************************************************/
-void xdebugr1appendcopy(real_1d_array &a);
+void xdebugr1appendcopy(real_1d_array &a, const xparams _xparams = alglib::xdefault);
 
 
 /*************************************************************************
@@ -1381,7 +1507,7 @@ Array is passed using "out" convention.
   -- ALGLIB --
      Copyright 11.10.2013 by Bochkanov Sergey
 *************************************************************************/
-void xdebugr1outeven(const ae_int_t n, real_1d_array &a);
+void xdebugr1outeven(const ae_int_t n, real_1d_array &a, const xparams _xparams = alglib::xdefault);
 
 
 /*************************************************************************
@@ -1393,7 +1519,7 @@ Returns sum of elements in the array.
   -- ALGLIB --
      Copyright 11.10.2013 by Bochkanov Sergey
 *************************************************************************/
-alglib::complex xdebugc1sum(const complex_1d_array &a);
+alglib::complex xdebugc1sum(const complex_1d_array &a, const xparams _xparams = alglib::xdefault);
 
 
 /*************************************************************************
@@ -1406,7 +1532,7 @@ Array is passed using "shared" convention.
   -- ALGLIB --
      Copyright 11.10.2013 by Bochkanov Sergey
 *************************************************************************/
-void xdebugc1neg(const complex_1d_array &a);
+void xdebugc1neg(const complex_1d_array &a, const xparams _xparams = alglib::xdefault);
 
 
 /*************************************************************************
@@ -1419,7 +1545,7 @@ Array is passed using "var" convention.
   -- ALGLIB --
      Copyright 11.10.2013 by Bochkanov Sergey
 *************************************************************************/
-void xdebugc1appendcopy(complex_1d_array &a);
+void xdebugc1appendcopy(complex_1d_array &a, const xparams _xparams = alglib::xdefault);
 
 
 /*************************************************************************
@@ -1434,7 +1560,7 @@ Array is passed using "out" convention.
   -- ALGLIB --
      Copyright 11.10.2013 by Bochkanov Sergey
 *************************************************************************/
-void xdebugc1outeven(const ae_int_t n, complex_1d_array &a);
+void xdebugc1outeven(const ae_int_t n, complex_1d_array &a, const xparams _xparams = alglib::xdefault);
 
 
 /*************************************************************************
@@ -1446,7 +1572,7 @@ Counts number of True values in the boolean 2D array.
   -- ALGLIB --
      Copyright 11.10.2013 by Bochkanov Sergey
 *************************************************************************/
-ae_int_t xdebugb2count(const boolean_2d_array &a);
+ae_int_t xdebugb2count(const boolean_2d_array &a, const xparams _xparams = alglib::xdefault);
 
 
 /*************************************************************************
@@ -1459,7 +1585,7 @@ Array is passed using "shared" convention.
   -- ALGLIB --
      Copyright 11.10.2013 by Bochkanov Sergey
 *************************************************************************/
-void xdebugb2not(const boolean_2d_array &a);
+void xdebugb2not(const boolean_2d_array &a, const xparams _xparams = alglib::xdefault);
 
 
 /*************************************************************************
@@ -1472,7 +1598,7 @@ Array is passed using "var" convention.
   -- ALGLIB --
      Copyright 11.10.2013 by Bochkanov Sergey
 *************************************************************************/
-void xdebugb2transpose(boolean_2d_array &a);
+void xdebugb2transpose(boolean_2d_array &a, const xparams _xparams = alglib::xdefault);
 
 
 /*************************************************************************
@@ -1485,7 +1611,7 @@ Array is passed using "out" convention.
   -- ALGLIB --
      Copyright 11.10.2013 by Bochkanov Sergey
 *************************************************************************/
-void xdebugb2outsin(const ae_int_t m, const ae_int_t n, boolean_2d_array &a);
+void xdebugb2outsin(const ae_int_t m, const ae_int_t n, boolean_2d_array &a, const xparams _xparams = alglib::xdefault);
 
 
 /*************************************************************************
@@ -1497,7 +1623,7 @@ Returns sum of elements in the array.
   -- ALGLIB --
      Copyright 11.10.2013 by Bochkanov Sergey
 *************************************************************************/
-ae_int_t xdebugi2sum(const integer_2d_array &a);
+ae_int_t xdebugi2sum(const integer_2d_array &a, const xparams _xparams = alglib::xdefault);
 
 
 /*************************************************************************
@@ -1510,7 +1636,7 @@ Array is passed using "shared" convention.
   -- ALGLIB --
      Copyright 11.10.2013 by Bochkanov Sergey
 *************************************************************************/
-void xdebugi2neg(const integer_2d_array &a);
+void xdebugi2neg(const integer_2d_array &a, const xparams _xparams = alglib::xdefault);
 
 
 /*************************************************************************
@@ -1523,7 +1649,7 @@ Array is passed using "var" convention.
   -- ALGLIB --
      Copyright 11.10.2013 by Bochkanov Sergey
 *************************************************************************/
-void xdebugi2transpose(integer_2d_array &a);
+void xdebugi2transpose(integer_2d_array &a, const xparams _xparams = alglib::xdefault);
 
 
 /*************************************************************************
@@ -1536,7 +1662,7 @@ Array is passed using "out" convention.
   -- ALGLIB --
      Copyright 11.10.2013 by Bochkanov Sergey
 *************************************************************************/
-void xdebugi2outsin(const ae_int_t m, const ae_int_t n, integer_2d_array &a);
+void xdebugi2outsin(const ae_int_t m, const ae_int_t n, integer_2d_array &a, const xparams _xparams = alglib::xdefault);
 
 
 /*************************************************************************
@@ -1548,7 +1674,7 @@ Returns sum of elements in the array.
   -- ALGLIB --
      Copyright 11.10.2013 by Bochkanov Sergey
 *************************************************************************/
-double xdebugr2sum(const real_2d_array &a);
+double xdebugr2sum(const real_2d_array &a, const xparams _xparams = alglib::xdefault);
 
 
 /*************************************************************************
@@ -1561,7 +1687,7 @@ Array is passed using "shared" convention.
   -- ALGLIB --
      Copyright 11.10.2013 by Bochkanov Sergey
 *************************************************************************/
-void xdebugr2neg(const real_2d_array &a);
+void xdebugr2neg(const real_2d_array &a, const xparams _xparams = alglib::xdefault);
 
 
 /*************************************************************************
@@ -1574,7 +1700,7 @@ Array is passed using "var" convention.
   -- ALGLIB --
      Copyright 11.10.2013 by Bochkanov Sergey
 *************************************************************************/
-void xdebugr2transpose(real_2d_array &a);
+void xdebugr2transpose(real_2d_array &a, const xparams _xparams = alglib::xdefault);
 
 
 /*************************************************************************
@@ -1587,7 +1713,7 @@ Array is passed using "out" convention.
   -- ALGLIB --
      Copyright 11.10.2013 by Bochkanov Sergey
 *************************************************************************/
-void xdebugr2outsin(const ae_int_t m, const ae_int_t n, real_2d_array &a);
+void xdebugr2outsin(const ae_int_t m, const ae_int_t n, real_2d_array &a, const xparams _xparams = alglib::xdefault);
 
 
 /*************************************************************************
@@ -1599,7 +1725,7 @@ Returns sum of elements in the array.
   -- ALGLIB --
      Copyright 11.10.2013 by Bochkanov Sergey
 *************************************************************************/
-alglib::complex xdebugc2sum(const complex_2d_array &a);
+alglib::complex xdebugc2sum(const complex_2d_array &a, const xparams _xparams = alglib::xdefault);
 
 
 /*************************************************************************
@@ -1612,7 +1738,7 @@ Array is passed using "shared" convention.
   -- ALGLIB --
      Copyright 11.10.2013 by Bochkanov Sergey
 *************************************************************************/
-void xdebugc2neg(const complex_2d_array &a);
+void xdebugc2neg(const complex_2d_array &a, const xparams _xparams = alglib::xdefault);
 
 
 /*************************************************************************
@@ -1625,7 +1751,7 @@ Array is passed using "var" convention.
   -- ALGLIB --
      Copyright 11.10.2013 by Bochkanov Sergey
 *************************************************************************/
-void xdebugc2transpose(complex_2d_array &a);
+void xdebugc2transpose(complex_2d_array &a, const xparams _xparams = alglib::xdefault);
 
 
 /*************************************************************************
@@ -1638,7 +1764,7 @@ Array is passed using "out" convention.
   -- ALGLIB --
      Copyright 11.10.2013 by Bochkanov Sergey
 *************************************************************************/
-void xdebugc2outsincos(const ae_int_t m, const ae_int_t n, complex_2d_array &a);
+void xdebugc2outsincos(const ae_int_t m, const ae_int_t n, complex_2d_array &a, const xparams _xparams = alglib::xdefault);
 
 
 /*************************************************************************
@@ -1650,7 +1776,7 @@ Returns sum of a[i,j]*(1+b[i,j]) such that c[i,j] is True
   -- ALGLIB --
      Copyright 11.10.2013 by Bochkanov Sergey
 *************************************************************************/
-double xdebugmaskedbiasedproductsum(const ae_int_t m, const ae_int_t n, const real_2d_array &a, const real_2d_array &b, const boolean_2d_array &c);
+double xdebugmaskedbiasedproductsum(const ae_int_t m, const ae_int_t n, const real_2d_array &a, const real_2d_array &b, const boolean_2d_array &c, const xparams _xparams = alglib::xdefault);
 #endif
 }
 
@@ -1696,7 +1822,18 @@ ae_int_t kdtreequeryrnn(kdtree* kdt,
      double r,
      ae_bool selfmatch,
      ae_state *_state);
+ae_int_t kdtreequeryrnnu(kdtree* kdt,
+     /* Real    */ ae_vector* x,
+     double r,
+     ae_bool selfmatch,
+     ae_state *_state);
 ae_int_t kdtreetsqueryrnn(kdtree* kdt,
+     kdtreerequestbuffer* buf,
+     /* Real    */ ae_vector* x,
+     double r,
+     ae_bool selfmatch,
+     ae_state *_state);
+ae_int_t kdtreetsqueryrnnu(kdtree* kdt,
      kdtreerequestbuffer* buf,
      /* Real    */ ae_vector* x,
      double r,
@@ -1805,6 +1942,15 @@ void hqrndseed(ae_int_t s1,
 double hqrnduniformr(hqrndstate* state, ae_state *_state);
 ae_int_t hqrnduniformi(hqrndstate* state, ae_int_t n, ae_state *_state);
 double hqrndnormal(hqrndstate* state, ae_state *_state);
+void hqrndnormalv(hqrndstate* state,
+     ae_int_t n,
+     /* Real    */ ae_vector* x,
+     ae_state *_state);
+void hqrndnormalm(hqrndstate* state,
+     ae_int_t m,
+     ae_int_t n,
+     /* Real    */ ae_matrix* x,
+     ae_state *_state);
 void hqrndunit2(hqrndstate* state, double* x, double* y, ae_state *_state);
 void hqrndnormal2(hqrndstate* state,
      double* x1,

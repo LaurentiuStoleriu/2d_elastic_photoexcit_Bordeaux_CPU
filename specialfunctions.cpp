@@ -1,5 +1,5 @@
 /*************************************************************************
-ALGLIB 3.13.0 (source code generated 2017-12-29)
+ALGLIB 3.17.0 (source code generated 2020-12-27)
 Copyright (c) Sergey Bochkanov (ALGLIB project).
 
 >>> SOURCE LICENSE >>>
@@ -17,6 +17,10 @@ A copy of the GNU General Public License is available at
 http://www.fsf.org/licensing/licenses
 >>> END OF LICENSE >>>
 *************************************************************************/
+#ifdef _MSC_VER
+#define _CRT_SECURE_NO_WARNINGS
+#endif
+
 #include "specialfunctions.h"
 
 // disable some irrelevant warnings
@@ -149,7 +153,7 @@ Cephes Math Library Release 2.8:  June, 2000
 Original copyright 1984, 1987, 1989, 1992, 2000 by Stephen L. Moshier
 Translated to AlgoPascal by Bochkanov Sergey (2005, 2006, 2007).
 *************************************************************************/
-double gammafunction(const double x)
+double gammafunction(const double x, const xparams _xparams)
 {
     jmp_buf _break_jump;
     alglib_impl::ae_state _alglib_env_state;
@@ -164,6 +168,8 @@ double gammafunction(const double x)
 #endif
     }
     ae_state_set_break_jump(&_alglib_env_state, &_break_jump);
+    if( _xparams.flags!=0x0 )
+        ae_state_set_flags(&_alglib_env_state, _xparams.flags);
     double result = alglib_impl::gammafunction(x, &_alglib_env_state);
     alglib_impl::ae_state_clear(&_alglib_env_state);
     return *(reinterpret_cast<double*>(&result));
@@ -201,7 +207,7 @@ Cephes Math Library Release 2.8:  June, 2000
 Copyright 1984, 1987, 1989, 1992, 2000 by Stephen L. Moshier
 Translated to AlgoPascal by Bochkanov Sergey (2005, 2006, 2007).
 *************************************************************************/
-double lngamma(const double x, double &sgngam)
+double lngamma(const double x, double &sgngam, const xparams _xparams)
 {
     jmp_buf _break_jump;
     alglib_impl::ae_state _alglib_env_state;
@@ -216,6 +222,8 @@ double lngamma(const double x, double &sgngam)
 #endif
     }
     ae_state_set_break_jump(&_alglib_env_state, &_break_jump);
+    if( _xparams.flags!=0x0 )
+        ae_state_set_flags(&_alglib_env_state, _xparams.flags);
     double result = alglib_impl::lngamma(x, &sgngam, &_alglib_env_state);
     alglib_impl::ae_state_clear(&_alglib_env_state);
     return *(reinterpret_cast<double*>(&result));
@@ -249,7 +257,7 @@ arithmetic   domain     # trials      peak         rms
 Cephes Math Library Release 2.8:  June, 2000
 Copyright 1984, 1987, 1988, 1992, 2000 by Stephen L. Moshier
 *************************************************************************/
-double errorfunction(const double x)
+double errorfunction(const double x, const xparams _xparams)
 {
     jmp_buf _break_jump;
     alglib_impl::ae_state _alglib_env_state;
@@ -264,6 +272,8 @@ double errorfunction(const double x)
 #endif
     }
     ae_state_set_break_jump(&_alglib_env_state, &_break_jump);
+    if( _xparams.flags!=0x0 )
+        ae_state_set_flags(&_alglib_env_state, _xparams.flags);
     double result = alglib_impl::errorfunction(x, &_alglib_env_state);
     alglib_impl::ae_state_clear(&_alglib_env_state);
     return *(reinterpret_cast<double*>(&result));
@@ -296,7 +306,7 @@ arithmetic   domain     # trials      peak         rms
 Cephes Math Library Release 2.8:  June, 2000
 Copyright 1984, 1987, 1988, 1992, 2000 by Stephen L. Moshier
 *************************************************************************/
-double errorfunctionc(const double x)
+double errorfunctionc(const double x, const xparams _xparams)
 {
     jmp_buf _break_jump;
     alglib_impl::ae_state _alglib_env_state;
@@ -311,13 +321,74 @@ double errorfunctionc(const double x)
 #endif
     }
     ae_state_set_break_jump(&_alglib_env_state, &_break_jump);
+    if( _xparams.flags!=0x0 )
+        ae_state_set_flags(&_alglib_env_state, _xparams.flags);
     double result = alglib_impl::errorfunctionc(x, &_alglib_env_state);
     alglib_impl::ae_state_clear(&_alglib_env_state);
     return *(reinterpret_cast<double*>(&result));
 }
 
 /*************************************************************************
-Normal distribution function
+Same as normalcdf(), obsolete name.
+*************************************************************************/
+double normaldistribution(const double x, const xparams _xparams)
+{
+    jmp_buf _break_jump;
+    alglib_impl::ae_state _alglib_env_state;
+    alglib_impl::ae_state_init(&_alglib_env_state);
+    if( setjmp(_break_jump) )
+    {
+#if !defined(AE_NO_EXCEPTIONS)
+        _ALGLIB_CPP_EXCEPTION(_alglib_env_state.error_msg);
+#else
+        _ALGLIB_SET_ERROR_FLAG(_alglib_env_state.error_msg);
+        return 0;
+#endif
+    }
+    ae_state_set_break_jump(&_alglib_env_state, &_break_jump);
+    if( _xparams.flags!=0x0 )
+        ae_state_set_flags(&_alglib_env_state, _xparams.flags);
+    double result = alglib_impl::normaldistribution(x, &_alglib_env_state);
+    alglib_impl::ae_state_clear(&_alglib_env_state);
+    return *(reinterpret_cast<double*>(&result));
+}
+
+/*************************************************************************
+Normal distribution PDF
+
+Returns Gaussian probability density function:
+
+               1
+   f(x)  = --------- * exp(-x^2/2)
+           sqrt(2pi)
+
+Cephes Math Library Release 2.8:  June, 2000
+Copyright 1984, 1987, 1988, 1992, 2000 by Stephen L. Moshier
+*************************************************************************/
+double normalpdf(const double x, const xparams _xparams)
+{
+    jmp_buf _break_jump;
+    alglib_impl::ae_state _alglib_env_state;
+    alglib_impl::ae_state_init(&_alglib_env_state);
+    if( setjmp(_break_jump) )
+    {
+#if !defined(AE_NO_EXCEPTIONS)
+        _ALGLIB_CPP_EXCEPTION(_alglib_env_state.error_msg);
+#else
+        _ALGLIB_SET_ERROR_FLAG(_alglib_env_state.error_msg);
+        return 0;
+#endif
+    }
+    ae_state_set_break_jump(&_alglib_env_state, &_break_jump);
+    if( _xparams.flags!=0x0 )
+        ae_state_set_flags(&_alglib_env_state, _xparams.flags);
+    double result = alglib_impl::normalpdf(x, &_alglib_env_state);
+    alglib_impl::ae_state_clear(&_alglib_env_state);
+    return *(reinterpret_cast<double*>(&result));
+}
+
+/*************************************************************************
+Normal distribution CDF
 
 Returns the area under the Gaussian probability density
 function, integrated from minus infinity to x:
@@ -346,7 +417,7 @@ arithmetic   domain     # trials      peak         rms
 Cephes Math Library Release 2.8:  June, 2000
 Copyright 1984, 1987, 1988, 1992, 2000 by Stephen L. Moshier
 *************************************************************************/
-double normaldistribution(const double x)
+double normalcdf(const double x, const xparams _xparams)
 {
     jmp_buf _break_jump;
     alglib_impl::ae_state _alglib_env_state;
@@ -361,7 +432,9 @@ double normaldistribution(const double x)
 #endif
     }
     ae_state_set_break_jump(&_alglib_env_state, &_break_jump);
-    double result = alglib_impl::normaldistribution(x, &_alglib_env_state);
+    if( _xparams.flags!=0x0 )
+        ae_state_set_flags(&_alglib_env_state, _xparams.flags);
+    double result = alglib_impl::normalcdf(x, &_alglib_env_state);
     alglib_impl::ae_state_clear(&_alglib_env_state);
     return *(reinterpret_cast<double*>(&result));
 }
@@ -372,7 +445,7 @@ Inverse of the error function
 Cephes Math Library Release 2.8:  June, 2000
 Copyright 1984, 1987, 1988, 1992, 2000 by Stephen L. Moshier
 *************************************************************************/
-double inverf(const double e)
+double inverf(const double e, const xparams _xparams)
 {
     jmp_buf _break_jump;
     alglib_impl::ae_state _alglib_env_state;
@@ -387,13 +460,40 @@ double inverf(const double e)
 #endif
     }
     ae_state_set_break_jump(&_alglib_env_state, &_break_jump);
+    if( _xparams.flags!=0x0 )
+        ae_state_set_flags(&_alglib_env_state, _xparams.flags);
     double result = alglib_impl::inverf(e, &_alglib_env_state);
     alglib_impl::ae_state_clear(&_alglib_env_state);
     return *(reinterpret_cast<double*>(&result));
 }
 
 /*************************************************************************
-Inverse of Normal distribution function
+Same as invnormalcdf(), deprecated name
+*************************************************************************/
+double invnormaldistribution(const double y0, const xparams _xparams)
+{
+    jmp_buf _break_jump;
+    alglib_impl::ae_state _alglib_env_state;
+    alglib_impl::ae_state_init(&_alglib_env_state);
+    if( setjmp(_break_jump) )
+    {
+#if !defined(AE_NO_EXCEPTIONS)
+        _ALGLIB_CPP_EXCEPTION(_alglib_env_state.error_msg);
+#else
+        _ALGLIB_SET_ERROR_FLAG(_alglib_env_state.error_msg);
+        return 0;
+#endif
+    }
+    ae_state_set_break_jump(&_alglib_env_state, &_break_jump);
+    if( _xparams.flags!=0x0 )
+        ae_state_set_flags(&_alglib_env_state, _xparams.flags);
+    double result = alglib_impl::invnormaldistribution(y0, &_alglib_env_state);
+    alglib_impl::ae_state_clear(&_alglib_env_state);
+    return *(reinterpret_cast<double*>(&result));
+}
+
+/*************************************************************************
+Inverse of Normal CDF
 
 Returns the argument, x, for which the area under the
 Gaussian probability density function (integrated from
@@ -417,7 +517,7 @@ arithmetic   domain        # trials      peak         rms
 Cephes Math Library Release 2.8:  June, 2000
 Copyright 1984, 1987, 1988, 1992, 2000 by Stephen L. Moshier
 *************************************************************************/
-double invnormaldistribution(const double y0)
+double invnormalcdf(const double y0, const xparams _xparams)
 {
     jmp_buf _break_jump;
     alglib_impl::ae_state _alglib_env_state;
@@ -432,7 +532,106 @@ double invnormaldistribution(const double y0)
 #endif
     }
     ae_state_set_break_jump(&_alglib_env_state, &_break_jump);
-    double result = alglib_impl::invnormaldistribution(y0, &_alglib_env_state);
+    if( _xparams.flags!=0x0 )
+        ae_state_set_flags(&_alglib_env_state, _xparams.flags);
+    double result = alglib_impl::invnormalcdf(y0, &_alglib_env_state);
+    alglib_impl::ae_state_clear(&_alglib_env_state);
+    return *(reinterpret_cast<double*>(&result));
+}
+
+/*************************************************************************
+Bivariate normal PDF
+
+Returns probability density function of the bivariate  Gaussian  with
+correlation parameter equal to Rho:
+
+                         1              (    x^2 - 2*rho*x*y + y^2  )
+    f(x,y,rho) = ----------------- * exp( - ----------------------- )
+                 2pi*sqrt(1-rho^2)      (        2*(1-rho^2)        )
+
+
+with -1<rho<+1 and arbitrary x, y.
+
+This function won't fail as long as Rho is in (-1,+1) range.
+
+  -- ALGLIB --
+     Copyright 15.11.2019 by Bochkanov Sergey
+*************************************************************************/
+double bivariatenormalpdf(const double x, const double y, const double rho, const xparams _xparams)
+{
+    jmp_buf _break_jump;
+    alglib_impl::ae_state _alglib_env_state;
+    alglib_impl::ae_state_init(&_alglib_env_state);
+    if( setjmp(_break_jump) )
+    {
+#if !defined(AE_NO_EXCEPTIONS)
+        _ALGLIB_CPP_EXCEPTION(_alglib_env_state.error_msg);
+#else
+        _ALGLIB_SET_ERROR_FLAG(_alglib_env_state.error_msg);
+        return 0;
+#endif
+    }
+    ae_state_set_break_jump(&_alglib_env_state, &_break_jump);
+    if( _xparams.flags!=0x0 )
+        ae_state_set_flags(&_alglib_env_state, _xparams.flags);
+    double result = alglib_impl::bivariatenormalpdf(x, y, rho, &_alglib_env_state);
+    alglib_impl::ae_state_clear(&_alglib_env_state);
+    return *(reinterpret_cast<double*>(&result));
+}
+
+/*************************************************************************
+Bivariate normal CDF
+
+Returns the area under the bivariate Gaussian  PDF  with  correlation
+parameter equal to Rho, integrated from minus infinity to (x,y):
+
+
+                                          x      y
+                                          -      -
+                            1            | |    | |
+    bvn(x,y,rho) = -------------------   |      |   f(u,v,rho)*du*dv
+                    2pi*sqrt(1-rho^2)  | |    | |
+                                        -      -
+                                       -INF   -INF
+
+
+where
+
+                      (    u^2 - 2*rho*u*v + v^2  )
+    f(u,v,rho)   = exp( - ----------------------- )
+                      (        2*(1-rho^2)        )
+
+
+with -1<rho<+1 and arbitrary x, y.
+
+This subroutine uses high-precision approximation scheme proposed  by
+Alan Genz in "Numerical  Computation  of  Rectangular  Bivariate  and
+Trivariate Normal and  t  probabilities",  which  computes  CDF  with
+absolute error roughly equal to 1e-14.
+
+This function won't fail as long as Rho is in (-1,+1) range.
+
+  -- ALGLIB --
+     Copyright 15.11.2019 by Bochkanov Sergey
+*************************************************************************/
+double bivariatenormalcdf(const double x, const double y, const double rho, const xparams _xparams)
+{
+    jmp_buf _break_jump;
+    alglib_impl::ae_state _alglib_env_state;
+    alglib_impl::ae_state_init(&_alglib_env_state);
+    if( setjmp(_break_jump) )
+    {
+#if !defined(AE_NO_EXCEPTIONS)
+        _ALGLIB_CPP_EXCEPTION(_alglib_env_state.error_msg);
+#else
+        _ALGLIB_SET_ERROR_FLAG(_alglib_env_state.error_msg);
+        return 0;
+#endif
+    }
+    ae_state_set_break_jump(&_alglib_env_state, &_break_jump);
+    if( _xparams.flags!=0x0 )
+        ae_state_set_flags(&_alglib_env_state, _xparams.flags);
+    double result = alglib_impl::bivariatenormalcdf(x, y, rho, &_alglib_env_state);
     alglib_impl::ae_state_clear(&_alglib_env_state);
     return *(reinterpret_cast<double*>(&result));
 }
@@ -468,7 +667,7 @@ arithmetic   domain     # trials      peak         rms
 Cephes Math Library Release 2.8:  June, 2000
 Copyright 1985, 1987, 2000 by Stephen L. Moshier
 *************************************************************************/
-double incompletegamma(const double a, const double x)
+double incompletegamma(const double a, const double x, const xparams _xparams)
 {
     jmp_buf _break_jump;
     alglib_impl::ae_state _alglib_env_state;
@@ -483,6 +682,8 @@ double incompletegamma(const double a, const double x)
 #endif
     }
     ae_state_set_break_jump(&_alglib_env_state, &_break_jump);
+    if( _xparams.flags!=0x0 )
+        ae_state_set_flags(&_alglib_env_state, _xparams.flags);
     double result = alglib_impl::incompletegamma(a, x, &_alglib_env_state);
     alglib_impl::ae_state_clear(&_alglib_env_state);
     return *(reinterpret_cast<double*>(&result));
@@ -521,7 +722,7 @@ arithmetic   domain   domain     # trials      peak         rms
 Cephes Math Library Release 2.8:  June, 2000
 Copyright 1985, 1987, 2000 by Stephen L. Moshier
 *************************************************************************/
-double incompletegammac(const double a, const double x)
+double incompletegammac(const double a, const double x, const xparams _xparams)
 {
     jmp_buf _break_jump;
     alglib_impl::ae_state _alglib_env_state;
@@ -536,6 +737,8 @@ double incompletegammac(const double a, const double x)
 #endif
     }
     ae_state_set_break_jump(&_alglib_env_state, &_break_jump);
+    if( _xparams.flags!=0x0 )
+        ae_state_set_flags(&_alglib_env_state, _xparams.flags);
     double result = alglib_impl::incompletegammac(a, x, &_alglib_env_state);
     alglib_impl::ae_state_clear(&_alglib_env_state);
     return *(reinterpret_cast<double*>(&result));
@@ -577,7 +780,7 @@ arithmetic   domain   domain     # trials      peak         rms
 Cephes Math Library Release 2.8:  June, 2000
 Copyright 1984, 1987, 1995, 2000 by Stephen L. Moshier
 *************************************************************************/
-double invincompletegammac(const double a, const double y0)
+double invincompletegammac(const double a, const double y0, const xparams _xparams)
 {
     jmp_buf _break_jump;
     alglib_impl::ae_state _alglib_env_state;
@@ -592,6 +795,8 @@ double invincompletegammac(const double a, const double y0)
 #endif
     }
     ae_state_set_break_jump(&_alglib_env_state, &_break_jump);
+    if( _xparams.flags!=0x0 )
+        ae_state_set_flags(&_alglib_env_state, _xparams.flags);
     double result = alglib_impl::invincompletegammac(a, y0, &_alglib_env_state);
     alglib_impl::ae_state_clear(&_alglib_env_state);
     return *(reinterpret_cast<double*>(&result));
@@ -629,7 +834,7 @@ arithmetic   domain     # trials      peak         rms
 Cephes Math Library, Release 2.8:  June, 2000
 Copyright 1984, 1987, 2000 by Stephen L. Moshier
 *************************************************************************/
-double ellipticintegralk(const double m)
+double ellipticintegralk(const double m, const xparams _xparams)
 {
     jmp_buf _break_jump;
     alglib_impl::ae_state _alglib_env_state;
@@ -644,6 +849,8 @@ double ellipticintegralk(const double m)
 #endif
     }
     ae_state_set_break_jump(&_alglib_env_state, &_break_jump);
+    if( _xparams.flags!=0x0 )
+        ae_state_set_flags(&_alglib_env_state, _xparams.flags);
     double result = alglib_impl::ellipticintegralk(m, &_alglib_env_state);
     alglib_impl::ae_state_clear(&_alglib_env_state);
     return *(reinterpret_cast<double*>(&result));
@@ -685,7 +892,7 @@ arithmetic   domain     # trials      peak         rms
 Cephes Math Library, Release 2.8:  June, 2000
 Copyright 1984, 1987, 2000 by Stephen L. Moshier
 *************************************************************************/
-double ellipticintegralkhighprecision(const double m1)
+double ellipticintegralkhighprecision(const double m1, const xparams _xparams)
 {
     jmp_buf _break_jump;
     alglib_impl::ae_state _alglib_env_state;
@@ -700,6 +907,8 @@ double ellipticintegralkhighprecision(const double m1)
 #endif
     }
     ae_state_set_break_jump(&_alglib_env_state, &_break_jump);
+    if( _xparams.flags!=0x0 )
+        ae_state_set_flags(&_alglib_env_state, _xparams.flags);
     double result = alglib_impl::ellipticintegralkhighprecision(m1, &_alglib_env_state);
     alglib_impl::ae_state_clear(&_alglib_env_state);
     return *(reinterpret_cast<double*>(&result));
@@ -739,7 +948,7 @@ arithmetic   domain     # trials      peak         rms
 Cephes Math Library Release 2.8:  June, 2000
 Copyright 1984, 1987, 2000 by Stephen L. Moshier
 *************************************************************************/
-double incompleteellipticintegralk(const double phi, const double m)
+double incompleteellipticintegralk(const double phi, const double m, const xparams _xparams)
 {
     jmp_buf _break_jump;
     alglib_impl::ae_state _alglib_env_state;
@@ -754,6 +963,8 @@ double incompleteellipticintegralk(const double phi, const double m)
 #endif
     }
     ae_state_set_break_jump(&_alglib_env_state, &_break_jump);
+    if( _xparams.flags!=0x0 )
+        ae_state_set_flags(&_alglib_env_state, _xparams.flags);
     double result = alglib_impl::incompleteellipticintegralk(phi, m, &_alglib_env_state);
     alglib_impl::ae_state_clear(&_alglib_env_state);
     return *(reinterpret_cast<double*>(&result));
@@ -786,7 +997,7 @@ arithmetic   domain     # trials      peak         rms
 Cephes Math Library, Release 2.8: June, 2000
 Copyright 1984, 1987, 1989, 2000 by Stephen L. Moshier
 *************************************************************************/
-double ellipticintegrale(const double m)
+double ellipticintegrale(const double m, const xparams _xparams)
 {
     jmp_buf _break_jump;
     alglib_impl::ae_state _alglib_env_state;
@@ -801,6 +1012,8 @@ double ellipticintegrale(const double m)
 #endif
     }
     ae_state_set_break_jump(&_alglib_env_state, &_break_jump);
+    if( _xparams.flags!=0x0 )
+        ae_state_set_flags(&_alglib_env_state, _xparams.flags);
     double result = alglib_impl::ellipticintegrale(m, &_alglib_env_state);
     alglib_impl::ae_state_clear(&_alglib_env_state);
     return *(reinterpret_cast<double*>(&result));
@@ -836,7 +1049,7 @@ arithmetic   domain     # trials      peak         rms
 Cephes Math Library Release 2.8:  June, 2000
 Copyright 1984, 1987, 1993, 2000 by Stephen L. Moshier
 *************************************************************************/
-double incompleteellipticintegrale(const double phi, const double m)
+double incompleteellipticintegrale(const double phi, const double m, const xparams _xparams)
 {
     jmp_buf _break_jump;
     alglib_impl::ae_state _alglib_env_state;
@@ -851,6 +1064,8 @@ double incompleteellipticintegrale(const double phi, const double m)
 #endif
     }
     ae_state_set_break_jump(&_alglib_env_state, &_break_jump);
+    if( _xparams.flags!=0x0 )
+        ae_state_set_flags(&_alglib_env_state, _xparams.flags);
     double result = alglib_impl::incompleteellipticintegrale(phi, m, &_alglib_env_state);
     alglib_impl::ae_state_clear(&_alglib_env_state);
     return *(reinterpret_cast<double*>(&result));
@@ -868,7 +1083,7 @@ Parameters:
 Result:
     the value of the Hermite polynomial Hn at x
 *************************************************************************/
-double hermitecalculate(const ae_int_t n, const double x)
+double hermitecalculate(const ae_int_t n, const double x, const xparams _xparams)
 {
     jmp_buf _break_jump;
     alglib_impl::ae_state _alglib_env_state;
@@ -883,6 +1098,8 @@ double hermitecalculate(const ae_int_t n, const double x)
 #endif
     }
     ae_state_set_break_jump(&_alglib_env_state, &_break_jump);
+    if( _xparams.flags!=0x0 )
+        ae_state_set_flags(&_alglib_env_state, _xparams.flags);
     double result = alglib_impl::hermitecalculate(n, x, &_alglib_env_state);
     alglib_impl::ae_state_clear(&_alglib_env_state);
     return *(reinterpret_cast<double*>(&result));
@@ -901,7 +1118,7 @@ Parameters:
 Result:
     the value of the Hermite polynomial at x
 *************************************************************************/
-double hermitesum(const real_1d_array &c, const ae_int_t n, const double x)
+double hermitesum(const real_1d_array &c, const ae_int_t n, const double x, const xparams _xparams)
 {
     jmp_buf _break_jump;
     alglib_impl::ae_state _alglib_env_state;
@@ -916,6 +1133,8 @@ double hermitesum(const real_1d_array &c, const ae_int_t n, const double x)
 #endif
     }
     ae_state_set_break_jump(&_alglib_env_state, &_break_jump);
+    if( _xparams.flags!=0x0 )
+        ae_state_set_flags(&_alglib_env_state, _xparams.flags);
     double result = alglib_impl::hermitesum(const_cast<alglib_impl::ae_vector*>(c.c_ptr()), n, x, &_alglib_env_state);
     alglib_impl::ae_state_clear(&_alglib_env_state);
     return *(reinterpret_cast<double*>(&result));
@@ -930,7 +1149,7 @@ Input parameters:
 Output parameters:
     C   -   coefficients
 *************************************************************************/
-void hermitecoefficients(const ae_int_t n, real_1d_array &c)
+void hermitecoefficients(const ae_int_t n, real_1d_array &c, const xparams _xparams)
 {
     jmp_buf _break_jump;
     alglib_impl::ae_state _alglib_env_state;
@@ -945,6 +1164,8 @@ void hermitecoefficients(const ae_int_t n, real_1d_array &c)
 #endif
     }
     ae_state_set_break_jump(&_alglib_env_state, &_break_jump);
+    if( _xparams.flags!=0x0 )
+        ae_state_set_flags(&_alglib_env_state, _xparams.flags);
     alglib_impl::hermitecoefficients(n, const_cast<alglib_impl::ae_vector*>(c.c_ptr()), &_alglib_env_state);
     alglib_impl::ae_state_clear(&_alglib_env_state);
     return;
@@ -977,7 +1198,7 @@ arithmetic   domain     # trials      peak         rms
 Cephes Math Library Release 2.8:  June, 2000
 Copyright 1984, 1987, 1989, 2000 by Stephen L. Moshier
 *************************************************************************/
-double dawsonintegral(const double x)
+double dawsonintegral(const double x, const xparams _xparams)
 {
     jmp_buf _break_jump;
     alglib_impl::ae_state _alglib_env_state;
@@ -992,6 +1213,8 @@ double dawsonintegral(const double x)
 #endif
     }
     ae_state_set_break_jump(&_alglib_env_state, &_break_jump);
+    if( _xparams.flags!=0x0 )
+        ae_state_set_flags(&_alglib_env_state, _xparams.flags);
     double result = alglib_impl::dawsonintegral(x, &_alglib_env_state);
     alglib_impl::ae_state_clear(&_alglib_env_state);
     return *(reinterpret_cast<double*>(&result));
@@ -1038,7 +1261,7 @@ arithmetic   function   # trials      peak         rms
 Cephes Math Library Release 2.1:  January, 1989
 Copyright 1984, 1987, 1989 by Stephen L. Moshier
 *************************************************************************/
-void sinecosineintegrals(const double x, double &si, double &ci)
+void sinecosineintegrals(const double x, double &si, double &ci, const xparams _xparams)
 {
     jmp_buf _break_jump;
     alglib_impl::ae_state _alglib_env_state;
@@ -1053,6 +1276,8 @@ void sinecosineintegrals(const double x, double &si, double &ci)
 #endif
     }
     ae_state_set_break_jump(&_alglib_env_state, &_break_jump);
+    if( _xparams.flags!=0x0 )
+        ae_state_set_flags(&_alglib_env_state, _xparams.flags);
     alglib_impl::sinecosineintegrals(x, &si, &ci, &_alglib_env_state);
     alglib_impl::ae_state_clear(&_alglib_env_state);
     return;
@@ -1098,7 +1323,7 @@ arithmetic   function  # trials      peak         rms
 Cephes Math Library Release 2.8:  June, 2000
 Copyright 1984, 1987, 2000 by Stephen L. Moshier
 *************************************************************************/
-void hyperbolicsinecosineintegrals(const double x, double &shi, double &chi)
+void hyperbolicsinecosineintegrals(const double x, double &shi, double &chi, const xparams _xparams)
 {
     jmp_buf _break_jump;
     alglib_impl::ae_state _alglib_env_state;
@@ -1113,6 +1338,8 @@ void hyperbolicsinecosineintegrals(const double x, double &shi, double &chi)
 #endif
     }
     ae_state_set_break_jump(&_alglib_env_state, &_break_jump);
+    if( _xparams.flags!=0x0 )
+        ae_state_set_flags(&_alglib_env_state, _xparams.flags);
     alglib_impl::hyperbolicsinecosineintegrals(x, &shi, &chi, &_alglib_env_state);
     alglib_impl::ae_state_clear(&_alglib_env_state);
     return;
@@ -1145,7 +1372,7 @@ See incomplete gamma function
 Cephes Math Library Release 2.8:  June, 2000
 Copyright 1984, 1987, 1995, 2000 by Stephen L. Moshier
 *************************************************************************/
-double poissondistribution(const ae_int_t k, const double m)
+double poissondistribution(const ae_int_t k, const double m, const xparams _xparams)
 {
     jmp_buf _break_jump;
     alglib_impl::ae_state _alglib_env_state;
@@ -1160,6 +1387,8 @@ double poissondistribution(const ae_int_t k, const double m)
 #endif
     }
     ae_state_set_break_jump(&_alglib_env_state, &_break_jump);
+    if( _xparams.flags!=0x0 )
+        ae_state_set_flags(&_alglib_env_state, _xparams.flags);
     double result = alglib_impl::poissondistribution(k, m, &_alglib_env_state);
     alglib_impl::ae_state_clear(&_alglib_env_state);
     return *(reinterpret_cast<double*>(&result));
@@ -1191,7 +1420,7 @@ See incomplete gamma function
 Cephes Math Library Release 2.8:  June, 2000
 Copyright 1984, 1987, 1995, 2000 by Stephen L. Moshier
 *************************************************************************/
-double poissoncdistribution(const ae_int_t k, const double m)
+double poissoncdistribution(const ae_int_t k, const double m, const xparams _xparams)
 {
     jmp_buf _break_jump;
     alglib_impl::ae_state _alglib_env_state;
@@ -1206,6 +1435,8 @@ double poissoncdistribution(const ae_int_t k, const double m)
 #endif
     }
     ae_state_set_break_jump(&_alglib_env_state, &_break_jump);
+    if( _xparams.flags!=0x0 )
+        ae_state_set_flags(&_alglib_env_state, _xparams.flags);
     double result = alglib_impl::poissoncdistribution(k, m, &_alglib_env_state);
     alglib_impl::ae_state_clear(&_alglib_env_state);
     return *(reinterpret_cast<double*>(&result));
@@ -1230,7 +1461,7 @@ See inverse incomplete gamma function
 Cephes Math Library Release 2.8:  June, 2000
 Copyright 1984, 1987, 1995, 2000 by Stephen L. Moshier
 *************************************************************************/
-double invpoissondistribution(const ae_int_t k, const double y)
+double invpoissondistribution(const ae_int_t k, const double y, const xparams _xparams)
 {
     jmp_buf _break_jump;
     alglib_impl::ae_state _alglib_env_state;
@@ -1245,6 +1476,8 @@ double invpoissondistribution(const ae_int_t k, const double y)
 #endif
     }
     ae_state_set_break_jump(&_alglib_env_state, &_break_jump);
+    if( _xparams.flags!=0x0 )
+        ae_state_set_flags(&_alglib_env_state, _xparams.flags);
     double result = alglib_impl::invpoissondistribution(k, y, &_alglib_env_state);
     alglib_impl::ae_state_clear(&_alglib_env_state);
     return *(reinterpret_cast<double*>(&result));
@@ -1282,7 +1515,7 @@ arithmetic   domain     # trials      peak         rms
 Cephes Math Library Release 2.8:  June, 2000
 Copyright 1984, 1987, 1989, 2000 by Stephen L. Moshier
 *************************************************************************/
-double besselj0(const double x)
+double besselj0(const double x, const xparams _xparams)
 {
     jmp_buf _break_jump;
     alglib_impl::ae_state _alglib_env_state;
@@ -1297,6 +1530,8 @@ double besselj0(const double x)
 #endif
     }
     ae_state_set_break_jump(&_alglib_env_state, &_break_jump);
+    if( _xparams.flags!=0x0 )
+        ae_state_set_flags(&_alglib_env_state, _xparams.flags);
     double result = alglib_impl::besselj0(x, &_alglib_env_state);
     alglib_impl::ae_state_clear(&_alglib_env_state);
     return *(reinterpret_cast<double*>(&result));
@@ -1322,7 +1557,7 @@ arithmetic   domain      # trials      peak         rms
 Cephes Math Library Release 2.8:  June, 2000
 Copyright 1984, 1987, 1989, 2000 by Stephen L. Moshier
 *************************************************************************/
-double besselj1(const double x)
+double besselj1(const double x, const xparams _xparams)
 {
     jmp_buf _break_jump;
     alglib_impl::ae_state _alglib_env_state;
@@ -1337,6 +1572,8 @@ double besselj1(const double x)
 #endif
     }
     ae_state_set_break_jump(&_alglib_env_state, &_break_jump);
+    if( _xparams.flags!=0x0 )
+        ae_state_set_flags(&_alglib_env_state, _xparams.flags);
     double result = alglib_impl::besselj1(x, &_alglib_env_state);
     alglib_impl::ae_state_clear(&_alglib_env_state);
     return *(reinterpret_cast<double*>(&result));
@@ -1369,7 +1606,7 @@ Not suitable for large n or x. Use jv() (fractional order) instead.
 Cephes Math Library Release 2.8:  June, 2000
 Copyright 1984, 1987, 2000 by Stephen L. Moshier
 *************************************************************************/
-double besseljn(const ae_int_t n, const double x)
+double besseljn(const ae_int_t n, const double x, const xparams _xparams)
 {
     jmp_buf _break_jump;
     alglib_impl::ae_state _alglib_env_state;
@@ -1384,6 +1621,8 @@ double besseljn(const ae_int_t n, const double x)
 #endif
     }
     ae_state_set_break_jump(&_alglib_env_state, &_break_jump);
+    if( _xparams.flags!=0x0 )
+        ae_state_set_flags(&_alglib_env_state, _xparams.flags);
     double result = alglib_impl::besseljn(n, x, &_alglib_env_state);
     alglib_impl::ae_state_clear(&_alglib_env_state);
     return *(reinterpret_cast<double*>(&result));
@@ -1417,7 +1656,7 @@ arithmetic   domain     # trials      peak         rms
 Cephes Math Library Release 2.8:  June, 2000
 Copyright 1984, 1987, 1989, 2000 by Stephen L. Moshier
 *************************************************************************/
-double bessely0(const double x)
+double bessely0(const double x, const xparams _xparams)
 {
     jmp_buf _break_jump;
     alglib_impl::ae_state _alglib_env_state;
@@ -1432,6 +1671,8 @@ double bessely0(const double x)
 #endif
     }
     ae_state_set_break_jump(&_alglib_env_state, &_break_jump);
+    if( _xparams.flags!=0x0 )
+        ae_state_set_flags(&_alglib_env_state, _xparams.flags);
     double result = alglib_impl::bessely0(x, &_alglib_env_state);
     alglib_impl::ae_state_clear(&_alglib_env_state);
     return *(reinterpret_cast<double*>(&result));
@@ -1458,7 +1699,7 @@ arithmetic   domain      # trials      peak         rms
 Cephes Math Library Release 2.8:  June, 2000
 Copyright 1984, 1987, 1989, 2000 by Stephen L. Moshier
 *************************************************************************/
-double bessely1(const double x)
+double bessely1(const double x, const xparams _xparams)
 {
     jmp_buf _break_jump;
     alglib_impl::ae_state _alglib_env_state;
@@ -1473,6 +1714,8 @@ double bessely1(const double x)
 #endif
     }
     ae_state_set_break_jump(&_alglib_env_state, &_break_jump);
+    if( _xparams.flags!=0x0 )
+        ae_state_set_flags(&_alglib_env_state, _xparams.flags);
     double result = alglib_impl::bessely1(x, &_alglib_env_state);
     alglib_impl::ae_state_clear(&_alglib_env_state);
     return *(reinterpret_cast<double*>(&result));
@@ -1500,7 +1743,7 @@ arithmetic   domain     # trials      peak         rms
 Cephes Math Library Release 2.8:  June, 2000
 Copyright 1984, 1987, 2000 by Stephen L. Moshier
 *************************************************************************/
-double besselyn(const ae_int_t n, const double x)
+double besselyn(const ae_int_t n, const double x, const xparams _xparams)
 {
     jmp_buf _break_jump;
     alglib_impl::ae_state _alglib_env_state;
@@ -1515,6 +1758,8 @@ double besselyn(const ae_int_t n, const double x)
 #endif
     }
     ae_state_set_break_jump(&_alglib_env_state, &_break_jump);
+    if( _xparams.flags!=0x0 )
+        ae_state_set_flags(&_alglib_env_state, _xparams.flags);
     double result = alglib_impl::besselyn(n, x, &_alglib_env_state);
     alglib_impl::ae_state_clear(&_alglib_env_state);
     return *(reinterpret_cast<double*>(&result));
@@ -1541,7 +1786,7 @@ arithmetic   domain     # trials      peak         rms
 Cephes Math Library Release 2.8:  June, 2000
 Copyright 1984, 1987, 2000 by Stephen L. Moshier
 *************************************************************************/
-double besseli0(const double x)
+double besseli0(const double x, const xparams _xparams)
 {
     jmp_buf _break_jump;
     alglib_impl::ae_state _alglib_env_state;
@@ -1556,6 +1801,8 @@ double besseli0(const double x)
 #endif
     }
     ae_state_set_break_jump(&_alglib_env_state, &_break_jump);
+    if( _xparams.flags!=0x0 )
+        ae_state_set_flags(&_alglib_env_state, _xparams.flags);
     double result = alglib_impl::besseli0(x, &_alglib_env_state);
     alglib_impl::ae_state_clear(&_alglib_env_state);
     return *(reinterpret_cast<double*>(&result));
@@ -1582,7 +1829,7 @@ arithmetic   domain     # trials      peak         rms
 Cephes Math Library Release 2.8:  June, 2000
 Copyright 1985, 1987, 2000 by Stephen L. Moshier
 *************************************************************************/
-double besseli1(const double x)
+double besseli1(const double x, const xparams _xparams)
 {
     jmp_buf _break_jump;
     alglib_impl::ae_state _alglib_env_state;
@@ -1597,6 +1844,8 @@ double besseli1(const double x)
 #endif
     }
     ae_state_set_break_jump(&_alglib_env_state, &_break_jump);
+    if( _xparams.flags!=0x0 )
+        ae_state_set_flags(&_alglib_env_state, _xparams.flags);
     double result = alglib_impl::besseli1(x, &_alglib_env_state);
     alglib_impl::ae_state_clear(&_alglib_env_state);
     return *(reinterpret_cast<double*>(&result));
@@ -1623,7 +1872,7 @@ arithmetic   domain     # trials      peak         rms
 Cephes Math Library Release 2.8:  June, 2000
 Copyright 1984, 1987, 2000 by Stephen L. Moshier
 *************************************************************************/
-double besselk0(const double x)
+double besselk0(const double x, const xparams _xparams)
 {
     jmp_buf _break_jump;
     alglib_impl::ae_state _alglib_env_state;
@@ -1638,6 +1887,8 @@ double besselk0(const double x)
 #endif
     }
     ae_state_set_break_jump(&_alglib_env_state, &_break_jump);
+    if( _xparams.flags!=0x0 )
+        ae_state_set_flags(&_alglib_env_state, _xparams.flags);
     double result = alglib_impl::besselk0(x, &_alglib_env_state);
     alglib_impl::ae_state_clear(&_alglib_env_state);
     return *(reinterpret_cast<double*>(&result));
@@ -1662,7 +1913,7 @@ arithmetic   domain     # trials      peak         rms
 Cephes Math Library Release 2.8:  June, 2000
 Copyright 1984, 1987, 2000 by Stephen L. Moshier
 *************************************************************************/
-double besselk1(const double x)
+double besselk1(const double x, const xparams _xparams)
 {
     jmp_buf _break_jump;
     alglib_impl::ae_state _alglib_env_state;
@@ -1677,6 +1928,8 @@ double besselk1(const double x)
 #endif
     }
     ae_state_set_break_jump(&_alglib_env_state, &_break_jump);
+    if( _xparams.flags!=0x0 )
+        ae_state_set_flags(&_alglib_env_state, _xparams.flags);
     double result = alglib_impl::besselk1(x, &_alglib_env_state);
     alglib_impl::ae_state_clear(&_alglib_env_state);
     return *(reinterpret_cast<double*>(&result));
@@ -1704,7 +1957,7 @@ between the two expansions used.
 Cephes Math Library Release 2.8:  June, 2000
 Copyright 1984, 1987, 1988, 2000 by Stephen L. Moshier
 *************************************************************************/
-double besselkn(const ae_int_t nn, const double x)
+double besselkn(const ae_int_t nn, const double x, const xparams _xparams)
 {
     jmp_buf _break_jump;
     alglib_impl::ae_state _alglib_env_state;
@@ -1719,6 +1972,8 @@ double besselkn(const ae_int_t nn, const double x)
 #endif
     }
     ae_state_set_break_jump(&_alglib_env_state, &_break_jump);
+    if( _xparams.flags!=0x0 )
+        ae_state_set_flags(&_alglib_env_state, _xparams.flags);
     double result = alglib_impl::besselkn(nn, x, &_alglib_env_state);
     alglib_impl::ae_state_clear(&_alglib_env_state);
     return *(reinterpret_cast<double*>(&result));
@@ -1767,7 +2022,7 @@ were excluded from these statistics.
 Cephes Math Library, Release 2.8:  June, 2000
 Copyright 1984, 1995, 2000 by Stephen L. Moshier
 *************************************************************************/
-double incompletebeta(const double a, const double b, const double x)
+double incompletebeta(const double a, const double b, const double x, const xparams _xparams)
 {
     jmp_buf _break_jump;
     alglib_impl::ae_state _alglib_env_state;
@@ -1782,6 +2037,8 @@ double incompletebeta(const double a, const double b, const double x)
 #endif
     }
     ae_state_set_break_jump(&_alglib_env_state, &_break_jump);
+    if( _xparams.flags!=0x0 )
+        ae_state_set_flags(&_alglib_env_state, _xparams.flags);
     double result = alglib_impl::incompletebeta(a, b, x, &_alglib_env_state);
     alglib_impl::ae_state_clear(&_alglib_env_state);
     return *(reinterpret_cast<double*>(&result));
@@ -1815,7 +2072,7 @@ With a = .5, b constrained to half-integer or integer values:
 Cephes Math Library Release 2.8:  June, 2000
 Copyright 1984, 1996, 2000 by Stephen L. Moshier
 *************************************************************************/
-double invincompletebeta(const double a, const double b, const double y)
+double invincompletebeta(const double a, const double b, const double y, const xparams _xparams)
 {
     jmp_buf _break_jump;
     alglib_impl::ae_state _alglib_env_state;
@@ -1830,6 +2087,8 @@ double invincompletebeta(const double a, const double b, const double y)
 #endif
     }
     ae_state_set_break_jump(&_alglib_env_state, &_break_jump);
+    if( _xparams.flags!=0x0 )
+        ae_state_set_flags(&_alglib_env_state, _xparams.flags);
     double result = alglib_impl::invincompletebeta(a, b, y, &_alglib_env_state);
     alglib_impl::ae_state_clear(&_alglib_env_state);
     return *(reinterpret_cast<double*>(&result));
@@ -1869,7 +2128,7 @@ arithmetic  domain  domain     # trials      peak         rms
 Cephes Math Library Release 2.8:  June, 2000
 Copyright 1984, 1987, 1995, 2000 by Stephen L. Moshier
 *************************************************************************/
-double fdistribution(const ae_int_t a, const ae_int_t b, const double x)
+double fdistribution(const ae_int_t a, const ae_int_t b, const double x, const xparams _xparams)
 {
     jmp_buf _break_jump;
     alglib_impl::ae_state _alglib_env_state;
@@ -1884,6 +2143,8 @@ double fdistribution(const ae_int_t a, const ae_int_t b, const double x)
 #endif
     }
     ae_state_set_break_jump(&_alglib_env_state, &_break_jump);
+    if( _xparams.flags!=0x0 )
+        ae_state_set_flags(&_alglib_env_state, _xparams.flags);
     double result = alglib_impl::fdistribution(a, b, x, &_alglib_env_state);
     alglib_impl::ae_state_clear(&_alglib_env_state);
     return *(reinterpret_cast<double*>(&result));
@@ -1925,7 +2186,7 @@ arithmetic  domain  domain     # trials      peak         rms
 Cephes Math Library Release 2.8:  June, 2000
 Copyright 1984, 1987, 1995, 2000 by Stephen L. Moshier
 *************************************************************************/
-double fcdistribution(const ae_int_t a, const ae_int_t b, const double x)
+double fcdistribution(const ae_int_t a, const ae_int_t b, const double x, const xparams _xparams)
 {
     jmp_buf _break_jump;
     alglib_impl::ae_state _alglib_env_state;
@@ -1940,6 +2201,8 @@ double fcdistribution(const ae_int_t a, const ae_int_t b, const double x)
 #endif
     }
     ae_state_set_break_jump(&_alglib_env_state, &_break_jump);
+    if( _xparams.flags!=0x0 )
+        ae_state_set_flags(&_alglib_env_state, _xparams.flags);
     double result = alglib_impl::fcdistribution(a, b, x, &_alglib_env_state);
     alglib_impl::ae_state_clear(&_alglib_env_state);
     return *(reinterpret_cast<double*>(&result));
@@ -1980,7 +2243,7 @@ arithmetic  domain     # trials      peak         rms
 Cephes Math Library Release 2.8:  June, 2000
 Copyright 1984, 1987, 1995, 2000 by Stephen L. Moshier
 *************************************************************************/
-double invfdistribution(const ae_int_t a, const ae_int_t b, const double y)
+double invfdistribution(const ae_int_t a, const ae_int_t b, const double y, const xparams _xparams)
 {
     jmp_buf _break_jump;
     alglib_impl::ae_state _alglib_env_state;
@@ -1995,6 +2258,8 @@ double invfdistribution(const ae_int_t a, const ae_int_t b, const double y)
 #endif
     }
     ae_state_set_break_jump(&_alglib_env_state, &_break_jump);
+    if( _xparams.flags!=0x0 )
+        ae_state_set_flags(&_alglib_env_state, _xparams.flags);
     double result = alglib_impl::invfdistribution(a, b, y, &_alglib_env_state);
     alglib_impl::ae_state_clear(&_alglib_env_state);
     return *(reinterpret_cast<double*>(&result));
@@ -2044,7 +2309,7 @@ Arithmetic  function   domain     # trials      peak         rms
 Cephes Math Library Release 2.8:  June, 2000
 Copyright 1984, 1987, 1989, 2000 by Stephen L. Moshier
 *************************************************************************/
-void fresnelintegral(const double x, double &c, double &s)
+void fresnelintegral(const double x, double &c, double &s, const xparams _xparams)
 {
     jmp_buf _break_jump;
     alglib_impl::ae_state _alglib_env_state;
@@ -2059,6 +2324,8 @@ void fresnelintegral(const double x, double &c, double &s)
 #endif
     }
     ae_state_set_break_jump(&_alglib_env_state, &_break_jump);
+    if( _xparams.flags!=0x0 )
+        ae_state_set_flags(&_alglib_env_state, _xparams.flags);
     alglib_impl::fresnelintegral(x, &c, &s, &_alglib_env_state);
     alglib_impl::ae_state_clear(&_alglib_env_state);
     return;
@@ -2106,7 +2373,7 @@ Accuracy deteriorates when u is large.
 Cephes Math Library Release 2.8:  June, 2000
 Copyright 1984, 1987, 2000 by Stephen L. Moshier
 *************************************************************************/
-void jacobianellipticfunctions(const double u, const double m, double &sn, double &cn, double &dn, double &ph)
+void jacobianellipticfunctions(const double u, const double m, double &sn, double &cn, double &dn, double &ph, const xparams _xparams)
 {
     jmp_buf _break_jump;
     alglib_impl::ae_state _alglib_env_state;
@@ -2121,6 +2388,8 @@ void jacobianellipticfunctions(const double u, const double m, double &sn, doubl
 #endif
     }
     ae_state_set_break_jump(&_alglib_env_state, &_break_jump);
+    if( _xparams.flags!=0x0 )
+        ae_state_set_flags(&_alglib_env_state, _xparams.flags);
     alglib_impl::jacobianellipticfunctions(u, m, &sn, &cn, &dn, &ph, &_alglib_env_state);
     alglib_impl::ae_state_clear(&_alglib_env_state);
     return;
@@ -2167,7 +2436,7 @@ arithmetic   domain     # trials      peak         rms
 Cephes Math Library Release 2.8:  June, 2000
 Copyright 1984, 1987, 1992, 2000 by Stephen L. Moshier
 *************************************************************************/
-double psi(const double x)
+double psi(const double x, const xparams _xparams)
 {
     jmp_buf _break_jump;
     alglib_impl::ae_state _alglib_env_state;
@@ -2182,6 +2451,8 @@ double psi(const double x)
 #endif
     }
     ae_state_set_break_jump(&_alglib_env_state, &_break_jump);
+    if( _xparams.flags!=0x0 )
+        ae_state_set_flags(&_alglib_env_state, _xparams.flags);
     double result = alglib_impl::psi(x, &_alglib_env_state);
     alglib_impl::ae_state_clear(&_alglib_env_state);
     return *(reinterpret_cast<double*>(&result));
@@ -2214,7 +2485,7 @@ arithmetic   domain     # trials      peak         rms
 Cephes Math Library Release 2.8:  May, 1999
 Copyright 1999 by Stephen L. Moshier
 *************************************************************************/
-double exponentialintegralei(const double x)
+double exponentialintegralei(const double x, const xparams _xparams)
 {
     jmp_buf _break_jump;
     alglib_impl::ae_state _alglib_env_state;
@@ -2229,6 +2500,8 @@ double exponentialintegralei(const double x)
 #endif
     }
     ae_state_set_break_jump(&_alglib_env_state, &_break_jump);
+    if( _xparams.flags!=0x0 )
+        ae_state_set_flags(&_alglib_env_state, _xparams.flags);
     double result = alglib_impl::exponentialintegralei(x, &_alglib_env_state);
     alglib_impl::ae_state_clear(&_alglib_env_state);
     return *(reinterpret_cast<double*>(&result));
@@ -2265,7 +2538,7 @@ arithmetic   domain     # trials      peak         rms
 Cephes Math Library Release 2.8:  June, 2000
 Copyright 1985, 2000 by Stephen L. Moshier
 *************************************************************************/
-double exponentialintegralen(const double x, const ae_int_t n)
+double exponentialintegralen(const double x, const ae_int_t n, const xparams _xparams)
 {
     jmp_buf _break_jump;
     alglib_impl::ae_state _alglib_env_state;
@@ -2280,6 +2553,8 @@ double exponentialintegralen(const double x, const ae_int_t n)
 #endif
     }
     ae_state_set_break_jump(&_alglib_env_state, &_break_jump);
+    if( _xparams.flags!=0x0 )
+        ae_state_set_flags(&_alglib_env_state, _xparams.flags);
     double result = alglib_impl::exponentialintegralen(x, n, &_alglib_env_state);
     alglib_impl::ae_state_clear(&_alglib_env_state);
     return *(reinterpret_cast<double*>(&result));
@@ -2297,7 +2572,7 @@ Parameters:
 Result:
     the value of the Laguerre polynomial Ln at x
 *************************************************************************/
-double laguerrecalculate(const ae_int_t n, const double x)
+double laguerrecalculate(const ae_int_t n, const double x, const xparams _xparams)
 {
     jmp_buf _break_jump;
     alglib_impl::ae_state _alglib_env_state;
@@ -2312,6 +2587,8 @@ double laguerrecalculate(const ae_int_t n, const double x)
 #endif
     }
     ae_state_set_break_jump(&_alglib_env_state, &_break_jump);
+    if( _xparams.flags!=0x0 )
+        ae_state_set_flags(&_alglib_env_state, _xparams.flags);
     double result = alglib_impl::laguerrecalculate(n, x, &_alglib_env_state);
     alglib_impl::ae_state_clear(&_alglib_env_state);
     return *(reinterpret_cast<double*>(&result));
@@ -2329,7 +2606,7 @@ Parameters:
 Result:
     the value of the Laguerre polynomial at x
 *************************************************************************/
-double laguerresum(const real_1d_array &c, const ae_int_t n, const double x)
+double laguerresum(const real_1d_array &c, const ae_int_t n, const double x, const xparams _xparams)
 {
     jmp_buf _break_jump;
     alglib_impl::ae_state _alglib_env_state;
@@ -2344,6 +2621,8 @@ double laguerresum(const real_1d_array &c, const ae_int_t n, const double x)
 #endif
     }
     ae_state_set_break_jump(&_alglib_env_state, &_break_jump);
+    if( _xparams.flags!=0x0 )
+        ae_state_set_flags(&_alglib_env_state, _xparams.flags);
     double result = alglib_impl::laguerresum(const_cast<alglib_impl::ae_vector*>(c.c_ptr()), n, x, &_alglib_env_state);
     alglib_impl::ae_state_clear(&_alglib_env_state);
     return *(reinterpret_cast<double*>(&result));
@@ -2358,7 +2637,7 @@ Input parameters:
 Output parameters:
     C   -   coefficients
 *************************************************************************/
-void laguerrecoefficients(const ae_int_t n, real_1d_array &c)
+void laguerrecoefficients(const ae_int_t n, real_1d_array &c, const xparams _xparams)
 {
     jmp_buf _break_jump;
     alglib_impl::ae_state _alglib_env_state;
@@ -2373,6 +2652,8 @@ void laguerrecoefficients(const ae_int_t n, real_1d_array &c)
 #endif
     }
     ae_state_set_break_jump(&_alglib_env_state, &_break_jump);
+    if( _xparams.flags!=0x0 )
+        ae_state_set_flags(&_alglib_env_state, _xparams.flags);
     alglib_impl::laguerrecoefficients(n, const_cast<alglib_impl::ae_vector*>(c.c_ptr()), &_alglib_env_state);
     alglib_impl::ae_state_clear(&_alglib_env_state);
     return;
@@ -2413,7 +2694,7 @@ See incomplete gamma function
 Cephes Math Library Release 2.8:  June, 2000
 Copyright 1984, 1987, 2000 by Stephen L. Moshier
 *************************************************************************/
-double chisquaredistribution(const double v, const double x)
+double chisquaredistribution(const double v, const double x, const xparams _xparams)
 {
     jmp_buf _break_jump;
     alglib_impl::ae_state _alglib_env_state;
@@ -2428,6 +2709,8 @@ double chisquaredistribution(const double v, const double x)
 #endif
     }
     ae_state_set_break_jump(&_alglib_env_state, &_break_jump);
+    if( _xparams.flags!=0x0 )
+        ae_state_set_flags(&_alglib_env_state, _xparams.flags);
     double result = alglib_impl::chisquaredistribution(v, x, &_alglib_env_state);
     alglib_impl::ae_state_clear(&_alglib_env_state);
     return *(reinterpret_cast<double*>(&result));
@@ -2464,7 +2747,7 @@ See incomplete gamma function
 Cephes Math Library Release 2.8:  June, 2000
 Copyright 1984, 1987, 2000 by Stephen L. Moshier
 *************************************************************************/
-double chisquarecdistribution(const double v, const double x)
+double chisquarecdistribution(const double v, const double x, const xparams _xparams)
 {
     jmp_buf _break_jump;
     alglib_impl::ae_state _alglib_env_state;
@@ -2479,6 +2762,8 @@ double chisquarecdistribution(const double v, const double x)
 #endif
     }
     ae_state_set_break_jump(&_alglib_env_state, &_break_jump);
+    if( _xparams.flags!=0x0 )
+        ae_state_set_flags(&_alglib_env_state, _xparams.flags);
     double result = alglib_impl::chisquarecdistribution(v, x, &_alglib_env_state);
     alglib_impl::ae_state_clear(&_alglib_env_state);
     return *(reinterpret_cast<double*>(&result));
@@ -2504,7 +2789,7 @@ See inverse incomplete gamma function
 Cephes Math Library Release 2.8:  June, 2000
 Copyright 1984, 1987, 2000 by Stephen L. Moshier
 *************************************************************************/
-double invchisquaredistribution(const double v, const double y)
+double invchisquaredistribution(const double v, const double y, const xparams _xparams)
 {
     jmp_buf _break_jump;
     alglib_impl::ae_state _alglib_env_state;
@@ -2519,6 +2804,8 @@ double invchisquaredistribution(const double v, const double y)
 #endif
     }
     ae_state_set_break_jump(&_alglib_env_state, &_break_jump);
+    if( _xparams.flags!=0x0 )
+        ae_state_set_flags(&_alglib_env_state, _xparams.flags);
     double result = alglib_impl::invchisquaredistribution(v, y, &_alglib_env_state);
     alglib_impl::ae_state_clear(&_alglib_env_state);
     return *(reinterpret_cast<double*>(&result));
@@ -2536,7 +2823,7 @@ Parameters:
 Result:
     the value of the Legendre polynomial Pn at x
 *************************************************************************/
-double legendrecalculate(const ae_int_t n, const double x)
+double legendrecalculate(const ae_int_t n, const double x, const xparams _xparams)
 {
     jmp_buf _break_jump;
     alglib_impl::ae_state _alglib_env_state;
@@ -2551,6 +2838,8 @@ double legendrecalculate(const ae_int_t n, const double x)
 #endif
     }
     ae_state_set_break_jump(&_alglib_env_state, &_break_jump);
+    if( _xparams.flags!=0x0 )
+        ae_state_set_flags(&_alglib_env_state, _xparams.flags);
     double result = alglib_impl::legendrecalculate(n, x, &_alglib_env_state);
     alglib_impl::ae_state_clear(&_alglib_env_state);
     return *(reinterpret_cast<double*>(&result));
@@ -2569,7 +2858,7 @@ Parameters:
 Result:
     the value of the Legendre polynomial at x
 *************************************************************************/
-double legendresum(const real_1d_array &c, const ae_int_t n, const double x)
+double legendresum(const real_1d_array &c, const ae_int_t n, const double x, const xparams _xparams)
 {
     jmp_buf _break_jump;
     alglib_impl::ae_state _alglib_env_state;
@@ -2584,6 +2873,8 @@ double legendresum(const real_1d_array &c, const ae_int_t n, const double x)
 #endif
     }
     ae_state_set_break_jump(&_alglib_env_state, &_break_jump);
+    if( _xparams.flags!=0x0 )
+        ae_state_set_flags(&_alglib_env_state, _xparams.flags);
     double result = alglib_impl::legendresum(const_cast<alglib_impl::ae_vector*>(c.c_ptr()), n, x, &_alglib_env_state);
     alglib_impl::ae_state_clear(&_alglib_env_state);
     return *(reinterpret_cast<double*>(&result));
@@ -2598,7 +2889,7 @@ Input parameters:
 Output parameters:
     C   -   coefficients
 *************************************************************************/
-void legendrecoefficients(const ae_int_t n, real_1d_array &c)
+void legendrecoefficients(const ae_int_t n, real_1d_array &c, const xparams _xparams)
 {
     jmp_buf _break_jump;
     alglib_impl::ae_state _alglib_env_state;
@@ -2613,6 +2904,8 @@ void legendrecoefficients(const ae_int_t n, real_1d_array &c)
 #endif
     }
     ae_state_set_break_jump(&_alglib_env_state, &_break_jump);
+    if( _xparams.flags!=0x0 )
+        ae_state_set_flags(&_alglib_env_state, _xparams.flags);
     alglib_impl::legendrecoefficients(n, const_cast<alglib_impl::ae_vector*>(c.c_ptr()), &_alglib_env_state);
     alglib_impl::ae_state_clear(&_alglib_env_state);
     return;
@@ -2642,7 +2935,7 @@ arithmetic   domain     # trials      peak         rms
 Cephes Math Library Release 2.0:  April, 1987
 Copyright 1984, 1987 by Stephen L. Moshier
 *************************************************************************/
-double beta(const double a, const double b)
+double beta(const double a, const double b, const xparams _xparams)
 {
     jmp_buf _break_jump;
     alglib_impl::ae_state _alglib_env_state;
@@ -2657,6 +2950,8 @@ double beta(const double a, const double b)
 #endif
     }
     ae_state_set_break_jump(&_alglib_env_state, &_break_jump);
+    if( _xparams.flags!=0x0 )
+        ae_state_set_flags(&_alglib_env_state, _xparams.flags);
     double result = alglib_impl::beta(a, b, &_alglib_env_state);
     alglib_impl::ae_state_clear(&_alglib_env_state);
     return *(reinterpret_cast<double*>(&result));
@@ -2676,7 +2971,7 @@ Parameters:
 Result:
     the value of the Chebyshev polynomial at x
 *************************************************************************/
-double chebyshevcalculate(const ae_int_t r, const ae_int_t n, const double x)
+double chebyshevcalculate(const ae_int_t r, const ae_int_t n, const double x, const xparams _xparams)
 {
     jmp_buf _break_jump;
     alglib_impl::ae_state _alglib_env_state;
@@ -2691,6 +2986,8 @@ double chebyshevcalculate(const ae_int_t r, const ae_int_t n, const double x)
 #endif
     }
     ae_state_set_break_jump(&_alglib_env_state, &_break_jump);
+    if( _xparams.flags!=0x0 )
+        ae_state_set_flags(&_alglib_env_state, _xparams.flags);
     double result = alglib_impl::chebyshevcalculate(r, n, x, &_alglib_env_state);
     alglib_impl::ae_state_clear(&_alglib_env_state);
     return *(reinterpret_cast<double*>(&result));
@@ -2713,7 +3010,7 @@ Parameters:
 Result:
     the value of the Chebyshev polynomial at x
 *************************************************************************/
-double chebyshevsum(const real_1d_array &c, const ae_int_t r, const ae_int_t n, const double x)
+double chebyshevsum(const real_1d_array &c, const ae_int_t r, const ae_int_t n, const double x, const xparams _xparams)
 {
     jmp_buf _break_jump;
     alglib_impl::ae_state _alglib_env_state;
@@ -2728,6 +3025,8 @@ double chebyshevsum(const real_1d_array &c, const ae_int_t r, const ae_int_t n, 
 #endif
     }
     ae_state_set_break_jump(&_alglib_env_state, &_break_jump);
+    if( _xparams.flags!=0x0 )
+        ae_state_set_flags(&_alglib_env_state, _xparams.flags);
     double result = alglib_impl::chebyshevsum(const_cast<alglib_impl::ae_vector*>(c.c_ptr()), r, n, x, &_alglib_env_state);
     alglib_impl::ae_state_clear(&_alglib_env_state);
     return *(reinterpret_cast<double*>(&result));
@@ -2742,7 +3041,7 @@ Input parameters:
 Output parameters:
     C   -   coefficients
 *************************************************************************/
-void chebyshevcoefficients(const ae_int_t n, real_1d_array &c)
+void chebyshevcoefficients(const ae_int_t n, real_1d_array &c, const xparams _xparams)
 {
     jmp_buf _break_jump;
     alglib_impl::ae_state _alglib_env_state;
@@ -2757,6 +3056,8 @@ void chebyshevcoefficients(const ae_int_t n, real_1d_array &c)
 #endif
     }
     ae_state_set_break_jump(&_alglib_env_state, &_break_jump);
+    if( _xparams.flags!=0x0 )
+        ae_state_set_flags(&_alglib_env_state, _xparams.flags);
     alglib_impl::chebyshevcoefficients(n, const_cast<alglib_impl::ae_vector*>(c.c_ptr()), &_alglib_env_state);
     alglib_impl::ae_state_clear(&_alglib_env_state);
     return;
@@ -2775,7 +3076,7 @@ Input parameters:
 Output parameters
     B   -   power series coefficients
 *************************************************************************/
-void fromchebyshev(const real_1d_array &a, const ae_int_t n, real_1d_array &b)
+void fromchebyshev(const real_1d_array &a, const ae_int_t n, real_1d_array &b, const xparams _xparams)
 {
     jmp_buf _break_jump;
     alglib_impl::ae_state _alglib_env_state;
@@ -2790,6 +3091,8 @@ void fromchebyshev(const real_1d_array &a, const ae_int_t n, real_1d_array &b)
 #endif
     }
     ae_state_set_break_jump(&_alglib_env_state, &_break_jump);
+    if( _xparams.flags!=0x0 )
+        ae_state_set_flags(&_alglib_env_state, _xparams.flags);
     alglib_impl::fromchebyshev(const_cast<alglib_impl::ae_vector*>(a.c_ptr()), n, const_cast<alglib_impl::ae_vector*>(b.c_ptr()), &_alglib_env_state);
     alglib_impl::ae_state_clear(&_alglib_env_state);
     return;
@@ -2838,7 +3141,7 @@ arithmetic   domain     # trials      peak         rms
 Cephes Math Library Release 2.8:  June, 2000
 Copyright 1984, 1987, 1995, 2000 by Stephen L. Moshier
 *************************************************************************/
-double studenttdistribution(const ae_int_t k, const double t)
+double studenttdistribution(const ae_int_t k, const double t, const xparams _xparams)
 {
     jmp_buf _break_jump;
     alglib_impl::ae_state _alglib_env_state;
@@ -2853,6 +3156,8 @@ double studenttdistribution(const ae_int_t k, const double t)
 #endif
     }
     ae_state_set_break_jump(&_alglib_env_state, &_break_jump);
+    if( _xparams.flags!=0x0 )
+        ae_state_set_flags(&_alglib_env_state, _xparams.flags);
     double result = alglib_impl::studenttdistribution(k, t, &_alglib_env_state);
     alglib_impl::ae_state_clear(&_alglib_env_state);
     return *(reinterpret_cast<double*>(&result));
@@ -2875,7 +3180,7 @@ arithmetic   domain     # trials      peak         rms
 Cephes Math Library Release 2.8:  June, 2000
 Copyright 1984, 1987, 1995, 2000 by Stephen L. Moshier
 *************************************************************************/
-double invstudenttdistribution(const ae_int_t k, const double p)
+double invstudenttdistribution(const ae_int_t k, const double p, const xparams _xparams)
 {
     jmp_buf _break_jump;
     alglib_impl::ae_state _alglib_env_state;
@@ -2890,6 +3195,8 @@ double invstudenttdistribution(const ae_int_t k, const double p)
 #endif
     }
     ae_state_set_break_jump(&_alglib_env_state, &_break_jump);
+    if( _xparams.flags!=0x0 )
+        ae_state_set_flags(&_alglib_env_state, _xparams.flags);
     double result = alglib_impl::invstudenttdistribution(k, p, &_alglib_env_state);
     alglib_impl::ae_state_clear(&_alglib_env_state);
     return *(reinterpret_cast<double*>(&result));
@@ -2928,7 +3235,7 @@ arithmetic  domain     # trials      peak         rms
 Cephes Math Library Release 2.8:  June, 2000
 Copyright 1984, 1987, 1995, 2000 by Stephen L. Moshier
 *************************************************************************/
-double binomialdistribution(const ae_int_t k, const ae_int_t n, const double p)
+double binomialdistribution(const ae_int_t k, const ae_int_t n, const double p, const xparams _xparams)
 {
     jmp_buf _break_jump;
     alglib_impl::ae_state _alglib_env_state;
@@ -2943,6 +3250,8 @@ double binomialdistribution(const ae_int_t k, const ae_int_t n, const double p)
 #endif
     }
     ae_state_set_break_jump(&_alglib_env_state, &_break_jump);
+    if( _xparams.flags!=0x0 )
+        ae_state_set_flags(&_alglib_env_state, _xparams.flags);
     double result = alglib_impl::binomialdistribution(k, n, p, &_alglib_env_state);
     alglib_impl::ae_state_clear(&_alglib_env_state);
     return *(reinterpret_cast<double*>(&result));
@@ -2981,7 +3290,7 @@ arithmetic  domain     # trials      peak         rms
 Cephes Math Library Release 2.8:  June, 2000
 Copyright 1984, 1987, 1995, 2000 by Stephen L. Moshier
 *************************************************************************/
-double binomialcdistribution(const ae_int_t k, const ae_int_t n, const double p)
+double binomialcdistribution(const ae_int_t k, const ae_int_t n, const double p, const xparams _xparams)
 {
     jmp_buf _break_jump;
     alglib_impl::ae_state _alglib_env_state;
@@ -2996,6 +3305,8 @@ double binomialcdistribution(const ae_int_t k, const ae_int_t n, const double p)
 #endif
     }
     ae_state_set_break_jump(&_alglib_env_state, &_break_jump);
+    if( _xparams.flags!=0x0 )
+        ae_state_set_flags(&_alglib_env_state, _xparams.flags);
     double result = alglib_impl::binomialcdistribution(k, n, p, &_alglib_env_state);
     alglib_impl::ae_state_clear(&_alglib_env_state);
     return *(reinterpret_cast<double*>(&result));
@@ -3029,7 +3340,7 @@ arithmetic  domain     # trials      peak         rms
 Cephes Math Library Release 2.8:  June, 2000
 Copyright 1984, 1987, 1995, 2000 by Stephen L. Moshier
 *************************************************************************/
-double invbinomialdistribution(const ae_int_t k, const ae_int_t n, const double y)
+double invbinomialdistribution(const ae_int_t k, const ae_int_t n, const double y, const xparams _xparams)
 {
     jmp_buf _break_jump;
     alglib_impl::ae_state _alglib_env_state;
@@ -3044,6 +3355,8 @@ double invbinomialdistribution(const ae_int_t k, const ae_int_t n, const double 
 #endif
     }
     ae_state_set_break_jump(&_alglib_env_state, &_break_jump);
+    if( _xparams.flags!=0x0 )
+        ae_state_set_flags(&_alglib_env_state, _xparams.flags);
     double result = alglib_impl::invbinomialdistribution(k, n, y, &_alglib_env_state);
     alglib_impl::ae_state_clear(&_alglib_env_state);
     return *(reinterpret_cast<double*>(&result));
@@ -3083,7 +3396,7 @@ IEEE        -10, 10    Bi'       30000       4.9e-15     7.3e-16
 Cephes Math Library Release 2.8:  June, 2000
 Copyright 1984, 1987, 1989, 2000 by Stephen L. Moshier
 *************************************************************************/
-void airy(const double x, double &ai, double &aip, double &bi, double &bip)
+void airy(const double x, double &ai, double &aip, double &bi, double &bip, const xparams _xparams)
 {
     jmp_buf _break_jump;
     alglib_impl::ae_state _alglib_env_state;
@@ -3098,6 +3411,8 @@ void airy(const double x, double &ai, double &aip, double &bi, double &bip)
 #endif
     }
     ae_state_set_break_jump(&_alglib_env_state, &_break_jump);
+    if( _xparams.flags!=0x0 )
+        ae_state_set_flags(&_alglib_env_state, _xparams.flags);
     alglib_impl::airy(x, &ai, &aip, &bi, &bip, &_alglib_env_state);
     alglib_impl::ae_state_clear(&_alglib_env_state);
     return;
@@ -3118,6 +3433,21 @@ static double gammafunc_gammastirf(double x, ae_state *_state);
 
 #endif
 #if defined(AE_COMPILE_NORMALDISTR) || !defined(AE_PARTIAL_BUILD)
+static double normaldistr_bvnintegrate3(double rangea,
+     double rangeb,
+     double x,
+     double y,
+     double gw,
+     double gx,
+     ae_state *_state);
+static double normaldistr_bvnintegrate6(double rangea,
+     double rangeb,
+     double x,
+     double y,
+     double s,
+     double gw,
+     double gx,
+     ae_state *_state);
 
 
 #endif
@@ -3710,7 +4040,43 @@ double errorfunctionc(double x, ae_state *_state)
 
 
 /*************************************************************************
-Normal distribution function
+Same as normalcdf(), obsolete name.
+*************************************************************************/
+double normaldistribution(double x, ae_state *_state)
+{
+    double result;
+
+
+    result = 0.5*(errorfunction(x/1.41421356237309504880, _state)+1);
+    return result;
+}
+
+
+/*************************************************************************
+Normal distribution PDF
+
+Returns Gaussian probability density function:
+
+               1
+   f(x)  = --------- * exp(-x^2/2)
+           sqrt(2pi)
+
+Cephes Math Library Release 2.8:  June, 2000
+Copyright 1984, 1987, 1988, 1992, 2000 by Stephen L. Moshier
+*************************************************************************/
+double normalpdf(double x, ae_state *_state)
+{
+    double result;
+
+
+    ae_assert(ae_isfinite(x, _state), "NormalPDF: X is infinite", _state);
+    result = ae_exp(-x*x/2, _state)/ae_sqrt(2*ae_pi, _state);
+    return result;
+}
+
+
+/*************************************************************************
+Normal distribution CDF
 
 Returns the area under the Gaussian probability density
 function, integrated from minus infinity to x:
@@ -3739,7 +4105,7 @@ arithmetic   domain     # trials      peak         rms
 Cephes Math Library Release 2.8:  June, 2000
 Copyright 1984, 1987, 1988, 1992, 2000 by Stephen L. Moshier
 *************************************************************************/
-double normaldistribution(double x, ae_state *_state)
+double normalcdf(double x, ae_state *_state)
 {
     double result;
 
@@ -3766,7 +4132,20 @@ double inverf(double e, ae_state *_state)
 
 
 /*************************************************************************
-Inverse of Normal distribution function
+Same as invnormalcdf(), deprecated name
+*************************************************************************/
+double invnormaldistribution(double y0, ae_state *_state)
+{
+    double result;
+
+
+    result = invnormalcdf(y0, _state);
+    return result;
+}
+
+
+/*************************************************************************
+Inverse of Normal CDF
 
 Returns the argument, x, for which the area under the
 Gaussian probability density function (integrated from
@@ -3790,7 +4169,7 @@ arithmetic   domain        # trials      peak         rms
 Cephes Math Library Release 2.8:  June, 2000
 Copyright 1984, 1987, 1988, 1992, 2000 by Stephen L. Moshier
 *************************************************************************/
-double invnormaldistribution(double y0, ae_state *_state)
+double invnormalcdf(double y0, ae_state *_state)
 {
     double expm2;
     double s2pi;
@@ -3905,6 +4284,260 @@ double invnormaldistribution(double y0, ae_state *_state)
         x = -x;
     }
     result = x;
+    return result;
+}
+
+
+/*************************************************************************
+Bivariate normal PDF
+
+Returns probability density function of the bivariate  Gaussian  with
+correlation parameter equal to Rho:
+
+                         1              (    x^2 - 2*rho*x*y + y^2  )
+    f(x,y,rho) = ----------------- * exp( - ----------------------- )
+                 2pi*sqrt(1-rho^2)      (        2*(1-rho^2)        )
+
+
+with -1<rho<+1 and arbitrary x, y.
+
+This function won't fail as long as Rho is in (-1,+1) range.
+
+  -- ALGLIB --
+     Copyright 15.11.2019 by Bochkanov Sergey
+*************************************************************************/
+double bivariatenormalpdf(double x,
+     double y,
+     double rho,
+     ae_state *_state)
+{
+    double onerho2;
+    double result;
+
+
+    ae_assert(ae_isfinite(x, _state), "BivariateNormalCDF: X is infinite", _state);
+    ae_assert(ae_isfinite(y, _state), "BivariateNormalCDF: Y is infinite", _state);
+    ae_assert(ae_isfinite(rho, _state), "BivariateNormalCDF: Rho is infinite", _state);
+    ae_assert(ae_fp_less((double)(-1),rho)&&ae_fp_less(rho,(double)(1)), "BivariateNormalCDF: Rho is not in (-1,+1) range", _state);
+    onerho2 = (1-rho)*(1+rho);
+    result = ae_exp(-(x*x+y*y-2*rho*x*y)/(2*onerho2), _state)/(2*ae_pi*ae_sqrt(onerho2, _state));
+    return result;
+}
+
+
+/*************************************************************************
+Bivariate normal CDF
+
+Returns the area under the bivariate Gaussian  PDF  with  correlation
+parameter equal to Rho, integrated from minus infinity to (x,y):
+
+
+                                          x      y
+                                          -      -  
+                            1            | |    | | 
+    bvn(x,y,rho) = -------------------   |      |   f(u,v,rho)*du*dv
+                    2pi*sqrt(1-rho^2)  | |    | |    
+                                        -      -
+                                       -INF   -INF
+
+                                       
+where
+
+                      (    u^2 - 2*rho*u*v + v^2  )
+    f(u,v,rho)   = exp( - ----------------------- )
+                      (        2*(1-rho^2)        )
+
+
+with -1<rho<+1 and arbitrary x, y.
+
+This subroutine uses high-precision approximation scheme proposed  by
+Alan Genz in "Numerical  Computation  of  Rectangular  Bivariate  and
+Trivariate Normal and  t  probabilities",  which  computes  CDF  with
+absolute error roughly equal to 1e-14.
+
+This function won't fail as long as Rho is in (-1,+1) range.
+
+  -- ALGLIB --
+     Copyright 15.11.2019 by Bochkanov Sergey
+*************************************************************************/
+double bivariatenormalcdf(double x,
+     double y,
+     double rho,
+     ae_state *_state)
+{
+    double rangea;
+    double rangeb;
+    double s;
+    double v;
+    double v0;
+    double v1;
+    double fxys;
+    double ta;
+    double tb;
+    double tc;
+    double result;
+
+
+    ae_assert(ae_isfinite(x, _state), "BivariateNormalCDF: X is infinite", _state);
+    ae_assert(ae_isfinite(y, _state), "BivariateNormalCDF: Y is infinite", _state);
+    ae_assert(ae_isfinite(rho, _state), "BivariateNormalCDF: Rho is infinite", _state);
+    ae_assert(ae_fp_less((double)(-1),rho)&&ae_fp_less(rho,(double)(1)), "BivariateNormalCDF: Rho is not in (-1,+1) range", _state);
+    if( ae_fp_eq(rho,(double)(0)) )
+    {
+        result = normalcdf(x, _state)*normalcdf(y, _state);
+        return result;
+    }
+    if( ae_fp_less_eq(ae_fabs(rho, _state),0.8) )
+    {
+        
+        /*
+         * Rho is small, compute integral using using formula (3) by Alan Genz, integrated
+         * by means of 10-point Gauss-Legendre quadrature
+         */
+        rangea = (double)(0);
+        rangeb = ae_asin(rho, _state);
+        v = (double)(0);
+        v = v+normaldistr_bvnintegrate3(rangea, rangeb, x, y, 0.2491470458134028, -0.1252334085114689, _state);
+        v = v+normaldistr_bvnintegrate3(rangea, rangeb, x, y, 0.2491470458134028, 0.1252334085114689, _state);
+        v = v+normaldistr_bvnintegrate3(rangea, rangeb, x, y, 0.2334925365383548, -0.3678314989981802, _state);
+        v = v+normaldistr_bvnintegrate3(rangea, rangeb, x, y, 0.2334925365383548, 0.3678314989981802, _state);
+        v = v+normaldistr_bvnintegrate3(rangea, rangeb, x, y, 0.2031674267230659, -0.5873179542866175, _state);
+        v = v+normaldistr_bvnintegrate3(rangea, rangeb, x, y, 0.2031674267230659, 0.5873179542866175, _state);
+        v = v+normaldistr_bvnintegrate3(rangea, rangeb, x, y, 0.1600783285433462, -0.7699026741943047, _state);
+        v = v+normaldistr_bvnintegrate3(rangea, rangeb, x, y, 0.1600783285433462, 0.7699026741943047, _state);
+        v = v+normaldistr_bvnintegrate3(rangea, rangeb, x, y, 0.1069393259953184, -0.9041172563704749, _state);
+        v = v+normaldistr_bvnintegrate3(rangea, rangeb, x, y, 0.1069393259953184, 0.9041172563704749, _state);
+        v = v+normaldistr_bvnintegrate3(rangea, rangeb, x, y, 0.0471753363865118, -0.9815606342467192, _state);
+        v = v+normaldistr_bvnintegrate3(rangea, rangeb, x, y, 0.0471753363865118, 0.9815606342467192, _state);
+        v = v*0.5*(rangeb-rangea)/(2*ae_pi);
+        result = normalcdf(x, _state)*normalcdf(y, _state)+v;
+    }
+    else
+    {
+        
+        /*
+         * Rho is large, compute integral using using formula (6) by Alan Genz, integrated
+         * by means of 20-point Gauss-Legendre quadrature.
+         */
+        x = -x;
+        y = -y;
+        s = (double)(ae_sign(rho, _state));
+        if( ae_fp_greater(s,(double)(0)) )
+        {
+            fxys = normalcdf(-ae_maxreal(x, y, _state), _state);
+        }
+        else
+        {
+            fxys = ae_maxreal(0.0, normalcdf(-x, _state)-normalcdf(y, _state), _state);
+        }
+        rangea = (double)(0);
+        rangeb = ae_sqrt((1-rho)*(1+rho), _state);
+        
+        /*
+         * Compute first term (analytic integral) from formula (6)
+         */
+        ta = rangeb;
+        tb = ae_fabs(x-s*y, _state);
+        tc = (4-s*x*y)/8;
+        v0 = ta*(1-tc*(tb*tb-ta*ta)/3)*ae_exp(-tb*tb/(2*ta*ta), _state)-tb*(1-tc*tb*tb/3)*ae_sqrt(2*ae_pi, _state)*normalcdf(-tb/ta, _state);
+        v0 = v0*ae_exp(-s*x*y/2, _state)/(2*ae_pi);
+        
+        /*
+         * Compute second term (numerical integral, 20-point Gauss-Legendre rule) from formula (6)
+         */
+        v1 = (double)(0);
+        v1 = v1+normaldistr_bvnintegrate6(rangea, rangeb, x, y, s, 0.1527533871307258, -0.0765265211334973, _state);
+        v1 = v1+normaldistr_bvnintegrate6(rangea, rangeb, x, y, s, 0.1527533871307258, 0.0765265211334973, _state);
+        v1 = v1+normaldistr_bvnintegrate6(rangea, rangeb, x, y, s, 0.1491729864726037, -0.2277858511416451, _state);
+        v1 = v1+normaldistr_bvnintegrate6(rangea, rangeb, x, y, s, 0.1491729864726037, 0.2277858511416451, _state);
+        v1 = v1+normaldistr_bvnintegrate6(rangea, rangeb, x, y, s, 0.1420961093183820, -0.3737060887154195, _state);
+        v1 = v1+normaldistr_bvnintegrate6(rangea, rangeb, x, y, s, 0.1420961093183820, 0.3737060887154195, _state);
+        v1 = v1+normaldistr_bvnintegrate6(rangea, rangeb, x, y, s, 0.1316886384491766, -0.5108670019508271, _state);
+        v1 = v1+normaldistr_bvnintegrate6(rangea, rangeb, x, y, s, 0.1316886384491766, 0.5108670019508271, _state);
+        v1 = v1+normaldistr_bvnintegrate6(rangea, rangeb, x, y, s, 0.1181945319615184, -0.6360536807265150, _state);
+        v1 = v1+normaldistr_bvnintegrate6(rangea, rangeb, x, y, s, 0.1181945319615184, 0.6360536807265150, _state);
+        v1 = v1+normaldistr_bvnintegrate6(rangea, rangeb, x, y, s, 0.1019301198172404, -0.7463319064601508, _state);
+        v1 = v1+normaldistr_bvnintegrate6(rangea, rangeb, x, y, s, 0.1019301198172404, 0.7463319064601508, _state);
+        v1 = v1+normaldistr_bvnintegrate6(rangea, rangeb, x, y, s, 0.0832767415767048, -0.8391169718222188, _state);
+        v1 = v1+normaldistr_bvnintegrate6(rangea, rangeb, x, y, s, 0.0832767415767048, 0.8391169718222188, _state);
+        v1 = v1+normaldistr_bvnintegrate6(rangea, rangeb, x, y, s, 0.0626720483341091, -0.9122344282513259, _state);
+        v1 = v1+normaldistr_bvnintegrate6(rangea, rangeb, x, y, s, 0.0626720483341091, 0.9122344282513259, _state);
+        v1 = v1+normaldistr_bvnintegrate6(rangea, rangeb, x, y, s, 0.0406014298003869, -0.9639719272779138, _state);
+        v1 = v1+normaldistr_bvnintegrate6(rangea, rangeb, x, y, s, 0.0406014298003869, 0.9639719272779138, _state);
+        v1 = v1+normaldistr_bvnintegrate6(rangea, rangeb, x, y, s, 0.0176140071391521, -0.9931285991850949, _state);
+        v1 = v1+normaldistr_bvnintegrate6(rangea, rangeb, x, y, s, 0.0176140071391521, 0.9931285991850949, _state);
+        v1 = v1*0.5*(rangeb-rangea)/(2*ae_pi);
+        result = fxys-s*(v0+v1);
+    }
+    result = ae_maxreal(result, (double)(0), _state);
+    result = ae_minreal(result, (double)(1), _state);
+    return result;
+}
+
+
+/*************************************************************************
+Internal function which computes integrand of  formula  (3)  by  Alan
+Genz times Gaussian weights (passed by user).
+
+  -- ALGLIB --
+     Copyright 15.11.2019 by Bochkanov Sergey
+*************************************************************************/
+static double normaldistr_bvnintegrate3(double rangea,
+     double rangeb,
+     double x,
+     double y,
+     double gw,
+     double gx,
+     ae_state *_state)
+{
+    double r;
+    double t2;
+    double dd;
+    double sinr;
+    double cosr;
+    double result;
+
+
+    r = (rangeb-rangea)*0.5*gx+(rangeb+rangea)*0.5;
+    t2 = ae_tan(0.5*r, _state);
+    dd = 1/(1+t2*t2);
+    sinr = 2*t2*dd;
+    cosr = (1-t2*t2)*dd;
+    result = gw*ae_exp(-(x*x+y*y-2*x*y*sinr)/(2*cosr*cosr), _state);
+    return result;
+}
+
+
+/*************************************************************************
+Internal function which computes integrand of  formula  (6)  by  Alan
+Genz times Gaussian weights (passed by user).
+
+  -- ALGLIB --
+     Copyright 15.11.2019 by Bochkanov Sergey
+*************************************************************************/
+static double normaldistr_bvnintegrate6(double rangea,
+     double rangeb,
+     double x,
+     double y,
+     double s,
+     double gw,
+     double gx,
+     ae_state *_state)
+{
+    double r;
+    double exphsk22x2;
+    double exphsk2;
+    double sqrt1x2;
+    double exphsk1sqrt1x2;
+    double result;
+
+
+    r = (rangeb-rangea)*0.5*gx+(rangeb+rangea)*0.5;
+    exphsk22x2 = ae_exp(-(x-s*y)*(x-s*y)/(2*r*r), _state);
+    exphsk2 = ae_exp(-x*s*y/2, _state);
+    sqrt1x2 = ae_sqrt((1-r)*(1+r), _state);
+    exphsk1sqrt1x2 = ae_exp(-x*s*y/(1+sqrt1x2), _state);
+    result = gw*exphsk22x2*(exphsk1sqrt1x2/sqrt1x2-exphsk2*(1+(4-x*y*s)*r*r/8));
     return result;
 }
 
@@ -8144,7 +8777,9 @@ void jacobianellipticfunctions(double u,
     ae_int_t i;
 
     ae_frame_make(_state, &_frame_block);
-    memset(&a, 0, sizeof(a));    memset(&c, 0, sizeof(c));    *sn = 0;
+    memset(&a, 0, sizeof(a));
+    memset(&c, 0, sizeof(c));
+    *sn = 0;
     *cn = 0;
     *dn = 0;
     *ph = 0;

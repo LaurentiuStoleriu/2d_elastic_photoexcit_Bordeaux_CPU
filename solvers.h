@@ -1,5 +1,5 @@
 /*************************************************************************
-ALGLIB 3.13.0 (source code generated 2017-12-29)
+ALGLIB 3.17.0 (source code generated 2020-12-27)
 Copyright (c) Sergey Bochkanov (ALGLIB project).
 
 >>> SOURCE LICENSE >>>
@@ -21,8 +21,8 @@ http://www.fsf.org/licensing/licenses
 #define _solvers_pkg_h
 #include "ap.h"
 #include "alglibinternal.h"
-#include "linalg.h"
 #include "alglibmisc.h"
+#include "linalg.h"
 
 /////////////////////////////////////////////////////////////////////////
 //
@@ -97,6 +97,7 @@ typedef struct
     ae_int_t repnmv;
     ae_int_t repterminationtype;
     ae_bool running;
+    ae_bool userterminationneeded;
     ae_vector tmpd;
     ae_vector tmpx;
     rcommstate rstate;
@@ -536,43 +537,20 @@ IMPORTANT: ! this function is NOT the most efficient linear solver provided
            ! This  performance  penalty  is  especially  visible  in   the
            ! multithreaded mode, because both condition number  estimation
            ! and   iterative    refinement   are   inherently   sequential
-           ! calculations. It also very significant on small matrices.
+           ! calculations. It is also very significant on small matrices.
            !
            ! Thus, if you need high performance and if you are pretty sure
            ! that your system is well conditioned, we  strongly  recommend
            ! you to use faster solver, RMatrixSolveFast() function.
 
-COMMERCIAL EDITION OF ALGLIB:
-
-  ! Commercial version of ALGLIB includes two  important  improvements  of
-  ! this function, which can be used from C++ and C#:
-  ! * Intel MKL support (lightweight Intel MKL is shipped with ALGLIB)
-  ! * multicore support
+  ! COMMERCIAL EDITION OF ALGLIB:
   !
-  ! Intel MKL gives approximately constant  (with  respect  to  number  of
-  ! worker threads) acceleration factor which depends on CPU  being  used,
-  ! problem  size  and  "baseline"  ALGLIB  edition  which  is  used   for
-  ! comparison.
-  !
-  ! Say, on SSE2-capable CPU with N=1024, HPC ALGLIB will be:
-  ! * about 2-3x faster than ALGLIB for C++ without MKL
-  ! * about 7-10x faster than "pure C#" edition of ALGLIB
-  ! Difference in performance will be more striking  on  newer  CPU's with
-  ! support for newer SIMD instructions. Generally,  MKL  accelerates  any
-  ! problem whose size is at least 128, with best  efficiency achieved for
-  ! N's larger than 512.
-  !
-  ! Commercial edition of ALGLIB also supports multithreaded  acceleration
-  ! of this function. We should note that LU decomposition  is  harder  to
-  ! parallelize than, say, matrix-matrix  product  -  this  algorithm  has
-  ! many internal synchronization points which can not be avoided. However
-  ! parallelism starts to be profitable starting  from  N=1024,  achieving
-  ! near-linear speedup for N=4096 or higher.
-  !
-  ! In order to use multicore features you have to:
-  ! * use commercial version of ALGLIB
-  ! * call  this  function  with  "smp_"  prefix,  which  indicates  that
-  !   multicore code will be used (for multicore support)
+  ! Commercial Edition of ALGLIB includes following important improvements
+  ! of this function:
+  ! * high-performance native backend with same C# interface (C# version)
+  ! * multithreading support (C++ and C# versions)
+  ! * hardware vendor (Intel) implementations of linear algebra primitives
+  !   (C++ and C# versions, x86/x64 platform)
   !
   ! We recommend you to read 'Working with commercial version' section  of
   ! ALGLIB Reference Manual in order to find out how to  use  performance-
@@ -599,8 +577,7 @@ OUTPUT PARAMETERS
   -- ALGLIB --
      Copyright 27.01.2010 by Bochkanov Sergey
 *************************************************************************/
-void rmatrixsolve(const real_2d_array &a, const ae_int_t n, const real_1d_array &b, ae_int_t &info, densesolverreport &rep, real_1d_array &x);
-void smp_rmatrixsolve(const real_2d_array &a, const ae_int_t n, const real_1d_array &b, ae_int_t &info, densesolverreport &rep, real_1d_array &x);
+void rmatrixsolve(const real_2d_array &a, const ae_int_t n, const real_1d_array &b, ae_int_t &info, densesolverreport &rep, real_1d_array &x, const xparams _xparams = alglib::xdefault);
 
 
 /*************************************************************************
@@ -618,37 +595,14 @@ Algorithm features:
 If you need condition number estimation or iterative refinement, use  more
 feature-rich version - RMatrixSolve().
 
-COMMERCIAL EDITION OF ALGLIB:
-
-  ! Commercial version of ALGLIB includes two  important  improvements  of
-  ! this function, which can be used from C++ and C#:
-  ! * Intel MKL support (lightweight Intel MKL is shipped with ALGLIB)
-  ! * multicore support
+  ! COMMERCIAL EDITION OF ALGLIB:
   !
-  ! Intel MKL gives approximately constant  (with  respect  to  number  of
-  ! worker threads) acceleration factor which depends on CPU  being  used,
-  ! problem  size  and  "baseline"  ALGLIB  edition  which  is  used   for
-  ! comparison.
-  !
-  ! Say, on SSE2-capable CPU with N=1024, HPC ALGLIB will be:
-  ! * about 2-3x faster than ALGLIB for C++ without MKL
-  ! * about 7-10x faster than "pure C#" edition of ALGLIB
-  ! Difference in performance will be more striking  on  newer  CPU's with
-  ! support for newer SIMD instructions. Generally,  MKL  accelerates  any
-  ! problem whose size is at least 128, with best  efficiency achieved for
-  ! N's larger than 512.
-  !
-  ! Commercial edition of ALGLIB also supports multithreaded  acceleration
-  ! of this function. We should note that LU decomposition  is  harder  to
-  ! parallelize than, say, matrix-matrix  product  -  this  algorithm  has
-  ! many internal synchronization points which can not be avoided. However
-  ! parallelism starts to be profitable starting  from  N=1024,  achieving
-  ! near-linear speedup for N=4096 or higher.
-  !
-  ! In order to use multicore features you have to:
-  ! * use commercial version of ALGLIB
-  ! * call  this  function  with  "smp_"  prefix,  which  indicates  that
-  !   multicore code will be used (for multicore support)
+  ! Commercial Edition of ALGLIB includes following important improvements
+  ! of this function:
+  ! * high-performance native backend with same C# interface (C# version)
+  ! * multithreading support (C++ and C# versions)
+  ! * hardware vendor (Intel) implementations of linear algebra primitives
+  !   (C++ and C# versions, x86/x64 platform)
   !
   ! We recommend you to read 'Working with commercial version' section  of
   ! ALGLIB Reference Manual in order to find out how to  use  performance-
@@ -672,8 +626,7 @@ OUTPUT PARAMETERS
   -- ALGLIB --
      Copyright 16.03.2015 by Bochkanov Sergey
 *************************************************************************/
-void rmatrixsolvefast(const real_2d_array &a, const ae_int_t n, const real_1d_array &b, ae_int_t &info);
-void smp_rmatrixsolvefast(const real_2d_array &a, const ae_int_t n, const real_1d_array &b, ae_int_t &info);
+void rmatrixsolvefast(const real_2d_array &a, const ae_int_t n, const real_1d_array &b, ae_int_t &info, const xparams _xparams = alglib::xdefault);
 
 
 /*************************************************************************
@@ -706,37 +659,14 @@ IMPORTANT: ! this function is NOT the most efficient linear solver provided
            ! that your system is well conditioned, we  strongly  recommend
            ! you to use faster solver, RMatrixSolveMFast() function.
 
-COMMERCIAL EDITION OF ALGLIB:
-
-  ! Commercial version of ALGLIB includes two  important  improvements  of
-  ! this function, which can be used from C++ and C#:
-  ! * Intel MKL support (lightweight Intel MKL is shipped with ALGLIB)
-  ! * multicore support
+  ! COMMERCIAL EDITION OF ALGLIB:
   !
-  ! Intel MKL gives approximately constant  (with  respect  to  number  of
-  ! worker threads) acceleration factor which depends on CPU  being  used,
-  ! problem  size  and  "baseline"  ALGLIB  edition  which  is  used   for
-  ! comparison.
-  !
-  ! Say, on SSE2-capable CPU with N=1024, HPC ALGLIB will be:
-  ! * about 2-3x faster than ALGLIB for C++ without MKL
-  ! * about 7-10x faster than "pure C#" edition of ALGLIB
-  ! Difference in performance will be more striking  on  newer  CPU's with
-  ! support for newer SIMD instructions. Generally,  MKL  accelerates  any
-  ! problem whose size is at least 128, with best  efficiency achieved for
-  ! N's larger than 512.
-  !
-  ! Commercial edition of ALGLIB also supports multithreaded  acceleration
-  ! of this function. We should note that LU decomposition  is  harder  to
-  ! parallelize than, say, matrix-matrix  product  -  this  algorithm  has
-  ! many internal synchronization points which can not be avoided. However
-  ! parallelism starts to be profitable starting  from  N=1024,  achieving
-  ! near-linear speedup for N=4096 or higher.
-  !
-  ! In order to use multicore features you have to:
-  ! * use commercial version of ALGLIB
-  ! * call  this  function  with  "smp_"  prefix,  which  indicates  that
-  !   multicore code will be used (for multicore support)
+  ! Commercial Edition of ALGLIB includes following important improvements
+  ! of this function:
+  ! * high-performance native backend with same C# interface (C# version)
+  ! * multithreading support (C++ and C# versions)
+  ! * hardware vendor (Intel) implementations of linear algebra primitives
+  !   (C++ and C# versions, x86/x64 platform)
   !
   ! We recommend you to read 'Working with commercial version' section  of
   ! ALGLIB Reference Manual in order to find out how to  use  performance-
@@ -771,8 +701,7 @@ OUTPUT PARAMETERS
   -- ALGLIB --
      Copyright 27.01.2010 by Bochkanov Sergey
 *************************************************************************/
-void rmatrixsolvem(const real_2d_array &a, const ae_int_t n, const real_2d_array &b, const ae_int_t m, const bool rfs, ae_int_t &info, densesolverreport &rep, real_2d_array &x);
-void smp_rmatrixsolvem(const real_2d_array &a, const ae_int_t n, const real_2d_array &b, const ae_int_t m, const bool rfs, ae_int_t &info, densesolverreport &rep, real_2d_array &x);
+void rmatrixsolvem(const real_2d_array &a, const ae_int_t n, const real_2d_array &b, const ae_int_t m, const bool rfs, ae_int_t &info, densesolverreport &rep, real_2d_array &x, const xparams _xparams = alglib::xdefault);
 
 
 /*************************************************************************
@@ -787,37 +716,14 @@ Algorithm features:
 * O(N^3+M*N^2) complexity
 * no additional functionality, highest performance
 
-COMMERCIAL EDITION OF ALGLIB:
-
-  ! Commercial version of ALGLIB includes two  important  improvements  of
-  ! this function, which can be used from C++ and C#:
-  ! * Intel MKL support (lightweight Intel MKL is shipped with ALGLIB)
-  ! * multicore support
+  ! COMMERCIAL EDITION OF ALGLIB:
   !
-  ! Intel MKL gives approximately constant  (with  respect  to  number  of
-  ! worker threads) acceleration factor which depends on CPU  being  used,
-  ! problem  size  and  "baseline"  ALGLIB  edition  which  is  used   for
-  ! comparison.
-  !
-  ! Say, on SSE2-capable CPU with N=1024, HPC ALGLIB will be:
-  ! * about 2-3x faster than ALGLIB for C++ without MKL
-  ! * about 7-10x faster than "pure C#" edition of ALGLIB
-  ! Difference in performance will be more striking  on  newer  CPU's with
-  ! support for newer SIMD instructions. Generally,  MKL  accelerates  any
-  ! problem whose size is at least 128, with best  efficiency achieved for
-  ! N's larger than 512.
-  !
-  ! Commercial edition of ALGLIB also supports multithreaded  acceleration
-  ! of this function. We should note that LU decomposition  is  harder  to
-  ! parallelize than, say, matrix-matrix  product  -  this  algorithm  has
-  ! many internal synchronization points which can not be avoided. However
-  ! parallelism starts to be profitable starting  from  N=1024,  achieving
-  ! near-linear speedup for N=4096 or higher.
-  !
-  ! In order to use multicore features you have to:
-  ! * use commercial version of ALGLIB
-  ! * call  this  function  with  "smp_"  prefix,  which  indicates  that
-  !   multicore code will be used (for multicore support)
+  ! Commercial Edition of ALGLIB includes following important improvements
+  ! of this function:
+  ! * high-performance native backend with same C# interface (C# version)
+  ! * multithreading support (C++ and C# versions)
+  ! * hardware vendor (Intel) implementations of linear algebra primitives
+  !   (C++ and C# versions, x86/x64 platform)
   !
   ! We recommend you to read 'Working with commercial version' section  of
   ! ALGLIB Reference Manual in order to find out how to  use  performance-
@@ -852,8 +758,7 @@ OUTPUT PARAMETERS
   -- ALGLIB --
      Copyright 27.01.2010 by Bochkanov Sergey
 *************************************************************************/
-void rmatrixsolvemfast(const real_2d_array &a, const ae_int_t n, const real_2d_array &b, const ae_int_t m, ae_int_t &info);
-void smp_rmatrixsolvemfast(const real_2d_array &a, const ae_int_t n, const real_2d_array &b, const ae_int_t m, ae_int_t &info);
+void rmatrixsolvemfast(const real_2d_array &a, const ae_int_t n, const real_2d_array &b, const ae_int_t m, ae_int_t &info, const xparams _xparams = alglib::xdefault);
 
 
 /*************************************************************************
@@ -910,7 +815,7 @@ OUTPUT PARAMETERS
   -- ALGLIB --
      Copyright 27.01.2010 by Bochkanov Sergey
 *************************************************************************/
-void rmatrixlusolve(const real_2d_array &lua, const integer_1d_array &p, const ae_int_t n, const real_1d_array &b, ae_int_t &info, densesolverreport &rep, real_1d_array &x);
+void rmatrixlusolve(const real_2d_array &lua, const integer_1d_array &p, const ae_int_t n, const real_1d_array &b, ae_int_t &info, densesolverreport &rep, real_1d_array &x, const xparams _xparams = alglib::xdefault);
 
 
 /*************************************************************************
@@ -945,7 +850,7 @@ OUTPUT PARAMETERS
   -- ALGLIB --
      Copyright 18.03.2015 by Bochkanov Sergey
 *************************************************************************/
-void rmatrixlusolvefast(const real_2d_array &lua, const integer_1d_array &p, const ae_int_t n, const real_1d_array &b, ae_int_t &info);
+void rmatrixlusolvefast(const real_2d_array &lua, const integer_1d_array &p, const ae_int_t n, const real_1d_array &b, ae_int_t &info, const xparams _xparams = alglib::xdefault);
 
 
 /*************************************************************************
@@ -980,35 +885,14 @@ IMPORTANT: ! this function is NOT the most efficient linear solver provided
            ! In such cases we strongly recommend you to use faster solver,
            ! RMatrixLUSolveMFast() function.
 
-COMMERCIAL EDITION OF ALGLIB:
-
-  ! Commercial version of ALGLIB includes two  important  improvements  of
-  ! this function, which can be used from C++ and C#:
-  ! * Intel MKL support (lightweight Intel MKL is shipped with ALGLIB)
-  ! * multicore support
+  ! COMMERCIAL EDITION OF ALGLIB:
   !
-  ! Intel MKL gives approximately constant  (with  respect  to  number  of
-  ! worker threads) acceleration factor which depends on CPU  being  used,
-  ! problem  size  and  "baseline"  ALGLIB  edition  which  is  used   for
-  ! comparison.
-  !
-  ! Say, on SSE2-capable CPU with N=1024, HPC ALGLIB will be:
-  ! * about 2-3x faster than ALGLIB for C++ without MKL
-  ! * about 7-10x faster than "pure C#" edition of ALGLIB
-  ! Difference in performance will be more striking  on  newer  CPU's with
-  ! support for newer SIMD instructions. Generally,  MKL  accelerates  any
-  ! problem whose size is at least 128, with best  efficiency achieved for
-  ! N's larger than 512.
-  !
-  ! Commercial edition of ALGLIB also supports multithreaded  acceleration
-  ! of this function. Triangular solver is relatively easy to parallelize.
-  ! However, parallelization will be efficient  only for  large number  of
-  ! right parts M.
-  !
-  ! In order to use multicore features you have to:
-  ! * use commercial version of ALGLIB
-  ! * call  this  function  with  "smp_"  prefix,  which  indicates  that
-  !   multicore code will be used (for multicore support)
+  ! Commercial Edition of ALGLIB includes following important improvements
+  ! of this function:
+  ! * high-performance native backend with same C# interface (C# version)
+  ! * multithreading support (C++ and C# versions)
+  ! * hardware vendor (Intel) implementations of linear algebra primitives
+  !   (C++ and C# versions, x86/x64 platform)
   !
   ! We recommend you to read 'Working with commercial version' section  of
   ! ALGLIB Reference Manual in order to find out how to  use  performance-
@@ -1039,8 +923,7 @@ OUTPUT PARAMETERS
   -- ALGLIB --
      Copyright 27.01.2010 by Bochkanov Sergey
 *************************************************************************/
-void rmatrixlusolvem(const real_2d_array &lua, const integer_1d_array &p, const ae_int_t n, const real_2d_array &b, const ae_int_t m, ae_int_t &info, densesolverreport &rep, real_2d_array &x);
-void smp_rmatrixlusolvem(const real_2d_array &lua, const integer_1d_array &p, const ae_int_t n, const real_2d_array &b, const ae_int_t m, ae_int_t &info, densesolverreport &rep, real_2d_array &x);
+void rmatrixlusolvem(const real_2d_array &lua, const integer_1d_array &p, const ae_int_t n, const real_2d_array &b, const ae_int_t m, ae_int_t &info, densesolverreport &rep, real_2d_array &x, const xparams _xparams = alglib::xdefault);
 
 
 /*************************************************************************
@@ -1056,35 +939,14 @@ Algorithm features:
 * O(M*N^2) complexity
 * fast algorithm without ANY additional checks, just triangular solver
 
-COMMERCIAL EDITION OF ALGLIB:
-
-  ! Commercial version of ALGLIB includes two  important  improvements  of
-  ! this function, which can be used from C++ and C#:
-  ! * Intel MKL support (lightweight Intel MKL is shipped with ALGLIB)
-  ! * multicore support
+  ! COMMERCIAL EDITION OF ALGLIB:
   !
-  ! Intel MKL gives approximately constant  (with  respect  to  number  of
-  ! worker threads) acceleration factor which depends on CPU  being  used,
-  ! problem  size  and  "baseline"  ALGLIB  edition  which  is  used   for
-  ! comparison.
-  !
-  ! Say, on SSE2-capable CPU with N=1024, HPC ALGLIB will be:
-  ! * about 2-3x faster than ALGLIB for C++ without MKL
-  ! * about 7-10x faster than "pure C#" edition of ALGLIB
-  ! Difference in performance will be more striking  on  newer  CPU's with
-  ! support for newer SIMD instructions. Generally,  MKL  accelerates  any
-  ! problem whose size is at least 128, with best  efficiency achieved for
-  ! N's larger than 512.
-  !
-  ! Commercial edition of ALGLIB also supports multithreaded  acceleration
-  ! of this function. Triangular solver is relatively easy to parallelize.
-  ! However, parallelization will be efficient  only for  large number  of
-  ! right parts M.
-  !
-  ! In order to use multicore features you have to:
-  ! * use commercial version of ALGLIB
-  ! * call  this  function  with  "smp_"  prefix,  which  indicates  that
-  !   multicore code will be used (for multicore support)
+  ! Commercial Edition of ALGLIB includes following important improvements
+  ! of this function:
+  ! * high-performance native backend with same C# interface (C# version)
+  ! * multithreading support (C++ and C# versions)
+  ! * hardware vendor (Intel) implementations of linear algebra primitives
+  !   (C++ and C# versions, x86/x64 platform)
   !
   ! We recommend you to read 'Working with commercial version' section  of
   ! ALGLIB Reference Manual in order to find out how to  use  performance-
@@ -1110,8 +972,7 @@ OUTPUT PARAMETERS:
   -- ALGLIB --
      Copyright 18.03.2015 by Bochkanov Sergey
 *************************************************************************/
-void rmatrixlusolvemfast(const real_2d_array &lua, const integer_1d_array &p, const ae_int_t n, const real_2d_array &b, const ae_int_t m, ae_int_t &info);
-void smp_rmatrixlusolvemfast(const real_2d_array &lua, const integer_1d_array &p, const ae_int_t n, const real_2d_array &b, const ae_int_t m, ae_int_t &info);
+void rmatrixlusolvemfast(const real_2d_array &lua, const integer_1d_array &p, const ae_int_t n, const real_2d_array &b, const ae_int_t m, ae_int_t &info, const xparams _xparams = alglib::xdefault);
 
 
 /*************************************************************************
@@ -1150,7 +1011,7 @@ OUTPUT PARAMETERS
   -- ALGLIB --
      Copyright 27.01.2010 by Bochkanov Sergey
 *************************************************************************/
-void rmatrixmixedsolve(const real_2d_array &a, const real_2d_array &lua, const integer_1d_array &p, const ae_int_t n, const real_1d_array &b, ae_int_t &info, densesolverreport &rep, real_1d_array &x);
+void rmatrixmixedsolve(const real_2d_array &a, const real_2d_array &lua, const integer_1d_array &p, const ae_int_t n, const real_1d_array &b, ae_int_t &info, densesolverreport &rep, real_1d_array &x, const xparams _xparams = alglib::xdefault);
 
 
 /*************************************************************************
@@ -1189,7 +1050,7 @@ OUTPUT PARAMETERS
   -- ALGLIB --
      Copyright 27.01.2010 by Bochkanov Sergey
 *************************************************************************/
-void rmatrixmixedsolvem(const real_2d_array &a, const real_2d_array &lua, const integer_1d_array &p, const ae_int_t n, const real_2d_array &b, const ae_int_t m, ae_int_t &info, densesolverreport &rep, real_2d_array &x);
+void rmatrixmixedsolvem(const real_2d_array &a, const real_2d_array &lua, const integer_1d_array &p, const ae_int_t n, const real_2d_array &b, const ae_int_t m, ae_int_t &info, densesolverreport &rep, real_2d_array &x, const xparams _xparams = alglib::xdefault);
 
 
 /*************************************************************************
@@ -1220,37 +1081,14 @@ IMPORTANT: ! this function is NOT the most efficient linear solver provided
            ! that your system is well conditioned, we  strongly  recommend
            ! you to use faster solver, CMatrixSolveMFast() function.
 
-COMMERCIAL EDITION OF ALGLIB:
-
-  ! Commercial version of ALGLIB includes two  important  improvements  of
-  ! this function, which can be used from C++ and C#:
-  ! * Intel MKL support (lightweight Intel MKL is shipped with ALGLIB)
-  ! * multicore support
+  ! COMMERCIAL EDITION OF ALGLIB:
   !
-  ! Intel MKL gives approximately constant  (with  respect  to  number  of
-  ! worker threads) acceleration factor which depends on CPU  being  used,
-  ! problem  size  and  "baseline"  ALGLIB  edition  which  is  used   for
-  ! comparison.
-  !
-  ! Say, on SSE2-capable CPU with N=1024, HPC ALGLIB will be:
-  ! * about 2-3x faster than ALGLIB for C++ without MKL
-  ! * about 7-10x faster than "pure C#" edition of ALGLIB
-  ! Difference in performance will be more striking  on  newer  CPU's with
-  ! support for newer SIMD instructions. Generally,  MKL  accelerates  any
-  ! problem whose size is at least 128, with best  efficiency achieved for
-  ! N's larger than 512.
-  !
-  ! Commercial edition of ALGLIB also supports multithreaded  acceleration
-  ! of this function. We should note that LU decomposition  is  harder  to
-  ! parallelize than, say, matrix-matrix  product  -  this  algorithm  has
-  ! many internal synchronization points which can not be avoided. However
-  ! parallelism starts to be profitable starting  from  N=1024,  achieving
-  ! near-linear speedup for N=4096 or higher.
-  !
-  ! In order to use multicore features you have to:
-  ! * use commercial version of ALGLIB
-  ! * call  this  function  with  "smp_"  prefix,  which  indicates  that
-  !   multicore code will be used (for multicore support)
+  ! Commercial Edition of ALGLIB includes following important improvements
+  ! of this function:
+  ! * high-performance native backend with same C# interface (C# version)
+  ! * multithreading support (C++ and C# versions)
+  ! * hardware vendor (Intel) implementations of linear algebra primitives
+  !   (C++ and C# versions, x86/x64 platform)
   !
   ! We recommend you to read 'Working with commercial version' section  of
   ! ALGLIB Reference Manual in order to find out how to  use  performance-
@@ -1284,8 +1122,7 @@ OUTPUT PARAMETERS
   -- ALGLIB --
      Copyright 27.01.2010 by Bochkanov Sergey
 *************************************************************************/
-void cmatrixsolvem(const complex_2d_array &a, const ae_int_t n, const complex_2d_array &b, const ae_int_t m, const bool rfs, ae_int_t &info, densesolverreport &rep, complex_2d_array &x);
-void smp_cmatrixsolvem(const complex_2d_array &a, const ae_int_t n, const complex_2d_array &b, const ae_int_t m, const bool rfs, ae_int_t &info, densesolverreport &rep, complex_2d_array &x);
+void cmatrixsolvem(const complex_2d_array &a, const ae_int_t n, const complex_2d_array &b, const ae_int_t m, const bool rfs, ae_int_t &info, densesolverreport &rep, complex_2d_array &x, const xparams _xparams = alglib::xdefault);
 
 
 /*************************************************************************
@@ -1298,37 +1135,14 @@ Algorithm features:
 * O(N^3+M*N^2) complexity
 * no additional time consuming functions
 
-COMMERCIAL EDITION OF ALGLIB:
-
-  ! Commercial version of ALGLIB includes two  important  improvements  of
-  ! this function, which can be used from C++ and C#:
-  ! * Intel MKL support (lightweight Intel MKL is shipped with ALGLIB)
-  ! * multicore support
+  ! COMMERCIAL EDITION OF ALGLIB:
   !
-  ! Intel MKL gives approximately constant  (with  respect  to  number  of
-  ! worker threads) acceleration factor which depends on CPU  being  used,
-  ! problem  size  and  "baseline"  ALGLIB  edition  which  is  used   for
-  ! comparison.
-  !
-  ! Say, on SSE2-capable CPU with N=1024, HPC ALGLIB will be:
-  ! * about 2-3x faster than ALGLIB for C++ without MKL
-  ! * about 7-10x faster than "pure C#" edition of ALGLIB
-  ! Difference in performance will be more striking  on  newer  CPU's with
-  ! support for newer SIMD instructions. Generally,  MKL  accelerates  any
-  ! problem whose size is at least 128, with best  efficiency achieved for
-  ! N's larger than 512.
-  !
-  ! Commercial edition of ALGLIB also supports multithreaded  acceleration
-  ! of this function. We should note that LU decomposition  is  harder  to
-  ! parallelize than, say, matrix-matrix  product  -  this  algorithm  has
-  ! many internal synchronization points which can not be avoided. However
-  ! parallelism starts to be profitable starting  from  N=1024,  achieving
-  ! near-linear speedup for N=4096 or higher.
-  !
-  ! In order to use multicore features you have to:
-  ! * use commercial version of ALGLIB
-  ! * call  this  function  with  "smp_"  prefix,  which  indicates  that
-  !   multicore code will be used (for multicore support)
+  ! Commercial Edition of ALGLIB includes following important improvements
+  ! of this function:
+  ! * high-performance native backend with same C# interface (C# version)
+  ! * multithreading support (C++ and C# versions)
+  ! * hardware vendor (Intel) implementations of linear algebra primitives
+  !   (C++ and C# versions, x86/x64 platform)
   !
   ! We recommend you to read 'Working with commercial version' section  of
   ! ALGLIB Reference Manual in order to find out how to  use  performance-
@@ -1353,8 +1167,7 @@ OUTPUT PARAMETERS:
   -- ALGLIB --
      Copyright 16.03.2015 by Bochkanov Sergey
 *************************************************************************/
-void cmatrixsolvemfast(const complex_2d_array &a, const ae_int_t n, const complex_2d_array &b, const ae_int_t m, ae_int_t &info);
-void smp_cmatrixsolvemfast(const complex_2d_array &a, const ae_int_t n, const complex_2d_array &b, const ae_int_t m, ae_int_t &info);
+void cmatrixsolvemfast(const complex_2d_array &a, const ae_int_t n, const complex_2d_array &b, const ae_int_t m, ae_int_t &info, const xparams _xparams = alglib::xdefault);
 
 
 /*************************************************************************
@@ -1383,37 +1196,14 @@ IMPORTANT: ! this function is NOT the most efficient linear solver provided
            ! that your system is well conditioned, we  strongly  recommend
            ! you to use faster solver, CMatrixSolveFast() function.
 
-COMMERCIAL EDITION OF ALGLIB:
-
-  ! Commercial version of ALGLIB includes two  important  improvements  of
-  ! this function, which can be used from C++ and C#:
-  ! * Intel MKL support (lightweight Intel MKL is shipped with ALGLIB)
-  ! * multicore support
+  ! COMMERCIAL EDITION OF ALGLIB:
   !
-  ! Intel MKL gives approximately constant  (with  respect  to  number  of
-  ! worker threads) acceleration factor which depends on CPU  being  used,
-  ! problem  size  and  "baseline"  ALGLIB  edition  which  is  used   for
-  ! comparison.
-  !
-  ! Say, on SSE2-capable CPU with N=1024, HPC ALGLIB will be:
-  ! * about 2-3x faster than ALGLIB for C++ without MKL
-  ! * about 7-10x faster than "pure C#" edition of ALGLIB
-  ! Difference in performance will be more striking  on  newer  CPU's with
-  ! support for newer SIMD instructions. Generally,  MKL  accelerates  any
-  ! problem whose size is at least 128, with best  efficiency achieved for
-  ! N's larger than 512.
-  !
-  ! Commercial edition of ALGLIB also supports multithreaded  acceleration
-  ! of this function. We should note that LU decomposition  is  harder  to
-  ! parallelize than, say, matrix-matrix  product  -  this  algorithm  has
-  ! many internal synchronization points which can not be avoided. However
-  ! parallelism starts to be profitable starting  from  N=1024,  achieving
-  ! near-linear speedup for N=4096 or higher.
-  !
-  ! In order to use multicore features you have to:
-  ! * use commercial version of ALGLIB
-  ! * call  this  function  with  "smp_"  prefix,  which  indicates  that
-  !   multicore code will be used (for multicore support)
+  ! Commercial Edition of ALGLIB includes following important improvements
+  ! of this function:
+  ! * high-performance native backend with same C# interface (C# version)
+  ! * multithreading support (C++ and C# versions)
+  ! * hardware vendor (Intel) implementations of linear algebra primitives
+  !   (C++ and C# versions, x86/x64 platform)
   !
   ! We recommend you to read 'Working with commercial version' section  of
   ! ALGLIB Reference Manual in order to find out how to  use  performance-
@@ -1440,8 +1230,7 @@ OUTPUT PARAMETERS
   -- ALGLIB --
      Copyright 27.01.2010 by Bochkanov Sergey
 *************************************************************************/
-void cmatrixsolve(const complex_2d_array &a, const ae_int_t n, const complex_1d_array &b, ae_int_t &info, densesolverreport &rep, complex_1d_array &x);
-void smp_cmatrixsolve(const complex_2d_array &a, const ae_int_t n, const complex_1d_array &b, ae_int_t &info, densesolverreport &rep, complex_1d_array &x);
+void cmatrixsolve(const complex_2d_array &a, const ae_int_t n, const complex_1d_array &b, ae_int_t &info, densesolverreport &rep, complex_1d_array &x, const xparams _xparams = alglib::xdefault);
 
 
 /*************************************************************************
@@ -1452,37 +1241,14 @@ Algorithm features:
 * O(N^3) complexity
 * no additional time consuming features, just triangular solver
 
-COMMERCIAL EDITION OF ALGLIB:
-
-  ! Commercial version of ALGLIB includes two  important  improvements  of
-  ! this function, which can be used from C++ and C#:
-  ! * Intel MKL support (lightweight Intel MKL is shipped with ALGLIB)
-  ! * multicore support
+  ! COMMERCIAL EDITION OF ALGLIB:
   !
-  ! Intel MKL gives approximately constant  (with  respect  to  number  of
-  ! worker threads) acceleration factor which depends on CPU  being  used,
-  ! problem  size  and  "baseline"  ALGLIB  edition  which  is  used   for
-  ! comparison.
-  !
-  ! Say, on SSE2-capable CPU with N=1024, HPC ALGLIB will be:
-  ! * about 2-3x faster than ALGLIB for C++ without MKL
-  ! * about 7-10x faster than "pure C#" edition of ALGLIB
-  ! Difference in performance will be more striking  on  newer  CPU's with
-  ! support for newer SIMD instructions. Generally,  MKL  accelerates  any
-  ! problem whose size is at least 128, with best  efficiency achieved for
-  ! N's larger than 512.
-  !
-  ! Commercial edition of ALGLIB also supports multithreaded  acceleration
-  ! of this function. We should note that LU decomposition  is  harder  to
-  ! parallelize than, say, matrix-matrix  product  -  this  algorithm  has
-  ! many internal synchronization points which can not be avoided. However
-  ! parallelism starts to be profitable starting  from  N=1024,  achieving
-  ! near-linear speedup for N=4096 or higher.
-  !
-  ! In order to use multicore features you have to:
-  ! * use commercial version of ALGLIB
-  ! * call  this  function  with  "smp_"  prefix,  which  indicates  that
-  !   multicore code will be used (for multicore support)
+  ! Commercial Edition of ALGLIB includes following important improvements
+  ! of this function:
+  ! * high-performance native backend with same C# interface (C# version)
+  ! * multithreading support (C++ and C# versions)
+  ! * hardware vendor (Intel) implementations of linear algebra primitives
+  !   (C++ and C# versions, x86/x64 platform)
   !
   ! We recommend you to read 'Working with commercial version' section  of
   ! ALGLIB Reference Manual in order to find out how to  use  performance-
@@ -1506,8 +1272,7 @@ OUTPUT PARAMETERS:
   -- ALGLIB --
      Copyright 27.01.2010 by Bochkanov Sergey
 *************************************************************************/
-void cmatrixsolvefast(const complex_2d_array &a, const ae_int_t n, const complex_1d_array &b, ae_int_t &info);
-void smp_cmatrixsolvefast(const complex_2d_array &a, const ae_int_t n, const complex_1d_array &b, ae_int_t &info);
+void cmatrixsolvefast(const complex_2d_array &a, const ae_int_t n, const complex_1d_array &b, ae_int_t &info, const xparams _xparams = alglib::xdefault);
 
 
 /*************************************************************************
@@ -1538,35 +1303,14 @@ IMPORTANT: ! this function is NOT the most efficient linear solver provided
            ! In such cases we strongly recommend you to use faster solver,
            ! CMatrixLUSolveMFast() function.
 
-COMMERCIAL EDITION OF ALGLIB:
-
-  ! Commercial version of ALGLIB includes two  important  improvements  of
-  ! this function, which can be used from C++ and C#:
-  ! * Intel MKL support (lightweight Intel MKL is shipped with ALGLIB)
-  ! * multicore support
+  ! COMMERCIAL EDITION OF ALGLIB:
   !
-  ! Intel MKL gives approximately constant  (with  respect  to  number  of
-  ! worker threads) acceleration factor which depends on CPU  being  used,
-  ! problem  size  and  "baseline"  ALGLIB  edition  which  is  used   for
-  ! comparison.
-  !
-  ! Say, on SSE2-capable CPU with N=1024, HPC ALGLIB will be:
-  ! * about 2-3x faster than ALGLIB for C++ without MKL
-  ! * about 7-10x faster than "pure C#" edition of ALGLIB
-  ! Difference in performance will be more striking  on  newer  CPU's with
-  ! support for newer SIMD instructions. Generally,  MKL  accelerates  any
-  ! problem whose size is at least 128, with best  efficiency achieved for
-  ! N's larger than 512.
-  !
-  ! Commercial edition of ALGLIB also supports multithreaded  acceleration
-  ! of this function. Triangular solver is relatively easy to parallelize.
-  ! However, parallelization will be efficient  only for  large number  of
-  ! right parts M.
-  !
-  ! In order to use multicore features you have to:
-  ! * use commercial version of ALGLIB
-  ! * call  this  function  with  "smp_"  prefix,  which  indicates  that
-  !   multicore code will be used (for multicore support)
+  ! Commercial Edition of ALGLIB includes following important improvements
+  ! of this function:
+  ! * high-performance native backend with same C# interface (C# version)
+  ! * multithreading support (C++ and C# versions)
+  ! * hardware vendor (Intel) implementations of linear algebra primitives
+  !   (C++ and C# versions, x86/x64 platform)
   !
   ! We recommend you to read 'Working with commercial version' section  of
   ! ALGLIB Reference Manual in order to find out how to  use  performance-
@@ -1595,8 +1339,7 @@ OUTPUT PARAMETERS
   -- ALGLIB --
      Copyright 27.01.2010 by Bochkanov Sergey
 *************************************************************************/
-void cmatrixlusolvem(const complex_2d_array &lua, const integer_1d_array &p, const ae_int_t n, const complex_2d_array &b, const ae_int_t m, ae_int_t &info, densesolverreport &rep, complex_2d_array &x);
-void smp_cmatrixlusolvem(const complex_2d_array &lua, const integer_1d_array &p, const ae_int_t n, const complex_2d_array &b, const ae_int_t m, ae_int_t &info, densesolverreport &rep, complex_2d_array &x);
+void cmatrixlusolvem(const complex_2d_array &lua, const integer_1d_array &p, const ae_int_t n, const complex_2d_array &b, const ae_int_t m, ae_int_t &info, densesolverreport &rep, complex_2d_array &x, const xparams _xparams = alglib::xdefault);
 
 
 /*************************************************************************
@@ -1608,35 +1351,14 @@ Algorithm features:
 * O(M*N^2) complexity
 * no additional time-consuming features
 
-COMMERCIAL EDITION OF ALGLIB:
-
-  ! Commercial version of ALGLIB includes two  important  improvements  of
-  ! this function, which can be used from C++ and C#:
-  ! * Intel MKL support (lightweight Intel MKL is shipped with ALGLIB)
-  ! * multicore support
+  ! COMMERCIAL EDITION OF ALGLIB:
   !
-  ! Intel MKL gives approximately constant  (with  respect  to  number  of
-  ! worker threads) acceleration factor which depends on CPU  being  used,
-  ! problem  size  and  "baseline"  ALGLIB  edition  which  is  used   for
-  ! comparison.
-  !
-  ! Say, on SSE2-capable CPU with N=1024, HPC ALGLIB will be:
-  ! * about 2-3x faster than ALGLIB for C++ without MKL
-  ! * about 7-10x faster than "pure C#" edition of ALGLIB
-  ! Difference in performance will be more striking  on  newer  CPU's with
-  ! support for newer SIMD instructions. Generally,  MKL  accelerates  any
-  ! problem whose size is at least 128, with best  efficiency achieved for
-  ! N's larger than 512.
-  !
-  ! Commercial edition of ALGLIB also supports multithreaded  acceleration
-  ! of this function. Triangular solver is relatively easy to parallelize.
-  ! However, parallelization will be efficient  only for  large number  of
-  ! right parts M.
-  !
-  ! In order to use multicore features you have to:
-  ! * use commercial version of ALGLIB
-  ! * call  this  function  with  "smp_"  prefix,  which  indicates  that
-  !   multicore code will be used (for multicore support)
+  ! Commercial Edition of ALGLIB includes following important improvements
+  ! of this function:
+  ! * high-performance native backend with same C# interface (C# version)
+  ! * multithreading support (C++ and C# versions)
+  ! * hardware vendor (Intel) implementations of linear algebra primitives
+  !   (C++ and C# versions, x86/x64 platform)
   !
   ! We recommend you to read 'Working with commercial version' section  of
   ! ALGLIB Reference Manual in order to find out how to  use  performance-
@@ -1663,8 +1385,7 @@ OUTPUT PARAMETERS
   -- ALGLIB --
      Copyright 27.01.2010 by Bochkanov Sergey
 *************************************************************************/
-void cmatrixlusolvemfast(const complex_2d_array &lua, const integer_1d_array &p, const ae_int_t n, const complex_2d_array &b, const ae_int_t m, ae_int_t &info);
-void smp_cmatrixlusolvemfast(const complex_2d_array &lua, const integer_1d_array &p, const ae_int_t n, const complex_2d_array &b, const ae_int_t m, ae_int_t &info);
+void cmatrixlusolvemfast(const complex_2d_array &lua, const integer_1d_array &p, const ae_int_t n, const complex_2d_array &b, const ae_int_t m, ae_int_t &info, const xparams _xparams = alglib::xdefault);
 
 
 /*************************************************************************
@@ -1719,7 +1440,7 @@ OUTPUT PARAMETERS
   -- ALGLIB --
      Copyright 27.01.2010 by Bochkanov Sergey
 *************************************************************************/
-void cmatrixlusolve(const complex_2d_array &lua, const integer_1d_array &p, const ae_int_t n, const complex_1d_array &b, ae_int_t &info, densesolverreport &rep, complex_1d_array &x);
+void cmatrixlusolve(const complex_2d_array &lua, const integer_1d_array &p, const ae_int_t n, const complex_1d_array &b, ae_int_t &info, densesolverreport &rep, complex_1d_array &x, const xparams _xparams = alglib::xdefault);
 
 
 /*************************************************************************
@@ -1757,7 +1478,7 @@ NOTE: unlike  CMatrixLUSolve(),  this   function   does   NOT   check  for
   -- ALGLIB --
      Copyright 27.01.2010 by Bochkanov Sergey
 *************************************************************************/
-void cmatrixlusolvefast(const complex_2d_array &lua, const integer_1d_array &p, const ae_int_t n, const complex_1d_array &b, ae_int_t &info);
+void cmatrixlusolvefast(const complex_2d_array &lua, const integer_1d_array &p, const ae_int_t n, const complex_1d_array &b, ae_int_t &info, const xparams _xparams = alglib::xdefault);
 
 
 /*************************************************************************
@@ -1793,7 +1514,7 @@ OUTPUT PARAMETERS
   -- ALGLIB --
      Copyright 27.01.2010 by Bochkanov Sergey
 *************************************************************************/
-void cmatrixmixedsolvem(const complex_2d_array &a, const complex_2d_array &lua, const integer_1d_array &p, const ae_int_t n, const complex_2d_array &b, const ae_int_t m, ae_int_t &info, densesolverreport &rep, complex_2d_array &x);
+void cmatrixmixedsolvem(const complex_2d_array &a, const complex_2d_array &lua, const integer_1d_array &p, const ae_int_t n, const complex_2d_array &b, const ae_int_t m, ae_int_t &info, densesolverreport &rep, complex_2d_array &x, const xparams _xparams = alglib::xdefault);
 
 
 /*************************************************************************
@@ -1828,7 +1549,7 @@ OUTPUT PARAMETERS
   -- ALGLIB --
      Copyright 27.01.2010 by Bochkanov Sergey
 *************************************************************************/
-void cmatrixmixedsolve(const complex_2d_array &a, const complex_2d_array &lua, const integer_1d_array &p, const ae_int_t n, const complex_1d_array &b, ae_int_t &info, densesolverreport &rep, complex_1d_array &x);
+void cmatrixmixedsolve(const complex_2d_array &a, const complex_2d_array &lua, const integer_1d_array &p, const ae_int_t n, const complex_1d_array &b, ae_int_t &info, densesolverreport &rep, complex_1d_array &x, const xparams _xparams = alglib::xdefault);
 
 
 /*************************************************************************
@@ -1861,36 +1582,14 @@ IMPORTANT: ! this function is NOT the most efficient linear solver provided
            ! that your system is well conditioned, we  strongly  recommend
            ! you to use faster solver, SPDMatrixSolveMFast() function.
 
-COMMERCIAL EDITION OF ALGLIB:
-
-  ! Commercial version of ALGLIB includes two  important  improvements  of
-  ! this function, which can be used from C++ and C#:
-  ! * Intel MKL support (lightweight Intel MKL is shipped with ALGLIB)
-  ! * multicore support
+  ! COMMERCIAL EDITION OF ALGLIB:
   !
-  ! Intel MKL gives approximately constant  (with  respect  to  number  of
-  ! worker threads) acceleration factor which depends on CPU  being  used,
-  ! problem  size  and  "baseline"  ALGLIB  edition  which  is  used   for
-  ! comparison.
-  !
-  ! Say, on SSE2-capable CPU with N=1024, HPC ALGLIB will be:
-  ! * about 2-3x faster than ALGLIB for C++ without MKL
-  ! * about 7-10x faster than "pure C#" edition of ALGLIB
-  ! Difference in performance will be more striking  on  newer  CPU's with
-  ! support for newer SIMD instructions. Generally,  MKL  accelerates  any
-  ! problem whose size is at least 128, with best  efficiency achieved for
-  ! N's larger than 512.
-  !
-  ! Commercial edition of ALGLIB also supports multithreaded  acceleration
-  ! of this function. We should note that Cholesky decomposition is harder
-  ! to parallelize than, say, matrix-matrix product - this  algorithm  has
-  ! several synchronization points which  can  not  be  avoided.  However,
-  ! parallelism starts to be profitable starting from N=500.
-  !
-  ! In order to use multicore features you have to:
-  ! * use commercial version of ALGLIB
-  ! * call  this  function  with  "smp_"  prefix,  which  indicates  that
-  !   multicore code will be used (for multicore support)
+  ! Commercial Edition of ALGLIB includes following important improvements
+  ! of this function:
+  ! * high-performance native backend with same C# interface (C# version)
+  ! * multithreading support (C++ and C# versions)
+  ! * hardware vendor (Intel) implementations of linear algebra primitives
+  !   (C++ and C# versions, x86/x64 platform)
   !
   ! We recommend you to read 'Working with commercial version' section  of
   ! ALGLIB Reference Manual in order to find out how to  use  performance-
@@ -1919,8 +1618,7 @@ OUTPUT PARAMETERS
   -- ALGLIB --
      Copyright 27.01.2010 by Bochkanov Sergey
 *************************************************************************/
-void spdmatrixsolvem(const real_2d_array &a, const ae_int_t n, const bool isupper, const real_2d_array &b, const ae_int_t m, ae_int_t &info, densesolverreport &rep, real_2d_array &x);
-void smp_spdmatrixsolvem(const real_2d_array &a, const ae_int_t n, const bool isupper, const real_2d_array &b, const ae_int_t m, ae_int_t &info, densesolverreport &rep, real_2d_array &x);
+void spdmatrixsolvem(const real_2d_array &a, const ae_int_t n, const bool isupper, const real_2d_array &b, const ae_int_t m, ae_int_t &info, densesolverreport &rep, real_2d_array &x, const xparams _xparams = alglib::xdefault);
 
 
 /*************************************************************************
@@ -1932,36 +1630,14 @@ Algorithm features:
 * matrix is represented by its upper or lower triangle
 * no additional time consuming features
 
-COMMERCIAL EDITION OF ALGLIB:
-
-  ! Commercial version of ALGLIB includes two  important  improvements  of
-  ! this function, which can be used from C++ and C#:
-  ! * Intel MKL support (lightweight Intel MKL is shipped with ALGLIB)
-  ! * multicore support
+  ! COMMERCIAL EDITION OF ALGLIB:
   !
-  ! Intel MKL gives approximately constant  (with  respect  to  number  of
-  ! worker threads) acceleration factor which depends on CPU  being  used,
-  ! problem  size  and  "baseline"  ALGLIB  edition  which  is  used   for
-  ! comparison.
-  !
-  ! Say, on SSE2-capable CPU with N=1024, HPC ALGLIB will be:
-  ! * about 2-3x faster than ALGLIB for C++ without MKL
-  ! * about 7-10x faster than "pure C#" edition of ALGLIB
-  ! Difference in performance will be more striking  on  newer  CPU's with
-  ! support for newer SIMD instructions. Generally,  MKL  accelerates  any
-  ! problem whose size is at least 128, with best  efficiency achieved for
-  ! N's larger than 512.
-  !
-  ! Commercial edition of ALGLIB also supports multithreaded  acceleration
-  ! of this function. We should note that Cholesky decomposition is harder
-  ! to parallelize than, say, matrix-matrix product - this  algorithm  has
-  ! several synchronization points which  can  not  be  avoided.  However,
-  ! parallelism starts to be profitable starting from N=500.
-  !
-  ! In order to use multicore features you have to:
-  ! * use commercial version of ALGLIB
-  ! * call  this  function  with  "smp_"  prefix,  which  indicates  that
-  !   multicore code will be used (for multicore support)
+  ! Commercial Edition of ALGLIB includes following important improvements
+  ! of this function:
+  ! * high-performance native backend with same C# interface (C# version)
+  ! * multithreading support (C++ and C# versions)
+  ! * hardware vendor (Intel) implementations of linear algebra primitives
+  !   (C++ and C# versions, x86/x64 platform)
   !
   ! We recommend you to read 'Working with commercial version' section  of
   ! ALGLIB Reference Manual in order to find out how to  use  performance-
@@ -1986,8 +1662,7 @@ OUTPUT PARAMETERS
   -- ALGLIB --
      Copyright 17.03.2015 by Bochkanov Sergey
 *************************************************************************/
-void spdmatrixsolvemfast(const real_2d_array &a, const ae_int_t n, const bool isupper, const real_2d_array &b, const ae_int_t m, ae_int_t &info);
-void smp_spdmatrixsolvemfast(const real_2d_array &a, const ae_int_t n, const bool isupper, const real_2d_array &b, const ae_int_t m, ae_int_t &info);
+void spdmatrixsolvemfast(const real_2d_array &a, const ae_int_t n, const bool isupper, const real_2d_array &b, const ae_int_t m, ae_int_t &info, const xparams _xparams = alglib::xdefault);
 
 
 /*************************************************************************
@@ -2021,36 +1696,14 @@ IMPORTANT: ! this function is NOT the most efficient linear solver provided
            ! that your system is well conditioned, we  strongly  recommend
            ! you to use faster solver, SPDMatrixSolveFast() function.
 
-COMMERCIAL EDITION OF ALGLIB:
-
-  ! Commercial version of ALGLIB includes two  important  improvements  of
-  ! this function, which can be used from C++ and C#:
-  ! * Intel MKL support (lightweight Intel MKL is shipped with ALGLIB)
-  ! * multicore support
+  ! COMMERCIAL EDITION OF ALGLIB:
   !
-  ! Intel MKL gives approximately constant  (with  respect  to  number  of
-  ! worker threads) acceleration factor which depends on CPU  being  used,
-  ! problem  size  and  "baseline"  ALGLIB  edition  which  is  used   for
-  ! comparison.
-  !
-  ! Say, on SSE2-capable CPU with N=1024, HPC ALGLIB will be:
-  ! * about 2-3x faster than ALGLIB for C++ without MKL
-  ! * about 7-10x faster than "pure C#" edition of ALGLIB
-  ! Difference in performance will be more striking  on  newer  CPU's with
-  ! support for newer SIMD instructions. Generally,  MKL  accelerates  any
-  ! problem whose size is at least 128, with best  efficiency achieved for
-  ! N's larger than 512.
-  !
-  ! Commercial edition of ALGLIB also supports multithreaded  acceleration
-  ! of this function. We should note that Cholesky decomposition is harder
-  ! to parallelize than, say, matrix-matrix product - this  algorithm  has
-  ! several synchronization points which  can  not  be  avoided.  However,
-  ! parallelism starts to be profitable starting from N=500.
-  !
-  ! In order to use multicore features you have to:
-  ! * use commercial version of ALGLIB
-  ! * call  this  function  with  "smp_"  prefix,  which  indicates  that
-  !   multicore code will be used (for multicore support)
+  ! Commercial Edition of ALGLIB includes following important improvements
+  ! of this function:
+  ! * high-performance native backend with same C# interface (C# version)
+  ! * multithreading support (C++ and C# versions)
+  ! * hardware vendor (Intel) implementations of linear algebra primitives
+  !   (C++ and C# versions, x86/x64 platform)
   !
   ! We recommend you to read 'Working with commercial version' section  of
   ! ALGLIB Reference Manual in order to find out how to  use  performance-
@@ -2078,8 +1731,7 @@ OUTPUT PARAMETERS
   -- ALGLIB --
      Copyright 27.01.2010 by Bochkanov Sergey
 *************************************************************************/
-void spdmatrixsolve(const real_2d_array &a, const ae_int_t n, const bool isupper, const real_1d_array &b, ae_int_t &info, densesolverreport &rep, real_1d_array &x);
-void smp_spdmatrixsolve(const real_2d_array &a, const ae_int_t n, const bool isupper, const real_1d_array &b, ae_int_t &info, densesolverreport &rep, real_1d_array &x);
+void spdmatrixsolve(const real_2d_array &a, const ae_int_t n, const bool isupper, const real_1d_array &b, ae_int_t &info, densesolverreport &rep, real_1d_array &x, const xparams _xparams = alglib::xdefault);
 
 
 /*************************************************************************
@@ -2092,36 +1744,14 @@ Algorithm features:
 * matrix is represented by its upper or lower triangle
 * no additional time consuming features like condition number estimation
 
-COMMERCIAL EDITION OF ALGLIB:
-
-  ! Commercial version of ALGLIB includes two  important  improvements  of
-  ! this function, which can be used from C++ and C#:
-  ! * Intel MKL support (lightweight Intel MKL is shipped with ALGLIB)
-  ! * multicore support
+  ! COMMERCIAL EDITION OF ALGLIB:
   !
-  ! Intel MKL gives approximately constant  (with  respect  to  number  of
-  ! worker threads) acceleration factor which depends on CPU  being  used,
-  ! problem  size  and  "baseline"  ALGLIB  edition  which  is  used   for
-  ! comparison.
-  !
-  ! Say, on SSE2-capable CPU with N=1024, HPC ALGLIB will be:
-  ! * about 2-3x faster than ALGLIB for C++ without MKL
-  ! * about 7-10x faster than "pure C#" edition of ALGLIB
-  ! Difference in performance will be more striking  on  newer  CPU's with
-  ! support for newer SIMD instructions. Generally,  MKL  accelerates  any
-  ! problem whose size is at least 128, with best  efficiency achieved for
-  ! N's larger than 512.
-  !
-  ! Commercial edition of ALGLIB also supports multithreaded  acceleration
-  ! of this function. We should note that Cholesky decomposition is harder
-  ! to parallelize than, say, matrix-matrix product - this  algorithm  has
-  ! several synchronization points which  can  not  be  avoided.  However,
-  ! parallelism starts to be profitable starting from N=500.
-  !
-  ! In order to use multicore features you have to:
-  ! * use commercial version of ALGLIB
-  ! * call  this  function  with  "smp_"  prefix,  which  indicates  that
-  !   multicore code will be used (for multicore support)
+  ! Commercial Edition of ALGLIB includes following important improvements
+  ! of this function:
+  ! * high-performance native backend with same C# interface (C# version)
+  ! * multithreading support (C++ and C# versions)
+  ! * hardware vendor (Intel) implementations of linear algebra primitives
+  !   (C++ and C# versions, x86/x64 platform)
   !
   ! We recommend you to read 'Working with commercial version' section  of
   ! ALGLIB Reference Manual in order to find out how to  use  performance-
@@ -2145,8 +1775,7 @@ OUTPUT PARAMETERS
   -- ALGLIB --
      Copyright 17.03.2015 by Bochkanov Sergey
 *************************************************************************/
-void spdmatrixsolvefast(const real_2d_array &a, const ae_int_t n, const bool isupper, const real_1d_array &b, ae_int_t &info);
-void smp_spdmatrixsolvefast(const real_2d_array &a, const ae_int_t n, const bool isupper, const real_1d_array &b, ae_int_t &info);
+void spdmatrixsolvefast(const real_2d_array &a, const ae_int_t n, const bool isupper, const real_1d_array &b, ae_int_t &info, const xparams _xparams = alglib::xdefault);
 
 
 /*************************************************************************
@@ -2206,8 +1835,7 @@ OUTPUT PARAMETERS
   -- ALGLIB --
      Copyright 27.01.2010 by Bochkanov Sergey
 *************************************************************************/
-void spdmatrixcholeskysolvem(const real_2d_array &cha, const ae_int_t n, const bool isupper, const real_2d_array &b, const ae_int_t m, ae_int_t &info, densesolverreport &rep, real_2d_array &x);
-void smp_spdmatrixcholeskysolvem(const real_2d_array &cha, const ae_int_t n, const bool isupper, const real_2d_array &b, const ae_int_t m, ae_int_t &info, densesolverreport &rep, real_2d_array &x);
+void spdmatrixcholeskysolvem(const real_2d_array &cha, const ae_int_t n, const bool isupper, const real_2d_array &b, const ae_int_t m, ae_int_t &info, densesolverreport &rep, real_2d_array &x, const xparams _xparams = alglib::xdefault);
 
 
 /*************************************************************************
@@ -2242,8 +1870,7 @@ OUTPUT PARAMETERS
   -- ALGLIB --
      Copyright 18.03.2015 by Bochkanov Sergey
 *************************************************************************/
-void spdmatrixcholeskysolvemfast(const real_2d_array &cha, const ae_int_t n, const bool isupper, const real_2d_array &b, const ae_int_t m, ae_int_t &info);
-void smp_spdmatrixcholeskysolvemfast(const real_2d_array &cha, const ae_int_t n, const bool isupper, const real_2d_array &b, const ae_int_t m, ae_int_t &info);
+void spdmatrixcholeskysolvemfast(const real_2d_array &cha, const ae_int_t n, const bool isupper, const real_2d_array &b, const ae_int_t m, ae_int_t &info, const xparams _xparams = alglib::xdefault);
 
 
 /*************************************************************************
@@ -2300,7 +1927,7 @@ OUTPUT PARAMETERS
   -- ALGLIB --
      Copyright 27.01.2010 by Bochkanov Sergey
 *************************************************************************/
-void spdmatrixcholeskysolve(const real_2d_array &cha, const ae_int_t n, const bool isupper, const real_1d_array &b, ae_int_t &info, densesolverreport &rep, real_1d_array &x);
+void spdmatrixcholeskysolve(const real_2d_array &cha, const ae_int_t n, const bool isupper, const real_1d_array &b, ae_int_t &info, densesolverreport &rep, real_1d_array &x, const xparams _xparams = alglib::xdefault);
 
 
 /*************************************************************************
@@ -2333,7 +1960,7 @@ OUTPUT PARAMETERS
   -- ALGLIB --
      Copyright 27.01.2010 by Bochkanov Sergey
 *************************************************************************/
-void spdmatrixcholeskysolvefast(const real_2d_array &cha, const ae_int_t n, const bool isupper, const real_1d_array &b, ae_int_t &info);
+void spdmatrixcholeskysolvefast(const real_2d_array &cha, const ae_int_t n, const bool isupper, const real_1d_array &b, ae_int_t &info, const xparams _xparams = alglib::xdefault);
 
 
 /*************************************************************************
@@ -2366,36 +1993,14 @@ IMPORTANT: ! this function is NOT the most efficient linear solver provided
            ! In such cases we strongly recommend you to use faster solver,
            ! HPDMatrixSolveMFast() function.
 
-COMMERCIAL EDITION OF ALGLIB:
-
-  ! Commercial version of ALGLIB includes two  important  improvements  of
-  ! this function, which can be used from C++ and C#:
-  ! * Intel MKL support (lightweight Intel MKL is shipped with ALGLIB)
-  ! * multicore support
+  ! COMMERCIAL EDITION OF ALGLIB:
   !
-  ! Intel MKL gives approximately constant  (with  respect  to  number  of
-  ! worker threads) acceleration factor which depends on CPU  being  used,
-  ! problem  size  and  "baseline"  ALGLIB  edition  which  is  used   for
-  ! comparison.
-  !
-  ! Say, on SSE2-capable CPU with N=1024, HPC ALGLIB will be:
-  ! * about 2-3x faster than ALGLIB for C++ without MKL
-  ! * about 7-10x faster than "pure C#" edition of ALGLIB
-  ! Difference in performance will be more striking  on  newer  CPU's with
-  ! support for newer SIMD instructions. Generally,  MKL  accelerates  any
-  ! problem whose size is at least 128, with best  efficiency achieved for
-  ! N's larger than 512.
-  !
-  ! Commercial edition of ALGLIB also supports multithreaded  acceleration
-  ! of this function. We should note that Cholesky decomposition is harder
-  ! to parallelize than, say, matrix-matrix product - this  algorithm  has
-  ! several synchronization points which  can  not  be  avoided.  However,
-  ! parallelism starts to be profitable starting from N=500.
-  !
-  ! In order to use multicore features you have to:
-  ! * use commercial version of ALGLIB
-  ! * call  this  function  with  "smp_"  prefix,  which  indicates  that
-  !   multicore code will be used (for multicore support)
+  ! Commercial Edition of ALGLIB includes following important improvements
+  ! of this function:
+  ! * high-performance native backend with same C# interface (C# version)
+  ! * multithreading support (C++ and C# versions)
+  ! * hardware vendor (Intel) implementations of linear algebra primitives
+  !   (C++ and C# versions, x86/x64 platform)
   !
   ! We recommend you to read 'Working with commercial version' section  of
   ! ALGLIB Reference Manual in order to find out how to  use  performance-
@@ -2417,8 +2022,7 @@ OUTPUT PARAMETERS
   -- ALGLIB --
      Copyright 27.01.2010 by Bochkanov Sergey
 *************************************************************************/
-void hpdmatrixsolvem(const complex_2d_array &a, const ae_int_t n, const bool isupper, const complex_2d_array &b, const ae_int_t m, ae_int_t &info, densesolverreport &rep, complex_2d_array &x);
-void smp_hpdmatrixsolvem(const complex_2d_array &a, const ae_int_t n, const bool isupper, const complex_2d_array &b, const ae_int_t m, ae_int_t &info, densesolverreport &rep, complex_2d_array &x);
+void hpdmatrixsolvem(const complex_2d_array &a, const ae_int_t n, const bool isupper, const complex_2d_array &b, const ae_int_t m, ae_int_t &info, densesolverreport &rep, complex_2d_array &x, const xparams _xparams = alglib::xdefault);
 
 
 /*************************************************************************
@@ -2430,36 +2034,14 @@ Algorithm features:
 * matrix is represented by its upper or lower triangle
 * no additional time consuming features like condition number estimation
 
-COMMERCIAL EDITION OF ALGLIB:
-
-  ! Commercial version of ALGLIB includes two  important  improvements  of
-  ! this function, which can be used from C++ and C#:
-  ! * Intel MKL support (lightweight Intel MKL is shipped with ALGLIB)
-  ! * multicore support
+  ! COMMERCIAL EDITION OF ALGLIB:
   !
-  ! Intel MKL gives approximately constant  (with  respect  to  number  of
-  ! worker threads) acceleration factor which depends on CPU  being  used,
-  ! problem  size  and  "baseline"  ALGLIB  edition  which  is  used   for
-  ! comparison.
-  !
-  ! Say, on SSE2-capable CPU with N=1024, HPC ALGLIB will be:
-  ! * about 2-3x faster than ALGLIB for C++ without MKL
-  ! * about 7-10x faster than "pure C#" edition of ALGLIB
-  ! Difference in performance will be more striking  on  newer  CPU's with
-  ! support for newer SIMD instructions. Generally,  MKL  accelerates  any
-  ! problem whose size is at least 128, with best  efficiency achieved for
-  ! N's larger than 512.
-  !
-  ! Commercial edition of ALGLIB also supports multithreaded  acceleration
-  ! of this function. We should note that Cholesky decomposition is harder
-  ! to parallelize than, say, matrix-matrix product - this  algorithm  has
-  ! several synchronization points which  can  not  be  avoided.  However,
-  ! parallelism starts to be profitable starting from N=500.
-  !
-  ! In order to use multicore features you have to:
-  ! * use commercial version of ALGLIB
-  ! * call  this  function  with  "smp_"  prefix,  which  indicates  that
-  !   multicore code will be used (for multicore support)
+  ! Commercial Edition of ALGLIB includes following important improvements
+  ! of this function:
+  ! * high-performance native backend with same C# interface (C# version)
+  ! * multithreading support (C++ and C# versions)
+  ! * hardware vendor (Intel) implementations of linear algebra primitives
+  !   (C++ and C# versions, x86/x64 platform)
   !
   ! We recommend you to read 'Working with commercial version' section  of
   ! ALGLIB Reference Manual in order to find out how to  use  performance-
@@ -2485,8 +2067,7 @@ OUTPUT PARAMETERS
   -- ALGLIB --
      Copyright 17.03.2015 by Bochkanov Sergey
 *************************************************************************/
-void hpdmatrixsolvemfast(const complex_2d_array &a, const ae_int_t n, const bool isupper, const complex_2d_array &b, const ae_int_t m, ae_int_t &info);
-void smp_hpdmatrixsolvemfast(const complex_2d_array &a, const ae_int_t n, const bool isupper, const complex_2d_array &b, const ae_int_t m, ae_int_t &info);
+void hpdmatrixsolvemfast(const complex_2d_array &a, const ae_int_t n, const bool isupper, const complex_2d_array &b, const ae_int_t m, ae_int_t &info, const xparams _xparams = alglib::xdefault);
 
 
 /*************************************************************************
@@ -2520,36 +2101,14 @@ IMPORTANT: ! this function is NOT the most efficient linear solver provided
            ! that your system is well conditioned, we  strongly  recommend
            ! you to use faster solver, HPDMatrixSolveFast() function.
 
-COMMERCIAL EDITION OF ALGLIB:
-
-  ! Commercial version of ALGLIB includes two  important  improvements  of
-  ! this function, which can be used from C++ and C#:
-  ! * Intel MKL support (lightweight Intel MKL is shipped with ALGLIB)
-  ! * multicore support
+  ! COMMERCIAL EDITION OF ALGLIB:
   !
-  ! Intel MKL gives approximately constant  (with  respect  to  number  of
-  ! worker threads) acceleration factor which depends on CPU  being  used,
-  ! problem  size  and  "baseline"  ALGLIB  edition  which  is  used   for
-  ! comparison.
-  !
-  ! Say, on SSE2-capable CPU with N=1024, HPC ALGLIB will be:
-  ! * about 2-3x faster than ALGLIB for C++ without MKL
-  ! * about 7-10x faster than "pure C#" edition of ALGLIB
-  ! Difference in performance will be more striking  on  newer  CPU's with
-  ! support for newer SIMD instructions. Generally,  MKL  accelerates  any
-  ! problem whose size is at least 128, with best  efficiency achieved for
-  ! N's larger than 512.
-  !
-  ! Commercial edition of ALGLIB also supports multithreaded  acceleration
-  ! of this function. We should note that Cholesky decomposition is harder
-  ! to parallelize than, say, matrix-matrix product - this  algorithm  has
-  ! several synchronization points which  can  not  be  avoided.  However,
-  ! parallelism starts to be profitable starting from N=500.
-  !
-  ! In order to use multicore features you have to:
-  ! * use commercial version of ALGLIB
-  ! * call  this  function  with  "smp_"  prefix,  which  indicates  that
-  !   multicore code will be used (for multicore support)
+  ! Commercial Edition of ALGLIB includes following important improvements
+  ! of this function:
+  ! * high-performance native backend with same C# interface (C# version)
+  ! * multithreading support (C++ and C# versions)
+  ! * hardware vendor (Intel) implementations of linear algebra primitives
+  !   (C++ and C# versions, x86/x64 platform)
   !
   ! We recommend you to read 'Working with commercial version' section  of
   ! ALGLIB Reference Manual in order to find out how to  use  performance-
@@ -2570,8 +2129,7 @@ OUTPUT PARAMETERS
   -- ALGLIB --
      Copyright 27.01.2010 by Bochkanov Sergey
 *************************************************************************/
-void hpdmatrixsolve(const complex_2d_array &a, const ae_int_t n, const bool isupper, const complex_1d_array &b, ae_int_t &info, densesolverreport &rep, complex_1d_array &x);
-void smp_hpdmatrixsolve(const complex_2d_array &a, const ae_int_t n, const bool isupper, const complex_1d_array &b, ae_int_t &info, densesolverreport &rep, complex_1d_array &x);
+void hpdmatrixsolve(const complex_2d_array &a, const ae_int_t n, const bool isupper, const complex_1d_array &b, ae_int_t &info, densesolverreport &rep, complex_1d_array &x, const xparams _xparams = alglib::xdefault);
 
 
 /*************************************************************************
@@ -2584,36 +2142,14 @@ Algorithm features:
 * matrix is represented by its upper or lower triangle
 * no additional time consuming functions
 
-COMMERCIAL EDITION OF ALGLIB:
-
-  ! Commercial version of ALGLIB includes two  important  improvements  of
-  ! this function, which can be used from C++ and C#:
-  ! * Intel MKL support (lightweight Intel MKL is shipped with ALGLIB)
-  ! * multicore support
+  ! COMMERCIAL EDITION OF ALGLIB:
   !
-  ! Intel MKL gives approximately constant  (with  respect  to  number  of
-  ! worker threads) acceleration factor which depends on CPU  being  used,
-  ! problem  size  and  "baseline"  ALGLIB  edition  which  is  used   for
-  ! comparison.
-  !
-  ! Say, on SSE2-capable CPU with N=1024, HPC ALGLIB will be:
-  ! * about 2-3x faster than ALGLIB for C++ without MKL
-  ! * about 7-10x faster than "pure C#" edition of ALGLIB
-  ! Difference in performance will be more striking  on  newer  CPU's with
-  ! support for newer SIMD instructions. Generally,  MKL  accelerates  any
-  ! problem whose size is at least 128, with best  efficiency achieved for
-  ! N's larger than 512.
-  !
-  ! Commercial edition of ALGLIB also supports multithreaded  acceleration
-  ! of this function. We should note that Cholesky decomposition is harder
-  ! to parallelize than, say, matrix-matrix product - this  algorithm  has
-  ! several synchronization points which  can  not  be  avoided.  However,
-  ! parallelism starts to be profitable starting from N=500.
-  !
-  ! In order to use multicore features you have to:
-  ! * use commercial version of ALGLIB
-  ! * call  this  function  with  "smp_"  prefix,  which  indicates  that
-  !   multicore code will be used (for multicore support)
+  ! Commercial Edition of ALGLIB includes following important improvements
+  ! of this function:
+  ! * high-performance native backend with same C# interface (C# version)
+  ! * multithreading support (C++ and C# versions)
+  ! * hardware vendor (Intel) implementations of linear algebra primitives
+  !   (C++ and C# versions, x86/x64 platform)
   !
   ! We recommend you to read 'Working with commercial version' section  of
   ! ALGLIB Reference Manual in order to find out how to  use  performance-
@@ -2639,8 +2175,7 @@ OUTPUT PARAMETERS
   -- ALGLIB --
      Copyright 17.03.2015 by Bochkanov Sergey
 *************************************************************************/
-void hpdmatrixsolvefast(const complex_2d_array &a, const ae_int_t n, const bool isupper, const complex_1d_array &b, ae_int_t &info);
-void smp_hpdmatrixsolvefast(const complex_2d_array &a, const ae_int_t n, const bool isupper, const complex_1d_array &b, ae_int_t &info);
+void hpdmatrixsolvefast(const complex_2d_array &a, const ae_int_t n, const bool isupper, const complex_1d_array &b, ae_int_t &info, const xparams _xparams = alglib::xdefault);
 
 
 /*************************************************************************
@@ -2701,8 +2236,7 @@ OUTPUT PARAMETERS:
   -- ALGLIB --
      Copyright 27.01.2010 by Bochkanov Sergey
 *************************************************************************/
-void hpdmatrixcholeskysolvem(const complex_2d_array &cha, const ae_int_t n, const bool isupper, const complex_2d_array &b, const ae_int_t m, ae_int_t &info, densesolverreport &rep, complex_2d_array &x);
-void smp_hpdmatrixcholeskysolvem(const complex_2d_array &cha, const ae_int_t n, const bool isupper, const complex_2d_array &b, const ae_int_t m, ae_int_t &info, densesolverreport &rep, complex_2d_array &x);
+void hpdmatrixcholeskysolvem(const complex_2d_array &cha, const ae_int_t n, const bool isupper, const complex_2d_array &b, const ae_int_t m, ae_int_t &info, densesolverreport &rep, complex_2d_array &x, const xparams _xparams = alglib::xdefault);
 
 
 /*************************************************************************
@@ -2736,8 +2270,7 @@ OUTPUT PARAMETERS:
   -- ALGLIB --
      Copyright 18.03.2015 by Bochkanov Sergey
 *************************************************************************/
-void hpdmatrixcholeskysolvemfast(const complex_2d_array &cha, const ae_int_t n, const bool isupper, const complex_2d_array &b, const ae_int_t m, ae_int_t &info);
-void smp_hpdmatrixcholeskysolvemfast(const complex_2d_array &cha, const ae_int_t n, const bool isupper, const complex_2d_array &b, const ae_int_t m, ae_int_t &info);
+void hpdmatrixcholeskysolvemfast(const complex_2d_array &cha, const ae_int_t n, const bool isupper, const complex_2d_array &b, const ae_int_t m, ae_int_t &info, const xparams _xparams = alglib::xdefault);
 
 
 /*************************************************************************
@@ -2794,7 +2327,7 @@ OUTPUT PARAMETERS
   -- ALGLIB --
      Copyright 27.01.2010 by Bochkanov Sergey
 *************************************************************************/
-void hpdmatrixcholeskysolve(const complex_2d_array &cha, const ae_int_t n, const bool isupper, const complex_1d_array &b, ae_int_t &info, densesolverreport &rep, complex_1d_array &x);
+void hpdmatrixcholeskysolve(const complex_2d_array &cha, const ae_int_t n, const bool isupper, const complex_1d_array &b, ae_int_t &info, densesolverreport &rep, complex_1d_array &x, const xparams _xparams = alglib::xdefault);
 
 
 /*************************************************************************
@@ -2827,7 +2360,7 @@ OUTPUT PARAMETERS
   -- ALGLIB --
      Copyright 18.03.2015 by Bochkanov Sergey
 *************************************************************************/
-void hpdmatrixcholeskysolvefast(const complex_2d_array &cha, const ae_int_t n, const bool isupper, const complex_1d_array &b, ae_int_t &info);
+void hpdmatrixcholeskysolvefast(const complex_2d_array &cha, const ae_int_t n, const bool isupper, const complex_1d_array &b, ae_int_t &info, const xparams _xparams = alglib::xdefault);
 
 
 /*************************************************************************
@@ -2843,22 +2376,14 @@ Algorithm features:
 * iterative refinement
 * O(N^3) complexity
 
-COMMERCIAL EDITION OF ALGLIB:
-
-  ! Commercial version of ALGLIB includes one  important  improvement   of
-  ! this function, which can be used from C++ and C#:
-  ! * Intel MKL support (lightweight Intel MKL is shipped with ALGLIB)
+  ! COMMERCIAL EDITION OF ALGLIB:
   !
-  ! Intel MKL gives approximately constant  (with  respect  to  number  of
-  ! worker threads) acceleration factor which depends on CPU  being  used,
-  ! problem  size  and  "baseline"  ALGLIB  edition  which  is  used   for
-  ! comparison.
-  !
-  ! Generally, commercial ALGLIB is several times faster than  open-source
-  ! generic C edition, and many times faster than open-source C# edition.
-  !
-  ! Multithreaded acceleration is only partially supported (some parts are
-  ! optimized, but most - are not).
+  ! Commercial Edition of ALGLIB includes following important improvements
+  ! of this function:
+  ! * high-performance native backend with same C# interface (C# version)
+  ! * multithreading support (C++ and C# versions)
+  ! * hardware vendor (Intel) implementations of linear algebra primitives
+  !   (C++ and C# versions, x86/x64 platform)
   !
   ! We recommend you to read 'Working with commercial version' section  of
   ! ALGLIB Reference Manual in order to find out how to  use  performance-
@@ -2896,8 +2421,7 @@ Subroutine sets following fields of the Rep structure:
   -- ALGLIB --
      Copyright 24.08.2009 by Bochkanov Sergey
 *************************************************************************/
-void rmatrixsolvels(const real_2d_array &a, const ae_int_t nrows, const ae_int_t ncols, const real_1d_array &b, const double threshold, ae_int_t &info, densesolverlsreport &rep, real_1d_array &x);
-void smp_rmatrixsolvels(const real_2d_array &a, const ae_int_t nrows, const ae_int_t ncols, const real_1d_array &b, const double threshold, ae_int_t &info, densesolverlsreport &rep, real_1d_array &x);
+void rmatrixsolvels(const real_2d_array &a, const ae_int_t nrows, const ae_int_t ncols, const real_1d_array &b, const double threshold, ae_int_t &info, densesolverlsreport &rep, real_1d_array &x, const xparams _xparams = alglib::xdefault);
 #endif
 
 #if defined(AE_COMPILE_LINLSQR) || !defined(AE_PARTIAL_BUILD)
@@ -2923,10 +2447,31 @@ INPUT PARAMETERS:
 OUTPUT PARAMETERS:
     State   -   structure which stores algorithm state
 
+NOTE: see also linlsqrcreatebuf()  for  version  which  reuses  previously
+      allocated place as much as possible.
+
   -- ALGLIB --
      Copyright 30.11.2011 by Bochkanov Sergey
 *************************************************************************/
-void linlsqrcreate(const ae_int_t m, const ae_int_t n, linlsqrstate &state);
+void linlsqrcreate(const ae_int_t m, const ae_int_t n, linlsqrstate &state, const xparams _xparams = alglib::xdefault);
+
+
+/*************************************************************************
+This function initializes linear LSQR Solver.  It  provides  exactly  same
+functionality as linlsqrcreate(), but reuses  previously  allocated  space
+as much as possible.
+
+INPUT PARAMETERS:
+    M       -   number of rows in A
+    N       -   number of variables, N>0
+
+OUTPUT PARAMETERS:
+    State   -   structure which stores algorithm state
+
+  -- ALGLIB --
+     Copyright 14.11.2018 by Bochkanov Sergey
+*************************************************************************/
+void linlsqrcreatebuf(const ae_int_t m, const ae_int_t n, const linlsqrstate &state, const xparams _xparams = alglib::xdefault);
 
 
 /*************************************************************************
@@ -2941,7 +2486,7 @@ INPUT PARAMETERS:
   -- ALGLIB --
      Copyright 19.11.2012 by Bochkanov Sergey
 *************************************************************************/
-void linlsqrsetprecunit(const linlsqrstate &state);
+void linlsqrsetprecunit(const linlsqrstate &state, const xparams _xparams = alglib::xdefault);
 
 
 /*************************************************************************
@@ -2955,7 +2500,7 @@ INPUT PARAMETERS:
   -- ALGLIB --
      Copyright 19.11.2012 by Bochkanov Sergey
 *************************************************************************/
-void linlsqrsetprecdiag(const linlsqrstate &state);
+void linlsqrsetprecdiag(const linlsqrstate &state, const xparams _xparams = alglib::xdefault);
 
 
 /*************************************************************************
@@ -2971,7 +2516,7 @@ OUTPUT PARAMETERS:
   -- ALGLIB --
      Copyright 30.11.2011 by Bochkanov Sergey
 *************************************************************************/
-void linlsqrsetlambdai(const linlsqrstate &state, const double lambdai);
+void linlsqrsetlambdai(const linlsqrstate &state, const double lambdai, const xparams _xparams = alglib::xdefault);
 
 
 /*************************************************************************
@@ -2997,7 +2542,7 @@ NOTE: this function uses lightweight preconditioning -  multiplication  by
   -- ALGLIB --
      Copyright 30.11.2011 by Bochkanov Sergey
 *************************************************************************/
-void linlsqrsolvesparse(const linlsqrstate &state, const sparsematrix &a, const real_1d_array &b);
+void linlsqrsolvesparse(const linlsqrstate &state, const sparsematrix &a, const real_1d_array &b, const xparams _xparams = alglib::xdefault);
 
 
 /*************************************************************************
@@ -3018,7 +2563,7 @@ be setted as default values.
   -- ALGLIB --
      Copyright 30.11.2011 by Bochkanov Sergey
 *************************************************************************/
-void linlsqrsetcond(const linlsqrstate &state, const double epsa, const double epsb, const ae_int_t maxits);
+void linlsqrsetcond(const linlsqrstate &state, const double epsa, const double epsb, const ae_int_t maxits, const xparams _xparams = alglib::xdefault);
 
 
 /*************************************************************************
@@ -3039,13 +2584,15 @@ OUTPUT PARAMETERS:
                     *  7    rounding errors prevent further progress,
                             X contains best point found so far.
                             (sometimes returned on singular systems)
+                    *  8    user requested termination via calling
+                            linlsqrrequesttermination()
                 * Rep.IterationsCount contains iterations count
                 * NMV countains number of matrix-vector calculations
 
   -- ALGLIB --
      Copyright 30.11.2011 by Bochkanov Sergey
 *************************************************************************/
-void linlsqrresults(const linlsqrstate &state, real_1d_array &x, linlsqrreport &rep);
+void linlsqrresults(const linlsqrstate &state, real_1d_array &x, linlsqrreport &rep, const xparams _xparams = alglib::xdefault);
 
 
 /*************************************************************************
@@ -3061,7 +2608,53 @@ provided to MinCGOptimize().
   -- ALGLIB --
      Copyright 30.11.2011 by Bochkanov Sergey
 *************************************************************************/
-void linlsqrsetxrep(const linlsqrstate &state, const bool needxrep);
+void linlsqrsetxrep(const linlsqrstate &state, const bool needxrep, const xparams _xparams = alglib::xdefault);
+
+
+/*************************************************************************
+This function is used to peek into LSQR solver and get  current  iteration
+counter. You can safely "peek" into the solver from another thread.
+
+INPUT PARAMETERS:
+    S           -   solver object
+
+RESULT:
+    iteration counter, in [0,INF)
+
+  -- ALGLIB --
+     Copyright 21.05.2018 by Bochkanov Sergey
+*************************************************************************/
+ae_int_t linlsqrpeekiterationscount(const linlsqrstate &s, const xparams _xparams = alglib::xdefault);
+
+
+/*************************************************************************
+This subroutine submits request for termination of the running solver.  It
+can be called from some other thread which wants LSQR solver to  terminate
+(obviously, the  thread  running  LSQR  solver can not request termination
+because it is already busy working on LSQR).
+
+As result, solver  stops  at  point  which  was  "current  accepted"  when
+termination  request  was  submitted  and returns error code 8 (successful
+termination).  Such   termination   is  a smooth  process  which  properly
+deallocates all temporaries.
+
+INPUT PARAMETERS:
+    State   -   solver structure
+
+NOTE: calling this function on solver which is NOT running  will  have  no
+      effect.
+
+NOTE: multiple calls to this function are possible. First call is counted,
+      subsequent calls are silently ignored.
+
+NOTE: solver clears termination flag on its start, it means that  if  some
+      other thread will request termination too soon, its request will went
+      unnoticed.
+
+  -- ALGLIB --
+     Copyright 08.10.2014 by Bochkanov Sergey
+*************************************************************************/
+void linlsqrrequesttermination(const linlsqrstate &state, const xparams _xparams = alglib::xdefault);
 #endif
 
 #if defined(AE_COMPILE_POLYNOMIALSOLVER) || !defined(AE_PARTIAL_BUILD)
@@ -3105,7 +2698,7 @@ NOTE:   roots are not "polished" and  no  matrix  balancing  is  performed
   -- ALGLIB --
      Copyright 24.02.2014 by Bochkanov Sergey
 *************************************************************************/
-void polynomialsolve(const real_1d_array &a, const ae_int_t n, complex_1d_array &x, polynomialsolverreport &rep);
+void polynomialsolve(const real_1d_array &a, const ae_int_t n, complex_1d_array &x, polynomialsolverreport &rep, const xparams _xparams = alglib::xdefault);
 #endif
 
 #if defined(AE_COMPILE_NLEQ) || !defined(AE_PARTIAL_BUILD)
@@ -3179,8 +2772,8 @@ NOTES:
   -- ALGLIB --
      Copyright 20.08.2009 by Bochkanov Sergey
 *************************************************************************/
-void nleqcreatelm(const ae_int_t n, const ae_int_t m, const real_1d_array &x, nleqstate &state);
-void nleqcreatelm(const ae_int_t m, const real_1d_array &x, nleqstate &state);
+void nleqcreatelm(const ae_int_t n, const ae_int_t m, const real_1d_array &x, nleqstate &state, const xparams _xparams = alglib::xdefault);
+void nleqcreatelm(const ae_int_t m, const real_1d_array &x, nleqstate &state, const xparams _xparams = alglib::xdefault);
 
 
 /*************************************************************************
@@ -3202,7 +2795,7 @@ NOTES:
   -- ALGLIB --
      Copyright 20.08.2010 by Bochkanov Sergey
 *************************************************************************/
-void nleqsetcond(const nleqstate &state, const double epsf, const ae_int_t maxits);
+void nleqsetcond(const nleqstate &state, const double epsf, const ae_int_t maxits, const xparams _xparams = alglib::xdefault);
 
 
 /*************************************************************************
@@ -3218,7 +2811,7 @@ provided to NLEQSolve().
   -- ALGLIB --
      Copyright 20.08.2010 by Bochkanov Sergey
 *************************************************************************/
-void nleqsetxrep(const nleqstate &state, const bool needxrep);
+void nleqsetxrep(const nleqstate &state, const bool needxrep, const xparams _xparams = alglib::xdefault);
 
 
 /*************************************************************************
@@ -3238,7 +2831,7 @@ function value at the x+stp*d.
   -- ALGLIB --
      Copyright 20.08.2010 by Bochkanov Sergey
 *************************************************************************/
-void nleqsetstpmax(const nleqstate &state, const double stpmax);
+void nleqsetstpmax(const nleqstate &state, const double stpmax, const xparams _xparams = alglib::xdefault);
 
 
 /*************************************************************************
@@ -3246,7 +2839,7 @@ This function provides reverse communication interface
 Reverse communication interface is not documented or recommended to use.
 See below for functions which provide better documented API
 *************************************************************************/
-bool nleqiteration(const nleqstate &state);
+bool nleqiteration(const nleqstate &state, const xparams _xparams = alglib::xdefault);
 
 
 /*************************************************************************
@@ -3272,7 +2865,8 @@ void nleqsolve(nleqstate &state,
     void (*func)(const real_1d_array &x, double &func, void *ptr),
     void  (*jac)(const real_1d_array &x, real_1d_array &fi, real_2d_array &jac, void *ptr),
     void  (*rep)(const real_1d_array &x, double func, void *ptr) = NULL,
-    void *ptr = NULL);
+    void *ptr = NULL,
+    const xparams _xparams = alglib::xdefault);
 
 
 /*************************************************************************
@@ -3300,7 +2894,7 @@ OUTPUT PARAMETERS:
   -- ALGLIB --
      Copyright 20.08.2009 by Bochkanov Sergey
 *************************************************************************/
-void nleqresults(const nleqstate &state, real_1d_array &x, nleqreport &rep);
+void nleqresults(const nleqstate &state, real_1d_array &x, nleqreport &rep, const xparams _xparams = alglib::xdefault);
 
 
 /*************************************************************************
@@ -3314,7 +2908,7 @@ where array reallocation penalty is too large to be ignored.
   -- ALGLIB --
      Copyright 20.08.2009 by Bochkanov Sergey
 *************************************************************************/
-void nleqresultsbuf(const nleqstate &state, real_1d_array &x, nleqreport &rep);
+void nleqresultsbuf(const nleqstate &state, real_1d_array &x, nleqreport &rep, const xparams _xparams = alglib::xdefault);
 
 
 /*************************************************************************
@@ -3334,7 +2928,7 @@ INPUT PARAMETERS:
   -- ALGLIB --
      Copyright 30.07.2010 by Bochkanov Sergey
 *************************************************************************/
-void nleqrestartfrom(const nleqstate &state, const real_1d_array &x);
+void nleqrestartfrom(const nleqstate &state, const real_1d_array &x, const xparams _xparams = alglib::xdefault);
 #endif
 
 #if defined(AE_COMPILE_DIRECTSPARSESOLVERS) || !defined(AE_PARTIAL_BUILD)
@@ -3349,22 +2943,49 @@ the original system.
 
 INPUT PARAMETERS
     A       -   sparse matrix, must be NxN exactly
-    N       -   size of A, N>0
     IsUpper -   which half of A is provided (another half is ignored)
     B       -   array[0..N-1], right part
 
 OUTPUT PARAMETERS
-    Rep     -   solver report, following fields are set:
-                * rep.terminationtype - solver status; >0 for success,
-                  set to -3 on failure (degenerate or non-SPD system).
     X       -   array[N], it contains:
                 * rep.terminationtype>0    =>  solution
                 * rep.terminationtype=-3   =>  filled by zeros
+    Rep     -   solver report, following fields are set:
+                * rep.terminationtype - solver status; >0 for success,
+                  set to -3 on failure (degenerate or non-SPD system).
 
   -- ALGLIB --
      Copyright 26.12.2017 by Bochkanov Sergey
 *************************************************************************/
-void sparsesolvesks(const sparsematrix &a, const ae_int_t n, const bool isupper, const real_1d_array &b, sparsesolverreport &rep, real_1d_array &x);
+void sparsespdsolvesks(const sparsematrix &a, const bool isupper, const real_1d_array &b, real_1d_array &x, sparsesolverreport &rep, const xparams _xparams = alglib::xdefault);
+
+
+/*************************************************************************
+Sparse linear solver for A*x=b with N*N  sparse  real  symmetric  positive
+definite matrix A, N*1 vectors x and b.
+
+This solver  converts  input  matrix  to  CRS  format,  performs  Cholesky
+factorization using supernodal Cholesky  decomposition  with  permutation-
+reducing ordering and uses sparse triangular solver to get solution of the
+original system.
+
+INPUT PARAMETERS
+    A       -   sparse matrix, must be NxN exactly
+    IsUpper -   which half of A is provided (another half is ignored)
+    B       -   array[N], right part
+
+OUTPUT PARAMETERS
+    X       -   array[N], it contains:
+                * rep.terminationtype>0    =>  solution
+                * rep.terminationtype=-3   =>  filled by zeros
+    Rep     -   solver report, following fields are set:
+                * rep.terminationtype - solver status; >0 for success,
+                  set to -3 on failure (degenerate or non-SPD system).
+
+  -- ALGLIB --
+     Copyright 26.12.2017 by Bochkanov Sergey
+*************************************************************************/
+void sparsespdsolve(const sparsematrix &a, const bool isupper, const real_1d_array &b, real_1d_array &x, sparsesolverreport &rep, const xparams _xparams = alglib::xdefault);
 
 
 /*************************************************************************
@@ -3372,27 +2993,82 @@ Sparse linear solver for A*x=b with N*N real  symmetric  positive definite
 matrix A given by its Cholesky decomposition, and N*1 vectors x and b.
 
 IMPORTANT: this solver requires input matrix to be in  the  SKS  (Skyline)
-           sparse storage format. An exception will be  generated  if  you
-           pass matrix in some other format (HASH or CRS).
+           or CRS (compressed row storage) format. An  exception  will  be
+           generated if you pass matrix in some other format.
 
 INPUT PARAMETERS
-    A       -   sparse NxN matrix stored in SKS format, must be NxN exactly
-    N       -   size of A, N>0
+    A       -   sparse NxN matrix stored in CRs or SKS format, must be NxN
+                exactly
     IsUpper -   which half of A is provided (another half is ignored)
     B       -   array[N], right part
 
 OUTPUT PARAMETERS
-    Rep     -   solver report, following fields are set:
-                * rep.terminationtype - solver status; >0 for success,
-                  set to -3 on failure (degenerate or non-SPD system).
     X       -   array[N], it contains:
                 * rep.terminationtype>0    =>  solution
                 * rep.terminationtype=-3   =>  filled by zeros
+    Rep     -   solver report, following fields are set:
+                * rep.terminationtype - solver status; >0 for success,
+                  set to -3 on failure (degenerate or non-SPD system).
 
   -- ALGLIB --
      Copyright 26.12.2017 by Bochkanov Sergey
 *************************************************************************/
-void sparsecholeskysolvesks(const sparsematrix &a, const ae_int_t n, const bool isupper, const real_1d_array &b, sparsesolverreport &rep, real_1d_array &x);
+void sparsespdcholeskysolve(const sparsematrix &a, const bool isupper, const real_1d_array &b, real_1d_array &x, sparsesolverreport &rep, const xparams _xparams = alglib::xdefault);
+
+
+/*************************************************************************
+Sparse linear solver for A*x=b with general (nonsymmetric) N*N sparse real
+matrix A, N*1 vectors x and b.
+
+This solver converts input matrix to CRS format, performs LU factorization
+and uses sparse triangular solvers to get solution of the original system.
+
+INPUT PARAMETERS
+    A       -   sparse matrix, must be NxN exactly, any storage format
+    N       -   size of A, N>0
+    B       -   array[0..N-1], right part
+
+OUTPUT PARAMETERS
+    X       -   array[N], it contains:
+                * rep.terminationtype>0    =>  solution
+                * rep.terminationtype=-3   =>  filled by zeros
+    Rep     -   solver report, following fields are set:
+                * rep.terminationtype - solver status; >0 for success,
+                  set to -3 on failure (degenerate system).
+
+  -- ALGLIB --
+     Copyright 26.12.2017 by Bochkanov Sergey
+*************************************************************************/
+void sparsesolve(const sparsematrix &a, const real_1d_array &b, real_1d_array &x, sparsesolverreport &rep, const xparams _xparams = alglib::xdefault);
+
+
+/*************************************************************************
+Sparse linear solver for A*x=b with general (nonsymmetric) N*N sparse real
+matrix A given by its LU factorization, N*1 vectors x and b.
+
+IMPORTANT: this solver requires input matrix  to  be  in  the  CRS  sparse
+           storage format. An exception will  be  generated  if  you  pass
+           matrix in some other format (HASH or SKS).
+
+INPUT PARAMETERS
+    A       -   LU factorization of the sparse matrix, must be NxN exactly
+                in CRS storage format
+    P, Q    -   pivot indexes from LU factorization
+    N       -   size of A, N>0
+    B       -   array[0..N-1], right part
+
+OUTPUT PARAMETERS
+    X       -   array[N], it contains:
+                * rep.terminationtype>0    =>  solution
+                * rep.terminationtype=-3   =>  filled by zeros
+    Rep     -   solver report, following fields are set:
+                * rep.terminationtype - solver status; >0 for success,
+                  set to -3 on failure (degenerate system).
+
+  -- ALGLIB --
+     Copyright 26.12.2017 by Bochkanov Sergey
+*************************************************************************/
+void sparselusolve(const sparsematrix &a, const integer_1d_array &p, const integer_1d_array &q, const real_1d_array &b, real_1d_array &x, sparsesolverreport &rep, const xparams _xparams = alglib::xdefault);
 #endif
 
 #if defined(AE_COMPILE_LINCG) || !defined(AE_PARTIAL_BUILD)
@@ -3422,7 +3098,7 @@ OUTPUT PARAMETERS:
   -- ALGLIB --
      Copyright 14.11.2011 by Bochkanov Sergey
 *************************************************************************/
-void lincgcreate(const ae_int_t n, lincgstate &state);
+void lincgcreate(const ae_int_t n, lincgstate &state, const xparams _xparams = alglib::xdefault);
 
 
 /*************************************************************************
@@ -3438,7 +3114,7 @@ OUTPUT PARAMETERS:
   -- ALGLIB --
      Copyright 14.11.2011 by Bochkanov Sergey
 *************************************************************************/
-void lincgsetstartingpoint(const lincgstate &state, const real_1d_array &x);
+void lincgsetstartingpoint(const lincgstate &state, const real_1d_array &x, const xparams _xparams = alglib::xdefault);
 
 
 /*************************************************************************
@@ -3453,7 +3129,7 @@ INPUT PARAMETERS:
   -- ALGLIB --
      Copyright 19.11.2012 by Bochkanov Sergey
 *************************************************************************/
-void lincgsetprecunit(const lincgstate &state);
+void lincgsetprecunit(const lincgstate &state, const xparams _xparams = alglib::xdefault);
 
 
 /*************************************************************************
@@ -3467,7 +3143,7 @@ INPUT PARAMETERS:
   -- ALGLIB --
      Copyright 19.11.2012 by Bochkanov Sergey
 *************************************************************************/
-void lincgsetprecdiag(const lincgstate &state);
+void lincgsetprecdiag(const lincgstate &state, const xparams _xparams = alglib::xdefault);
 
 
 /*************************************************************************
@@ -3489,7 +3165,7 @@ value.
   -- ALGLIB --
      Copyright 14.11.2011 by Bochkanov Sergey
 *************************************************************************/
-void lincgsetcond(const lincgstate &state, const double epsf, const ae_int_t maxits);
+void lincgsetcond(const lincgstate &state, const double epsf, const ae_int_t maxits, const xparams _xparams = alglib::xdefault);
 
 
 /*************************************************************************
@@ -3519,7 +3195,7 @@ NOTE: this function uses lightweight preconditioning -  multiplication  by
   -- ALGLIB --
      Copyright 14.11.2011 by Bochkanov Sergey
 *************************************************************************/
-void lincgsolvesparse(const lincgstate &state, const sparsematrix &a, const bool isupper, const real_1d_array &b);
+void lincgsolvesparse(const lincgstate &state, const sparsematrix &a, const bool isupper, const real_1d_array &b, const xparams _xparams = alglib::xdefault);
 
 
 /*************************************************************************
@@ -3548,7 +3224,7 @@ OUTPUT PARAMETERS:
   -- ALGLIB --
      Copyright 14.11.2011 by Bochkanov Sergey
 *************************************************************************/
-void lincgresults(const lincgstate &state, real_1d_array &x, lincgreport &rep);
+void lincgresults(const lincgstate &state, real_1d_array &x, lincgreport &rep, const xparams _xparams = alglib::xdefault);
 
 
 /*************************************************************************
@@ -3558,7 +3234,7 @@ after N subsequent iterations.
   -- ALGLIB --
      Copyright 14.11.2011 by Bochkanov Sergey
 *************************************************************************/
-void lincgsetrestartfreq(const lincgstate &state, const ae_int_t srf);
+void lincgsetrestartfreq(const lincgstate &state, const ae_int_t srf, const xparams _xparams = alglib::xdefault);
 
 
 /*************************************************************************
@@ -3579,7 +3255,7 @@ INPUT PARAMETERS:
   -- ALGLIB --
      Copyright 14.11.2011 by Bochkanov Sergey
 *************************************************************************/
-void lincgsetrupdatefreq(const lincgstate &state, const ae_int_t freq);
+void lincgsetrupdatefreq(const lincgstate &state, const ae_int_t freq, const xparams _xparams = alglib::xdefault);
 
 
 /*************************************************************************
@@ -3595,7 +3271,7 @@ provided to MinCGOptimize().
   -- ALGLIB --
      Copyright 14.11.2011 by Bochkanov Sergey
 *************************************************************************/
-void lincgsetxrep(const lincgstate &state, const bool needxrep);
+void lincgsetxrep(const lincgstate &state, const bool needxrep, const xparams _xparams = alglib::xdefault);
 #endif
 }
 
@@ -3614,21 +3290,11 @@ void rmatrixsolve(/* Real    */ ae_matrix* a,
      densesolverreport* rep,
      /* Real    */ ae_vector* x,
      ae_state *_state);
-void _pexec_rmatrixsolve(/* Real    */ ae_matrix* a,
-    ae_int_t n,
-    /* Real    */ ae_vector* b,
-    ae_int_t* info,
-    densesolverreport* rep,
-    /* Real    */ ae_vector* x, ae_state *_state);
 void rmatrixsolvefast(/* Real    */ ae_matrix* a,
      ae_int_t n,
      /* Real    */ ae_vector* b,
      ae_int_t* info,
      ae_state *_state);
-void _pexec_rmatrixsolvefast(/* Real    */ ae_matrix* a,
-    ae_int_t n,
-    /* Real    */ ae_vector* b,
-    ae_int_t* info, ae_state *_state);
 void rmatrixsolvem(/* Real    */ ae_matrix* a,
      ae_int_t n,
      /* Real    */ ae_matrix* b,
@@ -3638,25 +3304,12 @@ void rmatrixsolvem(/* Real    */ ae_matrix* a,
      densesolverreport* rep,
      /* Real    */ ae_matrix* x,
      ae_state *_state);
-void _pexec_rmatrixsolvem(/* Real    */ ae_matrix* a,
-    ae_int_t n,
-    /* Real    */ ae_matrix* b,
-    ae_int_t m,
-    ae_bool rfs,
-    ae_int_t* info,
-    densesolverreport* rep,
-    /* Real    */ ae_matrix* x, ae_state *_state);
 void rmatrixsolvemfast(/* Real    */ ae_matrix* a,
      ae_int_t n,
      /* Real    */ ae_matrix* b,
      ae_int_t m,
      ae_int_t* info,
      ae_state *_state);
-void _pexec_rmatrixsolvemfast(/* Real    */ ae_matrix* a,
-    ae_int_t n,
-    /* Real    */ ae_matrix* b,
-    ae_int_t m,
-    ae_int_t* info, ae_state *_state);
 void rmatrixlusolve(/* Real    */ ae_matrix* lua,
      /* Integer */ ae_vector* p,
      ae_int_t n,
@@ -3680,14 +3333,6 @@ void rmatrixlusolvem(/* Real    */ ae_matrix* lua,
      densesolverreport* rep,
      /* Real    */ ae_matrix* x,
      ae_state *_state);
-void _pexec_rmatrixlusolvem(/* Real    */ ae_matrix* lua,
-    /* Integer */ ae_vector* p,
-    ae_int_t n,
-    /* Real    */ ae_matrix* b,
-    ae_int_t m,
-    ae_int_t* info,
-    densesolverreport* rep,
-    /* Real    */ ae_matrix* x, ae_state *_state);
 void rmatrixlusolvemfast(/* Real    */ ae_matrix* lua,
      /* Integer */ ae_vector* p,
      ae_int_t n,
@@ -3695,12 +3340,6 @@ void rmatrixlusolvemfast(/* Real    */ ae_matrix* lua,
      ae_int_t m,
      ae_int_t* info,
      ae_state *_state);
-void _pexec_rmatrixlusolvemfast(/* Real    */ ae_matrix* lua,
-    /* Integer */ ae_vector* p,
-    ae_int_t n,
-    /* Real    */ ae_matrix* b,
-    ae_int_t m,
-    ae_int_t* info, ae_state *_state);
 void rmatrixmixedsolve(/* Real    */ ae_matrix* a,
      /* Real    */ ae_matrix* lua,
      /* Integer */ ae_vector* p,
@@ -3729,25 +3368,12 @@ void cmatrixsolvem(/* Complex */ ae_matrix* a,
      densesolverreport* rep,
      /* Complex */ ae_matrix* x,
      ae_state *_state);
-void _pexec_cmatrixsolvem(/* Complex */ ae_matrix* a,
-    ae_int_t n,
-    /* Complex */ ae_matrix* b,
-    ae_int_t m,
-    ae_bool rfs,
-    ae_int_t* info,
-    densesolverreport* rep,
-    /* Complex */ ae_matrix* x, ae_state *_state);
 void cmatrixsolvemfast(/* Complex */ ae_matrix* a,
      ae_int_t n,
      /* Complex */ ae_matrix* b,
      ae_int_t m,
      ae_int_t* info,
      ae_state *_state);
-void _pexec_cmatrixsolvemfast(/* Complex */ ae_matrix* a,
-    ae_int_t n,
-    /* Complex */ ae_matrix* b,
-    ae_int_t m,
-    ae_int_t* info, ae_state *_state);
 void cmatrixsolve(/* Complex */ ae_matrix* a,
      ae_int_t n,
      /* Complex */ ae_vector* b,
@@ -3755,21 +3381,11 @@ void cmatrixsolve(/* Complex */ ae_matrix* a,
      densesolverreport* rep,
      /* Complex */ ae_vector* x,
      ae_state *_state);
-void _pexec_cmatrixsolve(/* Complex */ ae_matrix* a,
-    ae_int_t n,
-    /* Complex */ ae_vector* b,
-    ae_int_t* info,
-    densesolverreport* rep,
-    /* Complex */ ae_vector* x, ae_state *_state);
 void cmatrixsolvefast(/* Complex */ ae_matrix* a,
      ae_int_t n,
      /* Complex */ ae_vector* b,
      ae_int_t* info,
      ae_state *_state);
-void _pexec_cmatrixsolvefast(/* Complex */ ae_matrix* a,
-    ae_int_t n,
-    /* Complex */ ae_vector* b,
-    ae_int_t* info, ae_state *_state);
 void cmatrixlusolvem(/* Complex */ ae_matrix* lua,
      /* Integer */ ae_vector* p,
      ae_int_t n,
@@ -3779,14 +3395,6 @@ void cmatrixlusolvem(/* Complex */ ae_matrix* lua,
      densesolverreport* rep,
      /* Complex */ ae_matrix* x,
      ae_state *_state);
-void _pexec_cmatrixlusolvem(/* Complex */ ae_matrix* lua,
-    /* Integer */ ae_vector* p,
-    ae_int_t n,
-    /* Complex */ ae_matrix* b,
-    ae_int_t m,
-    ae_int_t* info,
-    densesolverreport* rep,
-    /* Complex */ ae_matrix* x, ae_state *_state);
 void cmatrixlusolvemfast(/* Complex */ ae_matrix* lua,
      /* Integer */ ae_vector* p,
      ae_int_t n,
@@ -3794,12 +3402,6 @@ void cmatrixlusolvemfast(/* Complex */ ae_matrix* lua,
      ae_int_t m,
      ae_int_t* info,
      ae_state *_state);
-void _pexec_cmatrixlusolvemfast(/* Complex */ ae_matrix* lua,
-    /* Integer */ ae_vector* p,
-    ae_int_t n,
-    /* Complex */ ae_matrix* b,
-    ae_int_t m,
-    ae_int_t* info, ae_state *_state);
 void cmatrixlusolve(/* Complex */ ae_matrix* lua,
      /* Integer */ ae_vector* p,
      ae_int_t n,
@@ -3842,14 +3444,6 @@ void spdmatrixsolvem(/* Real    */ ae_matrix* a,
      densesolverreport* rep,
      /* Real    */ ae_matrix* x,
      ae_state *_state);
-void _pexec_spdmatrixsolvem(/* Real    */ ae_matrix* a,
-    ae_int_t n,
-    ae_bool isupper,
-    /* Real    */ ae_matrix* b,
-    ae_int_t m,
-    ae_int_t* info,
-    densesolverreport* rep,
-    /* Real    */ ae_matrix* x, ae_state *_state);
 void spdmatrixsolvemfast(/* Real    */ ae_matrix* a,
      ae_int_t n,
      ae_bool isupper,
@@ -3857,12 +3451,6 @@ void spdmatrixsolvemfast(/* Real    */ ae_matrix* a,
      ae_int_t m,
      ae_int_t* info,
      ae_state *_state);
-void _pexec_spdmatrixsolvemfast(/* Real    */ ae_matrix* a,
-    ae_int_t n,
-    ae_bool isupper,
-    /* Real    */ ae_matrix* b,
-    ae_int_t m,
-    ae_int_t* info, ae_state *_state);
 void spdmatrixsolve(/* Real    */ ae_matrix* a,
      ae_int_t n,
      ae_bool isupper,
@@ -3871,24 +3459,12 @@ void spdmatrixsolve(/* Real    */ ae_matrix* a,
      densesolverreport* rep,
      /* Real    */ ae_vector* x,
      ae_state *_state);
-void _pexec_spdmatrixsolve(/* Real    */ ae_matrix* a,
-    ae_int_t n,
-    ae_bool isupper,
-    /* Real    */ ae_vector* b,
-    ae_int_t* info,
-    densesolverreport* rep,
-    /* Real    */ ae_vector* x, ae_state *_state);
 void spdmatrixsolvefast(/* Real    */ ae_matrix* a,
      ae_int_t n,
      ae_bool isupper,
      /* Real    */ ae_vector* b,
      ae_int_t* info,
      ae_state *_state);
-void _pexec_spdmatrixsolvefast(/* Real    */ ae_matrix* a,
-    ae_int_t n,
-    ae_bool isupper,
-    /* Real    */ ae_vector* b,
-    ae_int_t* info, ae_state *_state);
 void spdmatrixcholeskysolvem(/* Real    */ ae_matrix* cha,
      ae_int_t n,
      ae_bool isupper,
@@ -3898,14 +3474,6 @@ void spdmatrixcholeskysolvem(/* Real    */ ae_matrix* cha,
      densesolverreport* rep,
      /* Real    */ ae_matrix* x,
      ae_state *_state);
-void _pexec_spdmatrixcholeskysolvem(/* Real    */ ae_matrix* cha,
-    ae_int_t n,
-    ae_bool isupper,
-    /* Real    */ ae_matrix* b,
-    ae_int_t m,
-    ae_int_t* info,
-    densesolverreport* rep,
-    /* Real    */ ae_matrix* x, ae_state *_state);
 void spdmatrixcholeskysolvemfast(/* Real    */ ae_matrix* cha,
      ae_int_t n,
      ae_bool isupper,
@@ -3913,12 +3481,6 @@ void spdmatrixcholeskysolvemfast(/* Real    */ ae_matrix* cha,
      ae_int_t m,
      ae_int_t* info,
      ae_state *_state);
-void _pexec_spdmatrixcholeskysolvemfast(/* Real    */ ae_matrix* cha,
-    ae_int_t n,
-    ae_bool isupper,
-    /* Real    */ ae_matrix* b,
-    ae_int_t m,
-    ae_int_t* info, ae_state *_state);
 void spdmatrixcholeskysolve(/* Real    */ ae_matrix* cha,
      ae_int_t n,
      ae_bool isupper,
@@ -3942,14 +3504,6 @@ void hpdmatrixsolvem(/* Complex */ ae_matrix* a,
      densesolverreport* rep,
      /* Complex */ ae_matrix* x,
      ae_state *_state);
-void _pexec_hpdmatrixsolvem(/* Complex */ ae_matrix* a,
-    ae_int_t n,
-    ae_bool isupper,
-    /* Complex */ ae_matrix* b,
-    ae_int_t m,
-    ae_int_t* info,
-    densesolverreport* rep,
-    /* Complex */ ae_matrix* x, ae_state *_state);
 void hpdmatrixsolvemfast(/* Complex */ ae_matrix* a,
      ae_int_t n,
      ae_bool isupper,
@@ -3957,12 +3511,6 @@ void hpdmatrixsolvemfast(/* Complex */ ae_matrix* a,
      ae_int_t m,
      ae_int_t* info,
      ae_state *_state);
-void _pexec_hpdmatrixsolvemfast(/* Complex */ ae_matrix* a,
-    ae_int_t n,
-    ae_bool isupper,
-    /* Complex */ ae_matrix* b,
-    ae_int_t m,
-    ae_int_t* info, ae_state *_state);
 void hpdmatrixsolve(/* Complex */ ae_matrix* a,
      ae_int_t n,
      ae_bool isupper,
@@ -3971,24 +3519,12 @@ void hpdmatrixsolve(/* Complex */ ae_matrix* a,
      densesolverreport* rep,
      /* Complex */ ae_vector* x,
      ae_state *_state);
-void _pexec_hpdmatrixsolve(/* Complex */ ae_matrix* a,
-    ae_int_t n,
-    ae_bool isupper,
-    /* Complex */ ae_vector* b,
-    ae_int_t* info,
-    densesolverreport* rep,
-    /* Complex */ ae_vector* x, ae_state *_state);
 void hpdmatrixsolvefast(/* Complex */ ae_matrix* a,
      ae_int_t n,
      ae_bool isupper,
      /* Complex */ ae_vector* b,
      ae_int_t* info,
      ae_state *_state);
-void _pexec_hpdmatrixsolvefast(/* Complex */ ae_matrix* a,
-    ae_int_t n,
-    ae_bool isupper,
-    /* Complex */ ae_vector* b,
-    ae_int_t* info, ae_state *_state);
 void hpdmatrixcholeskysolvem(/* Complex */ ae_matrix* cha,
      ae_int_t n,
      ae_bool isupper,
@@ -3998,14 +3534,6 @@ void hpdmatrixcholeskysolvem(/* Complex */ ae_matrix* cha,
      densesolverreport* rep,
      /* Complex */ ae_matrix* x,
      ae_state *_state);
-void _pexec_hpdmatrixcholeskysolvem(/* Complex */ ae_matrix* cha,
-    ae_int_t n,
-    ae_bool isupper,
-    /* Complex */ ae_matrix* b,
-    ae_int_t m,
-    ae_int_t* info,
-    densesolverreport* rep,
-    /* Complex */ ae_matrix* x, ae_state *_state);
 void hpdmatrixcholeskysolvemfast(/* Complex */ ae_matrix* cha,
      ae_int_t n,
      ae_bool isupper,
@@ -4013,12 +3541,6 @@ void hpdmatrixcholeskysolvemfast(/* Complex */ ae_matrix* cha,
      ae_int_t m,
      ae_int_t* info,
      ae_state *_state);
-void _pexec_hpdmatrixcholeskysolvemfast(/* Complex */ ae_matrix* cha,
-    ae_int_t n,
-    ae_bool isupper,
-    /* Complex */ ae_matrix* b,
-    ae_int_t m,
-    ae_int_t* info, ae_state *_state);
 void hpdmatrixcholeskysolve(/* Complex */ ae_matrix* cha,
      ae_int_t n,
      ae_bool isupper,
@@ -4042,14 +3564,6 @@ void rmatrixsolvels(/* Real    */ ae_matrix* a,
      densesolverlsreport* rep,
      /* Real    */ ae_vector* x,
      ae_state *_state);
-void _pexec_rmatrixsolvels(/* Real    */ ae_matrix* a,
-    ae_int_t nrows,
-    ae_int_t ncols,
-    /* Real    */ ae_vector* b,
-    double threshold,
-    ae_int_t* info,
-    densesolverlsreport* rep,
-    /* Real    */ ae_vector* x, ae_state *_state);
 void _densesolverreport_init(void* _p, ae_state *_state, ae_bool make_automatic);
 void _densesolverreport_init_copy(void* _dst, void* _src, ae_state *_state, ae_bool make_automatic);
 void _densesolverreport_clear(void* _p);
@@ -4061,6 +3575,10 @@ void _densesolverlsreport_destroy(void* _p);
 #endif
 #if defined(AE_COMPILE_LINLSQR) || !defined(AE_PARTIAL_BUILD)
 void linlsqrcreate(ae_int_t m,
+     ae_int_t n,
+     linlsqrstate* state,
+     ae_state *_state);
+void linlsqrcreatebuf(ae_int_t m,
      ae_int_t n,
      linlsqrstate* state,
      ae_state *_state);
@@ -4090,6 +3608,8 @@ void linlsqrsetxrep(linlsqrstate* state,
      ae_bool needxrep,
      ae_state *_state);
 void linlsqrrestart(linlsqrstate* state, ae_state *_state);
+ae_int_t linlsqrpeekiterationscount(linlsqrstate* s, ae_state *_state);
+void linlsqrrequesttermination(linlsqrstate* state, ae_state *_state);
 void _linlsqrstate_init(void* _p, ae_state *_state, ae_bool make_automatic);
 void _linlsqrstate_init_copy(void* _dst, void* _src, ae_state *_state, ae_bool make_automatic);
 void _linlsqrstate_clear(void* _p);
@@ -4144,19 +3664,35 @@ void _nleqreport_clear(void* _p);
 void _nleqreport_destroy(void* _p);
 #endif
 #if defined(AE_COMPILE_DIRECTSPARSESOLVERS) || !defined(AE_PARTIAL_BUILD)
-void sparsesolvesks(sparsematrix* a,
-     ae_int_t n,
+void sparsespdsolvesks(sparsematrix* a,
      ae_bool isupper,
      /* Real    */ ae_vector* b,
-     sparsesolverreport* rep,
      /* Real    */ ae_vector* x,
+     sparsesolverreport* rep,
      ae_state *_state);
-void sparsecholeskysolvesks(sparsematrix* a,
-     ae_int_t n,
+void sparsespdsolve(sparsematrix* a,
      ae_bool isupper,
      /* Real    */ ae_vector* b,
-     sparsesolverreport* rep,
      /* Real    */ ae_vector* x,
+     sparsesolverreport* rep,
+     ae_state *_state);
+void sparsespdcholeskysolve(sparsematrix* a,
+     ae_bool isupper,
+     /* Real    */ ae_vector* b,
+     /* Real    */ ae_vector* x,
+     sparsesolverreport* rep,
+     ae_state *_state);
+void sparsesolve(sparsematrix* a,
+     /* Real    */ ae_vector* b,
+     /* Real    */ ae_vector* x,
+     sparsesolverreport* rep,
+     ae_state *_state);
+void sparselusolve(sparsematrix* a,
+     /* Integer */ ae_vector* p,
+     /* Integer */ ae_vector* q,
+     /* Real    */ ae_vector* b,
+     /* Real    */ ae_vector* x,
+     sparsesolverreport* rep,
      ae_state *_state);
 void _sparsesolverreport_init(void* _p, ae_state *_state, ae_bool make_automatic);
 void _sparsesolverreport_init_copy(void* _dst, void* _src, ae_state *_state, ae_bool make_automatic);
