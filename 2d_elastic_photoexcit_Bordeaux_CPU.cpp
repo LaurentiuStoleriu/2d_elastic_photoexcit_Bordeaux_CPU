@@ -23,14 +23,18 @@ constexpr auto n_max_vec = 6;
 
 constexpr auto radius = 1.0;	// radius trebuie sa ramana 1, e doar ce la LS
 
-constexpr auto L = 2.0;
+constexpr auto L = 0.6;//2.0;
+constexpr auto rmic = 0.20;
+constexpr auto rmare = 0.22;
 constexpr auto m = 1.0;
 constexpr auto Kf_mic_mic = 1.0;
 constexpr auto Kf_poly = 1.0;
 constexpr auto mu = 1.0;
 
-constexpr auto T_LIM_DWN = 120.0;
-constexpr auto T_LIM_UP = 300.0;
+constexpr auto n_steps = 301;
+constexpr auto T_LIM_DWN = 50.0;
+constexpr auto T_LIM_UP = 350.0;
+constexpr auto delta_T = (T_LIM_UP - T_LIM_DWN) / (n_steps - 1);
 
 constexpr auto H = 1100.0;		//1100;
 constexpr auto S = 5.5;			//7;
@@ -55,7 +59,7 @@ double sol[n_equ], sol_old[n_equ];
 double T[n_part];
 double probabilitateHL[n_part], probabilitateLH[n_part], pres[n_part];
 
-constexpr char fis_particule[500] = "E:\\Stoleriu\\C\\special\\3d\\generare\\2021\\Elastic\\30x30_RektHex_LS.dat";  // HS: r=1.1 L=2
+constexpr char fis_particule[500] = "E:\\Stoleriu\\C\\special\\3d\\generare\\2021\\Elastic\\30x30_RektHex_L2_LS.dat";  // HS: r=1.1 L=2
 
 constexpr char fis_solutiiMHL[500] = "E:\\Stoleriu\\C\\special\\3d\\res\\2021\\Elastic\\30x30_RektHex_Sol_MHL";
 constexpr char fis_volumeMHL[500] = "E:\\Stoleriu\\C\\special\\3d\\res\\2021\\Elastic\\30x30_RektHex_Sol_MHL.dat";
@@ -79,6 +83,8 @@ int Dopri5(double x, double xend, double eps, double hmax, double has, double *s
 int main()
 {
 	FILE *fvol;
+	fvol = fopen(fis_volumeMHL, "w");
+	fclose(fvol);
 	int i, j;
 
 	initializare();
@@ -150,13 +156,10 @@ int main()
 
 	timp = t_init;
 
-
 	for (i = 0; i < n_part; i++)
 	{
 		T[i] = T_LIM_DWN;
 	}
-
-
 
 	for (i = 0; i < n_part; i++) //Conditii initiale
 	{
@@ -167,56 +170,58 @@ int main()
 		//Medium[i].raza = 1.1 * radius;
 	}
 
-	diference = radius;
-	j = 0;
-
 	std::random_device rd;
 	std::mt19937_64 gen(rd());
 	std::uniform_real_distribution<double> rand_dis(0.0, 1.0);  // use with rand_dis(gen)
 
-	int contor_sols = 0;
+	int contor_pasi_la_o_temperatura = 0;
 
-	while ((contor_sols < 10000) && (n_H > 0.025 * n_part))
+	for (int temperature_step = 0; temperature_step < n_steps; temperature_step++)
 	{
-		contor_sols++;
-		printf("TIME STEP %d ,   ", contor_sols);
-
-		Dopri5(timp, timp + step_t, eps, step_t, step_t / 4.0, &sol[0]);
-
-		for (i = 0; i < n_part; i++)
+		for (int i = 0; i < n_part; i++)
 		{
-			Medium[i].x = sol[4 * i + 0];
-			Medium[i].y = sol[4 * i + 2];
+			T[i] = T_LIM_DWN + delta_T * temperature_step;
 		}
-		timp += step_t;
 
-		Temperaturi();
-
-		for (i = 0; i < n_part; i++)
+		contor_pasi_la_o_temperatura = 0;
+		while ((contor_pasi_la_o_temperatura < 100) && (n_L > 0.025 * n_part))
 		{
-			if ((Medium[i].raza > 1.05 * radius) && (probabilitateHL[i] > rand_dis(gen)))
+			contor_pasi_la_o_temperatura++;
+
+			Dopri5(timp, timp + step_t, eps, step_t, step_t / 4.0, &sol[0]);
+
+			for (int i = 0; i < n_part; i++)
 			{
-				Medium[i].raza = 1.0;
-				n_H--;
+				Medium[i].x = sol[4 * i + 0];
+				Medium[i].y = sol[4 * i + 2];
 			}
-			else
+			timp += step_t;
+
+			Temperaturi();
+
+			for (int i = 0; i < n_part; i++)
 			{
-				if ((Medium[i].raza < 1.05 * radius) && (probabilitateLH[i] > rand_dis(gen)))
+				if ((Medium[i].raza > 1.05 * radius) && (probabilitateHL[i] > rand_dis(gen)))
 				{
-					Medium[i].raza = 1.1;
-					n_H++;
+					Medium[i].raza = 1.0;
+					n_H--;
+				}
+				else
+				{
+					if ((Medium[i].raza < 1.05 * radius) && (probabilitateLH[i] > rand_dis(gen)))
+					{
+						Medium[i].raza = 1.1;
+						n_H++;
+					}
 				}
 			}
 		}
 
-		printf("S  T  E  P :   %6.0f ,   HS: %d  \n", timp, n_H);
+		printf("Timp %lf \t\t Temp %lf \t\t HS %d \n", timp, T[0], n_H);
+		n_L_vechi = n_L;
 
-		if (fabs((double)(n_L - n_L_vechi)) > n_part / 100)
+		if (fabs((double)(n_L - n_L_vechi)) > ((double)n_part / 100))
 		{
-			printf("Timp %lf \t\t Temp %lf \t\t HS %d \n", timp, T[0], n_H);
-			n_L_vechi = n_L;
-
-
 #ifdef grafic
 			{
 				int p, i, j, v1, v2;
@@ -313,15 +318,197 @@ int main()
 			}
 
 #endif
-
-			fvol = fopen(fis_volumeMHL, "a");
-			// ************************* SALVARI VOL********************************
-			fprintf(fvol, "%lf  %d\n", timp, n_H);
-			// ************************ END SALVARI *****************************
-			fclose(fvol);
 		}
 
+		fvol = fopen(fis_volumeMHL, "a");
+		// ************************* SALVARI VOL********************************
+		fprintf(fvol, "%lf   %lf   %lf\n", timp, T[0], (double)n_H/n_part);
+		// ************************ END SALVARI *****************************
+		fclose(fvol);
+
 	}
+
+
+//////////////////////////////////////////////////////////////////////////
+// MHL - TO - DOWN
+//////////////////////////////////////////////////////////////////////////
+
+	n_H = n_part;
+	n_L = 0;
+	n_L_vechi = 0;
+
+	//timp = t_init;
+
+	for (i = 0; i < n_part; i++)
+	{
+		T[i] = T_LIM_UP;
+	}
+
+	for (i = 0; i < n_part; i++) //Conditii initiale
+	{
+		sol[4 * i + 0] = Medium[i].x;
+		sol[4 * i + 1] = 0.0;
+		sol[4 * i + 2] = Medium[i].y;
+		sol[4 * i + 3] = 0.0;
+		//Medium[i].raza = 1.1 * radius;
+	}
+
+	for (int temperature_step = 0; temperature_step < n_steps; temperature_step++)
+	{
+		for (int i = 0; i < n_part; i++)
+		{
+			T[i] = T_LIM_UP - delta_T * temperature_step;
+		}
+
+		contor_pasi_la_o_temperatura = 0;
+		while ((contor_pasi_la_o_temperatura < 100) && (n_H > 0.025 * n_part))
+		{
+			contor_pasi_la_o_temperatura++;
+
+			Dopri5(timp, timp + step_t, eps, step_t, step_t / 4.0, &sol[0]);
+
+			for (int i = 0; i < n_part; i++)
+			{
+				Medium[i].x = sol[4 * i + 0];
+				Medium[i].y = sol[4 * i + 2];
+			}
+			timp += step_t;
+
+			Temperaturi();
+
+			for (int i = 0; i < n_part; i++)
+			{
+				if ((Medium[i].raza > 1.05 * radius) && (probabilitateHL[i] > rand_dis(gen)))
+				{
+					Medium[i].raza = 1.0;
+					n_H--;
+				}
+				else
+				{
+					if ((Medium[i].raza < 1.05 * radius) && (probabilitateLH[i] > rand_dis(gen)))
+					{
+						Medium[i].raza = 1.1;
+						n_H++;
+					}
+				}
+			}
+		}
+
+		printf("Timp %lf \t\t Temp %lf \t\t HS %d \n", timp, T[0], n_H);
+		n_L_vechi = n_L;
+
+		if (fabs((double)(n_L - n_L_vechi)) > ((double)n_part / 100))
+		{
+#ifdef grafic
+			{
+				int p, i, j, v1, v2;
+				int count = 0;
+				int *count_switched;
+				double d1;
+
+				count_switched = (int *)calloc(n_part, sizeof(int));
+
+				for (p = 0; p < n_part; p++)
+				{
+					count_switched[p] = 0;
+
+					for (i = 0; i < neighbours[p]; i++)
+					{
+						if (Medium[Position_Coef[p][i].vecin].raza > 1.05)
+						{
+							count_switched[p]++;
+						}
+					}
+
+					for (i = 0; i < neighbours[p] - 1; i++)
+					{
+						for (j = i + 1; j < neighbours[p]; j++)
+						{
+							v1 = Position_Coef[p][i].vecin;
+							v2 = Position_Coef[p][j].vecin;
+
+							d1 = sqrt((Medium[v1].x - Medium[v2].x) * (Medium[v1].x - Medium[v2].x) + (Medium[v1].y - Medium[v2].y) * (Medium[v1].y - Medium[v2].y) + (Medium[v1].z - Medium[v2].z) * (Medium[v1].z - Medium[v2].z));
+
+							if ((d1 < 5.0)) //ca sa nu luam doi vecini ambii de pe Ox sau ambii de pe Oy
+							{
+								count++;
+							}
+						}
+					}
+				}
+
+
+				char fis_save_vis[500];
+				sprintf(fis_save_vis, "%s_ucd_%06d.inp", file, (int)timp);
+
+				FILE *fpout;
+				fpout = fopen(fis_save_vis, "w");
+
+				fprintf(fpout, "%d %d 1 0 0\n", n_part, count);
+				printf("SAVING UCD %d %d\n", n_part, count);
+
+				for (i = 0; i < n_part; i++)
+				{
+					fprintf(fpout, "%d %f %f %f\n", i + 1, Medium[i].x, Medium[i].y, Medium[i].z);
+				}
+
+				count = 0;
+				for (p = 0; p < n_part; p++)
+				{
+					for (i = 0; i < neighbours[p] - 1; i++)
+					{
+						for (j = i + 1; j < neighbours[p]; j++)
+						{
+							v1 = Position_Coef[p][i].vecin;
+							v2 = Position_Coef[p][j].vecin;
+
+							d1 = sqrt((Medium[v1].x - Medium[v2].x) * (Medium[v1].x - Medium[v2].x) + (Medium[v1].y - Medium[v2].y) * (Medium[v1].y - Medium[v2].y) + (Medium[v1].z - Medium[v2].z) * (Medium[v1].z - Medium[v2].z));
+
+							if ((d1 < 5.0))  //ca sa nu luam doi vecini ambii de pe Ox sau ambii de pe Oy
+							{
+								count++;
+								fprintf(fpout, "%d 1 tri  %d  %d  %d \n", count, p + 1, v1 + 1, v2 + 1);
+							}
+
+						}
+					}
+				}
+
+				fprintf(fpout, "5 1 1 1 1 1\n");
+				fprintf(fpout, "raza, nm\n");
+				fprintf(fpout, "phase, au\n");
+				fprintf(fpout, "PLH, au\n");
+				fprintf(fpout, "PHL, au\n");
+				fprintf(fpout, "pressure, au\n");
+
+				for (i = 0; i < n_part; i++)
+				{
+					fprintf(fpout, "%d %lf %lf %f %f %f\n", i + 1, Medium[i].raza, Medium[i].k,
+						((probabilitateLH[i] < 1.0) ? (probabilitateLH[i]) : (1.0)),
+						((probabilitateHL[i] < 1.0) ? (probabilitateHL[i]) : (1.0)),
+						pres[i]);
+				}
+
+				fclose(fpout);
+
+				free(count_switched);
+			}
+
+#endif
+		}
+
+		fvol = fopen(fis_volumeMHL, "a");
+		// ************************* SALVARI VOL********************************
+		fprintf(fvol, "%lf   %lf   %lf\n", timp, T[0], (double)n_H / n_part);
+		// ************************ END SALVARI *****************************
+		fclose(fvol);
+		//}
+	}
+
+
+
+
+
 
 	printf("\n\n D  O  N  E : \n");
 
