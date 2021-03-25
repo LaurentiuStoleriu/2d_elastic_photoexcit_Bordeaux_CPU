@@ -16,7 +16,7 @@ using namespace alglib;
 using namespace std;
 
 #define grafic 1
-//#undef grafic
+#undef grafic
 
 #define MHL 1
 //#undef MHL
