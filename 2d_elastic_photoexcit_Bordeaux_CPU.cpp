@@ -16,13 +16,13 @@ using namespace alglib;
 using namespace std;
 
 #define grafic 1
-#undef grafic
+//#undef grafic
 
 #define MHL 1
-#undef MHL
+//#undef MHL
 
 #define PHOTO
-//#undef PHOTO
+#undef PHOTO
 
 constexpr auto n_lat = 30;
 constexpr auto n_part = 3540;
@@ -37,13 +37,13 @@ constexpr auto rmare = 1.1 * radius; // 0.22;
 constexpr auto m = 1.0;
 constexpr auto Kf_mic_mic = 5.0;
 constexpr auto Kf_poly = 1.0;
-constexpr auto mu = 1.0;
+constexpr auto mu = 0.01;
 
 constexpr auto n_steps = 301;
 constexpr auto T_LIM_DWN = 50.0;
 constexpr auto T_LIM_UP = 350.0;
 constexpr auto delta_T = (T_LIM_UP - T_LIM_DWN) / (n_steps - 1);
-constexpr auto T_EXCITATION = 235.0;
+constexpr auto T_EXCITATION = 275.0;
 
 constexpr auto H = 1100.0;		//1100;
 constexpr auto S = 5.5;			//7;
@@ -72,9 +72,9 @@ constexpr char fis_particule[500] = "E:\\Stoleriu\\C\\special\\3d\\generare\\202
 
 constexpr char fis_solutiiMHL[500] = "E:\\Stoleriu\\C\\special\\3d\\res\\2021\\Elastic\\30x30_RektHex_Sol_MHL";
 constexpr char fis_volumeMHL[500] = "E:\\Stoleriu\\C\\special\\3d\\res\\2021\\Elastic\\30x30_RektHex_Sol_MHL.dat";
-constexpr char fis_volumePHOTO[500] = "E:\\Stoleriu\\C\\special\\3d\\res\\2021\\Elastic\\30x30_RektHex_Sol_PHOTO235.dat";
+constexpr char fis_volumePHOTO[500] = "E:\\Stoleriu\\C\\special\\3d\\res\\2021\\Elastic\\30x30_RektHex_Sol_PHOTO275.dat";
 
-char file[200] = "E:\\Stoleriu\\C\\special\\3d\\res\\2021\\Elastic\\30x30_RektHex_MHLViz";
+char file[200] = "E:\\Stoleriu\\C\\special\\3d\\res\\2021\\Elastic\\30x30_RektHex_PHOTOViz";
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -540,7 +540,16 @@ int main()
 
 	for (i = 0; i < n_part; i++)
 	{
-		T[i] = T_EXCITATION;
+		if (rand_dis(gen) < 0.9)
+		{
+			T[i] = T_EXCITATION;
+			//Medium[i].raza = rmare;
+		}
+		else
+		{
+			T[i] = T_LIM_DWN;
+			//Medium[i].raza = rmic;
+		}
 	}
 
 	for (i = 0; i < n_part; i++) //Conditii initiale
@@ -687,7 +696,7 @@ int main()
 #endif
 	
 	if(!(contor_pasi%100))
-		printf("Timp %lf \t\t Temp %lf \t\t HS %d \t\t Surf  %lf \n", timp, T[0], n_H, arie);
+		printf("Timp %5.2lf \t Temp %5.2lf \t HS %d \t Surf  %6.4lf \n", timp, T[0], n_H, arie);
 
 	// ************************* SALVARI VOL********************************
 	fprintf(fvol, "%lf   %lf   %lf   %lf\n", timp, T[0], (double)n_H / n_part, arie);
