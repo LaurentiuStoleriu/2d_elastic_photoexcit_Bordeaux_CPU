@@ -19,10 +19,10 @@ using namespace std;
 #undef grafic
 
 #define MHL 1
-//#undef MHL
+#undef MHL
 
 #define PHOTO
-#undef PHOTO
+//#undef PHOTO
 
 constexpr auto n_lat = 30;
 constexpr auto n_part = 3540;
@@ -37,13 +37,13 @@ constexpr auto rmare = 1.1 * radius; // 0.22;
 constexpr auto m = 1.0;
 constexpr auto Kf_mic_mic = 5.0;
 constexpr auto Kf_poly = 1.0;
-constexpr auto mu = 0.01;
+constexpr auto mu = 0.05;
 
 constexpr auto n_steps = 301;
 constexpr auto T_LIM_DWN = 50.0;
 constexpr auto T_LIM_UP = 350.0;
 constexpr auto delta_T = (T_LIM_UP - T_LIM_DWN) / (n_steps - 1);
-constexpr auto T_EXCITATION = 275.0;
+constexpr auto T_EXCITATION = 335.0;
 
 constexpr auto H = 1100.0;		//1100;
 constexpr auto S = 5.5;			//7;
@@ -72,7 +72,7 @@ constexpr char fis_particule[500] = "E:\\Stoleriu\\C\\special\\3d\\generare\\202
 
 constexpr char fis_solutiiMHL[500] = "E:\\Stoleriu\\C\\special\\3d\\res\\2021\\Elastic\\30x30_RektHex_Sol_MHL";
 constexpr char fis_volumeMHL[500] = "E:\\Stoleriu\\C\\special\\3d\\res\\2021\\Elastic\\30x30_RektHex_Sol_MHL.dat";
-constexpr char fis_volumePHOTO[500] = "E:\\Stoleriu\\C\\special\\3d\\res\\2021\\Elastic\\30x30_RektHex_Sol_PHOTO275.dat";
+constexpr char fis_volumePHOTO[500] = "E:\\Stoleriu\\C\\special\\3d\\res\\2021\\Elastic\\30x30_RektHex_Sol_PHOTO335_mu0.05.dat";
 
 char file[200] = "E:\\Stoleriu\\C\\special\\3d\\res\\2021\\Elastic\\30x30_RektHex_PHOTOViz";
 
@@ -106,7 +106,7 @@ int main()
 
 	double timp;
 	double t_init = 0.0;
-	double step_t = 1.0;
+	double step_t = 0.1;
 	double eps = 1.0e-5;
 	double diference;
 	double arie_ini = 0.0;
@@ -564,7 +564,7 @@ int main()
 
 	int contor_pasi = 0;
 
-	while ((contor_pasi < 1000))
+	while ((contor_pasi < 5000))
 	{
 		contor_pasi++;
 
