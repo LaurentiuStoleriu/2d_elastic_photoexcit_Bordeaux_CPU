@@ -37,13 +37,14 @@ constexpr auto rmare = 1.1 * radius; // 0.22;
 constexpr auto m = 1.0;
 constexpr auto Kf_mic_mic = 5.0;
 constexpr auto Kf_poly = 1.0;
-constexpr auto mu = 0.1;
+constexpr auto mu = 0.02;
 
 constexpr auto n_steps = 301;
 constexpr auto T_LIM_DWN = 50.0;
 constexpr auto T_LIM_UP = 350.0;
 constexpr auto delta_T = (T_LIM_UP - T_LIM_DWN) / (n_steps - 1);
 constexpr auto T_EXCITATION = 335.0;
+constexpr auto N_MAX_STEPS = 10000;
 
 constexpr auto H = 1100.0;		//1100;
 constexpr auto S = 5.5;			//7;
@@ -51,7 +52,7 @@ constexpr auto E = 400.0;		//200;
 constexpr auto ka = 2000.0;		//700;
 constexpr auto tau = 100.0;		//50;
 
-constexpr auto CoefTerm = 0.001; //% din diferenta de temperaturi ce se schimba per pas
+constexpr auto CoefTerm = 0.005; //% din diferenta de temperaturi ce se schimba per pas
 
 typedef struct 
 {
@@ -567,7 +568,7 @@ int main()
 
 	int contor_pasi = 0;
 
-	while ((contor_pasi < 5000))
+	while ((contor_pasi < N_MAX_STEPS))
 	{
 		contor_pasi++;
 
@@ -602,7 +603,7 @@ int main()
 
 		arie = Suprafata(false);
 	
-		if (!(contor_pasi % 100))
+		if (   (   (contor_pasi <= 1000) && !(contor_pasi % 25)   )         ||         (  (contor_pasi > 1000) && !(contor_pasi % 100)  )  )
 		{
 #ifdef grafic
 			{
