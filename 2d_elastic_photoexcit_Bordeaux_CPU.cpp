@@ -16,7 +16,7 @@ using namespace alglib;
 using namespace std;
 
 #define grafic 1
-#undef grafic
+//#undef grafic
 
 #define MHL 1
 #undef MHL
@@ -37,7 +37,7 @@ constexpr auto rmare = 1.1 * radius; // 0.22;
 constexpr auto m = 1.0;
 constexpr auto Kf_mic_mic = 5.0;
 constexpr auto Kf_poly = 1.0;
-constexpr auto mu = 0.05;
+constexpr auto mu = 0.1;
 
 constexpr auto n_steps = 301;
 constexpr auto T_LIM_DWN = 50.0;
@@ -50,6 +50,8 @@ constexpr auto S = 5.5;			//7;
 constexpr auto E = 400.0;		//200;
 constexpr auto ka = 2000.0;		//700;
 constexpr auto tau = 100.0;		//50;
+
+constexpr auto CoefTerm = 0.001; //% din diferenta de temperaturi ce se schimba per pas
 
 typedef struct 
 {
@@ -72,7 +74,7 @@ constexpr char fis_particule[500] = "E:\\Stoleriu\\C\\special\\3d\\generare\\202
 
 constexpr char fis_solutiiMHL[500] = "E:\\Stoleriu\\C\\special\\3d\\res\\2021\\Elastic\\30x30_RektHex_Sol_MHL";
 constexpr char fis_volumeMHL[500] = "E:\\Stoleriu\\C\\special\\3d\\res\\2021\\Elastic\\30x30_RektHex_Sol_MHL.dat";
-constexpr char fis_volumePHOTO[500] = "E:\\Stoleriu\\C\\special\\3d\\res\\2021\\Elastic\\30x30_RektHex_Sol_PHOTO335_mu0.05.dat";
+constexpr char fis_volumePHOTO[500] = "E:\\Stoleriu\\C\\special\\3d\\res\\2021\\Elastic\\30x30_RektHex_Sol_PHOTO335_mu0.1_CoefT0.01.dat";
 
 char file[200] = "E:\\Stoleriu\\C\\special\\3d\\res\\2021\\Elastic\\30x30_RektHex_PHOTOViz";
 
@@ -82,6 +84,7 @@ char file[200] = "E:\\Stoleriu\\C\\special\\3d\\res\\2021\\Elastic\\30x30_RektHe
 
 int initializare(void);
 void alglib_function_neighbours(void);
+int TemperaturiExchange(void);
 int Temperaturi(void);
 double Suprafata(bool save);
 int Funct_Dopri(double time, double *input, double *deriv);
@@ -540,7 +543,7 @@ int main()
 
 	for (i = 0; i < n_part; i++)
 	{
-		if (rand_dis(gen) < 0.9)
+		if (rand_dis(gen) < 0.75)
 		{
 			T[i] = T_EXCITATION;
 			//Medium[i].raza = rmare;
@@ -577,6 +580,7 @@ int main()
 		}
 		timp += step_t;
 
+		TemperaturiExchange();
 		Temperaturi();
 
 		for (int i = 0; i < n_part; i++)
@@ -597,106 +601,111 @@ int main()
 		}
 
 		arie = Suprafata(false);
-
-#ifdef grafic
+	
+		if (!(contor_pasi % 100))
 		{
-			int p, i, j, v1, v2;
-			int count = 0;
-			int *count_switched;
-			double d1;
-
-			count_switched = (int *)calloc(n_part, sizeof(int));
-
-			for (p = 0; p < n_part; p++)
+#ifdef grafic
 			{
-				count_switched[p] = 0;
+				int p, i, j, v1, v2;
+				int count = 0;
+				int *count_switched;
+				double d1;
 
-				for (i = 0; i < neighbours[p]; i++)
+				count_switched = (int *)calloc(n_part, sizeof(int));
+
+				for (p = 0; p < n_part; p++)
 				{
-					if (Medium[Position_Coef[p][i].vecin].raza > 1.05)
+					count_switched[p] = 0;
+
+					for (i = 0; i < neighbours[p]; i++)
 					{
-						count_switched[p]++;
-					}
-				}
-
-				for (i = 0; i < neighbours[p] - 1; i++)
-				{
-					for (j = i + 1; j < neighbours[p]; j++)
-					{
-						v1 = Position_Coef[p][i].vecin;
-						v2 = Position_Coef[p][j].vecin;
-
-						d1 = sqrt((Medium[v1].x - Medium[v2].x) * (Medium[v1].x - Medium[v2].x) + (Medium[v1].y - Medium[v2].y) * (Medium[v1].y - Medium[v2].y) + (Medium[v1].z - Medium[v2].z) * (Medium[v1].z - Medium[v2].z));
-
-						if ((d1 < 5.0)) //ca sa nu luam doi vecini ambii de pe Ox sau ambii de pe Oy
+						if (Medium[Position_Coef[p][i].vecin].raza > 1.05)
 						{
-							count++;
+							count_switched[p]++;
+						}
+					}
+
+					for (i = 0; i < neighbours[p] - 1; i++)
+					{
+						for (j = i + 1; j < neighbours[p]; j++)
+						{
+							v1 = Position_Coef[p][i].vecin;
+							v2 = Position_Coef[p][j].vecin;
+
+							d1 = sqrt((Medium[v1].x - Medium[v2].x) * (Medium[v1].x - Medium[v2].x) + (Medium[v1].y - Medium[v2].y) * (Medium[v1].y - Medium[v2].y) + (Medium[v1].z - Medium[v2].z) * (Medium[v1].z - Medium[v2].z));
+
+							if ((d1 < 5.0)) //ca sa nu luam doi vecini ambii de pe Ox sau ambii de pe Oy
+							{
+								count++;
+							}
 						}
 					}
 				}
-			}
 
 
-			char fis_save_vis[500];
-			sprintf(fis_save_vis, "%s_ucd_%06d.inp", file, (int)timp);
+				char fis_save_vis[500];
+				sprintf(fis_save_vis, "%s_ucd_%06d.inp", file, (int)timp);
 
-			FILE *fpout;
-			fpout = fopen(fis_save_vis, "w");
+				FILE *fpout;
+				fpout = fopen(fis_save_vis, "w");
 
-			fprintf(fpout, "%d %d 1 0 0\n", n_part, count);
-			printf("SAVING UCD %d %d\n", n_part, count);
+				fprintf(fpout, "%d %d 1 0 0\n", n_part, count);
+				printf("SAVING UCD %d %d\n", n_part, count);
 
-			for (i = 0; i < n_part; i++)
-			{
-				fprintf(fpout, "%d %f %f %f\n", i + 1, Medium[i].x, Medium[i].y, Medium[i].z);
-			}
-
-			count = 0;
-			for (p = 0; p < n_part; p++)
-			{
-				for (i = 0; i < neighbours[p] - 1; i++)
+				for (i = 0; i < n_part; i++)
 				{
-					for (j = i + 1; j < neighbours[p]; j++)
+					fprintf(fpout, "%d %f %f %f\n", i + 1, Medium[i].x, Medium[i].y, Medium[i].z);
+				}
+
+				count = 0;
+				for (p = 0; p < n_part; p++)
+				{
+					for (i = 0; i < neighbours[p] - 1; i++)
 					{
-						v1 = Position_Coef[p][i].vecin;
-						v2 = Position_Coef[p][j].vecin;
-
-						d1 = sqrt((Medium[v1].x - Medium[v2].x) * (Medium[v1].x - Medium[v2].x) + (Medium[v1].y - Medium[v2].y) * (Medium[v1].y - Medium[v2].y) + (Medium[v1].z - Medium[v2].z) * (Medium[v1].z - Medium[v2].z));
-
-						if ((d1 < 5.0))  //ca sa nu luam doi vecini ambii de pe Ox sau ambii de pe Oy
+						for (j = i + 1; j < neighbours[p]; j++)
 						{
-							count++;
-							fprintf(fpout, "%d 1 tri  %d  %d  %d \n", count, p + 1, v1 + 1, v2 + 1);
-						}
+							v1 = Position_Coef[p][i].vecin;
+							v2 = Position_Coef[p][j].vecin;
 
+							d1 = sqrt((Medium[v1].x - Medium[v2].x) * (Medium[v1].x - Medium[v2].x) + (Medium[v1].y - Medium[v2].y) * (Medium[v1].y - Medium[v2].y) + (Medium[v1].z - Medium[v2].z) * (Medium[v1].z - Medium[v2].z));
+
+							if ((d1 < 5.0))  //ca sa nu luam doi vecini ambii de pe Ox sau ambii de pe Oy
+							{
+								count++;
+								fprintf(fpout, "%d 1 tri  %d  %d  %d \n", count, p + 1, v1 + 1, v2 + 1);
+							}
+
+						}
 					}
 				}
+
+				fprintf(fpout, "6 1 1 1 1 1 1\n");
+				fprintf(fpout, "raza, nm\n");
+				fprintf(fpout, "phase, au\n");
+				fprintf(fpout, "PLH, au\n");
+				fprintf(fpout, "PHL, au\n");
+				fprintf(fpout, "Temperature, K\n");
+				fprintf(fpout, "pressure, au\n");
+
+				for (i = 0; i < n_part; i++)
+				{
+					fprintf(fpout, "%d %lf %lf %lf %lf %lf %lf\n", i + 1, Medium[i].raza, Medium[i].k,
+						((probabilitateLH[i] < 1.0) ? (probabilitateLH[i]) : (1.0)),
+						((probabilitateHL[i] < 1.0) ? (probabilitateHL[i]) : (1.0)),
+						T[i],
+						pres[i]);
+				}
+
+				fclose(fpout);
+
+				free(count_switched);
 			}
-
-			fprintf(fpout, "5 1 1 1 1 1\n");
-			fprintf(fpout, "raza, nm\n");
-			fprintf(fpout, "phase, au\n");
-			fprintf(fpout, "PLH, au\n");
-			fprintf(fpout, "PHL, au\n");
-			fprintf(fpout, "pressure, au\n");
-
-			for (i = 0; i < n_part; i++)
-			{
-				fprintf(fpout, "%d %lf %lf %f %f %f\n", i + 1, Medium[i].raza, Medium[i].k,
-					((probabilitateLH[i] < 1.0) ? (probabilitateLH[i]) : (1.0)),
-					((probabilitateHL[i] < 1.0) ? (probabilitateHL[i]) : (1.0)),
-					pres[i]);
-			}
-
-			fclose(fpout);
-
-			free(count_switched);
-		}
 
 #endif
-	
-	if(!(contor_pasi%100))
-		printf("Timp %5.2lf \t Temp %5.2lf \t HS %d \t Surf  %6.4lf \n", timp, T[0], n_H, arie);
+
+
+			printf("Timp %5.2lf \t Temp %5.2lf \t HS %d \t Surf  %6.4lf \n", timp, T[0], n_H, arie);
+		}
 
 	// ************************* SALVARI VOL********************************
 	fprintf(fvol, "%lf   %lf   %lf   %lf\n", timp, T[0], (double)n_H / n_part, arie);
@@ -840,6 +849,33 @@ void alglib_function_neighbours(void)
 }
 
 //*************************************************************************
+
+int TemperaturiExchange(void)
+{
+	int j, v;
+	double Q;
+	for (int i = 0; i < n_part; i++)
+	{
+		if (neighbours[i] < 4)
+		{
+			//T[i] -= (T[i] - T_LIM_DWN) * CoefTerm; 
+			T[i] = T_LIM_DWN;
+		}
+		else
+		{
+			for (j = 0; j < neighbours[i]; j++)
+			{
+				v = Position_Coef[i][j].vecin;
+				Q = (T[i] - T[v]) * CoefTerm;
+				T[i] -= Q;
+				T[v] += Q;
+			}
+		}
+	}
+	return(0);
+}
+
+//**************************************************************************
 
 int Temperaturi(void)
 {
