@@ -37,14 +37,14 @@ constexpr auto rmare = 1.1 * radius; // 0.22;
 constexpr auto m = 1.0;
 constexpr auto Kf_mic_mic = 5.0;
 constexpr auto Kf_poly = 1.0;
-constexpr auto mu = 0.02;
+constexpr auto mu = 0.04;
 
 constexpr auto n_steps = 301;
 constexpr auto T_LIM_DWN = 50.0;
 constexpr auto T_LIM_UP = 350.0;
 constexpr auto delta_T = (T_LIM_UP - T_LIM_DWN) / (n_steps - 1);
 constexpr auto T_EXCITATION = 335.0;
-constexpr auto N_MAX_STEPS = 10000;
+constexpr auto N_MAX_STEPS = 100000;
 
 constexpr auto H = 1100.0;		//1100;
 constexpr auto S = 5.5;			//7;
@@ -52,7 +52,7 @@ constexpr auto E = 400.0;		//200;
 constexpr auto ka = 2000.0;		//700;
 constexpr auto tau = 100.0;		//50;
 
-constexpr auto CoefTerm = 0.005; //% din diferenta de temperaturi ce se schimba per pas
+constexpr auto CoefTerm = 0.001; //% din diferenta de temperaturi ce se schimba per pas
 
 typedef struct 
 {
@@ -75,7 +75,7 @@ constexpr char fis_particule[500] = "E:\\Stoleriu\\C\\special\\3d\\generare\\202
 
 constexpr char fis_solutiiMHL[500] = "E:\\Stoleriu\\C\\special\\3d\\res\\2021\\Elastic\\30x30_RektHex_Sol_MHL";
 constexpr char fis_volumeMHL[500] = "E:\\Stoleriu\\C\\special\\3d\\res\\2021\\Elastic\\30x30_RektHex_Sol_MHL.dat";
-constexpr char fis_volumePHOTO[500] = "E:\\Stoleriu\\C\\special\\3d\\res\\2021\\Elastic\\30x30_RektHex_Sol_PHOTO335_mu0.1_CoefT0.01.dat";
+constexpr char fis_volumePHOTO[500] = "E:\\Stoleriu\\C\\special\\3d\\res\\2021\\Elastic\\30x30_RektHex_Sol_PHOTO335_mu0.04_CoefT0.001_Excit0.60.dat";
 
 char file[200] = "E:\\Stoleriu\\C\\special\\3d\\res\\2021\\Elastic\\30x30_RektHex_PHOTOViz";
 
@@ -544,7 +544,7 @@ int main()
 
 	for (i = 0; i < n_part; i++)
 	{
-		if (rand_dis(gen) < 0.75)
+		if (rand_dis(gen) < 0.60)
 		{
 			T[i] = T_EXCITATION;
 			//Medium[i].raza = rmare;
@@ -857,7 +857,7 @@ int TemperaturiExchange(void)
 	double Q;
 	for (int i = 0; i < n_part; i++)
 	{
-		if (neighbours[i] < 4)
+		if (neighbours[i] < 5)
 		{
 			//T[i] -= (T[i] - T_LIM_DWN) * CoefTerm; 
 			T[i] = T_LIM_DWN;
