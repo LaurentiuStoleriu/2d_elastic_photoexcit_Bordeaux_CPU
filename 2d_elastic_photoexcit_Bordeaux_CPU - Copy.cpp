@@ -542,17 +542,46 @@ int main()
 
 	timp = t_init;
 
-	for (i = 0; i < n_part; i++)
+	T[3160] = T_EXCITATION;
+	//T[2455] = T_EXCITATION;
+	T[2661] = T_EXCITATION;
+	T[1100] = T_EXCITATION;
+	//T[1258] = T_EXCITATION;
+	T[2559] = T_EXCITATION;
+	T[1703] = T_EXCITATION;
+	T[189] = T_EXCITATION;
+	T[115] = T_EXCITATION;
+	//T[89] = T_EXCITATION;
+
+	bool DA = false;
+
+	for (int dati = 0; dati < 3; dati++)
 	{
-		if (rand_dis(gen) < 0.60)
+		for (i = 0; i < n_part; i++)
 		{
-			T[i] = T_EXCITATION;
-			//Medium[i].raza = rmare;
-		}
-		else
-		{
-			T[i] = T_LIM_DWN;
-			//Medium[i].raza = rmic;
+			if ( ((rand_dis(gen) < 0.30) && (T[i] < 150.0)) )
+			{
+				DA = false;
+				for (j = 0; j < neighbours[i]; j++)
+				{
+					if (T[Position_Coef[i][j].vecin] > 150.0)
+					{
+						DA = true;
+						break;
+					}
+				}
+				if (DA)
+					T[i] = T_EXCITATION;
+				else
+					T[i] = T_LIM_DWN;
+				//Medium[i].raza = rmare;
+			}
+			else
+			{
+				if (T[i] < 150.0)
+					T[i] = T_LIM_DWN;
+				//Medium[i].raza = rmic;
+			}
 		}
 	}
 

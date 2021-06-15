@@ -40,7 +40,7 @@ constexpr auto Kf_poly = 1.0;
 constexpr auto mu = 0.04;
 
 constexpr auto n_steps = 301;
-constexpr auto T_LIM_DWN = 50.0;
+constexpr auto T_LIM_DWN = 100.0;
 constexpr auto T_LIM_UP = 350.0;
 constexpr auto delta_T = (T_LIM_UP - T_LIM_DWN) / (n_steps - 1);
 constexpr auto T_EXCITATION = 335.0;
@@ -52,7 +52,8 @@ constexpr auto E = 400.0;		//200;
 constexpr auto ka = 2000.0;		//700;
 constexpr auto tau = 100.0;		//50;
 
-constexpr auto CoefTerm = 0.001; //% din diferenta de temperaturi ce se schimba per pas
+constexpr auto CoefTerm = 0.01; //% din diferenta de temperaturi ce se schimba per pas
+constexpr auto CoefTermExt = 0.01;
 
 typedef struct 
 {
@@ -75,7 +76,7 @@ constexpr char fis_particule[500] = "E:\\Stoleriu\\C\\special\\3d\\generare\\202
 
 constexpr char fis_solutiiMHL[500] = "E:\\Stoleriu\\C\\special\\3d\\res\\2021\\Elastic\\30x30_RektHex_Sol_MHL";
 constexpr char fis_volumeMHL[500] = "E:\\Stoleriu\\C\\special\\3d\\res\\2021\\Elastic\\30x30_RektHex_Sol_MHL.dat";
-constexpr char fis_volumePHOTO[500] = "E:\\Stoleriu\\C\\special\\3d\\res\\2021\\Elastic\\30x30_RektHex_Sol_PHOTO335_mu0.04_CoefT0.001_Excit0.60.dat";
+constexpr char fis_volumePHOTO[500] = "E:\\Stoleriu\\C\\special\\3d\\res\\2021\\Elastic\\30x30_RektHex_Sol_PHOTO335_mu0.04_CoefT0.01_Excit335.dat";
 
 char file[200] = "E:\\Stoleriu\\C\\special\\3d\\res\\2021\\Elastic\\30x30_RektHex_PHOTOViz";
 
@@ -542,18 +543,19 @@ int main()
 
 	timp = t_init;
 
+	// heating by substrate only
 	for (i = 0; i < n_part; i++)
 	{
-		if (rand_dis(gen) < 0.60)
-		{
-			T[i] = T_EXCITATION;
-			//Medium[i].raza = rmare;
-		}
-		else
-		{
+// 		if (rand_dis(gen) < 0.60)
+// 		{
+// 			T[i] = T_EXCITATION;
+// 			//Medium[i].raza = rmare;
+// 		}
+// 		else
+// 		{
 			T[i] = T_LIM_DWN;
 			//Medium[i].raza = rmic;
-		}
+// 		}
 	}
 
 	for (i = 0; i < n_part; i++) //Conditii initiale
@@ -565,7 +567,6 @@ int main()
 		//Medium[i].raza = 1.1 * radius;
 	}
 
-
 	int contor_pasi = 0;
 
 	while ((contor_pasi < N_MAX_STEPS))
@@ -576,8 +577,16 @@ int main()
 
 		for (int i = 0; i < n_part; i++)
 		{
-			Medium[i].x = sol[4 * i + 0];
-			Medium[i].y = sol[4 * i + 2];
+			if (i % 59)	// fara latura din stanga - NU update
+			{
+				Medium[i].x = sol[4 * i + 0];
+				Medium[i].y = sol[4 * i + 2];
+			}
+			//else
+			//{
+			//	sol[4 * i + 1] = 0.0;	//anulare viteze
+			//	sol[4 + i + 3] = 0.0;
+			//}
 		}
 		timp += step_t;
 
@@ -586,17 +595,20 @@ int main()
 
 		for (int i = 0; i < n_part; i++)
 		{
-			if ((Medium[i].raza > 1.05 * radius) && (probabilitateHL[i] > rand_dis(gen)))
+			if (i % 59)	// fara latura din stanga - NU update
 			{
-				Medium[i].raza = rmic;
-				n_H--; n_L++;
-			}
-			else
-			{
-				if ((Medium[i].raza < 1.05 * radius) && (probabilitateLH[i] > rand_dis(gen)))
+				if ((Medium[i].raza > 1.05 * radius) && (probabilitateHL[i] > rand_dis(gen)))
 				{
-					Medium[i].raza = rmare;
-					n_H++; n_L--;
+					Medium[i].raza = rmic;
+					n_H--; n_L++;
+				}
+				else
+				{
+					if ((Medium[i].raza < 1.05 * radius) && (probabilitateLH[i] > rand_dis(gen)))
+					{
+						Medium[i].raza = rmare;
+						n_H++; n_L--;
+					}
 				}
 			}
 		}
@@ -857,19 +869,26 @@ int TemperaturiExchange(void)
 	double Q;
 	for (int i = 0; i < n_part; i++)
 	{
-		if (neighbours[i] < 5)
+		if (!(i % 59))	// latura din stanga ia temp substrat
 		{
-			//T[i] -= (T[i] - T_LIM_DWN) * CoefTerm; 
-			T[i] = T_LIM_DWN;
+			T[i] += (T_EXCITATION-T[i]) * CoefTermExt;
 		}
 		else
 		{
-			for (j = 0; j < neighbours[i]; j++)
+			if (neighbours[i] < 5)
 			{
-				v = Position_Coef[i][j].vecin;
-				Q = (T[i] - T[v]) * CoefTerm;
-				T[i] -= Q;
-				T[v] += Q;
+				T[i] -= (T[i] - T_LIM_DWN) * CoefTermExt; 
+				//T[i] = T_LIM_DWN;
+			}
+			else
+			{
+				for (j = 0; j < neighbours[i]; j++)
+				{
+					v = Position_Coef[i][j].vecin;
+					Q = (T[i] - T[v]) * CoefTerm;
+					T[i] -= Q;
+					T[v] += Q;
+				}
 			}
 		}
 	}

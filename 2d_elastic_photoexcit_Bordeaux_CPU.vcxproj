@@ -151,7 +151,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="2d_elastic_photoexcit_Bordeaux_CPU.cpp" />
+    <ClCompile Include="2d_elastic_photoexcit_Bordeaux_CPU - Copy.cpp" />
     <ClCompile Include="alglibinternal.cpp" />
     <ClCompile Include="alglibmisc.cpp" />
     <ClCompile Include="ap.cpp" />
