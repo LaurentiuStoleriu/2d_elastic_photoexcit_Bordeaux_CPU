@@ -52,7 +52,7 @@ constexpr auto E = 400.0;		//200;
 constexpr auto ka = 2000.0;		//700;
 constexpr auto tau = 100.0;		//50;
 
-constexpr auto CoefTerm = 0.001; //% din diferenta de temperaturi ce se schimba per pas
+constexpr auto CoefTerm = 0.01; //% din diferenta de temperaturi ce se schimba per pas
 
 typedef struct 
 {
@@ -75,7 +75,7 @@ constexpr char fis_particule[500] = "E:\\Stoleriu\\C\\special\\3d\\generare\\202
 
 constexpr char fis_solutiiMHL[500] = "E:\\Stoleriu\\C\\special\\3d\\res\\2021\\Elastic\\30x30_RektHex_Sol_MHL";
 constexpr char fis_volumeMHL[500] = "E:\\Stoleriu\\C\\special\\3d\\res\\2021\\Elastic\\30x30_RektHex_Sol_MHL.dat";
-constexpr char fis_volumePHOTO[500] = "E:\\Stoleriu\\C\\special\\3d\\res\\2021\\Elastic\\30x30_RektHex_Sol_PHOTO335_mu0.04_CoefT0.001_Excit0.60.dat";
+constexpr char fis_volumePHOTO[500] = "E:\\Stoleriu\\C\\special\\3d\\res\\2021\\Elastic\\30x30_RektHex_Sol_PHOTO-Plate_T335.dat";
 
 char file[200] = "E:\\Stoleriu\\C\\special\\3d\\res\\2021\\Elastic\\30x30_RektHex_PHOTOViz";
 
@@ -118,13 +118,10 @@ int main()
 
 	timp = t_init;
 
-
 	for (i = 0; i < n_part; i++)
 	{
 		T[i] = T_LIM_DWN;
 	}
-
-
 
 	for (i = 0; i < n_part; i++) //Conditii initiale
 	{
@@ -542,48 +539,58 @@ int main()
 
 	timp = t_init;
 
-	T[3160] = T_EXCITATION;
-	//T[2455] = T_EXCITATION;
-	T[2661] = T_EXCITATION;
-	T[1100] = T_EXCITATION;
-	//T[1258] = T_EXCITATION;
-	T[2559] = T_EXCITATION;
-	T[1703] = T_EXCITATION;
-	T[189] = T_EXCITATION;
-	T[115] = T_EXCITATION;
-	//T[89] = T_EXCITATION;
 
-	bool DA = false;
 
-	for (int dati = 0; dati < 3; dati++)
+	///////////////////////// PLATE
+	for (i = 0; i < n_part; i++)
 	{
-		for (i = 0; i < n_part; i++)
+		if (!(i%59))
 		{
-			if ( ((rand_dis(gen) < 0.30) && (T[i] < 150.0)) )
-			{
-				DA = false;
-				for (j = 0; j < neighbours[i]; j++)
-				{
-					if (T[Position_Coef[i][j].vecin] > 150.0)
-					{
-						DA = true;
-						break;
-					}
-				}
-				if (DA)
-					T[i] = T_EXCITATION;
-				else
-					T[i] = T_LIM_DWN;
-				//Medium[i].raza = rmare;
-			}
-			else
-			{
-				if (T[i] < 150.0)
-					T[i] = T_LIM_DWN;
-				//Medium[i].raza = rmic;
-			}
+			T[i] = T_EXCITATION;
 		}
 	}
+
+	/////////////////////////SEEDS
+// 	T[3160] = T_EXCITATION;
+// 	//T[2455] = T_EXCITATION;
+// 	T[2661] = T_EXCITATION;
+// 	T[1100] = T_EXCITATION;
+// 	//T[1258] = T_EXCITATION;
+// 	T[2559] = T_EXCITATION;
+// 	T[1703] = T_EXCITATION;
+// 	T[189] = T_EXCITATION;
+// 	T[115] = T_EXCITATION;
+// 	//T[89] = T_EXCITATION;
+// 	bool DA = false;
+// 	for (int dati = 0; dati < 3; dati++)
+// 	{
+// 		for (i = 0; i < n_part; i++)
+// 		{
+// 			if ( ((rand_dis(gen) < 0.30) && (T[i] < 150.0)) )
+// 			{
+// 				DA = false;
+// 				for (j = 0; j < neighbours[i]; j++)
+// 				{
+// 					if (T[Position_Coef[i][j].vecin] > 150.0)
+// 					{
+// 						DA = true;
+// 						break;
+// 					}
+// 				}
+// 				if (DA)
+// 					T[i] = T_EXCITATION;
+// 				else
+// 					T[i] = T_LIM_DWN;
+// 				//Medium[i].raza = rmare;
+// 			}
+// 			else
+// 			{
+// 				if (T[i] < 150.0)
+// 					T[i] = T_LIM_DWN;
+// 				//Medium[i].raza = rmic;
+// 			}
+// 		}
+// 	}
 
 	for (i = 0; i < n_part; i++) //Conditii initiale
 	{
@@ -599,6 +606,16 @@ int main()
 
 	while ((contor_pasi < N_MAX_STEPS))
 	{
+		///////////////////////// PLATE
+		for (i = 0; i < n_part; i++)
+		{
+			if (!(i % 59))
+			{
+				T[i] = T_EXCITATION;
+			}
+		}
+		////////////////////////
+
 		contor_pasi++;
 
 		Dopri5(timp, timp + step_t, eps, step_t, step_t / 4.0, &sol[0]);
@@ -762,7 +779,7 @@ int initializare(void)
 	fp = fopen(fis_particule, "r");
 	for (i = 0; i < n_part; i++)
 	{
-		fscanf(fp, "%lG %lG %lG %lG %lG %lG \n", &Medium[i].x, &Medium[i].z, &Medium[i].y, &Medium[i].raza, &Medium[i].theta, &Medium[i].k);
+		fscanf(fp, "%lG %lG %lG %lG %lG %lG \n", &Medium[i].y, &Medium[i].z, &Medium[i].x, &Medium[i].raza, &Medium[i].theta, &Medium[i].k);
 	}
 	fclose(fp);
 
@@ -888,8 +905,8 @@ int TemperaturiExchange(void)
 	{
 		if (neighbours[i] < 5)
 		{
-			//T[i] -= (T[i] - T_LIM_DWN) * CoefTerm; 
-			T[i] = T_LIM_DWN;
+			T[i] -= (T[i] - T_LIM_DWN) * CoefTerm; 
+			//T[i] = T_LIM_DWN;
 		}
 		else
 		{
