@@ -24,9 +24,46 @@ using namespace std;
 #define PHOTO
 //#undef PHOTO
 
+// constexpr auto n_lat = 30;
+// constexpr auto n_part = 3540;
+// constexpr auto n_equ = 14160;
+// 
+// constexpr auto idxMidd = 1755;
+// constexpr auto idxMiddUp = 3525;
+// constexpr auto idxMiddDwn = 15;
+// constexpr auto idxMiddLft = 1711;
+// constexpr auto idxMiddRght = 1799;
+
+// constexpr auto n_lat = 30;
+// constexpr auto n_part = 7080;
+// constexpr auto n_equ = 28320;
+// 
+// constexpr auto idxMidd = 3525;
+// constexpr auto idxMiddUp = 7065;
+// constexpr auto idxMiddDwn = 15;
+// constexpr auto idxMiddLft = 3540;
+// constexpr auto idxMiddRght = 3569;
+
+// constexpr auto n_lat = 30;
+// constexpr auto n_part = 7140;
+// constexpr auto n_equ = 28560;
+// 
+// constexpr auto idxMidd = 3540;
+// constexpr auto idxMiddUp = 7110;
+// constexpr auto idxMiddDwn = 30;
+// constexpr auto idxMiddLft = 3570;
+// constexpr auto idxMiddRght = 3629;
+
 constexpr auto n_lat = 30;
-constexpr auto n_part = 3540;
-constexpr auto n_equ = 14160;
+constexpr auto n_part = 10740;
+constexpr auto n_equ = 42960;
+
+constexpr auto idxMidd = 5325;
+constexpr auto idxMiddUp = 10595;
+constexpr auto idxMiddDwn = 45;
+constexpr auto idxMiddLft = 5281;
+constexpr auto idxMiddRght = 5459;
+
 constexpr auto n_max_vec = 6;
 
 constexpr auto radius = 0.2;	// radius trebuie sa ramana 1, e doar ce la LS
@@ -37,13 +74,13 @@ constexpr auto rmare = 1.1 * radius; // 0.22;
 constexpr auto m = 1.0;
 constexpr auto Kf_mic_mic = 5.0;
 constexpr auto Kf_poly = 1.0;
-constexpr auto mu = 0.04;
+constexpr auto mu = 0.01;
 
 constexpr auto n_steps = 301;
 constexpr auto T_LIM_DWN = 100.0;
 constexpr auto T_LIM_UP = 350.0;
 constexpr auto delta_T = (T_LIM_UP - T_LIM_DWN) / (n_steps - 1);
-constexpr auto T_EXCITATION = 335.0;
+constexpr auto T_EXCITATION = 700.0;
 constexpr auto N_MAX_STEPS = 100000;
 
 constexpr auto H = 1100.0;		//1100;
@@ -72,13 +109,13 @@ double sol[n_equ], sol_old[n_equ];
 double T[n_part];
 double probabilitateHL[n_part], probabilitateLH[n_part], pres[n_part];
 
-constexpr char fis_particule[500] = "E:\\Stoleriu\\C\\special\\3d\\generare\\2021\\Elastic\\30x30_RektHex_L06_LS.dat";  // HS: r=1.1 L=2
+constexpr char fis_particule[500] = "E:\\Stoleriu\\C\\special\\3d\\generare\\2022\\Elastic\\90x30_RektHex_L06_LS.dat";  // HS: r=1.1 L=2
 
-constexpr char fis_solutiiMHL[500] = "E:\\Stoleriu\\C\\special\\3d\\res\\2021\\Elastic\\30x30_RektHex_Sol_MHL";
-constexpr char fis_volumeMHL[500] = "E:\\Stoleriu\\C\\special\\3d\\res\\2021\\Elastic\\30x30_RektHex_Sol_MHL.dat";
-constexpr char fis_volumePHOTO[500] = "E:\\Stoleriu\\C\\special\\3d\\res\\2021\\Elastic\\30x30_RektHex_Sol_PHOTO335_mu0.04_CoefT0.01_Excit335.dat";
+constexpr char fis_solutiiMHL[500] =  "E:\\Stoleriu\\C\\special\\3d\\res\\2022\\elastic\\Bordeaux\\90x30_t0.1_k5_mu0.01_25prc_700K\\90x30_RektHex_Sol_MHL";
+constexpr char fis_volumeMHL[500] =   "E:\\Stoleriu\\C\\special\\3d\\res\\2022\\elastic\\Bordeaux\\90x30_t0.1_k5_mu0.01_25prc_700K\\90x30_RektHex_Sol_MHL.dat";
+constexpr char fis_volumePHOTO[500] = "E:\\Stoleriu\\C\\special\\3d\\res\\2022\\elastic\\Bordeaux\\90x30_t0.1_k5_mu0.01_25prc_700K\\90x30_RektHex_Sol_PHOTO335.dat";
 
-char file[200] = "E:\\Stoleriu\\C\\special\\3d\\res\\2021\\Elastic\\30x30_RektHex_PHOTOViz";
+char file[200] = "E:\\Stoleriu\\C\\special\\3d\\res\\2022\\elastic\\Bordeaux\\90x30_t0.1_k5_mu0.01_25prc_700K\\90x30_RektHex_PHOTOViz";
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -88,7 +125,7 @@ int initializare(void);
 void alglib_function_neighbours(void);
 int TemperaturiExchange(void);
 int Temperaturi(void);
-double Suprafata(bool save);
+double Suprafata(double *peX, double *peY, bool save);
 int Funct_Dopri(double time, double *input, double *deriv);
 int Dopri5(double x, double xend, double eps, double hmax, double has, double *sol);
 
@@ -116,6 +153,8 @@ int main()
 	double diference;
 	double arie_ini = 0.0;
 	double arie = 0.0;
+	double latX = 0.0;
+	double latY = 0.0;
 
 	timp = t_init;
 
@@ -163,7 +202,7 @@ int main()
 		printf("S  T  E  P :   %d , \t\t diference: %7.5lg \t\t in: %7.3lf ms\n", j, diference, 0.0);
 	}
 
-	arie_ini = Suprafata(false);
+	arie_ini = Suprafata(&latX, &latY, false);
 
 #ifdef MHL
 	//////////////////////////////////////////////////////////////////////////
@@ -543,19 +582,20 @@ int main()
 
 	timp = t_init;
 
-	// heating by substrate only
+
 	for (i = 0; i < n_part; i++)
 	{
-// 		if (rand_dis(gen) < 0.60)
-// 		{
-// 			T[i] = T_EXCITATION;
-// 			//Medium[i].raza = rmare;
-// 		}
-// 		else
-// 		{
+		if (rand_dis(gen) < 0.25)
+		{
+			T[i] = T_EXCITATION;
+			//Medium[i].raza = rmare;
+			//n_H++; n_L--;
+		}
+		else
+		{
 			T[i] = T_LIM_DWN;
 			//Medium[i].raza = rmic;
-// 		}
+ 		}
 	}
 
 	for (i = 0; i < n_part; i++) //Conditii initiale
@@ -569,7 +609,7 @@ int main()
 
 	int contor_pasi = 0;
 
-	while ((contor_pasi < N_MAX_STEPS))
+	while ( (contor_pasi < N_MAX_STEPS) )
 	{
 		contor_pasi++;
 
@@ -577,11 +617,8 @@ int main()
 
 		for (int i = 0; i < n_part; i++)
 		{
-			if (i % 59)	// fara latura din stanga - NU update
-			{
 				Medium[i].x = sol[4 * i + 0];
 				Medium[i].y = sol[4 * i + 2];
-			}
 			//else
 			//{
 			//	sol[4 * i + 1] = 0.0;	//anulare viteze
@@ -595,8 +632,6 @@ int main()
 
 		for (int i = 0; i < n_part; i++)
 		{
-			if (i % 59)	// fara latura din stanga - NU update
-			{
 				if ((Medium[i].raza > 1.05 * radius) && (probabilitateHL[i] > rand_dis(gen)))
 				{
 					Medium[i].raza = rmic;
@@ -610,10 +645,10 @@ int main()
 						n_H++; n_L--;
 					}
 				}
-			}
 		}
 
-		arie = Suprafata(false);
+		arie = Suprafata(&latX, &latY, false);
+
 	
 		if (   (   (contor_pasi <= 1000) && !(contor_pasi % 25)   )         ||         (  (contor_pasi > 1000) && !(contor_pasi % 100)  )  )
 		{
@@ -721,7 +756,7 @@ int main()
 		}
 
 	// ************************* SALVARI VOL********************************
-	fprintf(fvol, "%lf   %lf   %lf   %lf\n", timp, T[0], (double)n_H / n_part, arie);
+	fprintf(fvol, "%lf   %lf   %lf    %lf    %lf    %lf\n", timp, T[0], (double)n_H / n_part, arie, latX, latY);
 	// ************************ END SALVARI *****************************
 
 	}
@@ -869,12 +904,12 @@ int TemperaturiExchange(void)
 	double Q;
 	for (int i = 0; i < n_part; i++)
 	{
-		if (!(i % 59))	// latura din stanga ia temp substrat
-		{
-			T[i] += (T_EXCITATION-T[i]) * CoefTermExt;
-		}
-		else
-		{
+// 		if (!(i % 59))	// latura din stanga ia temp substrat
+// 		{
+// 			T[i] += (T_EXCITATION-T[i]) * CoefTermExt;
+// 		}
+// 		else
+// 		{
 			if (neighbours[i] < 5)
 			{
 				T[i] -= (T[i] - T_LIM_DWN) * CoefTermExt; 
@@ -890,7 +925,7 @@ int TemperaturiExchange(void)
 					T[v] += Q;
 				}
 			}
-		}
+//		}
 	}
 	return(0);
 }
@@ -923,19 +958,34 @@ int Temperaturi(void)
 
 //**************************************************************************
 
-double Suprafata(bool save)
+double Suprafata(double *peX, double *peY, bool save)
 {
 	int i;
 	double a, b, c, p;												//laturile triunghiului
-	double x0 = Medium[1785].x, y0 = Medium[1785].y;
+	double x0 = Medium[idxMidd].x, y0 = Medium[idxMidd].y;
 	double x1, y1, x2, y2;
 
-	double pante_inainte_ordonare[6 * n_lat - 3];
-	double index_margini[6 * n_lat - 3];
-	double index_sort[6 * n_lat - 3];
+	double *pante_inainte_ordonare;
+	double *index_margini;
+	double *index_sort;
+
+	*peX = Medium[idxMiddRght].x - Medium[idxMiddLft].x;
+	*peY = Medium[idxMiddUp].y - Medium[idxMiddDwn].y;
 
 	int contor = 0;
 	double Surf;
+
+	contor = 0;
+	for (i = 0; i < n_part; i++)
+	{
+		if (neighbours[i] < 4.9)
+		{
+			contor++;
+		}
+	}
+	pante_inainte_ordonare = (double*)malloc(contor * sizeof(double));
+	index_margini = (double*)malloc(contor * sizeof(double));
+	index_sort = (double*)malloc(contor * sizeof(double));
 
 	/////////////////////////////////////////////////////////////////////
 	//////////////////////////////////////////////////// calcul arie ////
@@ -1011,6 +1061,11 @@ double Suprafata(bool save)
 
 		fclose(fp);
 	}
+
+
+	free(pante_inainte_ordonare);
+	free(index_margini);
+	free(index_sort);
 
 	return Surf;
 }
@@ -1415,6 +1470,13 @@ int Dopri5(double x, double xend, double eps, double hmax, double has, double *s
 
 		has = hnew;
 	};
+
+	free(k1);
+	free(k2);
+	free(k3);
+	free(k4);
+	free(k5);
+	free(ygrec1);
 
 	return(0);
 }
