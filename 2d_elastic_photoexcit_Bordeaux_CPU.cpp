@@ -128,11 +128,11 @@ double probabilitateHL[n_part], probabilitateLH[n_part], pres[n_part];
 
 constexpr char fis_particule[500] = "E:\\Stoleriu\\C\\special\\3d\\generare\\2022\\Elastic\\60x60_RektHex_L06_LS.dat";  // HS: r=1.1 L=2
 
-constexpr char fis_solutiiMHL[500] = "E:\\Stoleriu\\C\\special\\3d\\res\\2022\\elastic\\Bordeaux\\60x60_ani_UD10.0_L1.0_t0.1_k5_mu0.01_95prc_400K\\60x60_RektHex_Sol_MHL";
-constexpr char fis_volumeMHL[500] = "E:\\Stoleriu\\C\\special\\3d\\res\\2022\\elastic\\Bordeaux\\60x60_ani_UD10.0_L1.0_t0.1_k5_mu0.01_95prc_400K\\60x60_RektHex_Sol_MHL.dat";
-constexpr char fis_volumePHOTO[500] = "E:\\Stoleriu\\C\\special\\3d\\res\\2022\\elastic\\Bordeaux\\60x60_ani_UD10.0_L1.0_t0.1_k5_mu0.01_95prc_400K\\60x60_RektHex_Sol_PHOTO335.dat";
+constexpr char fis_solutiiMHL[500] = "E:\\Stoleriu\\C\\special\\3d\\res\\2022\\elastic\\Bordeaux\\60x60_aniR_UD2.0_L1.0_t0.1_k5_mu0.01_95prc_400K\\60x60_RektHex_Sol_MHL";
+constexpr char fis_volumeMHL[500] = "E:\\Stoleriu\\C\\special\\3d\\res\\2022\\elastic\\Bordeaux\\60x60_aniR_UD2.0_L1.0_t0.1_k5_mu0.01_95prc_400K\\60x60_RektHex_Sol_MHL.dat";
+constexpr char fis_volumePHOTO[500] = "E:\\Stoleriu\\C\\special\\3d\\res\\2022\\elastic\\Bordeaux\\60x60_aniR_UD2.0_L1.0_t0.1_k5_mu0.01_95prc_400K\\60x60_RektHex_Sol_PHOTO335.dat";
 
-char file[200] = "E:\\Stoleriu\\C\\special\\3d\\res\\2022\\elastic\\Bordeaux\\60x60_ani_UD10.0_L1.0_t0.1_k5_mu0.01_95prc_400K\\60x60_RektHex_PHOTOViz";
+char file[200] = "E:\\Stoleriu\\C\\special\\3d\\res\\2022\\elastic\\Bordeaux\\60x60_aniR_UD2.0_L1.0_t0.1_k5_mu0.01_95prc_400K\\60x60_RektHex_PHOTOViz";
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -953,7 +953,7 @@ int TemperaturiExchange(void)
 
 int Temperaturi(void)
 {
-	double Fe, radical, tipv;
+	double Fe, radical, tipv, raza_baza, raza_veci;
 	int v, j;
 
 
@@ -965,9 +965,13 @@ int Temperaturi(void)
 		{
 			v = Position_Coef[i][j].vecin;
 			tipv = Position_Coef[i][j].tip_vecin;
+
+			raza_baza = (Medium[i].raza > 0.21) ? ((tipv > 1.01) ? 0.23 : 0.21) : 0.20;
+			raza_veci = (Medium[v].raza > 0.21) ? ((tipv > 1.01) ? 0.23 : 0.21) : 0.20;
+
 			radical = sqrt((Medium[v].x - Medium[i].x) * (Medium[v].x - Medium[i].x) + (Medium[v].y - Medium[i].y) * (Medium[v].y - Medium[i].y) + (Medium[v].z - Medium[i].z) * (Medium[v].z - Medium[i].z));
 
-			Fe -= Kf_mic_mic * tipv * (radical - Medium[v].raza - Medium[i].raza - L);
+			Fe -= Kf_mic_mic * tipv * (radical - raza_baza - raza_veci/*Medium[v].raza - Medium[i].raza*/ - L);
 		}
 
 		pres[i] = Fe;
@@ -1096,7 +1100,7 @@ double Suprafata(double *peX, double *peY, bool save)
 int Funct_Dopri(double time, double *input, double *deriv)
 {
 	long i, j, k, kk;
-	double tipv;
+	double tipv, raza_baza, raza_veci;
 	double radical, Fe, Fex, Fey;
 	double alungirea;
 	double distanta_normala = L;
@@ -1111,9 +1115,12 @@ int Funct_Dopri(double time, double *input, double *deriv)
 		{
 			kk = 4 * Position_Coef[i][j].vecin;
 			tipv = Position_Coef[i][j].tip_vecin;
+			raza_baza = (Medium[i].raza > 0.21) ? ((tipv > 1.01) ? 0.23 : 0.21) : 0.20;
+			raza_veci = (Medium[Position_Coef[i][j].vecin].raza > 0.21)? ((tipv > 1.01) ? 0.23 : 0.21) : 0.20;
+
 			radical = sqrt((input[kk + 0] - input[k + 0]) * (input[kk + 0] - input[k + 0]) + (input[kk + 2] - input[k + 2]) * (input[kk + 2] - input[k + 2]));
 
-			alungirea = (radical - Medium[Position_Coef[i][j].vecin].raza - Medium[i].raza - distanta_normala);
+			alungirea = (radical - raza_baza - raza_veci/*Medium[Position_Coef[i][j].vecin].raza - Medium[i].raza*/ - distanta_normala);
 
 			Fe = Kf_mic_mic * tipv * alungirea;
 
