@@ -54,15 +54,26 @@ using namespace std;
 // constexpr auto idxMiddLft = 3570;
 // constexpr auto idxMiddRght = 3629;
 
-constexpr auto n_lat = 30;
-constexpr auto n_part = 10740;
-constexpr auto n_equ = 42960;
+// constexpr auto n_lat = 30;
+// constexpr auto n_part = 10740;
+// constexpr auto n_equ = 42960;
+// 
+// constexpr auto idxMidd = 5325;
+// constexpr auto idxMiddUp = 10595;
+// constexpr auto idxMiddDwn = 45;
+// constexpr auto idxMiddLft = 5281;
+// constexpr auto idxMiddRght = 5459;
 
-constexpr auto idxMidd = 5325;
-constexpr auto idxMiddUp = 10595;
-constexpr auto idxMiddDwn = 45;
-constexpr auto idxMiddLft = 5281;
-constexpr auto idxMiddRght = 5459;
+constexpr auto n_lat = 60;
+constexpr auto n_part = 14280;
+constexpr auto n_equ = 57120;
+
+constexpr auto idxMidd = 7110;
+constexpr auto idxMiddUp = 14250;
+constexpr auto idxMiddDwn = 30;
+constexpr auto idxMiddLft = 7140;
+constexpr auto idxMiddRght = 7199;
+
 
 constexpr auto n_max_vec = 6;
 
@@ -80,7 +91,7 @@ constexpr auto n_steps = 301;
 constexpr auto T_LIM_DWN = 100.0;
 constexpr auto T_LIM_UP = 350.0;
 constexpr auto delta_T = (T_LIM_UP - T_LIM_DWN) / (n_steps - 1);
-constexpr auto T_EXCITATION = 700.0;
+constexpr auto T_EXCITATION = 400.0;
 constexpr auto N_MAX_STEPS = 100000;
 
 constexpr auto H = 1100.0;		//1100;
@@ -99,8 +110,14 @@ public: double x, y, z, raza, theta, k;
 
 typedef struct 
 {
-public: int vecin, tip_vecin;
+public: int vecin;
+public: double tip_vecin;
 }sPosCoef;
+
+
+constexpr auto VecinUpDwn = 2.0;
+constexpr auto VecinLat = 1.0;
+
 
 sReadData Medium[n_part];
 sPosCoef Position_Coef[n_part][n_max_vec];
@@ -109,13 +126,13 @@ double sol[n_equ], sol_old[n_equ];
 double T[n_part];
 double probabilitateHL[n_part], probabilitateLH[n_part], pres[n_part];
 
-constexpr char fis_particule[500] = "E:\\Stoleriu\\C\\special\\3d\\generare\\2022\\Elastic\\90x30_RektHex_L06_LS.dat";  // HS: r=1.1 L=2
+constexpr char fis_particule[500] = "E:\\Stoleriu\\C\\special\\3d\\generare\\2022\\Elastic\\60x60_RektHex_L06_LS.dat";  // HS: r=1.1 L=2
 
-constexpr char fis_solutiiMHL[500] =  "E:\\Stoleriu\\C\\special\\3d\\res\\2022\\elastic\\Bordeaux\\90x30_t0.1_k5_mu0.01_25prc_700K\\90x30_RektHex_Sol_MHL";
-constexpr char fis_volumeMHL[500] =   "E:\\Stoleriu\\C\\special\\3d\\res\\2022\\elastic\\Bordeaux\\90x30_t0.1_k5_mu0.01_25prc_700K\\90x30_RektHex_Sol_MHL.dat";
-constexpr char fis_volumePHOTO[500] = "E:\\Stoleriu\\C\\special\\3d\\res\\2022\\elastic\\Bordeaux\\90x30_t0.1_k5_mu0.01_25prc_700K\\90x30_RektHex_Sol_PHOTO335.dat";
+constexpr char fis_solutiiMHL[500] = "E:\\Stoleriu\\C\\special\\3d\\res\\2022\\elastic\\Bordeaux\\60x60_ani_UD10.0_L1.0_t0.1_k5_mu0.01_95prc_400K\\60x60_RektHex_Sol_MHL";
+constexpr char fis_volumeMHL[500] = "E:\\Stoleriu\\C\\special\\3d\\res\\2022\\elastic\\Bordeaux\\60x60_ani_UD10.0_L1.0_t0.1_k5_mu0.01_95prc_400K\\60x60_RektHex_Sol_MHL.dat";
+constexpr char fis_volumePHOTO[500] = "E:\\Stoleriu\\C\\special\\3d\\res\\2022\\elastic\\Bordeaux\\60x60_ani_UD10.0_L1.0_t0.1_k5_mu0.01_95prc_400K\\60x60_RektHex_Sol_PHOTO335.dat";
 
-char file[200] = "E:\\Stoleriu\\C\\special\\3d\\res\\2022\\elastic\\Bordeaux\\90x30_t0.1_k5_mu0.01_25prc_700K\\90x30_RektHex_PHOTOViz";
+char file[200] = "E:\\Stoleriu\\C\\special\\3d\\res\\2022\\elastic\\Bordeaux\\60x60_ani_UD10.0_L1.0_t0.1_k5_mu0.01_95prc_400K\\60x60_RektHex_PHOTOViz";
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -585,7 +602,7 @@ int main()
 
 	for (i = 0; i < n_part; i++)
 	{
-		if (rand_dis(gen) < 0.25)
+		if (rand_dis(gen) < 0.95)
 		{
 			T[i] = T_EXCITATION;
 			//Medium[i].raza = rmare;
@@ -876,14 +893,16 @@ void alglib_function_neighbours(void)
 
 				Position_Coef[i][j].vecin = local_index;  //<<<---- asta e vecin
 				Position_Coef[i][j].tip_vecin = 0;
-				if (local_index < (i - 1))
-					Position_Coef[i][j].tip_vecin = 1;
-				if (local_index == (i - 1))
-					Position_Coef[i][j].tip_vecin = 2;
-				if (local_index == (i + 1))
-					Position_Coef[i][j].tip_vecin = 3;
-				if (local_index > (i + 1))
-					Position_Coef[i][j].tip_vecin = 4;
+				if (local_index < (i - 1.5 * n_lat))
+					Position_Coef[i][j].tip_vecin = VecinUpDwn;
+				else
+				{
+					if (local_index > (i + 1.5 * n_lat))
+						Position_Coef[i][j].tip_vecin = VecinUpDwn;
+					else
+						Position_Coef[i][j].tip_vecin = VecinLat;
+				}
+
 			}
 			//n_vec++;
 		}
@@ -934,8 +953,9 @@ int TemperaturiExchange(void)
 
 int Temperaturi(void)
 {
-	double Fe, radical;
+	double Fe, radical, tipv;
 	int v, j;
+
 
 	for (int i = 0; i < n_part; i++)
 	{
@@ -944,9 +964,10 @@ int Temperaturi(void)
 		for (j = 0; j < neighbours[i]; j++)
 		{
 			v = Position_Coef[i][j].vecin;
+			tipv = Position_Coef[i][j].tip_vecin;
 			radical = sqrt((Medium[v].x - Medium[i].x) * (Medium[v].x - Medium[i].x) + (Medium[v].y - Medium[i].y) * (Medium[v].y - Medium[i].y) + (Medium[v].z - Medium[i].z) * (Medium[v].z - Medium[i].z));
 
-			Fe -= Kf_mic_mic * (radical - Medium[v].raza - Medium[i].raza - L);
+			Fe -= Kf_mic_mic * tipv * (radical - Medium[v].raza - Medium[i].raza - L);
 		}
 
 		pres[i] = Fe;
@@ -1075,6 +1096,7 @@ double Suprafata(double *peX, double *peY, bool save)
 int Funct_Dopri(double time, double *input, double *deriv)
 {
 	long i, j, k, kk;
+	double tipv;
 	double radical, Fe, Fex, Fey;
 	double alungirea;
 	double distanta_normala = L;
@@ -1088,11 +1110,12 @@ int Funct_Dopri(double time, double *input, double *deriv)
 		for (j = 0; j < neighbours[i]; j++)
 		{
 			kk = 4 * Position_Coef[i][j].vecin;
+			tipv = Position_Coef[i][j].tip_vecin;
 			radical = sqrt((input[kk + 0] - input[k + 0]) * (input[kk + 0] - input[k + 0]) + (input[kk + 2] - input[k + 2]) * (input[kk + 2] - input[k + 2]));
 
 			alungirea = (radical - Medium[Position_Coef[i][j].vecin].raza - Medium[i].raza - distanta_normala);
 
-			Fe = Kf_mic_mic * alungirea;
+			Fe = Kf_mic_mic * tipv * alungirea;
 
 			Fex += Fe * (input[kk + 0] - input[k + 0]) / radical;
 			Fey += Fe * (input[kk + 2] - input[k + 2]) / radical;
