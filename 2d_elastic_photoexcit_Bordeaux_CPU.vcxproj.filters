@@ -54,7 +54,7 @@
     <ClCompile Include="statistics.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="2d_elastic_photoexcit_Bordeaux_CPU.cpp">
+    <ClCompile Include="2d_elastic_photoexcit_Bordeaux_CPU-anizo.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

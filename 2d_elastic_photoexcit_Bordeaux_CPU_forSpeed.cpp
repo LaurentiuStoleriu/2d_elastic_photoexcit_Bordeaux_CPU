@@ -54,7 +54,7 @@ using namespace std;
 // constexpr auto idxMiddLft = 3570;
 // constexpr auto idxMiddRght = 3629;
 
-/* 90x30 */
+ /* 90x30 */
 constexpr auto n_lat = 30;
 constexpr auto n_part = 10740;
 constexpr auto n_equ = 42960;
@@ -65,16 +65,16 @@ constexpr auto idxMiddDwn = 44;
 constexpr auto idxMiddLft = 5191;
 constexpr auto idxMiddRght = 5280;
 
-// /* 60x60 */
-// constexpr auto n_lat = 60;
-// constexpr auto n_part = 14280;
-// constexpr auto n_equ = 57120;
-// 
-// constexpr auto idxMidd = 7110;
-// constexpr auto idxMiddUp = 14250;
-// constexpr auto idxMiddDwn = 30;
-// constexpr auto idxMiddLft = 7140;
-// constexpr auto idxMiddRght = 7199;
+ ///* 60x60 */
+ //constexpr auto n_lat = 60;
+ //constexpr auto n_part = 14280;
+ //constexpr auto n_equ = 57120;
+ //
+ //constexpr auto idxMidd = 7110;
+ //constexpr auto idxMiddUp = 14250;
+ //constexpr auto idxMiddDwn = 30;
+ //constexpr auto idxMiddLft = 7140;
+ //constexpr auto idxMiddRght = 7199;
 
 // /* 30x90 */
 // constexpr auto n_lat = 90;
@@ -142,11 +142,11 @@ double probabilitateHL[n_part], probabilitateLH[n_part], pres[n_part];
 
 constexpr char fis_particule[500] = "E:\\Stoleriu\\C\\special\\3d\\generare\\2022\\Elastic\\90x30_RektHex_L06_LS.dat";  // HS: r=1.1 L=2
 
-constexpr char fis_solutiiMHL[500] = "E:\\Stoleriu\\C\\special\\3d\\res\\2022\\elastic\\Bordeaux\\90x30_isoR-UD1.0_L1.0_75prc_400K_Therm1\\90x30_RektHex_Sol_MHL";
-constexpr char fis_volumeMHL[500] = "E:\\Stoleriu\\C\\special\\3d\\res\\2022\\elastic\\Bordeaux\\90x30_isoR-UD1.0_L1.0_75prc_400K_Therm1\\90x30_RektHex_Sol_MHL.dat";
-constexpr char fis_volumePHOTO[500] = "E:\\Stoleriu\\C\\special\\3d\\res\\2022\\elastic\\Bordeaux\\90x30_isoR-UD1.0_L1.0_75prc_400K_Therm1\\90x30_RektHex_Sol_PHOTO335.dat";
+constexpr char fis_solutiiMHL[500] = "E:\\Stoleriu\\C\\special\\3d\\res\\2022\\elastic\\Bordeaux\\Speed\\90x30_RektHex_Sol_MHL";
+constexpr char fis_volumeMHL[500] = "E:\\Stoleriu\\C\\special\\3d\\res\\2022\\elastic\\Bordeaux\\Speed\\90x30_RektHex_Sol_MHL.dat";
+constexpr char fis_volumePHOTO[500] = "E:\\Stoleriu\\C\\special\\3d\\res\\2022\\elastic\\Bordeaux\\Speed\\90x30_RektHex_Sol_PHOTO335.dat";
 
-char file[200] = "E:\\Stoleriu\\C\\special\\3d\\res\\2022\\elastic\\Bordeaux\\90x30_isoR-UD1.0_L1.0_75prc_400K_Therm1\\90x30_RektHex_PHOTOViz";
+char file[200] = "E:\\Stoleriu\\C\\special\\3d\\res\\2022\\elastic\\Bordeaux\\Speed\\90x30_RektHex_PHOTOViz";
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -614,20 +614,6 @@ int main()
 	timp = t_init;
 
 
-	for (i = 0; i < n_part; i++)
-	{
-		if (rand_dis(gen) < 0.75)
-		{
-			T[i] = T_EXCITATION;
-			//Medium[i].raza = rmare;
-			//n_H++; n_L--;
-		}
-		else
-		{
-			T[i] = T_LIM_DWN;
-			//Medium[i].raza = rmic;
- 		}
-	}
 
 	for (i = 0; i < n_part; i++) //Conditii initiale
 	{
@@ -642,6 +628,19 @@ int main()
 
 	while ( (contor_pasi < N_MAX_STEPS) )
 	{
+		if (contor_pasi == 1)
+		{
+			for (i = 0; i < n_part; i++)
+			{
+				if (Medium[i].x < 0.1)
+				{
+					//Medium[i].raza = rmare;
+					Medium[i].x = -0.2;
+					sol[4 * i + 0] = Medium[i].x;
+				}
+			}
+		}
+
 		contor_pasi++;
 
 		Dopri5(timp, timp + step_t, eps, step_t, step_t / 4.0, &sol[0]);
@@ -658,32 +657,32 @@ int main()
 		}
 		timp += step_t;
 
-		TemperaturiExchange();
-		Temperaturi();
+		//TemperaturiExchange();
+		//Temperaturi();
 
-		for (int i = 0; i < n_part; i++)
-		{
-				if ((Medium[i].HS > 0.5) && (probabilitateHL[i] > rand_dis(gen)))
-				{
-					Medium[i].raza = rmic;
-					Medium[i].HS = 0.0;
-					n_H--; n_L++;
-				}
-				else
-				{
-					if ((Medium[i].HS < 0.5) && (probabilitateLH[i] > rand_dis(gen)))
-					{
-						Medium[i].raza = rmare;
-						Medium[i].HS = 1.0;
-						n_H++; n_L--;
-					}
-				}
-		}
+		//for (int i = 0; i < n_part; i++)
+		//{
+		//		if ((Medium[i].HS > 0.5) && (probabilitateHL[i] > rand_dis(gen)))
+		//		{
+		//			Medium[i].raza = rmic;
+		//			Medium[i].HS = 0.0;
+		//			n_H--; n_L++;
+		//		}
+		//		else
+		//		{
+		//			if ((Medium[i].HS < 0.5) && (probabilitateLH[i] > rand_dis(gen)))
+		//			{
+		//				Medium[i].raza = rmare;
+		//				Medium[i].HS = 1.0;
+		//				n_H++; n_L--;
+		//			}
+		//		}
+		//}
 
 		arie = Suprafata(&latX, &latY, false);
 
 	
-		if (   (   (contor_pasi <= 1000) && !(contor_pasi % 25)   )         ||         (  (contor_pasi > 1000) && !(contor_pasi % 100)  )  )
+		if (   (   (contor_pasi <= 1000) && !(contor_pasi % 1)   )         ||         (  (contor_pasi > 1000) && !(contor_pasi % 1)  )  )
 		{
 #ifdef grafic
 			{
@@ -792,11 +791,11 @@ int main()
 #endif
 
 
-			printf("Timp %5.2lf \t Temp %5.2lf \t HS %d \t Surf  %6.4lf \n", timp, T[0], n_H, arie);
+			printf("Timp %5.2lf \t Right %5.2lf \t HS %d \t Surf  %6.4lf \n", timp, Medium[idxMiddRght].x, n_H, arie);
 		}
 
 	// ************************* SALVARI VOL********************************
-	fprintf(fvol, "%lf   %lf   %lf    %lf    %lf    %lf\n", timp, T[0], (double)n_H / n_part, arie, latX, latY);
+	fprintf(fvol, "%lf  %lf  %lf  %lf  %lf  %lf  %lf  %lf  %lf  %lf  %lf  %lf  %lf  %lf\n", timp, arie, latX, latY, Medium[idxMiddLft].x, Medium[idxMiddLft].y, Medium[idxMiddRght].x, Medium[idxMiddRght].y, Medium[idxMidd].x, Medium[idxMidd].y, Medium[idxMiddDwn].x, Medium[idxMiddDwn].y, Medium[idxMiddUp].x, Medium[idxMiddUp].y);
 	// ************************ END SALVARI *****************************
 
 	}
@@ -1140,8 +1139,8 @@ int Funct_Dopri(double time, double *input, double *deriv)
 			v = Position_Coef[i][j].vecin;
 			tipv = (Position_Coef[i][j].tip_vecin > 0.5) ? VecinUpDwn : VecinLat;
 
-			raza_baza = (Medium[i].HS > 0.5) ? ((Position_Coef[i][j].tip_vecin > 0.5) ? 0.22 : 0.22) : 0.20;
-			raza_veci = (Medium[v].HS > 0.5) ? ((Position_Coef[i][j].tip_vecin > 0.5) ? 0.22 : 0.22) : 0.20;
+			raza_baza = (Medium[i].HS > 0.5) ? ((Position_Coef[i][j].tip_vecin > 0.5) ? 0.23 : 0.21) : 0.20;
+			raza_veci = (Medium[v].HS > 0.5) ? ((Position_Coef[i][j].tip_vecin > 0.5) ? 0.23 : 0.21) : 0.20;
 			//raza_baza = Medium[i].raza;
 			//raza_veci = Medium[v].raza;
 
