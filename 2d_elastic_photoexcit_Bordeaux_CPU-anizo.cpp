@@ -54,16 +54,16 @@ using namespace std;
 // constexpr auto idxMiddLft = 3570;
 // constexpr auto idxMiddRght = 3629;
 
-/* 90x30 */
-constexpr auto n_lat = 30;
-constexpr auto n_part = 10740;
-constexpr auto n_equ = 42960;
-
-constexpr auto idxMidd = 5235;
-constexpr auto idxMiddUp = 10694;
-constexpr auto idxMiddDwn = 44;
-constexpr auto idxMiddLft = 5191;
-constexpr auto idxMiddRght = 5280;
+// /* 90x30 */
+// constexpr auto n_lat = 30;
+// constexpr auto n_part = 10740;
+// constexpr auto n_equ = 42960;
+// 
+// constexpr auto idxMidd = 5235;
+// constexpr auto idxMiddUp = 10694;
+// constexpr auto idxMiddDwn = 44;
+// constexpr auto idxMiddLft = 5191;
+// constexpr auto idxMiddRght = 5280;
 
 // /* 60x60 */
 // constexpr auto n_lat = 60;
@@ -76,16 +76,16 @@ constexpr auto idxMiddRght = 5280;
 // constexpr auto idxMiddLft = 7140;
 // constexpr auto idxMiddRght = 7199;
 
-// /* 30x90 */
-// constexpr auto n_lat = 90;
-// constexpr auto n_part = 10620;
-// constexpr auto n_equ = 42480;
-// 
-// constexpr auto idxMidd = 5324;
-// constexpr auto idxMiddUp = 10605;
-// constexpr auto idxMiddDwn = 15;
-// constexpr auto idxMiddLft = 5310;
-// constexpr auto idxMiddRght = 5339;
+/* 30x90 */
+constexpr auto n_lat = 90;
+constexpr auto n_part = 10620;
+constexpr auto n_equ = 42480;
+
+constexpr auto idxMidd = 5324;
+constexpr auto idxMiddUp = 10605;
+constexpr auto idxMiddDwn = 15;
+constexpr auto idxMiddLft = 5310;
+constexpr auto idxMiddRght = 5339;
 
 
 constexpr auto n_max_vec = 6;
@@ -134,19 +134,22 @@ constexpr auto VecinLat = 1.0;
 
 sReadData Medium[n_part];
 sReadData Medium_ini[n_part];
+sReadData Medium_martor[n_part];
 sPosCoef Position_Coef[n_part][n_max_vec];
 int   neighbours[n_part];
 double sol[n_equ], sol_old[n_equ];
 double T[n_part];
 double probabilitateHL[n_part], probabilitateLH[n_part], pres[n_part];
 
-constexpr char fis_particule[500] = "E:\\Stoleriu\\C\\special\\3d\\generare\\2022\\Elastic\\90x30_RektHex_L06_LS.dat";  // HS: r=1.1 L=2
+constexpr char fis_particule[500]       = "E:\\Stoleriu\\C\\special\\3d\\generare\\2022\\Elastic\\30x90_RektHex_L06_LS_anizo.dat";  // HS: r=1.1 L=2
+constexpr char fis_particule_neigh[500] = "E:\\Stoleriu\\C\\special\\3d\\generare\\2022\\Elastic\\30x90_RektHex_L06_LS.dat";  // HS: r=1.1 L=2
 
-constexpr char fis_solutiiMHL[500] = "E:\\Stoleriu\\C\\special\\3d\\res\\2022\\elastic\\Bordeaux\\90x30_isoR-UD1.0_L1.0_75prc_400K_Therm1\\90x30_RektHex_Sol_MHL";
-constexpr char fis_volumeMHL[500] = "E:\\Stoleriu\\C\\special\\3d\\res\\2022\\elastic\\Bordeaux\\90x30_isoR-UD1.0_L1.0_75prc_400K_Therm1\\90x30_RektHex_Sol_MHL.dat";
-constexpr char fis_volumePHOTO[500] = "E:\\Stoleriu\\C\\special\\3d\\res\\2022\\elastic\\Bordeaux\\90x30_isoR-UD1.0_L1.0_75prc_400K_Therm1\\90x30_RektHex_Sol_PHOTO335.dat";
 
-char file[200] = "E:\\Stoleriu\\C\\special\\3d\\res\\2022\\elastic\\Bordeaux\\90x30_isoR-UD1.0_L1.0_75prc_400K_Therm1\\90x30_RektHex_PHOTOViz";
+constexpr char fis_solutiiMHL[500] = "E:\\Stoleriu\\C\\special\\3d\\res\\2022\\elastic\\Bordeaux\\30x90_isoR-UD1.0_L1.0_75prc_400K_Therm1\\30x90_RektHex_Sol_MHL";
+constexpr char fis_volumeMHL[500] = "E:\\Stoleriu\\C\\special\\3d\\res\\2022\\elastic\\Bordeaux\\30x90_isoR-UD1.0_L1.0_75prc_400K_Therm1\\30x90_RektHex_Sol_MHL.dat";
+constexpr char fis_volumePHOTO[500] = "E:\\Stoleriu\\C\\special\\3d\\res\\2022\\elastic\\Bordeaux\\30x90_isoR-UD1.0_L1.0_75prc_400K_Therm1\\30x90_RektHex_Sol_PHOTO335.dat";
+
+char file[200] = "E:\\Stoleriu\\C\\special\\3d\\res\\2022\\elastic\\Bordeaux\\30x90_isoR-UD1.0_L1.0_75prc_400K_Therm1\\30x90_RektHex_PHOTOViz";
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -713,7 +716,7 @@ int main()
 							v1 = Position_Coef[p][i].vecin;
 							v2 = Position_Coef[p][j].vecin;
 
-							d1 = sqrt((Medium[v1].x - Medium[v2].x) * (Medium[v1].x - Medium[v2].x) + (Medium[v1].y - Medium[v2].y) * (Medium[v1].y - Medium[v2].y) + (Medium[v1].z - Medium[v2].z) * (Medium[v1].z - Medium[v2].z));
+							d1 = sqrt((Medium_martor[v1].x - Medium_martor[v2].x) * (Medium_martor[v1].x - Medium_martor[v2].x) + (Medium_martor[v1].y - Medium_martor[v2].y) * (Medium_martor[v1].y - Medium_martor[v2].y) + (Medium_martor[v1].z - Medium_martor[v2].z) * (Medium_martor[v1].z - Medium_martor[v2].z));
 
 							if ((d1 < 5.0)) //ca sa nu luam doi vecini ambii de pe Ox sau ambii de pe Oy
 							{
@@ -748,7 +751,7 @@ int main()
 							v1 = Position_Coef[p][i].vecin;
 							v2 = Position_Coef[p][j].vecin;
 
-							d1 = sqrt((Medium[v1].x - Medium[v2].x) * (Medium[v1].x - Medium[v2].x) + (Medium[v1].y - Medium[v2].y) * (Medium[v1].y - Medium[v2].y) + (Medium[v1].z - Medium[v2].z) * (Medium[v1].z - Medium[v2].z));
+							d1 = sqrt((Medium_martor[v1].x - Medium_martor[v2].x) * (Medium_martor[v1].x - Medium_martor[v2].x) + (Medium_martor[v1].y - Medium_martor[v2].y) * (Medium_martor[v1].y - Medium_martor[v2].y) + (Medium_martor[v1].z - Medium_martor[v2].z) * (Medium_martor[v1].z - Medium_martor[v2].z));
 
 							if ((d1 < 5.0))  //ca sa nu luam doi vecini ambii de pe Ox sau ambii de pe Oy
 							{
@@ -813,20 +816,23 @@ int main()
 
 int initializare(void)
 {
-	FILE *fp;
+	FILE *fp, *fp_martor;
 	long i;
 
 	/// READ Medium
-	fp = fopen(fis_particule, "r");
+	fp        = fopen(fis_particule, "r");
+	fp_martor = fopen(fis_particule_neigh, "r");
 	for (i = 0; i < n_part; i++)
 	{
 		fscanf(fp, "%lG %lG %lG %lG %lG %lG \n", &Medium[i].x, &Medium[i].z, &Medium[i].y, &Medium[i].raza, &Medium[i].theta, &Medium[i].k);
+		fscanf(fp_martor, "%lG %lG %lG %lG %lG %lG \n", &Medium_martor[i].x, &Medium_martor[i].z, &Medium_martor[i].y, &Medium_martor[i].raza, &Medium_martor[i].theta, &Medium_martor[i].k);
 		Medium[i].HS = 0.0;
 		Medium_ini[i].x = Medium[i].x;
 		Medium_ini[i].y = Medium[i].y;
 		Medium_ini[i].z = Medium[i].z;
 	}
 	fclose(fp);
+	fclose(fp_martor);
 
 	///// COMPUTE NEIGHBOURS
 	alglib_function_neighbours();
@@ -859,9 +865,9 @@ void alglib_function_neighbours(void)
 	a.setlength(n_part, 3);
 	for (i = 0; i < n_part; i++)
 	{
-		a(i, 0) = Medium[i].x;
-		a(i, 1) = Medium[i].y;
-		a(i, 2) = Medium[i].z;
+		a(i, 0) = Medium_martor[i].x;
+		a(i, 1) = Medium_martor[i].y;
+		a(i, 2) = Medium_martor[i].z;
 	}
 
 	integer_1d_array tags;
@@ -887,9 +893,9 @@ void alglib_function_neighbours(void)
 
 	for (i = 0; i < n_part; i++)
 	{
-		x(0) = Medium[i].x;
-		x(1) = Medium[i].y;
-		x(2) = Medium[i].z;
+		x(0) = Medium_martor[i].x;
+		x(1) = Medium_martor[i].y;
+		x(2) = Medium_martor[i].z;
 
 		ae_int_t k;
 		//k = kdtreequeryknn(kdt, x, 2, false);
@@ -919,11 +925,11 @@ void alglib_function_neighbours(void)
 				local_index = myvector[j];// (int)indexes(j);
 
 				Position_Coef[i][j].vecin = local_index;  //<<<---- asta e vecin
-				Position_Coef[i][j].tip_vecin = 0;
-				if ( fabs(Medium[local_index].x - Medium[i].x) < 1.0e-3 )
+				Position_Coef[i][j].tip_vecin = 0.0;
+				if ( fabs(Medium_martor[local_index].x - Medium_martor[i].x) < 1.0e-3 )
 					Position_Coef[i][j].tip_vecin = 1.0;	// UP-DOWN
 				else
-					Position_Coef[i][j].tip_vecin = 0.0;	// LATERAL
+					Position_Coef[i][j].tip_vecin = 3.0;	// LATERAL
 			}
 			//n_vec++;
 		}
@@ -985,16 +991,16 @@ int Temperaturi(void)
 		for (j = 0; j < neighbours[i]; j++)
 		{
 			v = Position_Coef[i][j].vecin;
-			tipv = (Position_Coef[i][j].tip_vecin > 0.5) ? VecinUpDwn : VecinLat;
 
-			raza_baza = (Medium[i].HS > 0.5) ? ((Position_Coef[i][j].tip_vecin > 0.5) ? 0.23 : 0.21) : 0.20;
-			raza_veci = (Medium[v].HS > 0.5) ? ((Position_Coef[i][j].tip_vecin > 0.5) ? 0.23 : 0.21) : 0.20;
-			//raza_baza = Medium[i].raza;
-			//raza_veci = Medium[v].raza;
+//			tipv = (Position_Coef[i][j].tip_vecin > 0.5) ? VecinUpDwn : VecinLat;
+// 			raza_baza = (Medium[i].HS > 0.5) ? ((Position_Coef[i][j].tip_vecin > 0.5) ? 0.23 : 0.21) : 0.20;
+// 			raza_veci = (Medium[v].HS > 0.5) ? ((Position_Coef[i][j].tip_vecin > 0.5) ? 0.23 : 0.21) : 0.20;
+// 			raza_baza = Medium[i].raza;
+// 			raza_veci = Medium[v].raza;
 
 			radical = sqrt((Medium[v].x - Medium[i].x) * (Medium[v].x - Medium[i].x) + (Medium[v].y - Medium[i].y) * (Medium[v].y - Medium[i].y) + (Medium[v].z - Medium[i].z) * (Medium[v].z - Medium[i].z));
 
-			Fe -= Kf_mic_mic * tipv * (radical - raza_baza - raza_veci/*Medium[v].raza - Medium[i].raza*/ - L);
+			Fe -= Kf_mic_mic * (radical - /*raza_baza - raza_veci*/ Medium[v].raza - Medium[i].raza - Position_Coef[i][j].tip_vecin*L);
 		}
 
 		pres[i] = Fe;
@@ -1138,18 +1144,18 @@ int Funct_Dopri(double time, double *input, double *deriv)
 		{
 			kk = 4 * Position_Coef[i][j].vecin;
 			v = Position_Coef[i][j].vecin;
-			tipv = (Position_Coef[i][j].tip_vecin > 0.5) ? VecinUpDwn : VecinLat;
 
-			raza_baza = (Medium[i].HS > 0.5) ? ((Position_Coef[i][j].tip_vecin > 0.5) ? 0.22 : 0.22) : 0.20;
-			raza_veci = (Medium[v].HS > 0.5) ? ((Position_Coef[i][j].tip_vecin > 0.5) ? 0.22 : 0.22) : 0.20;
-			//raza_baza = Medium[i].raza;
-			//raza_veci = Medium[v].raza;
+//			tipv = (Position_Coef[i][j].tip_vecin > 0.5) ? VecinUpDwn : VecinLat;
+// 			raza_baza = (Medium[i].HS > 0.5) ? ((Position_Coef[i][j].tip_vecin > 0.5) ? 0.22 : 0.22) : 0.20;
+// 			raza_veci = (Medium[v].HS > 0.5) ? ((Position_Coef[i][j].tip_vecin > 0.5) ? 0.22 : 0.22) : 0.20;
+// 			raza_baza = Medium[i].raza;
+// 			raza_veci = Medium[v].raza;
 
 			radical = sqrt((input[kk + 0] - input[k + 0]) * (input[kk + 0] - input[k + 0]) + (input[kk + 2] - input[k + 2]) * (input[kk + 2] - input[k + 2]));
 
-			alungirea = (radical - raza_baza - raza_veci/*Medium[Position_Coef[i][j].vecin].raza - Medium[i].raza*/ - distanta_normala);
+			alungirea = (radical - /*raza_baza - raza_veci*/ Medium[v].raza - Medium[i].raza - Position_Coef[i][j].tip_vecin*distanta_normala);
 
-			Fe = Kf_mic_mic * tipv * alungirea;
+			Fe = Kf_mic_mic * alungirea;
 
 			Fex += Fe * (input[kk + 0] - input[k + 0]) / radical;
 			Fey += Fe * (input[kk + 2] - input[k + 2]) / radical;
